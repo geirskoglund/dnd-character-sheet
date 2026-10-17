@@ -120,5 +120,9 @@ Status: Tilbakemelding ferdig. Ingen v0.4 bygget ennå.
 ## Designavklaring etter v0.6 (2026-10-18)
 - **Combat-faner:** Når «Action», «Bonus», «Reaction» eller «Other» allerede vises i fanelinjen, skal samme navn **ikke gjentas som overskrift** i innholdspanelet. Fjern også redundant teller for antall alternativer. Vis handlingskortene direkte under fanelinjen, med tydelig, men kompakt visuelt skille.
 
+
+## Videre testdekning – våpen (2026-10-18)
+- Legg til demonstrasjon av **dual wielding** (ett våpen i hver hånd), inkludert Bonus Action-angrep og relevante 2014-regler, og **tohåndsvåpen** (f.eks. greatsword) med korrekt håndbruk/equip-validering. Test også at Combat viser handlingene riktig ved bytte av utstyr. Foreløpig eksempelkarakterutvalg mangler disse kombinasjonene.
+
 ## Vedlikehold
 Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig **besluttet**, **foreløpig** og **åpent**, og legg vesentlige omgjøringer i historikken. Denne filen er kilden til prosjektbeslutninger på tvers av chat-komprimering og kan deles med Codex.
