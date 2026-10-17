@@ -35,6 +35,15 @@ En mobilvennlig, offline-først digital **karakterassistent** som reduserer tid 
 - **Spell slots og begrensede evner:** Enkle ±1-knapper eller én «bruk»-knapp; ingen slider der.
 - **Penger (besluttet):** GP er fast standardenhet i grensesnittet, vises med **to desimaler**. Saldo relativt høyt i Character. Trykk saldo → lite beløpsfelt og +/− samt Angre. Ingen myntvelger i vanlige transaksjoner. Oppbevar verdier som heltall CP internt for eksakt regning; omregning til andre mynter kan håndteres ved behov. Ikke press slider på pengebeløp.
 
+
+### Utstyr, AC og spesialeffekter (besluttet 2026-10-17)
+- Skille mellom **eid** og **utstyrt** utstyr. Kun aktivt/relevant utstyr skal påvirke beregninger og Combat.
+- Rustning: AC etter type, Dexterity-begrensninger, skjold og eventuelle magiske bonuser; håndter relevante begrensninger (f.eks. proficiency) og spesialregler.
+- Våpen: attack bonus, skadeuttrykk, damage type, properties, proficiency, bruksvarianter og magiske bonuser.
+- Magiske våpen/rustninger/gjenstander: egne effekter, aktive/passive bonuser, charges, bruk og recharge. Handlinger fra utstyret skal dukke opp under riktig Action/Bonus Action/Reaction i Combat.
+- Egenskaper og effekter lagres strukturert når mulig, med fritekst for særegne effekter. Unngå å la utstyrsinformasjon bli en isolert inventarliste.
+- Dette skal demonstreres i neste énfil-HTML-prototype med fungerende eksempler, uten å bygge en komplett regelmotor.
+
 ### Spells / evner
 - Skill mellom **cantrips** (normalt uten slots), **spells**, **known/spellbook**, **prepared spells**, **spell slots** og **concentration**.
 - Tilgjengelige spells og preparation-regler avhenger av **klasse**. Ikke alle klasser forbereder spells.
