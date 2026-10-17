@@ -42,6 +42,7 @@ En mobilvennlig, offline-først digital **karakterassistent** som reduserer tid 
 - Våpen: attack bonus, skadeuttrykk, damage type, properties, proficiency, bruksvarianter og magiske bonuser.
 - Magiske våpen/rustninger/gjenstander: egne effekter, aktive/passive bonuser, charges, bruk og recharge. Handlinger fra utstyret skal dukke opp under riktig Action/Bonus Action/Reaction i Combat.
 - Egenskaper og effekter lagres strukturert når mulig, med fritekst for særegne effekter. Unngå å la utstyrsinformasjon bli en isolert inventarliste.
+- **Viktig integrasjonskrav:** Combat er én samlet handlingsmeny. Handlinger/reaksjoner som gis av utstyrt våpen, armor, shield eller magiske gjenstander, vises automatisk under riktig **Action / Bonus Action / Reaction / Other** sammen med klasse-, feat- og spellhandlinger. Ved equip/unequip oppdateres menyen. Passive effekter påvirker beregnede verdier eller vises som passive, ikke som falske handlinger. Betingede og ressursbegrensede effekter merkes tydelig; ikke lag en separat meny som brukeren må lete i for utstyrsevner.
 - Dette skal demonstreres i neste énfil-HTML-prototype med fungerende eksempler, uten å bygge en komplett regelmotor.
 
 ### Spells / evner
