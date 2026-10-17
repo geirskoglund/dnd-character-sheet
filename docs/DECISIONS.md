@@ -22,7 +22,8 @@ En mobilvennlig, offline-først digital **karakterassistent** som reduserer tid 
 - Søk i strukturerte karakter- og regeldata med autofullføring; ikke bare eksakt fritekst.
 - Favoritter / ofte brukte modifiers (f.eks. Perception, Stealth, Insight) lett tilgjengelig.
 - Mulighet for kategorisert oversikt over skills, saves, evner, angrep og spells.
-- **Ingen talestøtte i første versjon** (besluttet). Tale kan forstyrre innlevelsen rundt bordet og øker kompleksiteten. Vi kan revurdere senere.
+- **Tale som valgfritt oppslag (ny beslutning):** Behold muligheten til å bruke mikrofonen for å søke etter f.eks. «Perception» og få opp modifieren. Vanlig søk med autofullføring og synlige favoritter er fortsatt primærløsningen. Det skal ikke kreve at man snakker høyt for vanlige oppslag.
+- **Ingen talestyrte endringskommandoer:** HP, penger, spell slots og andre ressurser oppdateres diskret via berøring. Skill tydelig mellom taleoppslag og talebetjening av karakterens tilstand. Talegjenkjenning kan være avhengig av plattform/nett; alltid tekstfallback.
 
 ### Ressurser og registrering
 - Registrer kun *begrensede* ressurser som har praktisk behov for telling (spell slots, begrensede class features, ammo/forbruksvarer ved behov), samt HP og penger.
@@ -60,10 +61,10 @@ En mobilvennlig, offline-først digital **karakterassistent** som reduserer tid 
 - Nøyaktig datamodell for multiclass, Pact Magic, spell preparation, concentration, Hit Dice, feats og spesielle rest-regler.
 - Hvordan håndteres fysiske mynter hvis DM krever eksakt veksling eller mynttyper? Normal UX er GP-desimaler.
 - Om «oftest brukt» skal foreslås automatisk eller bare administreres manuelt.
-- Om man senere vil teste stemmestyring som valgfri snarvei; **ikke** med i v1.
+- Om mikrofonoppslag tas inn i første prototype eller først i robust app; funksjonen er ønsket, men nettleserstøtte/offline og engelsk/norsk D&D-transkripsjon må testes.
 
 ## Historikk / beslutningsendringer
-- Først vurdert taleoppslag og talekommandoer («legg til / ta bort X Y»). **Revidert:** Talestøtte droppes i første versjon av hensyn til immersion og kompleksitet.
+- Først vurdert taleoppslag og talekommandoer («legg til / ta bort X Y»). Deretter ble all tale utsatt av hensyn til immersion og kompleksitet. **Ny avklaring:** Valgfritt taleoppslag (f.eks. «Perception») er ønsket; talekommandoer som endrer ressurser er fortsatt ute. Favoritter og vanlig søk beholdes.
 - Først vurdert avkryssing av action/bonus action/reaction og movement-tracking. **Forkastet:** Combat skal vise *muligheter*, ikke en turtracker.
 - Først foreslått én felles inputmekanisme for alle ressurser. **Revidert:** Ressurstypen avgjør egnet UI: HP-slider + finjustering, penger desimalinput i GP, begrensede evner ett trykk.
 - Først utviklet en enkel GitHub Pages-PWA. Brukeren opplevde at den manglet mye av den avtalte funksjonaliteten. Ikke behandle eksisterende implementasjon som autoritativ kravspesifikasjon.
