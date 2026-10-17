@@ -79,5 +79,21 @@ En mobilvennlig, offline-først digital **karakterassistent** som reduserer tid 
 - Først foreslått én felles inputmekanisme for alle ressurser. **Revidert:** Ressurstypen avgjør egnet UI: HP-slider + finjustering, penger desimalinput i GP, begrensede evner ett trykk.
 - Først utviklet en enkel GitHub Pages-PWA. Brukeren opplevde at den manglet mye av den avtalte funksjonaliteten. Ikke behandle eksisterende implementasjon som autoritativ kravspesifikasjon.
 
+
+## Tilbakemelding etter første gjennomgang av prototype v0.2 (2026-10-17)
+
+**Prioriteres i neste prototype – brukerens observasjoner:**
+1. **Penger:** Kompakt saldo-brikke på størrelse med HP/AC; trykk åpner popup med GP-beløp, +/− og angre. Ikke ha hele redigeringspanelet synlig.
+2. **HP:** Kompakt HP-brikke; trykk åpner popup med endringsslider, finjustering, temp-HP og angre. Ikke vis hele kontrollen permanent.
+3. **Oppslag:** Flytt favoritter/hurtigoppslag høyere opp, frigjort av kompakte brikker. Vurder om søkefelt skal være permanent eller åpnes ved behov – **åpent UX-spørsmål**.
+4. **Sjeldne handlinger:** Level Up og Bytt karakter skal ikke oppta toppareal; flyttes til meny/administrasjon.
+5. **Utstyr:** Hindre ugyldige samtidige kombinasjoner av våpen/skjold; modellér håndbruk (én hånd/to hender) og relevante 2014-regler. Muligheter for å trekke, bytte og håndtere våpen i combat skal vises med korrekt action economy (ikke anta at alle bytter alltid koster en Action; objektinteraksjon og situasjon avgjør).
+6. **Navigasjon:** Bevar scrollposisjon **separat for Character og Combat** når man veksler mellom dem.
+7. **Combat-liste:** Mye kortere linjer/kort. Vis navn og essensiell status; trykk åpner popup/popover med full forklaring. Tydeligere visuell hierarki/kontrast mellom Action/Bonus Action/Reaction-overskrifter og handlingsalternativene.
+8. **Ressursknapper:** Kall knappen **«Bruk»**, ikke «Bruk 1». Når beholdningen er null, skjul/deaktiver bruksknappen og vis tydelig «oppbrukt», men **behold evnen i listen**.
+9. **Action economy – endret beslutning:** Brukeren ønsker nå at bruk av en Action, Bonus Action eller Reaction faktisk kan registreres, og at «Ferdig med tur» gjør relevante turressurser klare til neste runde. Når en handling brukes, markeres tilsvarende handlingstype som brukt. **Dette overstyrer tidligere beslutning om ingen action-avkryssing/tursporing.** Avklar nøyaktig reset-semantikk for Reaction (2014: gjenopprettes ved starten av neste tur) og støtte for unntak som Action Surge, Extra Attack og actions uten ressurskostnad. Løsningen bør utløses av trykk på selve handlingen, ikke ekstra avkrysningsfelt, og bør ikke spore movement/rundekart.
+
+**Fortsatt åpent:** Hvor mye automatikk for turstatus skal være aktivert, og hvordan «Ferdig med tur» håndterer reaksjoner brukt utenfor egen tur, uten å gjøre appen tungvint.
+
 ## Vedlikehold
 Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig **besluttet**, **foreløpig** og **åpent**, og legg vesentlige omgjøringer i historikken. Denne filen er kilden til prosjektbeslutninger på tvers av chat-komprimering og kan deles med Codex.
