@@ -93,6 +93,9 @@ En mobilvennlig, offline-først digital **karakterassistent** som reduserer tid 
 8. **Ressursknapper:** Kall knappen **«Bruk»**, ikke «Bruk 1». Når beholdningen er null, skjul/deaktiver bruksknappen og vis tydelig «oppbrukt», men **behold evnen i listen**.
 9. **Action economy – endret beslutning:** Brukeren ønsker nå at bruk av en Action, Bonus Action eller Reaction faktisk kan registreres, og at «Ferdig med tur» gjør relevante turressurser klare til neste runde. Når en handling brukes, markeres tilsvarende handlingstype som brukt. **Dette overstyrer tidligere beslutning om ingen action-avkryssing/tursporing.** Avklar nøyaktig reset-semantikk for Reaction (2014: gjenopprettes ved starten av neste tur) og støtte for unntak som Action Surge, Extra Attack og actions uten ressurskostnad. Løsningen bør utløses av trykk på selve handlingen, ikke ekstra avkrysningsfelt, og bør ikke spore movement/rundekart.
 
+
+10. **DM har siste ord (besluttet):** Appen skal aldri forhindre at spilleren registrerer eller gjennomfører en handling, verken den normalt er lovlig eller ulovlig etter reglene. Den kan varsle om regelkonflikt, oppbrukt Action/Bonus Action/Reaction, ugyldig utstyrskombinasjon eller manglende ressurser, men skal tillate overstyring uten tungvint prosess. Bruk av «Bruk» og turstatus er veiledning, ikke håndhevelse; eventuell overstyring og angre må være enkel. Dette presiserer også punkt 5 om utstyrsvalidering: **advar, ikke blokker**.
+
 **Fortsatt åpent:** Hvor mye automatikk for turstatus skal være aktivert, og hvordan «Ferdig med tur» håndterer reaksjoner brukt utenfor egen tur, uten å gjøre appen tungvint.
 
 ## Vedlikehold
