@@ -116,5 +116,9 @@ Tilbakemeldinger og foreslått løsning for neste prototype (ikke implementert e
 
 Status: Tilbakemelding ferdig. Ingen v0.4 bygget ennå.
 
+
+## Designavklaring etter v0.6 (2026-10-18)
+- **Combat-faner:** Når «Action», «Bonus», «Reaction» eller «Other» allerede vises i fanelinjen, skal samme navn **ikke gjentas som overskrift** i innholdspanelet. Fjern også redundant teller for antall alternativer. Vis handlingskortene direkte under fanelinjen, med tydelig, men kompakt visuelt skille.
+
 ## Vedlikehold
 Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig **besluttet**, **foreløpig** og **åpent**, og legg vesentlige omgjøringer i historikken. Denne filen er kilden til prosjektbeslutninger på tvers av chat-komprimering og kan deles med Codex.
