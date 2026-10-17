@@ -98,5 +98,23 @@ En mobilvennlig, offline-først digital **karakterassistent** som reduserer tid 
 
 **Fortsatt åpent:** Hvor mye automatikk for turstatus skal være aktivert, og hvordan «Ferdig med tur» håndterer reaksjoner brukt utenfor egen tur, uten å gjøre appen tungvint.
 
+
+## Gjennomgang av prototype v0.3 (2026-10-18)
+
+Tilbakemeldinger og foreslått løsning for neste prototype (ikke implementert ennå):
+
+1. **Ferdig med tur:** Plasseringen øverst til høyre er lite naturlig. Flytt den til etter handlingsalternativene; vurder diskret sticky knapp hvis det reduserer scrolling uten å stjele plass.
+2. **Kollapsbare grupper:** Action, Bonus Action, Reaction og andre relevante grupper kan åpnes/lukkes ved å trykke overskriften. Bevar tilstanden ved fanebytte.
+3. **Spellcasting-popup:** Erstatt dropdown for spell-slot-nivå med små valgkort/chips. Valgt nivå aktiverer «Bruk/Cast». Kompakte knapper.
+4. **Generelle handlinger:** Ikke egen løsrevet bunnliste. Vis generelle handlinger *etter karakterspesifikke handlinger innen riktig kategori*. Merk 2014-reglene: Dash, Dodge, Disengage m.fl. bruker normalt Action; Jump inngår normalt i movement, enkelte objektinteraksjoner er gratis.
+5. **Hurtigoppslag:** Sikt på fire små kort i bredden, slik status- og ability-scorekortene bruker plassen effektivt. Forkort labels eller tilpass typografi for lange skillnavn.
+6. **Utstyr:** Skill **Armor** og **Weapons**, vis equipped før unequipped, og sikt på fire kort i bredden på relevante mobilbredder. Bevar støtte for automatiske handlinger/effekter fra utstyr.
+7. **Arcane Recovery:** En gang per spilledag når wizard fullfører short rest, ikke automatisk basert på virkelige døgn. Appen skal ikke gjette hvor mange spilledager som har gått. Avklar UX for eksplisitt «ny spilledag» eller DM-styrt reset, og vis mekanikken forståelig.
+8. **Level Up:** Hører til karakterens progresjon, ikke sammen med rent teknisk administrasjon som import/eksport eller bytte karakter.
+9. **Feats:** Relevante aktive feats og avledede handlinger skal være synlige i riktig Combat-kategori; passive feats skal påvirke relevante verdier/angrep eller vises kontekstuelt. Unngå en ukritisk full feat-liste i Combat.
+10. **Generell layout:** Fortsatt for mye fullbreddeinnhold. Prioriter kompakte kort, tydelig hierarki og detaljer ved trykk. Merk at fire kolonner må testes for lesbarhet og treffflater på små mobiler.
+
+Status: Tilbakemelding ferdig. Ingen v0.4 bygget ennå.
+
 ## Vedlikehold
 Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig **besluttet**, **foreløpig** og **åpent**, og legg vesentlige omgjøringer i historikken. Denne filen er kilden til prosjektbeslutninger på tvers av chat-komprimering og kan deles med Codex.
