@@ -204,3 +204,8 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - Vurder øvrige mekanismer for skade: saving throws, flat reduksjon, reaksjoner (Uncanny Dodge), midlertidige HP, immunitet og sammensatt skade i flere typer. Ikke bygg helautomatisk kampsimulator; vis ekstra felt kun ved behov.
 - **Tydelig beregningslogg og DM-vennlig oppsummering:** Vis innkommende skade, reduksjoner/økninger og årsak, skade absorbert av temp HP, faktisk tap av HP og ny HP-verdi. For bom mot AC vis «bom, ingen skade»; AC skal ikke beskrives som absorbert skade.
 - Dette er evaluering og anbefalinger til neste prototype, ikke implementerte endringer.
+
+## Avklaring – ingen treffkontroll i skadekalkulatoren (2026-10-18)
+- **Forkast tidligere forslag om valgfri AC/treffkontroll** i «Ta skade». DM avgjør om angrep treffer og oppgir innkommende skade.
+- Kalkulatoren håndterer kun skadeeffekten (skadetype, resistance/vulnerability/immunity, øvrige relevante modifikasjoner, temporary HP og vanlig HP) og eksplisitt bekreftelse av HP-endring.
+- AC beholdes som oppslagsverdi i Character, ikke som del av kalkulatoren. Denne beslutningen overstyrer omtale av AC-sjekk under evalueringen av v0.10.
