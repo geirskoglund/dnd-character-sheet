@@ -187,3 +187,17 @@ Hver berørt user story skal konkretisere prinsippet i forventet spilleropplevel
 ## Øverste produktmål: erstatte papirkarakterarket (presisert 2026-10-19)
 
 Brukeren minnet om at hele produktet skal erstatte et papirkarakterark. Dette eksisterende målet er nå fremhevet som øverste føring i krav §1, arbeidsinstruksen og matrisen. Konteksttilpasning og kommende user stories skal vurderes etter hvordan de støtter rask oversikt, oppslag, notater og manuell føring under fysisk spill, med spillerens kontroll og DM som autoritet. Tidligere vedtatte grenser for automatisk karakterbygging, regelmotor og turstyring gjelder fortsatt.
+
+
+## Konkrete våpen- og rustningsoppslag (brukerreview 2026-10-19)
+
+Brukeren opplever at våpen og rustning fremstår som generiske typer og savner blant annet damage modifiers. Gjennomgangen av kode bekrefter at utstyr allerede lagres som egne instanser, med redigerbart navn og verdier. Mangelen er karaktertilpasset våpenoppslag: angreps-/skadebonus beregnes ikke, og utstyrsverdiene ligger under et lukket detaljfelt. Nye katalogvåpen har grunnskade; eldre poster fra den tidligere katalogen kan mangle den. Rustningsprofil brukes allerede til beregnet AC/speed.
+
+Dette føres som delvis støtte og åpne avvik i matrisen, med separate scenarioer for våpenverdier og tydelig rustningsoppslag. Manuelle overstyringer og eksisterende karakterdata bevares. Det er ikke bestilt ny funksjonskode i denne gjennomgangen. Dette er også et konkret eksempel på produktprinsippene: det digitale arket skal gjøre karakterens faktiske spillverdier tilgjengelige under spill.
+
+
+## Lettere registrering og færre felt (brukerreview 2026-10-19)
+
+Brukeren opplever at det generelt er tungvint å legge til innhold og at mange felt må håndteres. Dette føres som et gjennomgående UX-behov, knyttet til målet om enkel føring på et digitalt papirark. Gjennomgangen skal vurdere både synlig feltmengde og faktisk nødvendig utfylling i hver berørt flyt.
+
+Sikre katalog-/kontekstverdier, korte minimumsskjemaer og detaljer/overstyringer ved behov er mulige forenklinger som skal vurderes. Konkret feltsett og utforming per flyt er ikke besluttet. Nødvendig informasjon, eksisterende avklaringer om opprettelse og spillerens manuelle kontroll skal bevares. Ingen funksjonskode er bestilt eller endret i denne dokumentasjonsrunden.
