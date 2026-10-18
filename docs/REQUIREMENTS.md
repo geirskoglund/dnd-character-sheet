@@ -23,6 +23,8 @@ Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, t
 - Class Features & Feats **før** Weapons/Armor/Equipment; equipped først. Skill eid fra equipped.
 - Hver redigerbare samling bruker **inline, pilleformet +** på samme flex/wrap-rad, etter siste element. Ikke rundt +, ikke på egen rad med mindre naturlig wrap. Klikk på element for detaljer/redigering; + for legg til.
 - Velgere for større innholdsbibliotek er søkbare, med kategorifiltre og «Opprett egen». Feat-tillegging skal fungere fullt ut.
+- Egenskaps-/featvelgerens standardliste skal bruke karakterens relevante kontekst. Klasseegenskaper vurderes etter klasse, subclass og nivå i den aktuelle klassen; art tas med der den har betydning. Feats vurderes etter sine faktiske forutsetninger. Manuelle valg og DM-unntak beholdes.
+- Generelle feats uten klassekrav skal beholdes ved klassefiltrering. Begrensninger må bygge på faktiske forutsetninger; eventuelle andre krav vurderes fortsatt. Uavklarte forutsetninger merkes og valget beholdes tilgjengelig.
 - Spells, cantrips og spell slots tilgjengelige også utenfor Combat. Slot-pille åpner **kun sitt nivå** og enkel ±1-redigering; skille known, spellbook, prepared og klassespesifikt Pact Magic.
 - Hit Dice brukt én om gangen ved Short Rest med spillerens fysisk kastede healingresultat; tillat manuell korrigering. Rests endrer bare relevante ressurser, med korrekt håndtering av særregler og DM-baserte unntak.
 - Death Saves (3 suksesser/3 feilslag), Inspiration, Conditions, Exhaustion og tilpassbare ressurser skal være redigerbare.
@@ -84,3 +86,14 @@ Disse presiserer eksisterende krav og skal leses sammen med siste avklaringer i 
 - **Vedlikeholdskrav:** Oppdater denne spesifikasjonen og beslutningsloggen når brukeren avklarer noe. Før leveransestatus og gjenstående arbeid eksplisitt i en kravmatrise. Samtalekomprimering skal ikke medføre tap av vedtatte krav. Nye ideer må merkes som uavklart fremfor å føres som beslutninger.
 
 Fasevis levering endrer ikke ferdigdefinisjonen for hele produktet. Genererte Combat-oppslag, sammensatt skadekalkulator og komplett lokalt SRD-bibliotek står fortsatt som krav der de ennå ikke er implementert. Se [aktuell kravmatrise](CHARACTER_WORKSPACE.md).
+
+## 10. Produktkontroll som betingelse for levering og merge (2026-10-19)
+
+For hver funksjons- eller UX-endring skal Codex:
+
+1. Beskrive forventet spilleropplevelse med konkret karakter og relevant tilstand **før koding**, med grunnlag i krav, gjeldende avklaringer og D&D 5e 2014-regler, sammenholdt med prototypen.
+2. Definere testscenarier fra disse forventningene før implementasjonen, og verifisere relevante valg, ugyldige valg, grenser og DM-unntak der de gjelder.
+3. Gjennomføre en egen produktgjennomgang på mobil av berørte flyter, inkludert relevans, plassbruk, mellomtrykk, knappeformål og begrunnede forskjeller fra referansen.
+4. Dokumentere scenarioer, faktisk kontroll, resultater og gjenværende krav i PR og kravmatrise før merge. Grønne tekniske tester alene oppfyller ikke dette kravet. Uløste avvik i berørte flyter må rettes eller uttrykkelig avgrenses av brukeren; eksisterende godkjente fasegrenser beholdes.
+
+Codex utfører produktkontrollen; brukerens UX-vurdering kommer i tillegg. Se [arbeidsinstruks](../AGENTS.md#obligatorisk-produktkontroll-før-levering-og-merge) og [matriseformat, scenarioer og åpne avvik](CHARACTER_WORKSPACE.md#produktkontroll-før-levering-og-merge-vedtatt-2026-10-19). Rene dokumentasjonsendringer verifiseres med tekst-, konsistens- og lenkekontroll; funksjonskrav erklæres ikke oppfylt av en dokumentasjonsendring.
