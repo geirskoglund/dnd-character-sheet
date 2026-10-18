@@ -156,3 +156,20 @@ Disse avklaringene må bevares mellom arbeidsøkter og eventuell komprimering av
 - Codex skal gjennomgå de konkrete brukerflytene og regresjonene selv før levering. Grønne tester er nødvendig, men erstatter ikke sammenligning med krav og prototype eller vurdering av mellomsteg, plassbruk og knappeformål.
 
 Se [kravmatrise og faktisk leveransestatus](CHARACTER_WORKSPACE.md). Dette dokumentet bevarer produktbeslutningene; matrisen skiller implementert funksjon, delvis støtte og gjenstående arbeid.
+
+## Fast produktkontroll før levering og merge (2026-10-19)
+
+**Besluttet av brukeren:** De fire foreslåtte kravene til arbeidet skal legges inn i arbeidsinstruksen og kravmatrisen:
+
+1. Forventet spilleropplevelse med konkrete karakterer beskrives før koding, basert på spesifikasjon, avklaringer og relevante D&D 2014-regler, sammenholdt med prototypen.
+2. Testscenariene utledes fra disse forventningene før implementasjon; de dekker relevans og spillmessig korrekthet i tillegg til teknisk funksjon og lagring.
+3. Codex gjennomfører en egen produktgjennomgang på mobil før levering og vurderer valg, plassbruk, mellomtrykk og sammenheng med referansen. Forskjeller begrunnes.
+4. Dette er en betingelse for merge: PR og matrise viser prøvde spillsituasjoner, faktiske resultater og gjenværende krav. Uløste avvik i berørte flyter rettes eller uttrykkelig avgrenses av brukeren. Tidligere godkjente fasegrenser står ved lag.
+
+Bakgrunnen er den lange egenskaps-/featlisten som viser irrelevante valg for karakteren. Eksisterende CRUD- og lagringstester dokumenterte ikke korrekt relevans etter klasse, subclass, klassenivå, art eller faktiske feat-forutsetninger. Dette føres som et **åpent avvik**, med scenarioer i matrisen. Tidligere grønne tester skal ikke omtales som bevis for denne dekningen.
+
+Denne bestillingen gjelder dokumentasjon av arbeidsmåten og status. Den autoriserer ingen ny implementasjon av filtreringen. Rene dokumentasjonsendringer kontrolleres med tekst, konsistens og lenker. Se [arbeidsinstruks](../AGENTS.md#obligatorisk-produktkontroll-før-levering-og-merge), [krav §10](REQUIREMENTS.md#10-produktkontroll-som-betingelse-for-levering-og-merge-2026-10-19) og [kravmatrise](CHARACTER_WORKSPACE.md#produktkontroll-før-levering-og-merge-vedtatt-2026-10-19).
+
+### Presisering: generelle feats skal beholdes (2026-10-19)
+
+Brukeren presiserte at filtreringen ikke må være så streng at feats som gjelder for alle, forsvinner. **Generelle feats uten klassekrav skal beholdes uansett klassefilter.** En manglende klassebegrensning er ikke grunnlag for å skjule en feat. Eventuelle andre faktiske forutsetninger vurderes fortsatt; uavklarte krav merkes og valget beholdes tilgjengelig. Matrisen skal ha scenarioer for både generelle feats og feats med reelle begrensninger. Dette er ført som krav og åpent kontrollpunkt, uten å implementere ny filtrering i denne dokumentasjonsendringen.
