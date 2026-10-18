@@ -193,3 +193,14 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 
 ## Navneavklaring (2026-10-18)
 - Knappen for beregning og registrering av innkommende skade skal hete **«Ta skade»** (godkjent av bruker).
+
+
+## Evaluering av v0.10 (2026-10-18)
+- HP-popup i v0.10 mangler «Ta skade»-snarvei, men bruker aksepterer at kalkulatoren er separat i Combat; ikke nødvendig å presse inn snarveien.
+- **+-piller:** samme pilleform som øvrige elementer (ikke runde knapper); plasseres inline rett etter siste pille og flyter først til neste linje ved naturlig wrap, ikke alltid på egen rad.
+- Skadekalkulatorens valg for damage defenses bruker for mye plass; gjør valgene kompakte og helst én rad på mobil.
+- Resistance og vulnerability **kan sameksistere** for samme skadetype etter 2014-reglene; de fire gjensidig utelukkende radiovalgene må erstattes med uavhengige egenskaper (normal når ingen, immunity betyr null skade). Karakterens strukturerte skadeegenskaper skal automatisk foreslås/oppdateres **når skadetype endres**, men spilleren kan overstyre. For 2014-regler brukes andre skademodifikasjoner først, så resistance (halver/avrund ned), deretter vulnerability (doble).
+- Ønske om **valgfri AC/treffkontroll** i «Ta skade», men viktig regelmessig skille: AC avgjør om et attack roll treffer, ikke skadeabsorpsjon; effekter med saving throw kan skade uten attack roll. Standardflyten skal forbli rask og uten krav om treffkontroll.
+- Vurder øvrige mekanismer for skade: saving throws, flat reduksjon, reaksjoner (Uncanny Dodge), midlertidige HP, immunitet og sammensatt skade i flere typer. Ikke bygg helautomatisk kampsimulator; vis ekstra felt kun ved behov.
+- **Tydelig beregningslogg og DM-vennlig oppsummering:** Vis innkommende skade, reduksjoner/økninger og årsak, skade absorbert av temp HP, faktisk tap av HP og ny HP-verdi. For bom mot AC vis «bom, ingen skade»; AC skal ikke beskrives som absorbert skade.
+- Dette er evaluering og anbefalinger til neste prototype, ikke implementerte endringer.
