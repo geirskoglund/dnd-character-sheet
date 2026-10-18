@@ -119,3 +119,9 @@
 - Behold tidligere avklaringer: tre Combat-faner og Andre egenskaper separat, ingen turstyring eller AC-treffkontroll, valgfrie skadeposter, betingede modifikatorer med bekreftelse ved ukjente vilkår, pluss-piller inline, kortfattede oppslag, DM avgjør spillet.
 
 **Overlevering:** Før Codex starter, skriv en konsistent kravspesifikasjon og implementasjonsplan med prioritet mellom kilder: 1) vedtatte krav, 2) godkjente UX-mønstre fra prototyper, 3) visuell designbrief. Testarkitektur og testcaser utformes av Codex; bruker vurderer UX. Design kan forbedres vesentlig uten å videreføre prototypefeil.
+
+## Presisering etter gjennomgang av fase 1
+
+Brukeren har påpekt at opprettelsen feilaktig ba om AC, speed og temporary HP som uavhengige grunnverdier. Opprettelse skal registrere art, klasse/nivå, ability scores og utstyr, vise avledede verdier med grunnlag og håndtere løpende spilltilstand på karakterarket. Manuelle overstyringer er egne, eksplisitte korreksjoner. Eksisterende karakterer kan fortsatt registreres direkte uten automatisk karakterbygging eller rekonstruksjon av tidligere levels. Se [implementert kontrakt og avgrensning](CHARACTER_FOUNDATIONS.md).
+
+Brukeren har også overlatt kodegjennomgang og merge av testede endringer til Codex. Produkt- og designavgjørelser ligger fortsatt hos brukeren.

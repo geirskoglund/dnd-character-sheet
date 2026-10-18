@@ -22,15 +22,18 @@ const effect = z.object({ id, sourceRef: ref.optional(), target: z.enum(['damage
   amount: z.number().optional(), damageTypes: z.array(z.string()), condition: condition.optional(),
   scope: z.enum(['component', 'event']), description: text, activeStateRef: id.optional() });
 export const characterSchema = z.object({
-  schemaVersion: z.literal(1), id, revision: count, name: z.string().trim().min(1).max(100),
+  schemaVersion: z.literal(2), id, revision: count, name: z.string().trim().min(1).max(100),
   createdAt: z.iso.datetime(), updatedAt: z.iso.datetime(),
   level: z.number().int().min(1).max(20),
   classes: z.array(z.object({ id, name: z.string().max(100), subclass: z.string().max(100).optional(),
     definitionRef: ref.optional(), level: z.number().int().min(1).max(20) })),
-  species: z.string().max(100), backgroundNoteId: id.optional(), campaignId: id.optional(), portraitAssetId: id.optional(),
+  species: z.object({ name: z.string().max(100), catalogId: z.string().optional(),
+    walkingSpeed: count.nullable(), ignoresHeavyArmorSpeedPenalty: z.boolean(),
+    traits: z.array(z.object({ name: text, description: text })), languages: z.array(text) }), backgroundNoteId: id.optional(), campaignId: id.optional(), portraitAssetId: id.optional(),
   abilityScores: z.object({ STR: count, DEX: count, CON: count, INT: count, WIS: count, CHA: count }),
   proficiencyBonusOverride: z.number().optional(), derivedOverrides: z.record(z.string(), z.number()),
-  hp: z.object({ current: count, max: count, temp: count }), acOverride: z.number(), speed: count,
+  hp: z.object({ current: count, max: count, temp: count }), acOverride: z.number().nullable(), speedOverride: count.nullable(),
+  unarmoredDefense: z.enum(['auto', 'none', 'barbarian', 'monk']),
   inspiration: z.boolean(), deathSaves: z.object({ successes: count.max(3), failures: count.max(3) }),
   skills: z.array(z.object({ skillId: z.string(), proficiencyLevel: proficiency, override: z.number().optional() })),
   saves: z.array(z.object({ abilityId: z.enum(abilities), proficiencyLevel: proficiency, override: z.number().optional() })),
@@ -53,6 +56,8 @@ export const characterSchema = z.object({
   items: z.array(z.object({ id, definitionRef: ref.optional(), name: text,
     category: z.enum(['weapon', 'armor', 'shield', 'equipment', 'magic']), quantity: count, equipped: z.boolean(),
     handUsage: z.enum(['one', 'two', 'versatile']).optional(), attack: text.optional(), damage: text.optional(),
+    armorProfile: z.object({ kind: z.enum(['light', 'medium', 'heavy', 'custom']), baseAc: count,
+      addDex: z.boolean(), dexCap: z.number().int().nullable(), strength: count, stealthDisadvantage: z.boolean() }).optional(),
     acContribution: z.number().optional(), effectRefs: z.array(id), resourceRefs: z.array(id), notes: text.optional() })),
   notes: z.array(z.object({ id, title: z.string().trim().min(1).max(100), body: text })),
   favoriteModifierRefs: z.array(z.string()).length(4), goldCp: count,
@@ -86,10 +91,10 @@ export interface CatalogEntry { id: string; origin: 'srd-5.1' | 'custom'; name: 
 export interface PortraitAsset { id: string; mimeType: 'image/png' | 'image/jpeg' | 'image/webp'; dataUrl: string }
 export function createCharacter(name = 'Ny karakter'): Character {
   const now = new Date().toISOString();
-  return characterSchema.parse({ schemaVersion: 1, id: crypto.randomUUID(), revision: 0, name,
-    createdAt: now, updatedAt: now, level: 1, classes: [], species: '',
+  return characterSchema.parse({ schemaVersion: 2, id: crypto.randomUUID(), revision: 0, name,
+    createdAt: now, updatedAt: now, level: 1, classes: [], species: { name: '', walkingSpeed: null, ignoresHeavyArmorSpeedPenalty: false, traits: [], languages: [] },
     abilityScores: Object.fromEntries(abilities.map(a => [a, 10])), derivedOverrides: {},
-    hp: { current: 0, max: 0, temp: 0 }, acOverride: 10, speed: 30, inspiration: false,
+    hp: { current: 0, max: 0, temp: 0 }, acOverride: null, speedOverride: null, unarmoredDefense: 'auto', inspiration: false,
     deathSaves: { successes: 0, failures: 0 }, skills: [], saves: [], languages: [], proficiencies: [],
     damageDefenses: [], conditionImmunities: [], conditions: [], exhaustionLevel: 0, resources: [],
     features: [], actions: [], effects: [], spells: [], items: [], notes: [],
@@ -101,7 +106,8 @@ export function copyCharacter(source: Character): Character {
   const ids = new Map<string, string>();
   function collect(value: unknown) {
     if (!value || typeof value !== 'object') return;
-    if (!('kind' in value) && 'id' in value && typeof value.id === 'string') ids.set(value.id, crypto.randomUUID());
+    const reference = 'kind' in value && Object.keys(value).every(key => key === 'kind' || key === 'id');
+    if (!reference && 'id' in value && typeof value.id === 'string') ids.set(value.id, crypto.randomUUID());
     Object.values(value).forEach(collect);
   }
   collect(copy);

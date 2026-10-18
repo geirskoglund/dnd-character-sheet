@@ -56,3 +56,12 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8rem; }
 
 input[name="name"]::placeholder { color: #a8b2b8; opacity: 1; }
 input[name="name"]:focus::placeholder { opacity: 0; }
+[hidden] { display: none !important; }
+.check { display: flex; align-items: center; gap: .6rem; }
+.check input { width: 22px; min-height: 22px; flex: 0 0 22px; }
+.equipment-row { border-bottom: 1px solid #647078; padding-bottom: 1rem; margin-bottom: 1rem; display: grid; gap: .6rem; }
+fieldset label + label, [data-custom-species], [data-custom-item], [data-custom-armor] { margin-top: .7rem; }
+.stats button { display: grid; text-align: left; padding: .2rem .5rem; }
+.warning { color: #f2c58b; }
+input[type="range"] { padding: .5rem 0; }
+a { color: var(--accent); }

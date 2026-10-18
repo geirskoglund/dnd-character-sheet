@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [VitePWA({
     registerType: 'prompt',
     manifest: false,
-    workbox: { globPatterns: ['**/*.{js,css,html,svg,webmanifest}'], cleanupOutdatedCaches: true },
+    workbox: { globPatterns: ['**/*.{js,css,html,svg,webmanifest,txt}'], cleanupOutdatedCaches: true },
   })],
 });
