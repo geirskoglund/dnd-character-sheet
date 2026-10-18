@@ -154,3 +154,10 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - Brukeren bekrefter: enkle modifiers beregnes automatisk, **manuell overstyring alltid mulig**; egne handlinger/ressurser/effekter/notater kan opprettes og redigeres; eksisterende karakterer kan registreres direkte, uten level-1-veiviser.
 - Videre UX: **kompakt, rask, mobilførst**, men også visuelt inspirerende og karakterfullt; ikke bare funksjonelt dashboard.
 - Codex kan foreslå og implementere visuell utforming, men skal følge godkjent funksjonell UX og eksplisitt designretning. Vurder 2–3 alternative visuelle retninger på samme Character- og Combat-skjerm før én velges. Unngå overdreven ornamentikk og tap av lesbarhet.
+
+
+## Valgfritt karakterportrett (2026-10-18)
+- Spilleren kan laste opp et eget bilde som karakterportrett fra mobil eller PC.
+- Vis portrettet kompakt ved karakteridentiteten uten å fortrenge viktige verdier; trykk for større visning/bytt/fjern.
+- Lagre bildet lokalt i IndexedDB; sørg for at JSON-sikkerhetskopi kan inneholde portrettet (med hensyn til filstørrelse).
+- Portrettet er frivillig; appen skal fungere like godt uten bilde. Inkluder dette i Codex-designbriefen.
