@@ -161,3 +161,15 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - Vis portrettet kompakt ved karakteridentiteten uten å fortrenge viktige verdier; trykk for større visning/bytt/fjern.
 - Lagre bildet lokalt i IndexedDB; sørg for at JSON-sikkerhetskopi kan inneholde portrettet (med hensyn til filstørrelse).
 - Portrettet er frivillig; appen skal fungere like godt uten bilde. Inkluder dette i Codex-designbriefen.
+
+
+## Evaluering av v0.8 (2026-10-18) – innspill, ikke ferdigspesifisert
+- Tomt/uforklart felt eller knapp observert i v0.8; må lokaliseres og fjernes/rettes.
+- Brukeren foreslår at **Bakgrunn og fritekst** erstattes med vilkårlig mange notater, hvert med overskrift og tekst, vist som kompakte piller. Bakgrunn kan være et vanlig notat. Dette er ønsket retning.
+- Brukeren vurderer om språk, proficiencies og resistances også kan vises som piller; fortsatt uavklart. Anbefaling: språk som strukturert liste, proficiencies og resistances som strukturerte egenskaper, gjerne med pillevisning, ikke bare fritekst.
+- **Egne handlinger og ressurser** i v0.8 oppleves som gode; behold konseptet.
+- Uklar vei til å legge til **egne feats**; neste versjon bør ha tydelig «Legg til feat» med fri redigering og valgfri kobling til handling/ressurs.
+- Saving throws og modifiers behøver ikke gjentas i Combat; Character er ett fanetrykk unna.
+- **Action Surge** ligger under Other: teknisk korrekt at evnen ikke koster Action/Bonus Action, men «Other» er ikke en egen rundedel. Forslag til vurdering: endre fanen til «Features» for passive/spesielle egenskaper; de tre øvrige fanene er Action, Bonus og Reaction. **Navnevalget er ennå ikke godkjent.**
+- Videre testscenarier: Fighter våpenangrep + Action Surge + short rest; Wizard cantrip, leveled spell + slot-justering; dual wielding med bonus-angrep. Tohåndsvåpen viktig for regeldata, mindre for ny UX.
+- Avvent v0.9 og Codex-kravspesifikasjon til bruker har vurdert videre.
