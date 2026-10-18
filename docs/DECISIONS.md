@@ -43,7 +43,7 @@
 - Rask standardflyt: angi skademengde (slider med ±1 for presisjon) → velg skadetype → gjennomgå automatisk foreslåtte skadeeffekter → se tydelig resultat → bekreft «Oppdater HP». Oppdater aldri HP bare ved åpning.
 - Finn relevante passive skademodifikatorer fra karakterdata, inkludert resistance, vulnerability, immunity, flat reduksjon som **Heavy Armor Master** med betingelser. **Alle som kan anses relevante er avkrysset som standard**, men **hver modifikator kan deaktiveres separat for denne beregningen** (f.eks. hvis DM allerede har regnet den med). Dette endrer ikke karakterdata.
 - Resistance og vulnerability **kan eksistere samtidig**; ikke bruk eksklusive radiovalg. «Normal» = ingen; damage immunity gir null. Foreslåtte effekter må oppdateres ved endring av skadetype.
-- Strukturert effect-modell bør kunne representere betingelser som skade-/våpentype, heavy armor og ikke-magiske angrep, uten særkode for hver feat.
+- Strukturert effect-modell bør kunne representere betingelser som skade-/våpentype, heavy armor og ikke-magiske angrep, uten særkode for hver feat. **Ukjente betingelser vises tydelig og krever spillerens bekreftelse før modifikatoren regnes med**; kjente relevante effekter velges automatisk.
 - **Sammensatt skade:** Én skadepost vises som standard; spilleren kan legge til flere med pluss-pille, med selvstendig skadetype/modifikatorer per post og samlet HP-resultat.
 - Regn i korrekt 2014-rekkefølge og med korrekt avrunding, også når flere effekter virker sammen. Passive effekter fra feats, class features og utstyr behandles konsistent.
 - Temporary HP absorberer før vanlig HP; vis begge nye verdier. **Én Angre skal reversere hele skadehendelsen.**
@@ -76,7 +76,7 @@
 ## 7. Åpne spørsmål – avklares én etter én
 
 1. **Sammensatt skade – besluttet:** Støtt flere skadeposter/skadetyper i én hendelse. Vis én skadepost som standard; legg til flere via pluss-pille.
-2. **Betingelser for passive skadeeffekter:** Hvilke opplysninger skal spilleren oppgi eller bekrefte når effekten avhenger av f.eks. ikke-magisk angrep/heavy armor?
+2. **Betingelser for passive skadeeffekter – besluttet:** Vis aktuelle modifikatorer og vilkår. Når vilkår ikke kan avgjøres automatisk, må spilleren bekrefte at effekten gjelder før den brukes i beregningen.
 3. **Hit Dice og hvile:** Hvordan registrere antall brukte terninger og HP-healing uten å simulere terningkast?
 4. **Spellcasting-varianter:** Hvordan holde prepared/known/spellbook og Warlock Pact Magic tydelig og praktisk?
 5. **Aktive effekter:** Hvordan kombinere av/på-status og begrenset ressurs for Rage, Concentration, Mage Armor osv.?
