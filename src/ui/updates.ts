@@ -90,7 +90,8 @@ export function installUpdates() {
   };
   if (supported) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!hasController) { hasController = true; return; }
+      if (!hasController && !reloadRequested) { hasController = true; return; }
+      hasController = true;
       if (reloadRequested && !document.querySelector('dialog[open]')) window.location.reload();
       else if (registration?.active) {
         apply.hidden = true;
