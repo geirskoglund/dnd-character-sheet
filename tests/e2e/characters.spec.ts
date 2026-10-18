@@ -62,6 +62,8 @@ test('production PWA works offline on a GitHub Pages subpath and has no horizont
   await page.getByRole('button', { name: 'Rediger karakter' }).click();
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Offline Alva');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  // The heading updates only after the IndexedDB transaction commits and the list refreshes.
+  await expect(page.getByRole('heading', { name: 'Offline Alva', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Offline Alva', exact: true })).toBeVisible();
   for (const width of [320, 360, 390, 768]) {
