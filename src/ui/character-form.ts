@@ -31,7 +31,7 @@ export function characterForm(c: Character, creating: boolean) {
     <fieldset><legend>Grunnverdier</legend><p>Angi endelige ability scores, inkludert bonuser.</p><div class="form-grid">${abilities.map(a => field(a, a, c.abilityScores[a], 'type="number" min="0" required')).join('')}</div>
     ${field('Maks HP fra karakterarket', 'hpMax', c.hp.max || '', 'type="number" min="1" required')}
     <p>På level 1: full Hit Die + Constitution modifier. Senere levels: fysisk kast eller fast verdi + Constitution modifier. Angi samlet maks HP her.</p>
-    <p>${creating ? 'Karakteren starter med full HP. Utstyr og egenskaper legges til inne i appen.' : 'Nåværende HP og temporary HP beholdes. Skade og healing registreres i Combat.'}</p></fieldset>`;
+    <p>${creating ? 'Karakteren starter med full HP. Utstyr legges til inne i appen.' : 'Nåværende HP og temporary HP beholdes. Skade og healing registreres i Combat.'}</p></fieldset>`;
 }
 export function readSubclass(root: ParentNode) {
   const choice = root.querySelector<HTMLSelectElement>('[name="subclassChoice"]')!.value;

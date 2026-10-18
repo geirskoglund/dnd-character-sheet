@@ -184,7 +184,7 @@ function levelUp(c: Character) {
     <div data-level-subclass></div>
     ${field('Ny samlet maks HP', 'maxHp', '', `type="number" min="${Math.max(1, c.hp.max)}" required`)}
     <p>Tidligere maks HP: ${c.hp.max}. Legg til fysisk Hit Die-kast eller fast verdi, Constitution modifier og eventuelle andre bonuser.</p>
-    <p>Nåværende HP og temporary HP beholdes. Nye spells, utstyr og egenskaper registreres inne i appen. Ny klasse kan registreres via Rediger karakter.</p>`, async form => {
+    <p>Nåværende HP og temporary HP beholdes. Kontroller andre endringer med DM. Ny klasse kan registreres via Rediger karakter.</p>`, async form => {
       const data = new FormData(form);
       const draft = levelUpCharacter(c, String(data.get('levelClass')), Number(data.get('maxHp')), readSubclass(form));
       await repo.save(draft, 'level-up', `Level Up: ${c.level} → ${draft.level}, maks HP ${c.hp.max} → ${draft.hp.max}`);
