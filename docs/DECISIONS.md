@@ -209,3 +209,9 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - **Forkast tidligere forslag om valgfri AC/treffkontroll** i «Ta skade». DM avgjør om angrep treffer og oppgir innkommende skade.
 - Kalkulatoren håndterer kun skadeeffekten (skadetype, resistance/vulnerability/immunity, øvrige relevante modifikasjoner, temporary HP og vanlig HP) og eksplisitt bekreftelse av HP-endring.
 - AC beholdes som oppslagsverdi i Character, ikke som del av kalkulatoren. Denne beslutningen overstyrer omtale av AC-sjekk under evalueringen av v0.10.
+
+## Skadekalkulator – individuelle modifikatorer (2026-10-18)
+- Ved valgt skadetype finner «Ta skade» automatisk relevante passive skademodifikatorer fra karakterens strukturerte egenskaper (f.eks. resistance, Heavy Armor Master), og **alle relevante er påslått som standard** så langt betingelsene kan avgjøres.
+- Hver enkelt modifikator kan **krysses av/på for den aktuelle skadehendelsen**, f.eks. hvis DM allerede har regnet den inn. Endringen skal ikke fjerne/endre karakterens faste egenskap.
+- Regn bare med aktive avkryssede modifikatorer, i korrekt rekkefølge, og vis hvilke som faktisk ble brukt i oppsummeringen. Revurder automatisk relevante modifikatorer når skadetype eller betingelser endres.
+- Behold Uncanny Dodge som oppslags-/Reaction-egenskap, ikke automatisk fratrekk i kalkulatoren; DM kan ta med aktive reaksjoner i oppgitt skade.
