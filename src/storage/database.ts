@@ -81,6 +81,7 @@ export class CharacterRepository {
     try {
       const before: Character | undefined = await request(chars.get(parsed.id));
       if (before && before.revision !== parsed.revision) throw new Error('Karakteren er endret i en annen fane. Last siden på nytt før du lagrer.');
+      if (before && JSON.stringify(before) === JSON.stringify(parsed)) { await done; return before; }
       const after = { ...parsed, revision: (before?.revision ?? 0) + 1, updatedAt: new Date().toISOString() };
       chars.put(after);
       tx.objectStore('events').add(this.event(after.id, before ?? null, after, type, description));

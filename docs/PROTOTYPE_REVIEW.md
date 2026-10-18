@@ -10,7 +10,7 @@ Referansen er [den faktiske v0.11-filen](../prototypes/dnd-character-companion-v
 | Fire modifierfavoritter og kompakte abilities | Fire lagrede favoritter med alfabetisk velger, fullstendige navn, og modifiers fra karakterdata. Seks scores viser også modifier. |
 | Tette seksjoner, blågrå kort og dempet gull | Samme kompakte rytme, fargetoner og rolige serifoverskrifter. Lange forklaringspaneler og teknisk fasetekst er fjernet fra arbeidsflaten. |
 | Tre Combat-faner med aktiv understrek | Harmonisert uten gjentatt kategoritittel eller turstatus. |
-| Utstyrspille åpner detaljer | Viser utstyrsdetaljer og lar spilleren bekrefte utstyrt-status. Ingen lagring ved åpning eller avbryt. |
+| Utstyrspille åpner detaljer | Åpner én utstyrspost for redigering og eventuell fjerning. Ingen lagring ved åpning eller avbryt; + åpner katalogvalget direkte. |
 | + med annen størrelse/form eller på egen rad | Kjent regresjon er rettet: alle piller i samlingen, inkludert +, har lik bredde, høyde, form og ramme. + følger siste element og bryter naturlig til neste ledige plass. |
 | Fritekst/grunnlagsredigering og demo-Level Up | Nyere avklaring: minimal opprettelse, klasseavhengig subclass-liste og egne valg. Egen utstyrsdialog inne i appen. Manuell Level Up krever ny samlet maks HP; ingen automatisk healing eller tildeling av innhold. |
 | Statiske demoer, «Nullstill demo» og generisk «øvrige felt» | Ikke videreført. Karakterer lagres i IndexedDB; JSON-backup, hendelseslogg og angre beholdes. |

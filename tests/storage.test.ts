@@ -141,3 +141,20 @@ describe('aggregate invariants', () => {
     expect(characterSchema.safeParse(c).success).toBe(false);
   });
 });
+
+describe('unchanged saves', () => {
+  it('preserves history and the ability to undo the last real edit', async () => {
+    const repo = await setup();
+    const original = await repo.save(createCharacter('Alva'));
+    const edited = await repo.save({...original, goldCp:1234}, 'money', 'Penger endret');
+    expect(await repo.save(structuredClone(edited))).toEqual(edited);
+    expect(await repo.history(edited.id)).toHaveLength(2);
+    expect((await repo.undo(edited)).goldCp).toBe(0);
+  });
+  it('still rejects a stale unchanged form', async () => {
+    const repo = await setup(), original = await repo.save(createCharacter('Alva'));
+    await repo.save({...original, name:'Ny Alva'});
+    await expect(repo.save(original)).rejects.toThrow('annen fane');
+    expect(await repo.history(original.id)).toHaveLength(2);
+  });
+});

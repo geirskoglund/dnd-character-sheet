@@ -11,15 +11,16 @@ async function openCharacter(page: Page, species = 'Human', className = 'Fighter
   for (const [name,value] of [['DEX','16'],['CON','14'],['WIS','16']]) await page.getByRole('spinbutton',{name,exact:true}).fill(value);
 }
 async function addEquipment(page: Page, name: string) {
-  await page.getByRole('button', {name:'+ Utstyr',exact:true}).click();
-  await page.getByRole('combobox', {name:'Utstyr',exact:true}).last().selectOption({label: name});
+  if (!await page.getByRole('dialog').isVisible()) await equipment(page);
+  await page.getByRole('button', {name:`Legg til ${name.split(' · ')[0]}`,exact:true}).click();
+  await expect(page.getByRole('dialog')).not.toBeVisible();
 }
 async function save(page: Page) {
   await page.getByRole('dialog').getByRole('button', {name:'Lagre',exact:true}).click();
   await expect(page.getByRole('dialog')).not.toBeVisible();
   await expect(page.getByRole('heading', {name:'Alva',exact:true})).toBeVisible();
 }
-async function equipment(page: Page) { await page.getByRole('button',{name:'Rediger utstyr',exact:true}).click(); }
+async function equipment(page: Page) { await page.getByRole('button',{name:'Legg til utstyr',exact:true}).click(); }
 test('minimal creation, five read-only status values, equipment edited inside app and uniform pills', async ({page}) => {
   await openCharacter(page);
   await expect(page.locator('#species-info, #derived-preview, #equipment-rows, [name="hpCurrent"], [name="hpTemp"], [name="acOverride"]')).toHaveCount(0);
@@ -32,7 +33,7 @@ test('minimal creation, five read-only status values, equipment edited inside ap
   await expect(page.getByLabel('Karakterstatus')).toContainText('42 / 42');
   await expect(page.getByLabel('Karakterstatus').locator(':scope > *')).toHaveCount(5);
   await equipment(page); await addEquipment(page,'Leather · armor'); await addEquipment(page,'Shield · shield');
-  await expect(page.locator('#derived-preview')).toContainText('AC 16'); await save(page);
+  await expect(page.getByLabel('Karakterstatus')).toContainText('AC16');
   await page.getByRole('button',{name:'Shield · utstyrt',exact:true}).click();
   await page.getByRole('checkbox',{name:'Utstyrt',exact:true}).uncheck(); await save(page);
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC14');
@@ -62,7 +63,7 @@ test('subclass lists follow class, custom subclasses persist, core editing prese
   await expect(page.locator('[name="subclassChoice"] option')).not.toContainText(['Champion']);
   await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption('custom');
   await page.getByRole('textbox',{name:'Egen subclass',exact:true}).fill('Min skole');
-  await save(page); await equipment(page); await addEquipment(page,'Shield · shield'); await save(page);
+  await save(page); await equipment(page); await addEquipment(page,'Shield · shield');
   await menuAction(page,'Rediger karakter');
   await expect(page.getByRole('textbox',{name:'Egen subclass',exact:true})).toHaveValue('Min skole');
   await page.getByRole('combobox',{name:'Art / species',exact:true}).selectOption({label:'Dwarf'});
@@ -76,8 +77,8 @@ test('Monk AC and speed follow class level and equipped shield', async ({page}) 
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC16');
   await expect(page.getByLabel('Karakterstatus')).toContainText('Speed45 ft');
   await equipment(page); await addEquipment(page,'Shield · shield');
-  await expect(page.locator('#derived-preview')).toContainText('AC 15');
-  await expect(page.locator('#derived-preview')).toContainText('Speed 30 ft'); await save(page);
+  await expect(page.getByLabel('Karakterstatus')).toContainText('AC15');
+  await expect(page.getByLabel('Karakterstatus')).toContainText('Speed30 ft');
   await page.getByRole('button',{name:'Shield · utstyrt',exact:true}).click();
   await page.getByRole('checkbox',{name:'Utstyrt',exact:true}).uncheck(); await save(page);
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC16');
@@ -88,8 +89,7 @@ test('custom species and custom armor remain editable separately', async ({page}
   await page.getByRole('combobox',{name:'Art / species',exact:true}).selectOption('custom');
   await page.getByRole('textbox',{name:'Navn på art / underart',exact:true}).fill('Min art');
   await page.getByRole('spinbutton',{name:'Grunnfart for arten (ft)',exact:true}).fill('35'); await save(page);
-  await equipment(page); await page.getByRole('button',{name:'+ Utstyr',exact:true}).click();
-  await page.getByRole('combobox',{name:'Utstyr',exact:true}).selectOption('custom');
+  await equipment(page); await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
   await page.getByRole('textbox',{name:'Navn på utstyr',exact:true}).fill('Min rustning');
   await page.getByRole('combobox',{name:'Kategori',exact:true}).selectOption('armor');
   await page.getByRole('spinbutton',{name:'Base AC for rustningen',exact:true}).fill('15');
@@ -97,7 +97,7 @@ test('custom species and custom armor remain editable separately', async ({page}
   await expect(page.locator('#derived-preview')).toContainText('AC 17'); await save(page); await page.reload();
   await menuAction(page,'Rediger karakter');
   await expect(page.getByRole('textbox',{name:'Navn på art / underart',exact:true})).toHaveValue('Min art'); await save(page);
-  await equipment(page); await expect(page.getByRole('textbox',{name:'Navn på utstyr',exact:true})).toHaveValue('Min rustning'); await save(page);
+  await page.getByRole('button',{name:'Min rustning · utstyrt',exact:true}).click(); await expect(page.getByRole('textbox',{name:'Navn på utstyr',exact:true})).toHaveValue('Min rustning'); await save(page);
 });
 test('damage and temp HP only in Combat, preview/cancel and atomic undo', async ({page}) => {
   await openCharacter(page); await save(page);
@@ -169,7 +169,7 @@ test('cancelled forms leave no stale listeners or errors in the next dialog', as
   await page.getByRole('combobox',{name:'Klasse',exact:true}).selectOption('custom');
   await page.getByRole('textbox',{name:'Egen klasse',exact:true}).fill('Min klasse');
   await page.getByRole('button',{name:'Avbryt',exact:true}).click();
-  await equipment(page); await addEquipment(page,'Leather · armor'); await save(page);
+  await equipment(page); await addEquipment(page,'Leather · armor');
   await menuAction(page,'Rediger karakter');
   await page.getByRole('button',{name:'Avbryt',exact:true}).click();
   await page.getByRole('button',{name:'Combat',exact:true}).click();

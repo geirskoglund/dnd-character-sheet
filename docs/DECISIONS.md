@@ -137,3 +137,7 @@ Disse presiserer og erstatter eldre plasseringer i prototypebeslutningene:
 - Maks HP kan bygge på fysisk Hit Die-kast eller fast verdi. Manuell Level Up må derfor ha felt for ny maks HP. Ingen digital kasting eller automatisk karakterbygger.
 - Brukeren ønsker å kunne fullføre en tankeprosess før koding: kommentarer er ikke i seg selv en kodebestilling. Denne endringen ble uttrykkelig bestilt med «nå starter å kode».
 - Brukeren la v0.11-prototypen i `prototypes/dnd-character-companion-v0.11.html`. Den er lest og åpnet i nettleser; se [konkret gjennomgang og avgrensning](PROTOTYPE_REVIEW.md). Gammel app.js er ikke samme referanse.
+
+## Avklart opprydding av eksisterende brukerflyter
+
+Brukeren aksepterte at Combat-oppslag ennå ikke var implementert innen den opprinnelige faseavgrensningen, og bestilte deretter en grundig rettelse av unødvendige mellomsteg og dårlig UX i eksisterende funksjoner. Katalogutstyr velges direkte fra inline +; eget utstyr kan opprettes fra velgeren. Eksisterende utstyr redigeres/fjernes fra sin egen pille. Rene oppslag har bare Lukk. Se [konkret gjennomgang, rettelser og kontroll](UX_REVIEW.md). Dette erstatter den tidligere samlede utstyrsredigeringsdialogen.
