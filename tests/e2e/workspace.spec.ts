@@ -204,3 +204,15 @@ test('new structured editors retain entered values on storage error and support 
   await dialog(page).getByRole('button',{name:'Lagre',exact:true}).click();await expect(dialog(page).getByRole('alert')).toContainText('Full lagring');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toHaveValue('Dwarvish');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toBeEditable();
   await page.evaluate(()=>(window as unknown as {blockWrites:boolean}).blockWrites=false);await save(page);expect((await state(page)).languages.filter(row=>row.name==='Dwarvish')).toHaveLength(1);
 });
+
+
+test('removing a feature pool link preserves the pool used by another action',async({page})=>{
+  await createCharacter(page);await ownFeature(page,'Delt ressurs');
+  await dialog(page).getByText('Begrenset ressurs',{exact:true}).click();await page.getByRole('checkbox',{name:'Har egen ressurs',exact:true}).check();await save(page);
+  await page.getByRole('button',{name:'Legg til egen handling',exact:true}).click();await page.getByRole('textbox',{name:'Navn',exact:true}).fill('Annen handling');await page.getByRole('checkbox',{name:'Delt ressurs',exact:true}).check();await save(page);
+  const original=await state(page),pool=original.resources[0];
+  await pill(page,'Class Features & Feats','Delt ressurs');await page.getByRole('checkbox',{name:'Har egen ressurs',exact:true}).uncheck();await save(page);
+  let after=await state(page);expect(after.features[0].resourceRefs).toEqual([]);expect(after.resources).toEqual([pool]);expect(after.actions[0].resourceRefs).toEqual([pool.id]);
+  await pill(page,'Class Features & Feats','Delt ressurs');await page.getByRole('button',{name:'Fjern egenskap',exact:true}).click();await dialog(page).getByRole('button',{name:'Fjern',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
+  after=await state(page);expect(after.resources).toEqual([pool]);expect(after.actions[0].resourceRefs).toEqual([pool.id]);
+});

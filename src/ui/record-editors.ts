@@ -120,7 +120,7 @@ export function createRecordEditors(ctx: EditorContext) {
         const sourceRef = {kind:'feature' as const,id:source.id};
         // Only our owned row is replaced; arbitrary imported/shared child records are retained.
         const replace = <K extends 'actions'|'resources'|'effects'>(collection: K, old: Character[K][number]|undefined, value?: Character[K][number]) => {
-          const shared=old && [...draft.features.filter(owner=>owner.id!==source.id),...draft.items].some(owner=>owner.resourceRefs.includes(old.id) || owner.effectRefs.includes(old.id) || ('actionRefs' in owner && owner.actionRefs.includes(old.id)));
+          const shared=old && [...draft.features.filter(owner=>owner.id!==source.id),...draft.items,...draft.actions.filter(action=>action.sourceRef?.kind!=='feature' || action.sourceRef.id!==source.id)].some(owner=>owner.resourceRefs.includes(old.id) || ('effectRefs' in owner && owner.effectRefs.includes(old.id)) || ('actionRefs' in owner && owner.actionRefs.includes(old.id)));
           draft[collection] = (old ? draft[collection].flatMap(child=>child.id!==old.id ? [child] : value ? [value] : shared ? [child] : []) : [...draft[collection],...(value ? [value] : [])]) as never;
         };
         const newPool = data.has('hasPool') ? {...pool,id:pool?.id ?? uid(),ownerCharacterId:c.id,name:row.name,current:num(data,'poolCurrent'),max:num(data,'poolMax'),kind:'custom' as const,sourceRef,recharge:{kind:str(data,'poolRecharge') as 'shortRest',ruleText:optionalString(data,'poolRule')}} : undefined;
@@ -133,7 +133,7 @@ export function createRecordEditors(ctx: EditorContext) {
         replace('effects',effect,newEffect);
         row.effectRefs = [...source.effectRefs.filter(ref=>ref!==effect?.id),...(newEffect ? [newEffect.id] : [])];
         // Detach the removed private pool from any other references without removing shared pools.
-        if (pool && !newPool) {
+        if (pool && !newPool && !draft.resources.some(resource=>resource.id===pool.id)) {
           for (const owner of [...draft.features,...draft.items,...draft.actions]) owner.resourceRefs = owner.resourceRefs.filter(ref=>ref!==pool.id);
         }
         return row;

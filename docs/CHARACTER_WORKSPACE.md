@@ -41,7 +41,7 @@ SRD-data er bygget inn i egne statiske chunks og precaches av PWA-en. Ingen API-
 
 ## Verifisert før levering
 
-`CI=1 CHROMIUM_PATH=/usr/bin/chromium npm run check` passerer: **60 domene-/lagringstester, TypeScript-kontroll, produksjonsbygg og 33 Playwright-tester**. Ingen hoppede tester. `git diff --check` er også kontrollert.
+`CI=1 CHROMIUM_PATH=/usr/bin/chromium npm run check` passerer: **60 domene-/lagringstester, TypeScript-kontroll, produksjonsbygg og 34 Playwright-tester**. Ingen hoppede tester. `git diff --check` er også kontrollert.
 
 Nettlesertestene kjører produksjonsbygget på Pages-understien `/dnd-character-sheet/` og dekker:
 
