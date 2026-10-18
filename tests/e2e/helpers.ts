@@ -7,3 +7,12 @@ export async function menuAction(page: Page, name: string) {
   await openMenu(page);
   await page.getByRole('button', {name, exact:true}).click();
 }
+export async function createCharacter(page: Page, species = 'Elf') {
+  await page.goto('./'); await menuAction(page, 'Ny karakter');
+  await page.getByRole('textbox', {name:'Navn',exact:true}).fill('Alva');
+  await page.getByRole('combobox', {name:'Art / species',exact:true}).selectOption({label:species});
+  await page.getByRole('combobox', {name:'Klasse',exact:true}).selectOption({label:'Fighter'});
+  await page.getByRole('spinbutton', {name:'Maks HP fra karakterarket',exact:true}).fill('12');
+  await page.getByRole('button', {name:'Lagre',exact:true}).click();
+  await page.getByRole('dialog').waitFor({state:'hidden'});
+}

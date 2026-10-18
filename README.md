@@ -27,7 +27,7 @@ Bruk `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` hvis Chromium allerede e
 - Art fra SRD 5.1 eller egen art/underart med grunnfart.
 - Klasse og subclass fra lister eller egenregistrering; nåværende klassenivå og multiclass uten rekonstruksjon av level-ups.
 - Endelige ability scores og maksimal HP fra karakterarket.
-- Opprettelsen inneholder bare identitet, klasse/nivå, ability scores og maks HP. Utstyr registreres i egen dialog inne i appen.
+- Opprettelsen inneholder bare identitet, klasse/nivå, ability scores og maks HP. Utstyrs-+ åpner søk/valg direkte; eksisterende utstyr redigeres fra sin egen pille.
 - Rustning/skjold og separat eid/utstyrt-status gir beregnet AC og walking speed. Forklaringer finnes i utstyrsdialogen og menyens beregningsvalg. Se [støttede 2014-regler og begrensninger](docs/CHARACTER_FOUNDATIONS.md).
 - Character viser HP, AC, Initiative, GP og Speed på én rad. Skade, healing og temporary HP håndteres i Combat; GP fra Character.
 - Meny → Denne karakteren: redigering, manuell Level Up med ny samlet maks HP, beregninger, historikk og angre. Level Up gir ingen automatisk healing, spells eller features.
@@ -36,7 +36,7 @@ Bruk `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` hvis Chromium allerede e
 - IndexedDB med atomisk versjonsoppgradering, konfliktkontroll og versjonert JSON-backup.
 - Character/Combat-navigasjon og offline produksjons-PWA. Kampoppslag og full SRD-dekning gjenstår.
 
-Arbeidsflaten er sammenholdt med [v0.11-prototypen](docs/PROTOTYPE_REVIEW.md), med nyere brukeravklaringer som føring. Utformingen er fortsatt foreløpig. Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
+Arbeidsflaten er sammenholdt med [v0.11-prototypen](docs/PROTOTYPE_REVIEW.md), med nyere brukeravklaringer som føring. En [UX-gjennomgang av eksisterende flyter](docs/UX_REVIEW.md) dokumenterer videre opprydding av tillegg, oppslag, redigering, avbryt, fokus og historikk. Utformingen er fortsatt foreløpig. Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
 
 ## Data og backup
 

@@ -92,3 +92,18 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8rem; }
 #app-update p { margin: 0 0 .6rem; }
 #app-update button { margin-right: .5rem; }
 @media (max-width: 340px) { .form-grid { grid-template-columns: 1fr; } }
+
+.choice-list { display: grid; gap: .4rem; }
+.choice-list button { display: flex; justify-content: space-between; align-items: center; text-align: left; gap: .6rem; }
+.choice-list strong { overflow-wrap: anywhere; }
+.choice-list small { flex-shrink: 0; }
+#dialog-body > label + label, #dialog-body > .form-grid, #dialog-body > .check, #dialog-body > details { margin-top: .7rem; }
+#custom-equipment { width: 100%; margin-top: .7rem; }
+.danger { color: #ffb4a6; }
+.dialog-actions { position: sticky; bottom: -1.2rem; margin-inline: -1.2rem; padding: .8rem 1.2rem; background: #1b2732; border-top: 1px solid var(--line); z-index: 1; }
+#dialog-error:empty { display: none; }
+.history { padding-left: 1.2rem; }
+.history > li { margin-bottom: 1rem; }
+.history p { margin: .3rem 0; }
+.history-change { border-bottom: 1px solid var(--line); padding-block: .4rem; overflow-wrap: anywhere; }
+.history-change p { white-space: pre-wrap; }

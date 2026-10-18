@@ -4,7 +4,11 @@ import { CharacterRepository, openDatabase } from './storage/database';
 import { exportBackup, importBackup } from './storage/backup';
 import { characterView, combatView } from './ui/views';
 import { characterForm, bindCharacterForm, readCharacterForm, subclassFields, bindSubclass, readSubclass } from './ui/character-form';
-import { equipmentForm, bindEquipment, readEquipment } from './ui/equipment-form';
+import { equipmentForm, bindEquipment, readEquipment, newEquipment } from './ui/equipment-form';
+import { editDialog as dialog, viewDialog, confirmDialog, commitDialog } from './ui/dialog';
+import { equipmentPicker, bindEquipmentPicker } from './ui/equipment-picker';
+import { instantiateEquipment } from './domain/catalog';
+import { historyView } from './ui/history';
 import { modifiers, signed } from './domain/modifiers';
 import { levelUpCharacter } from './domain/level-up';
 import { deriveStats, hpAfterChange } from './domain/derived';
@@ -42,13 +46,13 @@ function render() {
     <header><div class="identity"><p class="eyebrow">D&D · 5e 2014</p><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c ? `<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl => `${esc(cl.name)} ${cl.level}${cl.subclass ? ' · ' + esc(cl.subclass) : ''}`).join(' / ')}</p>` : ''}</div>
     <details class="app-menu"><summary>Meny</summary><div class="menu-panel">
     ${c ? '<h2>Denne karakteren</h2><div class="menu-actions"><button data-action="edit">Rediger karakter</button><button data-action="level-up">Level Up</button><button data-action="overrides">Beregninger og overstyringer</button><button data-action="history">Endringslogg</button><button data-action="undo">Angre siste endring</button></div>' : ''}
-    <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="">Velg karakter</option>${characters.map(ch => `<option value="${ch.id}" ${selected === ch.id ? 'selected' : ''}>${esc(ch.name)}</option>`).join('')}</select></label>
+    <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch => `<option value="${ch.id}" ${selected === ch.id ? 'selected' : ''}>${esc(ch.name)}</option>`).join('')}</select></label>
     <div class="menu-actions"><button data-action="create">Ny karakter</button>${c ? '<button data-action="copy">Kopier karakter</button><button data-action="delete">Slett karakter</button>' : ''}<button data-action="export" ${characters.length ? '' : 'disabled'}>Eksporter backup</button><button data-action="import">Importer backup</button></div>
     <p class="muted">Lokalt lagret på denne enheten. Ta JSON-backup før du rydder nettleserdata.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p class="muted">Versjon ${__APP_VERSION__}</p><button data-action="check-update">Se etter oppdatering</button></div></details></header>
     <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
     <p id="status" role="status" aria-live="polite">${esc(message)}</p></div>
     <nav aria-label="Hovednavigasjon">${['character', 'combat'].map(tab => `<button data-page="${tab}" ${page === tab ? 'aria-current="page"' : ''}>${tab === 'character' ? 'Character' : 'Combat'}</button>`).join('')}</nav>
-    <dialog aria-labelledby="dialog-title"></dialog>`;
+    `;
   root.querySelectorAll<HTMLButtonElement>('[data-page]').forEach(button => button.onclick = () => {
     scroll[page] = window.scrollY;
     page = button.dataset.page as typeof page;
@@ -61,7 +65,9 @@ function render() {
     document.querySelector<HTMLElement>(`[data-category="${category}"]`)?.focus();
   });
   root.querySelector<HTMLSelectElement>('#character-select')!.onchange = event => void run(async () => {
-    selected = (event.target as HTMLSelectElement).value || undefined;
+    const next = (event.target as HTMLSelectElement).value;
+    if (!next || next === selected) return;
+    selected = next;
     await repo.setSetting('selectedCharacter', selected); render();
   });
   root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(button => button.onclick = () => {
@@ -71,21 +77,18 @@ function render() {
   root.querySelectorAll<HTMLButtonElement>('[data-modifier]').forEach(button => button.onclick = () => {
     const c = current()!, index = Number(button.dataset.modifier);
     const options = modifiers(c);
-    const d = dialog('Velg modifierfavoritt', `<p>Trykk på oppslaget som skal vises i dette kortet.</p><div class="modifier-list">${options.map((m, i) => `<button type="button" data-choice="${i}" aria-pressed="${c.favoriteModifierRefs[index] === m.ref}"><span>${esc(m.name)}</span><strong>${signed(m.value)}</strong></button>`).join('')}</div>`, async () => {}, 'Lukk');
-    d.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach(choice => choice.onclick = () => void run(async () => {
-      try {
-        const draft = structuredClone(c);
-        draft.favoriteModifierRefs[index] = options[Number(choice.dataset.choice)].ref;
-        await repo.save(draft, 'favorite', 'Modifierfavoritt endret');
-        message = 'Modifierfavoritt lagret.'; await refresh();
-      } catch (error) {
-        d.querySelector('#dialog-error')!.textContent = error instanceof Error ? error.message : 'Kunne ikke lagre favoritten.';
-      }
+    const d = viewDialog('Velg modifierfavoritt', `<p>Trykk på oppslaget som skal vises i dette kortet.</p><div class="modifier-list">${options.map((m, i) => `<button type="button" data-choice="${i}" aria-pressed="${c.favoriteModifierRefs[index] === m.ref}"><span>${esc(m.name)}</span><strong>${signed(m.value)}</strong></button>`).join('')}</div>`);
+    d.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach(choice => choice.onclick = () => void commitDialog(async () => {
+      if (c.favoriteModifierRefs[index] === options[Number(choice.dataset.choice)].ref) return;
+      const draft = structuredClone(c);
+      draft.favoriteModifierRefs[index] = options[Number(choice.dataset.choice)].ref;
+      await repo.save(draft, 'favorite', 'Modifierfavoritt endret');
+      message = 'Modifierfavoritt lagret.'; await refresh();
     }));
   });
   root.querySelectorAll<HTMLButtonElement>('[data-trait]').forEach(button => button.onclick = () => {
     const trait = current()!.species.traits[Number(button.dataset.trait)];
-    dialog(trait.name, `<p>${esc(trait.description)}</p>`, async () => {}, 'Lukk');
+    viewDialog(trait.name, `<p>${esc(trait.description)}</p>`);
   });
   root.querySelectorAll<HTMLButtonElement>('[data-note]').forEach(button => button.onclick = () => editNote(button.dataset.note));
   root.querySelectorAll<HTMLButtonElement>('[data-item]').forEach(button => button.onclick = () => inspectEquipment(button.dataset.item!));
@@ -101,37 +104,6 @@ async function run(fn: () => Promise<void>) {
   busy = true;
   try { await fn(); } catch (error) { tell(error instanceof Error ? error.message : 'Operasjonen mislyktes. Prøv igjen og ta backup.'); }
   finally { busy = false; }
-}
-function dialog(title: string, html: string, onSubmit: (form: HTMLFormElement) => Promise<void>, submit = 'Lagre') {
-  const d = root.querySelector('dialog')!;
-  const trigger = document.activeElement as HTMLElement | null;
-  // A fresh form also discards listeners belonging to an earlier cancelled dialog.
-  d.innerHTML = '<form><h2 id="dialog-title" tabindex="-1"></h2><div id="dialog-body"></div><p id="dialog-error" role="alert"></p><div class="dialog-actions"><button type="button" id="cancel">Avbryt</button><button id="submit" type="submit">Lagre</button></div></form>';
-  d.onclose = () => {
-    if (!d.isConnected || d.open) return;
-    if (trigger?.isConnected && trigger.getClientRects().length) trigger.focus({preventScroll:true});
-    else root.querySelector<HTMLElement>('.app-menu > summary')?.focus({preventScroll:true});
-  };
-  const form = d.querySelector('form')!;
-  d.querySelector('#dialog-title')!.textContent = title;
-  d.querySelector('#dialog-body')!.innerHTML = html;
-  d.querySelector('#submit')!.textContent = submit;
-  d.querySelector<HTMLButtonElement>('#cancel')!.onclick = () => d.close();
-  form.onsubmit = async event => {
-    event.preventDefault();
-    const button = d.querySelector<HTMLButtonElement>('#submit')!;
-    button.disabled = true;
-    try {
-      await onSubmit(form);
-      d.close();
-      if (!d.isConnected) document.querySelector<HTMLElement>('#content')?.focus({ preventScroll: true });
-    }
-    catch (error) { d.querySelector('#dialog-error')!.textContent = error instanceof Error ? error.message : 'Kunne ikke lagre. Ingen endringer er bekreftet.'; }
-    finally { button.disabled = false; }
-  };
-  d.showModal();
-  d.querySelector<HTMLElement>('#dialog-title')!.focus();
-  return d;
 }
 function editCharacter(source?: Character) {
   const draft = source ? structuredClone(source) : { ...createCharacter(), name: '' };
@@ -151,36 +123,37 @@ function editCharacter(source?: Character) {
   });
   bindCharacterForm(d.querySelector('form')!, draft, creating);
 }
-function inspectEquipment(id: string) {
-  const c = current()!, item = c.items.find(i => i.id === id)!;
-  const armor = item.armorProfile;
-  dialog(item.name, `<p>${esc(item.category)} · Antall ${item.quantity}</p>
-    ${armor ? `<p>Base AC ${armor.baseAc}${armor.addDex ? ' + Dexterity modifier' : ''}${armor.dexCap !== null ? ` (maks bonus ${armor.dexCap})` : ''}. Strength-krav ${armor.strength}.${armor.stealthDisadvantage ? ' Disadvantage på Stealth.' : ''}</p>` : ''}
-    ${item.acContribution !== undefined ? `<p>AC-bonus: ${item.acContribution}</p>` : ''}
-    ${item.attack ? `<p>Attack: ${esc(item.attack)}</p>` : ''}${item.damage ? `<p>Damage: ${esc(item.damage)}</p>` : ''}
-    ${item.handUsage ? `<p>Håndbruk: ${esc(item.handUsage)}</p>` : ''}${item.notes ? `<p>${esc(item.notes)}</p>` : ''}
-    <label class="check"><input type="checkbox" name="equipped" ${item.equipped ? 'checked' : ''}>Utstyrt</label>`, async form => {
-      const draft = structuredClone(c), updated = draft.items.find(i => i.id === id)!;
-      updated.equipped = new FormData(form).has('equipped');
-      if (updated.equipped !== item.equipped) await repo.save(draft, 'equipment', `${item.name}: ${updated.equipped ? 'utstyrt' : 'tatt av'}`);
-      message = 'Utstyr og beregninger oppdatert.'; await refresh();
-    });
+function inspectEquipment(id: string) { editEquipment(current()!, id); }
+function addEquipment(c: Character) {
+  const d = viewDialog('Legg til utstyr', equipmentPicker(), '[name="equipmentSearch"]');
+  bindEquipmentPicker(d, async catalogId => {
+    const item = instantiateEquipment(catalogId);
+    await repo.save({...c, items:[...c.items, item]}, 'equipment', `${item.name} lagt til`);
+    message = `${item.name} lagt til.`; await refresh();
+  }, () => editEquipment(c));
 }
-function editEquipment(c: Character) {
-  const d = dialog('Utstyr', equipmentForm(c), async form => {
-    const items = readEquipment(form, c);
-    if (items.some(i => !i.name)) throw new Error('Velg eller navngi utstyret.');
-    const draft = characterSchema.parse({...c, items});
-    await repo.save(draft, 'equipment', 'Utstyr redigert');
+function editEquipment(c: Character, id?: string) {
+  const source = id ? c.items.find(i => i.id === id)! : newEquipment();
+  const d = dialog(id ? source.name : 'Nytt utstyr', equipmentForm(source, !id), async form => {
+    const item = readEquipment(form, source);
+    const items = id ? c.items.map(i => i.id === id ? item : i) : [...c.items, item];
+    const result = characterSchema.safeParse({...c, items});
+    if (!result.success) throw new Error('Kontroller navn, antall og utstyrsverdier. Bruk hele tall der det kreves.');
+    await repo.save(result.data, 'equipment', `${item.name} ${id ? 'redigert' : 'lagt til'}`);
     message = 'Utstyr lagret.'; await refresh();
   });
-  bindEquipment(d.querySelector('form')!, c);
+  bindEquipment(d.querySelector('form')!, source, c);
+  const remove = d.querySelector<HTMLButtonElement>('#delete-item');
+  if (remove) remove.onclick = () => confirmDialog('Fjern utstyr?', `<p>Vil du fjerne «${esc(source.name)}» fra karakteren?</p>`, async () => {
+    await repo.save({...c, items:c.items.filter(i => i.id !== id)}, 'equipment', `${source.name} fjernet`);
+    message = 'Utstyr fjernet.'; await refresh();
+  }, 'Fjern utstyr');
 }
 function levelUp(c: Character) {
   if (!c.classes.length) { tell('Registrer klasse og klassenivå før Level Up.'); editCharacter(c); return; }
   if (c.level >= 20) { tell('Karakteren er allerede level 20. Korriger eventuelt nivå via Rediger karakter.'); return; }
   const d = dialog('Level Up', `<p>Level ${c.level} → ${c.level + 1}. Registrer det du og DM har bestemt.</p>
-    ${select('Klasse som øker ett nivå', 'levelClass', c.classes[0]?.id ?? '', c.classes.map(cl => ({value:cl.id, label:`${cl.name} ${cl.level} → ${cl.level + 1}`})), 'required')}
+    ${c.classes.length === 1 ? `<p>${esc(c.classes[0].name)} ${c.classes[0].level} → ${c.classes[0].level + 1}</p><input type="hidden" name="levelClass" value="${c.classes[0].id}">` : select('Klasse som øker ett nivå', 'levelClass', c.classes[0].id, c.classes.map(cl => ({value:cl.id, label:`${cl.name} ${cl.level} → ${cl.level + 1}`})), 'required')}
     <div data-level-subclass></div>
     ${field('Ny samlet maks HP', 'maxHp', '', `type="number" min="${Math.max(1, c.hp.max)}" required`)}
     <p>Tidligere maks HP: ${c.hp.max}. Legg til fysisk Hit Die-kast eller fast verdi, Constitution modifier og eventuelle andre bonuser.</p>
@@ -192,17 +165,17 @@ function levelUp(c: Character) {
     }, 'Bekreft Level Up');
   const form = d.querySelector('form')!;
   const update = () => {
-    const cl = c.classes.find(cl => cl.id === form.querySelector<HTMLSelectElement>('[name="levelClass"]')!.value)!;
+    const cl = c.classes.find(cl => cl.id === form.querySelector<HTMLInputElement | HTMLSelectElement>('[name="levelClass"]')!.value)!;
     form.querySelector('[data-level-subclass]')!.innerHTML = subclassFields(cl.definitionRef?.id ?? '', cl.subclass);
     bindSubclass(form);
   };
-  form.querySelector<HTMLSelectElement>('[name="levelClass"]')!.onchange = update;
+  form.querySelector<HTMLInputElement | HTMLSelectElement>('[name="levelClass"]')!.onchange = update;
   form.addEventListener('change', () => bindSubclass(form));
   update();
 }
 function editHitPoints(c: Character) {
   const range = Math.max(c.hp.max, c.hp.current + c.hp.temp, 1);
-  const d = dialog('Endre HP', `<p>Skade bruker temporary HP først. Healing endrer bare vanlig HP.</p><label>Endring i HP<input type="range" name="delta" min="-${range}" max="${range}" value="0" step="1"></label><div class="actions"><button type="button" id="hp-minus" aria-label="Reduser endring med 1">−1</button><button type="button" id="hp-plus" aria-label="Øk endring med 1">+1</button></div><p id="hp-preview" aria-live="polite"></p>`, async form => {
+  const d = dialog('Endre HP', `<p>Skade bruker temporary HP først. Healing endrer bare vanlig HP.</p><label>Endring i HP<input type="range" name="delta" min="-${range}" max="${range}" value="0" step="1"></label>${field('HP-endring i tall', 'deltaAmount', 0, `type="number" min="-${range}" max="${range}" step="1" required inputmode="numeric"`)}<div class="actions"><button type="button" id="hp-minus" aria-label="Reduser endring med 1">−1</button><button type="button" id="hp-plus" aria-label="Øk endring med 1">+1</button></div><p id="hp-preview" aria-live="polite"></p>`, async form => {
     const delta = Number(new FormData(form).get('delta'));
     if (!Number.isInteger(delta) || delta < -range || delta > range) throw new Error('Ugyldig HP-endring.');
     if (!delta) return;
@@ -210,11 +183,18 @@ function editHitPoints(c: Character) {
     message = 'HP oppdatert.'; await refresh();
   }, 'Oppdater HP');
   const slider = d.querySelector<HTMLInputElement>('[name="delta"]')!;
+  const amount = d.querySelector<HTMLInputElement>('[name="deltaAmount"]')!;
   const preview = () => {
     const delta = Number(slider.value), after = hpAfterChange(c.hp, delta);
+    amount.value = slider.value;
+    d.querySelector<HTMLButtonElement>('#submit')!.disabled = delta === 0;
     d.querySelector('#hp-preview')!.textContent = `${delta > 0 ? '+' : ''}${delta}: HP ${c.hp.current} → ${after.current} / ${after.max} · Temporary HP ${c.hp.temp} → ${after.temp}`;
   };
   slider.oninput = preview;
+  amount.oninput = () => {
+    if (amount.value === '' || !amount.checkValidity()) { d.querySelector<HTMLButtonElement>('#submit')!.disabled = true; return; }
+    slider.value = amount.value; preview();
+  };
   d.querySelector<HTMLButtonElement>('#hp-minus')!.onclick = () => { slider.stepDown(); preview(); };
   d.querySelector<HTMLButtonElement>('#hp-plus')!.onclick = () => { slider.stepUp(); preview(); };
   preview();
@@ -244,8 +224,7 @@ function editNote(id?: string) {
   });
   const remove = d.querySelector<HTMLButtonElement>('#delete-note');
   if (remove) remove.onclick = () => {
-    d.close();
-    dialog('Slett notat?', `<p>Vil du slette «${esc(note.title)}»?</p>`, async () => {
+    confirmDialog('Slett notat?', `<p>Vil du slette «${esc(note.title)}»?</p>`, async () => {
       draft.notes = draft.notes.filter(n => n.id !== id);
       if (draft.backgroundNoteId === id) delete draft.backgroundNoteId;
       await repo.save(draft, 'note', 'Notat slettet'); await refresh();
@@ -258,7 +237,7 @@ async function action(name: string) {
     case 'check-update': await updates.check(); break;
     case 'create': editCharacter(); break;
     case 'edit': editCharacter(c); break;
-    case 'edit-equipment': editEquipment(c!); break;
+    case 'edit-equipment': addEquipment(c!); break;
     case 'level-up': levelUp(c!); break;
     case 'hp': editHitPoints(c!); break;
     case 'overrides': editOverrides(c!); break;
@@ -276,13 +255,13 @@ async function action(name: string) {
       await repo.save(copy, 'copy', 'Karakter kopiert'); selected = copy.id;
       message = 'Uavhengig kopi opprettet.'; await refresh(); break;
     }
-    case 'delete': dialog('Slett karakter?', `<p>Vil du slette «${esc(c!.name)}» fra denne enheten? Eksporter backup først hvis du vil beholde karakteren.</p>`, async () => {
+    case 'delete': confirmDialog('Slett karakter?', `<p>Vil du slette «${esc(c!.name)}» fra denne enheten? Eksporter backup først hvis du vil beholde karakteren.</p>`, async () => {
       await repo.remove(c!); message = 'Karakter slettet.'; await refresh();
     }, 'Slett karakter'); break;
     case 'undo': await repo.undo(c!); message = 'Siste endring angret.'; await refresh(); break;
     case 'history': {
       const events = await repo.history(c!.id);
-      dialog('Endringslogg', `<p>Kun bekreftede endringer logges. Eldre verdier korrigeres manuelt.</p><ol>${events.map(e => `<li><strong>${esc(e.description)}</strong> · ${esc(new Date(e.timestamp).toLocaleString('nb-NO'))}<details><summary>Før og etter</summary><pre>${esc(JSON.stringify(e.changes, null, 2))}</pre></details></li>`).join('')}</ol>`, async () => {}, 'Lukk'); break;
+      viewDialog('Endringslogg', historyView(events)); break;
     }
     case 'export': {
       const raw = await exportBackup(repo.db, characters);

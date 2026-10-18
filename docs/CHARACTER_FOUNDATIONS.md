@@ -1,6 +1,6 @@
 # Karaktergrunnlag, beregnede verdier og spilltilstand
 
-Denne rettelsen erstatter det flate opprettelsesskjemaet fra fase 1. Opprettelse registrerer identitet, art, nåværende klasse(r)/nivå, endelige ability scores, maksimal HP. Valg av kjent art viser ingen artsdetaljer eller speed i opprettelsen. Utstyr legges til i egen dialog inne i appen; beregnet AC og walking speed forklares der og i menyens beregningsvalg. Totalt level er summen av klassenivåene. Det finnes ingen automatisk level-up eller rekonstruksjon av tidligere levels.
+Denne rettelsen erstatter det flate opprettelsesskjemaet fra fase 1. Opprettelse registrerer identitet, art, nåværende klasse(r)/nivå, endelige ability scores, maksimal HP. Valg av kjent art viser ingen artsdetaljer eller speed i opprettelsen. Utstyrs-+ åpner søk og kategorifilter direkte; et katalogvalg legges til umiddelbart. Eget utstyr opprettes fra samme velger. Beregnet AC og walking speed forklares i menyens beregningsvalg. Totalt level er summen av klassenivåene. Det finnes ingen automatisk level-up eller rekonstruksjon av tidligere levels.
 
 Maks HP registreres fra karakterarket: tidligere HP-kast, Constitution-endringer og særregler kan ikke utledes trygt bare fra nåværende klasse/nivå. En ny registrering starter med current HP = max HP og temp HP = 0. Endelige ability scores inkluderer allerede artsbonuser og ASI/feats; katalogvalget legger dem ikke på igjen. Dette er registrering av karakteren spilleren har, ikke en automatisk karakterbygger.
 
@@ -36,7 +36,7 @@ HP-pillens dialog i Combat har en endringsslider sentrert på 0, ±1, forhåndsv
 
 Temporary HP-pillens dialog erstatter den lagrede totalen; verdiene stables ikke automatisk. GP redigeres fra GP-pillen og lagres i heltall CP. Disse verdiene spørres det ikke om under opprettelsen. Identitets-/utstyrsredigering endrer ikke current eller temp HP.
 
-Meny → Denne karakteren → «Beregninger og overstyringer» lar spilleren velge Unarmored Defense og korrigere AC/speed. Tomme overstyringsfelt betyr beregnet verdi. Aktive overstyringer merkes med forklaring og advarsel. Utstyrspiller skiller eid fra utstyrt; trykk viser detaljer og lar spilleren bekrefte utstyrt-status; detaljredigering/opprettelse/fjerning åpnes fra Utstyr-seksjonens inline +-pille, uten å åpne karaktergrunnlaget.
+Meny → Denne karakteren → «Beregninger og overstyringer» lar spilleren velge Unarmored Defense og korrigere AC/speed. Tomme overstyringsfelt betyr beregnet verdi. Aktive overstyringer merkes med forklaring og advarsel. Utstyrspiller skiller eid fra utstyrt. Trykk åpner én post for redigering av antall, utstyrt-status, notat og øvrige verdier, samt fjerning med bekreftelse. Inline + brukes bare til tillegg. Utstyr og andre samlinger på karakteren bevares.
 
 ## Versjoner og bevaring
 
@@ -67,3 +67,5 @@ Mobilbilder av implementasjonen ved 390 px:
 - [Meny](images/character-menu.png)
 - [Opprettelse](images/character-creation.png)
 - [Manuell Level Up](images/level-up.png)
+
+Den etterfølgende [UX-gjennomgangen](UX_REVIEW.md) dokumenterer direkte tillegg, dialogtyper, feil-/avbrytflyt, fokus, scroll og lesbar historikk.
