@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
 **Oppdatert:** 2026-10-18  
-**Status:** Gjeldende produktbeslutninger og åpne spørsmål før neste funksjonsprototype. **Ikke endelig Codex-spesifikasjon.**  
+**Status:** Gjeldende produktbeslutninger. Prototyping er avsluttet etter v0.11; Codex-overlevering er neste fase. **Ikke endelig kravspesifikasjon.**  
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
@@ -105,3 +105,17 @@
 
 ---
 **Vedlikehold:** Nye avklaringer oppdateres i gjeldende seksjon og føres eventuelt som historisk endring. Ikke legg uavklarte forslag inn blant besluttede krav.
+
+## Evaluering v0.11 og overgang til Codex (2026-10-18)
+
+**Beslutning:** Stans videre iterasjon på énfil-HTML-prototyper. Overfør arbeidet til Codex med en konsolidert kravspesifikasjon, datamodell, designbrief og automatiserte tester. Eksisterende prototyper brukes som illustrasjon av arbeidsflyt, **ikke som korrekt eller fullstendig funksjonell fasit**.
+
+**Feil/mangler observert i v0.11 – skal uttrykkelig håndteres i Codex-bestillingen:**
+- Skadekalkulatoren viser en lite forklarende samlepost «Etter modifikatorer». Vis i stedet **hver anvendt skademodifikator separat**, med navn, endringsbeløp, årsak/vilkår og mulighet til å slå den av/på for gjeldende hendelse. Oppsummeringen skal kunne leses/forklares til DM.
+- Muligheten til å **angi/overstyre resistance, vulnerability og immunity i kalkulatoren** har forsvunnet. Gjeninnfør med kompakte, synlige kontroller; støtt samtidig resistance og vulnerability, og oppdater forslag ved bytte av skadetype. De strukturerte karakteregenskapene skal være utgangspunkt, men manuell overstyring skal alltid være mulig.
+- Flere tidligere fungerende grensesnittfunksjoner er falt bort under prototypeiterasjon. Codex må kartlegge gjeldende krav opp mot prototypeversjonene, bygge regresjonstester og ikke behandle siste prototype som eneste sannhet.
+- «Rediger øvrige felt»-popup er **forkastet**. Ikke egne duplikatfelt for Bakgrunn/Notater; bakgrunn kan være ett av mange **navngitte notater**, vist som piller med inline +-pille.
+- **Languages, proficiencies, damage resistances, vulnerabilities, immunities og condition immunities** må lagres og redigeres som **separate strukturerte data**, ikke uspesifisert fritekst. De kan presenteres kompakt som piller og kobles til beregningene der dette er relevant. Å bare beskrive dem som strukturert uten fungerende brukergrensesnitt og lagring er utilstrekkelig.
+- Behold tidligere avklaringer: tre Combat-faner og Andre egenskaper separat, ingen turstyring eller AC-treffkontroll, valgfrie skadeposter, betingede modifikatorer med bekreftelse ved ukjente vilkår, pluss-piller inline, kortfattede oppslag, DM avgjør spillet.
+
+**Overlevering:** Før Codex starter, skriv en konsistent kravspesifikasjon og implementasjonsplan med prioritet mellom kilder: 1) vedtatte krav, 2) godkjente UX-mønstre fra prototyper, 3) visuell designbrief. Testarkitektur og testcaser utformes av Codex; bruker vurderer UX. Design kan forbedres vesentlig uten å videreføre prototypefeil.
