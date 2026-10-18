@@ -16,7 +16,7 @@ Codex skal lage **2–3 klart forskjellige designkonsepter** med samme eksempelk
 Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge retning etter visuell vurdering.
 
 ## Låste UX-mønstre som ikke kan redesignes bort
-- To hovedfaner Character og Combat, separate scrollposisjoner.
+- Tre hovedfaner Character, Combat og Utstyr, separate scrollposisjoner.
 - Character: fem like store statuspiller på én rad (HP, AC, Initiative, GP, Speed). HP er kun status; Temporary HP og HP-endringer ligger i Combat. Fire tilpassbare modifier-kort med **fulltekst**.
 - Karakteradministrasjon og grunnlagsredigering ligger i menyen; ingen permanente administrasjonspaneler.
 - Alle piller innen hver seksjon har lik størrelse, form og ramme, inkludert inline +.
@@ -39,7 +39,7 @@ Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge re
 Prototyper v0.2–v0.11 viste og testet **arbeidsflyt**. v0.11 har regresjoner (bl.a. skadeegenskaper og generisk redigeringspopup). **Kopier ikke UI eller kode ukritisk.** Krav og gjeldende beslutninger går foran skjermbilder og HTML.
 
 ## Godkjenningsflyt
-1. Designskisser/klikkbare views av 2–3 retninger for begge hovedfaner.
+1. Designskisser/klikkbare views av 2–3 retninger for hovedfanene.
 2. Brukeren velger én retning og kommenterer.
 3. Codex bygger konsistent design-system og gjennomfører test av ekte mobilarbeidsflyt.
 Fremdrift og implementasjon trenger ikke stoppe på teknisk grunnarbeid mens designalternativene utformes.

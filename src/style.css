@@ -4,7 +4,7 @@
 body { margin: 0; }
 button, input, select, textarea { font: inherit; }
 button, summary { cursor: pointer; }
-button { min-height: 44px; padding: .5rem .85rem; border: 1px solid #647078; border-radius: .6rem; background: var(--card); color: inherit; }
+button { max-width: 100%; overflow-wrap: anywhere; min-height: 44px; padding: .5rem .85rem; border: 1px solid #647078; border-radius: .6rem; background: var(--card); color: inherit; }
 button:hover { background: #354751; }
 button:disabled { opacity: .5; cursor: default; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
@@ -60,19 +60,19 @@ summary { min-height: 44px; padding: .6rem 0; }
 .combat-tabs button[aria-pressed="true"] { border-bottom-color: var(--accent); color: #ecede8; }
 .empty { padding: 1.5rem 1rem; }
 nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; gap: .5rem; padding: .6rem 1rem calc(.6rem + env(safe-area-inset-bottom)); background: #182633f5; border-top: 1px solid var(--line); }
-nav button { width: min(45%, 220px); border: 0; min-width: 0; padding-inline: .2rem; overflow-wrap: anywhere; }
+nav button { width: min(30%, 220px); border: 0; min-width: 0; padding-inline: .2rem; overflow-wrap: anywhere; }
 nav button[aria-current="page"] { background: var(--card); }
 #status { color: var(--accent); margin: .8rem; font-size: .8rem; }
 #status:empty { display: none; }
-label { display: grid; gap: .35rem; min-width: 0; }
+label { display: grid; grid-template-columns: minmax(0, 1fr); overflow-wrap: anywhere; gap: .35rem; min-width: 0; }
 input, select, textarea { width: 100%; min-width: 0; min-height: 44px; border: 1px solid #78858b; border-radius: .4rem; padding: .55rem; background: #111820; color: inherit; }
 textarea { resize: vertical; }
 input[name="name"]::placeholder { color: #a8b2b8; opacity: 1; }
 input[name="name"]:focus::placeholder { opacity: 0; }
 input[type="range"] { padding: .5rem 0; }
-dialog { width: min(650px, calc(100% - 1rem)); max-height: calc(100dvh - 2rem); padding: 1.2rem; border: 1px solid #78858b; border-radius: .8rem; background: #1b2732; color: inherit; }
+dialog { --dialog-padding: min(1.2rem, 4vw); width: min(650px, calc(100% - 1rem)); max-height: calc(100dvh - 2rem); padding: var(--dialog-padding); border: 1px solid #78858b; border-radius: .8rem; background: #1b2732; color: inherit; }
 dialog::backdrop { background: #000b; }
-.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .8rem; }
 fieldset { min-width: 0; border: 1px solid #647078; margin: 1rem 0; border-radius: .5rem; }
 legend { max-width: 100%; }
 .class-row, .equipment-row { display: grid; gap: .6rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #647078; }
@@ -100,7 +100,7 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8rem; }
 #dialog-body > label + label, #dialog-body > .form-grid, #dialog-body > .check, #dialog-body > details { margin-top: .7rem; }
 #custom-equipment { width: 100%; margin-top: .7rem; }
 .danger { color: #ffb4a6; }
-.dialog-actions { position: sticky; bottom: -1.2rem; margin-inline: -1.2rem; padding: .8rem 1.2rem; background: #1b2732; border-top: 1px solid var(--line); z-index: 1; }
+.dialog-actions { position: sticky; bottom: calc(-1 * var(--dialog-padding)); margin-inline: calc(-1 * var(--dialog-padding)); padding: .8rem var(--dialog-padding); background: #1b2732; border-top: 1px solid var(--line); z-index: 1; }
 #dialog-error:empty { display: none; }
 .history { padding-left: 1.2rem; }
 .history > li { margin-bottom: 1rem; }
@@ -120,3 +120,11 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8rem; }
 .portrait-large { display: block; max-width: 100%; max-height: 60dvh; margin: 0 auto 1rem; border-radius: .6rem; }
 .combat-choices { margin-top: .8rem; }
 .rule-text { white-space: pre-wrap; }
+
+.weapon-values { display: grid; gap: .3rem; color: var(--accent); }
+#item-details > label, #item-details > details, #item-details > div { margin-top: .7rem; }
+#equipment-preview:empty { display: none; }
+
+summary { overflow-wrap: anywhere; }
+details { min-width: 0; }
+details:not([open]) > :not(summary) { display: none; }

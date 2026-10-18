@@ -52,7 +52,7 @@ Betingelser er **beskrivbare, og evalueres tri-state**: `true` / `false` / `unkn
 `{id,definitionRef?,name,category:weapon|armor|shield|equipment|magic,quantity,equipped,handUsage?:one|two|versatile,attack?,damage?,acContribution?,effectRefs[],resourceRefs[],notes?}`.
 Eid og utstyrt er ulike tilstander. Equip kan advare om kombinasjonskonflikter, ikke nekte lagring.
 
-Utstyrsoppsett (presisert 2026-10-19) må også kunne representere relevant bæreplassering/håndbruk og eventuell attunement, samt knytte gjenstandens bidrag til beregnede verdier/oppslag via kilde og vilkår. Gjenstandstype, eierskap og aktiv bruk er separate forhold. Konkrete felter og migrering avgjøres ved implementasjon; dagens kode har ikke full støtte. Kombinasjonsregler og advarsler følger D&D 5e 2014 og bevarer DM-unntak. Se [krav §2](REQUIREMENTS.md#2-character) og [åpne kontrollscenarioer](CHARACTER_WORKSPACE.md#kjente-mangler-som-den-nye-kontrollen-må-fange).
+Utstyrsoppsett (presisert 2026-10-19) må også kunne representere relevant bæreplassering/håndbruk og eventuell attunement, samt knytte gjenstandens bidrag til beregnede verdier/oppslag via kilde og vilkår. Gjenstandstype, eierskap og aktiv bruk er separate forhold. Senere godkjent forenkling (§11 i kravene) bruker ingen påkrevde kroppsdeler: samlet rustning, enkel bruk/håndbruk og attunement. Konkrete valg er beskrevet nedenfor. Kombinasjonsregler og advarsler følger D&D 5e 2014 og bevarer DM-unntak. Se [krav §2](REQUIREMENTS.md#2-character) og [åpne kontrollscenarioer](CHARACTER_WORKSPACE.md#kjente-mangler-som-den-nye-kontrollen-må-fange).
 
 ### SpellInstance
 `{id,definitionRef?,name,spellLevel,castingTime,actionEconomy,range,duration,concentration,ritual,components,attack?,save?,damage?,description,known?,inSpellbook?,prepared?,casterClassRef?,resourceSystemRef?}`.
@@ -84,3 +84,9 @@ Versjonert payload: `{schemaVersion, exportedAt, characters, referencedCustomCat
 
 ## Åpne implementasjonsvalg for Codex
 Valg av UI-rammeverk, state-management, IndexedDB-wrapper, normaliseringsgrad og fysisk schema, migrasjonsstrategi, testverktøy. Ikke endre brukerkrav uten å markere det som beslutningsbehov.
+
+## Implementert utstyrsutvidelse (2026-10-19)
+
+Character/backup forblir v2 og IndexedDB v3. Nye felter er valgfrie og endrer ikke tidligere felters kontrakt: `weaponProfile{category,kind,dice,damageType,twoHandedDice?,properties[],range?,thrownRange?,special?}`, `grip:one|two`, `attackMode:melee|thrown`, `attackAbility`, `damageOverride` (eksplisitt total), `proficient:boolean`, `requiresAttunement`, `attuned`, `bonuses{ac?,attack?,damage?,saves?}`. Manglende profil på eldre katalogvåpen får read-only katalogfallback; ingen omskriving eller brukerdataoverskriving ved oppstart. Manuelle `attack`/`damage`-totaler bevares og erstatter beregningene. Historisk katalogtekst i `damage` er fortsatt grunnverdi, ikke en manuell total. UUID-/katalogreferanser, andre effekter/ressurser og notater bevares.
+
+De nye feltene følger automatisk eksisterende validering, atomisk save/undo, kopi og full karakterbackup. Dette er en additiv utvidelse som leser eldre v2-data uten migrering; nedgradering til en eldre appversjon støttes ikke som redigeringsflyt. Beregningsregler, multiclass-konvensjon og begrensninger: [EQUIPMENT.md](EQUIPMENT.md).

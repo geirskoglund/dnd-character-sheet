@@ -54,7 +54,7 @@ it('removes a feature and owned children together, preserves shared children and
   expect(removeRecord(c,'resources',c.resources[0].id).actions[0].resourceRefs).toEqual([]);
 });
 it('instantiates every distributed catalog record as editable data with unique instance IDs',()=>{
-  expect(spellLibrary).toHaveLength(319);expect(featureLibrary).toHaveLength(408);expect(equipmentCatalog).toHaveLength(237);
+  expect(spellLibrary).toHaveLength(319);expect(featureLibrary).toHaveLength(408);expect(equipmentCatalog).toHaveLength(239);
   const c=createCharacter();c.spells=spellLibrary.map(row=>instantiateSpell(row.id));c.features=featureLibrary.map(row=>instantiateFeature(row.id));c.items=equipmentCatalog.map(row=>instantiateEquipment(row.catalogId));
   expect(characterSchema.safeParse(c).success).toBe(true);
   expect(new Set(equipmentCatalog.map(row=>row.catalogId)).size).toBe(equipmentCatalog.length);

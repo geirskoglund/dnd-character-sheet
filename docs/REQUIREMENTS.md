@@ -13,7 +13,7 @@ Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, t
 
 ### Overordnet prinsipp: karakterens kontekst
 
-Konteksttilpasning skal støtte målet om et digitalt papirkarakterark og gjøre føring og oppslag enklere. Hele appen skal bruke kjent informasjon om karakteren til å presentere relevante valg, verdier og oppslag i den aktuelle spillerflyten. Dette gjelder på tvers av Character og Combat, blant annet egenskaper/feats, cantrips/spells, utstyr, proficiencies og ressurser. Hver user story skal beskrive hvordan prinsippet gjelder for sin flyt.
+Konteksttilpasning skal støtte målet om et digitalt papirkarakterark og gjøre føring og oppslag enklere. Hele appen skal bruke kjent informasjon om karakteren til å presentere relevante valg, verdier og oppslag i den aktuelle spillerflyten. Dette gjelder på tvers av Character, Combat og Utstyr, blant annet egenskaper/feats, cantrips/spells, utstyr, proficiencies og ressurser. Hver user story skal beskrive hvordan prinsippet gjelder for sin flyt.
 
 - Relevans vurderes etter flytens formål og faktiske regler, med klasse/subclass, nivå i den aktuelle klassen, art, registrerte egenskaper, proficiencies, utstyr og øvrig relevant tilstand som grunnlag.
 - Generelle valg skal beholdes. Bare reelle forutsetninger kan begrunne en begrensning; ukjente eller uavklarte forhold merkes og valget beholdes tilgjengelig.
@@ -34,11 +34,11 @@ De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsipp
 8. Bestå automatiserte tester, inkl. regresjon for feilene fra prototype v0.8–v0.11.
 
 ## 2. Character
-- To hovedfaner **Character** og **Combat** med separat bevart scrollposisjon.
+- Tre hovedfaner **Character**, **Combat** og **Utstyr** med separat bevart scrollposisjon.
 - Kompakt identitet med valgfritt portrett; klassenivå, species/race, subclass, background som notat etter ønske.
 - Øverst: fem like store statuspiller på én rad: HP, AC, Initiative, GP og Speed. GP vises med to desimaler; lagres som heltall copper pieces. HP er lesbar status på Character. Skade, healing og Temporary HP håndteres i Combat med sentrert endringsslider, ±1, forhåndsvisning og bekreftelse. Healing påvirker ikke temporary HP; temp HP absorberer skade først.
 - Fire konfigurerbare modifier-kort med **fullstendige navn** (f.eks. Perception). Trykk viser alfabetisk, kort oversikt over skills, saving throws, abilities, passive perception og initiative som kan velges til kortet. Ikke ekstra fast søkefelt eller dupliserte Skills/Saves-knapper i denne seksjonen.
-- Class Features & Feats **før** Weapons/Armor/Equipment; equipped først. Skill eid fra equipped. Ved trykk på en konkret utstyrspost skal relevante verdier for karakteren og et forståelig beregningsgrunnlag være tilgjengelige: blant annet angrepskast/skade for våpen og AC-regler for rustning. Egne navn, varianter og manuelle korrigeringer skal bevares.
+- Class Features & Feats ligger på Character. Weapons/Armor/Equipment ligger i egen Utstyr-fane; i bruk først. Skill eid fra equipped. Ved trykk på en konkret utstyrspost skal relevante verdier for karakteren og et forståelig beregningsgrunnlag være tilgjengelige: blant annet angrepskast/skade for våpen og AC-regler for rustning. Egne navn, varianter og manuelle korrigeringer skal bevares.
 - **Utstyrsoppsettet er et sentralt krav:** Konkrete gjenstander skal kunne kombineres som de faktisk bæres og brukes. Skill type, relevant plassering/håndbruk, eid/utstyrt-status og eventuell attunement. Vis samlet virkning og bidraget fra hver kilde, med forståelige advarsler ved regelkonflikter og rom for DM-overstyring. Vanlige plagg kan bæres sammen med rustning uten å gi en automatisk bonus; særvirkninger følger den konkrete gjenstanden og dens vilkår. Føringen skal være enkel selv om grunnlaget omfatter flere kombinasjoner.
 - Hver redigerbare samling bruker **inline, pilleformet +** på samme flex/wrap-rad, etter siste element. Ikke rundt +, ikke på egen rad med mindre naturlig wrap. Klikk på element for detaljer/redigering; + for legg til.
 - Velgere for større innholdsbibliotek er søkbare, med kategorifiltre og «Opprett egen». Feat-tillegging skal fungere fullt ut.
@@ -99,7 +99,7 @@ Disse presiserer eksisterende krav og skal leses sammen med siste avklaringer i 
 
 - Pillesamlinger skal utnytte mobilbredden bedre enn to faste kolonner: normalt fire piller i bredden, tre ved 320 px, med lesbare navn, like celler og inline +. Stor skrift må kunne brukes uten horisontal overflyt.
 - Utstyr har tre synlige grupper: **Weapons**, **Armor og skjold**, **Annet utstyr**, med equipped først innen hver gruppe og direkte, relevant valg fra gruppens +.
-- **Class Features & Feats kommer før utstyr.** Feats/egenskaper, språk, skill-/save-proficiencies (inkludert expertise og manuell total modifier), weapon-/armor-/tool-/other-proficiencies, skadeegenskaper og tilstandsimmuniteter skal ha fungerende opprettelse, redigering, fjerning og persistering. De må ikke erstattes av fritekstfelt eller bare finnes i eksportformatet.
+- **Class Features & Feats ligger på Character; utstyr er flyttet til egen fane etter senere avklaring.** Feats/egenskaper, språk, skill-/save-proficiencies (inkludert expertise og manuell total modifier), weapon-/armor-/tool-/other-proficiencies, skadeegenskaper og tilstandsimmuniteter skal ha fungerende opprettelse, redigering, fjerning og persistering. De må ikke erstattes av fritekstfelt eller bare finnes i eksportformatet.
 - Egenskaper skal kunne kobles til handlinger, begrensede ressurser og betingede skadeeffekter. Spells/cantrips og ressurser inngår i den samlede Character-gjennomgangen; registrering forblir manuell, uten automatisk tildeling ved creation eller Level Up.
 - Se både prototype og spesifikasjon før endring, og kontroller komplette brukerflyter etterpå. Rene oppslag har én Lukk, redigering har Lagre/Avbryt. Unødvendige mellomdialoger og dupliserte avbryt-/lukkhandlinger skal fjernes.
 - **Vedlikeholdskrav:** Oppdater denne spesifikasjonen og beslutningsloggen når brukeren avklarer noe. Før leveransestatus og gjenstående arbeid eksplisitt i en kravmatrise. Samtalekomprimering skal ikke medføre tap av vedtatte krav. Nye ideer må merkes som uavklart fremfor å føres som beslutninger.
@@ -116,3 +116,12 @@ For hver funksjons- eller UX-endring skal Codex:
 4. Dokumentere scenarioer, faktisk kontroll, resultater og gjenværende krav i PR og kravmatrise før merge. Grønne tekniske tester alene oppfyller ikke dette kravet. Uløste avvik i berørte flyter må rettes eller uttrykkelig avgrenses av brukeren; eksisterende godkjente fasegrenser beholdes.
 
 Codex utfører produktkontrollen; brukerens UX-vurdering kommer i tillegg. Se [arbeidsinstruks](../AGENTS.md#obligatorisk-produktkontroll-før-levering-og-merge) og [matriseformat, scenarioer og åpne avvik](CHARACTER_WORKSPACE.md#produktkontroll-før-levering-og-merge-vedtatt-2026-10-19). Rene dokumentasjonsendringer verifiseres med tekst-, konsistens- og lenkekontroll; funksjonskrav erklæres ikke oppfylt av en dokumentasjonsendring.
+
+## 11. Enkel Utstyr-fane og avgrensede beregninger (vedtatt 2026-10-19)
+
+- Tre hovedfaner Character, Combat og Utstyr erstatter tidligere tofanekrav. Hver bevarer egen scroll. Administrasjon av utstyr ligger i Utstyr, relevante våpenoppslag og kampverdier i Combat, samme data ligger til grunn.
+- Ingen utstyrsfigur, dra-og-slipp eller obligatoriske kroppsdeler. Rustning er normalt ett samlet sett; enkeltplagg og egne gjenstander kan føres frivillig. Vanlige plagg gir ingen automatisk bonus.
+- Normalt velg kataloggjenstand → legg til direkte. Verdier følger med. Egenregistrering krever bare navn og relevant kategori; notater, antall, regelverdier, magiske bonuser og overstyringer er tilgjengelige ved behov.
+- Enkelt «I bruk»-valg, én/to hender der relevant, og attunement-valg for gjenstander som krever det. Varsle om konflikter uten å blokkere DM-unntak.
+- Beregn AC, våpenangrep og skade etter 2014-reglene fra relevant karaktergrunnlag, proficiencies, håndbruk og støttede registrerte egenskaper/vanlige magiske bonuser. Vis forklaring og kilder. Attunement-avhengige magiske bonuser gjelder bare når kravet er oppfylt; rustningens normale grunnverdier beholdes.
+- Mer sammensatte effekter beskrives som tekst inntil konkret støtte er implementert. Ikke tolk vilkårlig regeltekst som automatisk effekt. Manuelle totaler og egne varianter bevares og merkes tydelig.

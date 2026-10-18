@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test';
-import {createCharacter,menuAction,openMenu} from './helpers';
+import {createCharacter,menuAction,openMenu,equipmentTab} from './helpers';
 const dialog=(page:Page)=>page.getByRole('dialog');
 async function save(page:Page) { await dialog(page).getByRole('button',{name:'Lagre',exact:true}).click(); await expect(dialog(page)).not.toBeVisible(); }
 async function state(page:Page) {
@@ -29,6 +29,7 @@ test('dense pill collections, inline plus and the three prototype equipment grou
     await page.getByRole('button',{name:'Legg til artsegenskap',exact:true}).click();
     await page.getByRole('textbox',{name:'Navn',exact:true}).fill(name);await save(page);
   }
+  await equipmentTab(page);
   for (const [group,item] of [['Weapons','Dagger'],['Armor og skjold','Shield'],['Annet utstyr','Torch']]) {
     const region=page.getByRole('group',{name:group,exact:true});await region.getByRole('button',{name:`Legg til ${group.toLowerCase()}`,exact:true}).click();
     const expectedFilter=group==='Weapons'?'weapon':group==='Armor og skjold'?'armor':'other';
@@ -36,8 +37,9 @@ test('dense pill collections, inline plus and the three prototype equipment grou
     await page.getByRole('button',{name:`Legg til ${item}`,exact:true}).click();await expect(dialog(page)).not.toBeVisible();
     await expect(region).toContainText(item);
   }
+  await page.getByRole('button',{name:'Character',exact:true}).click();
   const sections=await page.locator('main > section > h2').allTextContents();
-  expect(sections.indexOf('Class Features & Feats')).toBeLessThan(sections.indexOf('Utstyr'));
+  expect(sections).toContain('Class Features & Feats');expect(sections).not.toContain('Utstyr');
   for(const [width,cols] of [[320,3],[360,4],[390,4],[768,4]]) {
     await page.setViewportSize({width,height:844});
     const cards=page.getByRole('region',{name:'Artsegenskaper',exact:true}).locator('.pills > button');
