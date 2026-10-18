@@ -66,6 +66,8 @@
 - **Level Up** finnes under «Denne karakteren» i innstillingsmenyen, ikke under generell administrasjon og ikke som stort Progression-panel.
 - Arcane Recovery krever vurdering av spilledag/short rest; ikke anta kalenderdato fra virkeligheten.
 
+- **Hendelseslogg:** Faktiske endringer i karakterens lagrede tilstand logges samlet per operasjon med tidspunkt, før-/etter-verdier og type. Midlertidige visningsvalg logges ikke. Angre siste endring og lesbar historikk; eldre poster kan korrigeres manuelt.
+
 ## 6. Teknologi og videre prosess – besluttet
 
 - Hosting: **GitHub Pages**. Lokal database: **IndexedDB**, ingen backend/brukerkonto. Lokal persistens synkroniseres ikke mellom enheter.
@@ -81,7 +83,7 @@
 3. **Hit Dice og hvile – besluttet:** DM avgjør om Short Rest gjennomføres. Spilleren kan bruke én Hit Die av gangen, kaste fysisk og registrere resultatet som healing, og velge å bruke flere etterpå. Tillat også manuell justering av totalsummer. Ingen digital terningkasting.
 4. **Spellcasting-varianter – besluttet:** Felles spellvisning med klassetilpassede felt og ressurser (known, spellbook, prepared, Pact Magic), og alltid mulighet for manuell redigering.
 5. **Aktive effekter – avgrenset:** Ikke bygg generell tracker for buffs/debuffs, eksterne spells, mørke eller andre situasjonsforhold. Registrer bare det som naturlig hører til karakterarket (f.eks. egne begrensede ressurser og eventuelt nyttig aktiv-status), eller er nødvendig for skadekalkulatoren. Videre detalj-UX kan utsettes.
-6. **Undo:** Bekrefte transaksjonsbasert angre for sammensatte endringer, og hvor langt tilbake man skal kunne gå.
+6. **Endringslogg og angre – besluttet:** Logg faktiske karakterendringer (HP, Temporary HP, spell slots, penger, utstyr og opprettelse/sletting) som strukturerte hendelser med før-/etter-verdier. Ikke logg midlertidige UI-valg som avkryssing i skadeberegning. Vis inspeksjonslogg; støtt enkel «Angre siste endring». Eldre endringer korrigeres manuelt i første versjon; eventuell flerstegs reversering utsettes.
 7. **Backup-sikkerhet:** Hvordan gjøre lokal lagring forståelig og sikkerhetskopiering enkel uten mas.
 8. **Systematisk funksjonstest:** Death Saves, Hit Dice, Inspiration, Conditions, feats, modifiers, spells og rustning/våpen på ulike klasser.
 9. **Innholdsdekning:** Hvilke 2014-/Eberron-opsjoner trengs i første virkelige versjon, kontra manuell registrering?
