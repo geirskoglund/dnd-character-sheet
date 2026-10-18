@@ -1,0 +1,71 @@
+# Kravspesifikasjon – D&D Character Companion
+**Status:** Implementasjonsgrunnlag v1, 2026-10-18. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
+**Spill:** D&D 5e (2014). Mobilførst, offline-først, fysisk terningkast og DM som autoritet.
+
+## 1. Produkt og akseptansekriterier
+Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, turstyrer, VTT eller karakterbygger. Eksisterende karakterer registreres uten å rekonstruere tidligere levels. Brukeren skal kunne overstyre beregninger og lagre egne egenskaper fra DM. Ingen backend, konto, digitale terninger, stemmestyrt mutasjon eller obligatorisk level-up-veiviser.
+
+**Må fungere end-to-end**, ikke bare demonstreres visuelt:
+1. Opprette, redigere, bytte, kopiere og slette karakterer, med eksplisitt bekreftelse ved sletting.
+2. Registrere en eksisterende karakter direkte; endre level og tilhørende felt manuelt.
+3. Administrere HP, temp HP, spell slots, hit dice, inspiration, death saves, ressurser og penger med persistering og hendelseslogg.
+4. Registrere og redigere weapons, armor, annet utstyr, class features, feats, spells, cantrips, notater, languages, proficiencies, damage defenses og condition immunities **som virkelige data**.
+5. Se korrekte, oppdaterte Combat-oppslag fra karakterens faktiske innhold, med korte kort og detaljvisning.
+6. Beregne og bekrefte sammensatt skade, inkludert betingede, individuelt overstyrbare modifikatorer, og forklare resultatet.
+7. Eksportere/importere en komplett karakter som versjonert JSON, inkludert portrett, med validering og trygg feilbehandling.
+8. Bestå automatiserte tester, inkl. regresjon for feilene fra prototype v0.8–v0.11.
+
+## 2. Character
+- To hovedfaner **Character** og **Combat** med separat bevart scrollposisjon.
+- Kompakt identitet med valgfritt portrett; klassenivå, species/race, subclass, background som notat etter ønske.
+- Øverst: kompakte statuspiller for HP, Temporary HP ved HP, AC, initiative og GP. GP vises med to desimaler; lagres som heltall copper pieces. HP endres med sentrert endringsslider, ±1, forhåndsvisning og bekreftelse. Healing påvirker ikke temporary HP; temp HP absorberer skade først.
+- Fire konfigurerbare modifier-kort med **fullstendige navn** (f.eks. Perception). Trykk viser alfabetisk, kort oversikt over skills, saving throws, abilities, passive perception og initiative som kan velges til kortet. Ikke ekstra fast søkefelt eller dupliserte Skills/Saves-knapper i denne seksjonen.
+- Class Features & Feats **før** Weapons/Armor/Equipment; equipped først. Skill eid fra equipped.
+- Hver redigerbare samling bruker **inline, pilleformet +** på samme flex/wrap-rad, etter siste element. Ikke rundt +, ikke på egen rad med mindre naturlig wrap. Klikk på element for detaljer/redigering; + for legg til.
+- Velgere for større innholdsbibliotek er søkbare, med kategorifiltre og «Opprett egen». Feat-tillegging skal fungere fullt ut.
+- Spells, cantrips og spell slots tilgjengelige også utenfor Combat. Slot-pille åpner **kun sitt nivå** og enkel ±1-redigering; skille known, spellbook, prepared og klassespesifikt Pact Magic.
+- Hit Dice brukt én om gangen ved Short Rest med spillerens fysisk kastede healingresultat; tillat manuell korrigering. Rests endrer bare relevante ressurser, med korrekt håndtering av særregler og DM-baserte unntak.
+- Death Saves (3 suksesser/3 feilslag), Inspiration, Conditions, Exhaustion og tilpassbare ressurser skal være redigerbare.
+- Vilkårlig mange navngitte notater med fritekst. Bakgrunn er **ikke** en separat duplisert datadel. Ingen «Rediger øvrige felt»-popup med redundante felt.
+- **Separate strukturerte felt:** languages, armor/weapon/tool proficiencies, skill/save proficiencies/expertise, damage resistance/vulnerability/immunity per damage type, og condition immunity per condition. Strukturerte data må ha fungerende create/edit/delete-UI og persistering.
+- Character-meny: «Denne karakteren» med manuell Level Up/rediger level; generell administrasjon separat (bytt, importer/eksporter osv.).
+
+## 3. Combat
+- **Action | Bonus | Reaction** er tre kompakte faner som kan sveipes mellom. Ingen duplisert kategorioverskrift etter tab-raden. Under finnes kompakt seksjon **Andre egenskaper** for Action Surge, passive/andre features.
+- Tilbud er oppslag, **ikke handlingstracker**: fjern Bruk for ordinære handlinger og «Ferdig med tur»; ingen Action/Bonus/Reaction brukt-indikator. Viser tilgjengelige våpenangrep, Unarmed Strike, Grapple, Shove, relevante general actions, cantrips, spells, feats, class features og utstyrshandlinger. Generelle handlinger sist innen passende kategori.
+- Trykk åpner kompakt detalj med fysisk terningkast uttrykt tydelig: attack bonus, dice/formula, damage type, save DC, casting time og regeltekst når relevant. ∞-symbol for cantrips og konsekvent levelmerke for spells.
+- Begrensede ressurser spores med enkel avkryssing eller antall, også når evnen vises i Combat; ingen automatisk turstyring.
+- «Ta skade» og «Hvile» ligger **under Andre egenskaper**, ingen tomme/uforklarlige knapper. Modifiers/saves kan hentes fra Character; ingen stor duplisering i Combat.
+- Våpen/håndbruk: dual wielding, bonus-action offhand, two-handed, versatile, skjold, proficiency og utstyrseffekter må kunne representeres; advar om konflikter, blokker aldri.
+
+## 4. «Ta skade» – høyprioritert akseptansetest
+**Ikke treff-/AC-kalkulator.** DM avgjør treff og saving throws og kan allerede ha justert skade for aktive reaksjoner (som Uncanny Dodge). Den samme reaksjonen skal fortsatt kunne slås opp under Reaction.
+
+1. Én skadepost som standard: mengde med slider og ±1, damage type. Inline +-pille legger til flere skadeposter med uavhengige damage types.
+2. For hver post, hent matchende passive modifikatorer fra **lagret, strukturert karakterdata** og relevante feats/effects. Reberegn umiddelbart når damage type endres.
+3. Vis **hver enkelt modifikator eksplisitt**: navn, effekt, eventuell betingelse og egen avkryssing. Ikke skjul alt bak «Etter modifikatorer». Vis både resistance og vulnerability samtidig når begge gjelder. Immunity nuller den relevante skaden.
+4. Kjente gyldige modifikatorer er valgt som standard. Når vilkår (f.eks. om angrepet er magisk) ikke er kjent, vis vilkåret og krev **brukerbekreftelse før medregning**. Spiller kan deaktivere enkeltekter som DM allerede har regnet inn, uten å endre karakterens permanente egenskaper.
+5. Støtt strukturert flat reduksjon (f.eks. Heavy Armor Master, 2014: -3 passende ikke-magisk B/P/S mens heavy armor er utstyrt). Bruk regelrett rekkefølge, inklusive 2014 resistance/vulnerability/avrunding. Ikke implementer en automatisert kampsimulator.
+6. Beregn damage-type-delene individuelt, summer skade, trekk så fra temporary HP og deretter vanlig HP. HP endres **kun ved eksplisitt Bekreft/Oppdater HP**; én samlet logghendelse registreres.
+7. Oppsummering viser innkommende skade per type, **alle anvendte modifikatorer og deres faktiske effekt**, temp HP absorbert, vanlig HP tapt, ny HP og kort forklaring som kan gis DM.
+8. Både skadetype- og modifikatorvalg skal være kompakte på mobil. Bruker kan legge til manuell, hendelsesspesifikk justering hvis datamodellen ikke kjenner effekten. Ikke dobbelberegn effekter DM har håndtert.
+9. Test eksplisitt: ingen effekt; bare resistance; bare vulnerability; begge samtidig; immunity; betinget Heavy Armor Master (bekreft/avvis); compound fire+slashing; temp HP større/mindre enn skade; 0 HP; overstyrte effekter; undo.
+
+## 5. Ressurser, spells og regler
+- Ressurser kan knyttes til class features, feats, spells og items og har count/max, rest-regler og manuell overstyring. Arcane Recovery styres av **spilledag**, ikke kalenderdato.
+- Felles spellvisning; klassespesifikke data (Wizard spellbook/prepared, Warlock Pact Magic, andre known/prepared). Slottelling er manuell ±1; cantrips koster normalt ingen spell slots.
+- Egne features kan være handlinger, ressurser, betingede passive effekter og eventuelt aktivstatus. Eksterne buffs, debuffs, darkness/dekning og lignende **skal ikke kreve** løpende registrering; bare tilføy ved behov, særlig for skadeberegning.
+- Full SRD 5.1 som lokalt regelbibliotek med riktig lisensinformasjon og sporbar opprinnelse. Innhold utenfor SRD, inkludert Eberron, er manuelt registrert av bruker; ikke distribuer proprietært innhold.
+
+## 6. Historikk, lagring og drift
+- **IndexedDB**, lokal/offline-first, GitHub Pages statisk hosting. Ingen obligatorisk nettforbindelse for lagrede karakterer og SRD-oppslag etter at appen er cachet.
+- Lagrede karakterendringer føres som strukturerte logghendelser med før-/etter-verdier; sammensatte endringer som én hendelse. Angre siste endring, se logg, korriger eldre manuelt. Ikke logg midlertidige UI-valg.
+- JSON import/export med schemaVersion, relevante IDs og komplett karakterdata inkl. valgfritt portrett; valider før import, ikke overskriv uventet. Diskret backup-påminnelse etter endringer over tid.
+- Data fra flere karakterer må forbli isolerte, også etter kopi. Oppgraderings-/migreringstester og backup round-trip er obligatoriske.
+
+## 7. Ikke-mål
+Automatisk karakterbygging/levelup, digital dice roller, rundeteller, AC-treffsjekk, full kampmotor, tvungen aktiv-status for eksterne effekter, konto/synk, all proprietær boktekst, komplett VTT.
+
+## 8. Kilderangering og ferdigdefinisjon
+Ved motstrid: **Denne spesifikasjonen og vedtatte gjeldende beslutninger** > godkjente arbeidsflyter i prototype > foreslått visuell utforming. Prototype v0.11 inneholder kjente regresjoner og er **ikke fasit**.
+Codex eier testplan, testdata og testimplementasjon; brukeren godkjenner UX. Før markering av ferdig: bygg kjører, tester er grønne, tilgjengelighet/mobilskjermer og offline er prøvd, kravene ovenfor demonstreres praktisk, og ingen godkjent funksjon har falt bort.
