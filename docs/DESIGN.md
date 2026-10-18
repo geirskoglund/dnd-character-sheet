@@ -17,7 +17,9 @@ Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge re
 
 ## Låste UX-mønstre som ikke kan redesignes bort
 - To hovedfaner Character og Combat, separate scrollposisjoner.
-- Character kompakt toppstatus inkl. temp HP ved HP, fire tilpassbare modifier-kort med **fulltekst**.
+- Character: fem like store statuspiller på én rad (HP, AC, Initiative, GP, Speed). HP er kun status; Temporary HP og HP-endringer ligger i Combat. Fire tilpassbare modifier-kort med **fulltekst**.
+- Karakteradministrasjon og grunnlagsredigering ligger i menyen; ingen permanente administrasjonspaneler.
+- Alle piller innen hver seksjon har lik størrelse, form og ramme, inkludert inline +.
 - Piller/kort for lagret informasjon, åpne detaljer ved trykk.
 - **Inline + i samme pilleform** som dataelementene, rett etter siste element med naturlig wrap; ingen separat sirkel eller egen pluss-rad.
 - Søkbare velgerpaneler for store kataloger; søk og filtre øverst; egenregistrering lett tilgjengelig.

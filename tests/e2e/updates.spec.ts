@@ -1,3 +1,4 @@
+import { menuAction } from './helpers';
 import { test, expect } from '@playwright/test';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -33,7 +34,7 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
   const url = `http://127.0.0.1:${address.port}/dnd-character-sheet/`;
   try {
     await page.goto(url); await expect(page).toHaveTitle('Release A');
-    await page.getByRole('button', { name: 'Ny karakter', exact: true }).click();
+    await menuAction(page, 'Ny karakter');
     await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Alva');
     await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({ label: 'Human' });
     await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({ label: 'Fighter' });
@@ -45,10 +46,10 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
     await page.evaluate(() => localStorage.setItem('update-sentinel', 'behold'));
 
     const other = await context.newPage(); await other.goto(url);
-    await other.getByRole('button', { name: 'Rediger karakter' }).click();
+    await menuAction(other, 'Rediger karakter');
     await other.getByRole('textbox', { name: 'Navn', exact: true }).fill('Bevart etter oppdatering');
     release = 'B';
-    await page.getByRole('button', { name: 'Se etter oppdatering', exact: true }).click();
+    await menuAction(page, 'Se etter oppdatering');
     await expect(page.locator('#app-update')).toContainText('En ny versjon er klar');
     await expect(page).toHaveTitle('Release A');
     await expect(other.getByRole('textbox', { name: 'Navn', exact: true })).toHaveValue('Bevart etter oppdatering');
@@ -62,16 +63,17 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
     await expect(page).toHaveTitle('Release B');
     await expect(page.getByRole('heading', { name: 'Bevart etter oppdatering', exact: true })).toBeVisible();
     expect(await page.evaluate(() => localStorage.getItem('update-sentinel'))).toBe('behold');
-    await expect(page.locator('[data-action="hp"]')).toContainText('12 / 12');
+    await expect(page.getByLabel('Karakterstatus')).toContainText('12 / 12');
 
     await context.setOffline(true); await page.reload();
     await expect(page).toHaveTitle('Release B');
     await expect(page.getByRole('heading', { name: 'Bevart etter oppdatering', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Se etter oppdatering', exact: true }).click();
+    await menuAction(page, 'Se etter oppdatering');
     await expect(page.locator('#app-update')).toContainText('uten nett');
+    await page.getByLabel('Appoppdatering').getByRole('button', {name:'Lukk',exact:true}).click();
     failWorker = true;
     await context.setOffline(false);
-    await page.getByRole('button', { name: 'Se etter oppdatering', exact: true }).click();
+    await menuAction(page, 'Se etter oppdatering');
     await expect(page.locator('#app-update')).toContainText('Kunne ikke sjekke');
     await expect(page.getByRole('heading', { name: 'Bevart etter oppdatering', exact: true })).toBeVisible();
   } finally {

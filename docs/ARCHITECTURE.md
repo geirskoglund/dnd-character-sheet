@@ -9,6 +9,8 @@ TypeScript + Vite og små DOM-baserte views uten UI-rammeverk. Grunnflaten er li
 - `src/domain/model.ts`: versjonert Character-aggregat, typer, validering, factory og kopiering.
 - `src/storage/database.ts`: IndexedDB, skjemaoppgradering, repository, optimistisk revisjonskontroll og atomiske endringshendelser.
 - `src/storage/backup.ts`: komplett karakterpayload og refererte portrettdata, størrelsesgrenser og transaksjonell import.
+- `src/domain/level-up.ts`: manuell nivåøkning i én klasse med eksplisitt maks HP, uten automatisk healing eller tildeling av regelinnhold.
+- `src/ui/character-form.ts` og `equipment-form.ts`: separate skjemaer for karaktergrunnlag og utstyr.
 - `src/ui/`: presentasjon og HTML-escaping. `src/main.ts` binder UI, navigasjon, dialogs og applikasjonsoperasjoner sammen.
 - `public/`: manifest og ikon. Vite PWA/Workbox genererer `sw.js` med hashet precache ved bygg. Ingen CDN, eksterne fonter eller runtime API-kall.
 
@@ -36,7 +38,7 @@ Utformingen er et foreløpig teknisk grunnlag med høy kontrast og 44 px trykkfl
 
 ## Videre faser
 
-1. Redigeringsflater for alle strukturerte samlinger og fire konfigurerbare modifierkort.
+1. Redigeringsflater for alle strukturerte samlinger. Fire konfigurerbare modifierkort er senere implementert; proficiency-/skill-redigering gjenstår.
 2. Portrettopplasting med filvalidering, enklere backupmigrering fra prototype og forbedret backup-påminnelse basert på faktiske endringer.
 3. Lisensiert lokalt SRD 5.1-bibliotek; søkbare velgere og manuelle egendefinerte oppføringer.
 4. Karaktergenererte Combat-oppslag, swipe, ressurser, spells/Pact Magic og hvile.

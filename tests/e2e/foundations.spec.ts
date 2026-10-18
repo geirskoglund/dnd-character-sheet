@@ -1,82 +1,107 @@
 import { test, expect, type Page } from '@playwright/test';
+import { menuAction } from './helpers';
 async function openCharacter(page: Page, species = 'Human', className = 'Fighter', level = 5) {
-  await page.goto('./'); await page.getByRole('button', {name:'Ny karakter',exact:true}).click();
+  await page.goto('./'); await menuAction(page, 'Ny karakter');
+  await expect(page.getByRole('textbox', {name:'Navn',exact:true})).toHaveValue('');
   await page.getByRole('textbox', {name:'Navn',exact:true}).fill('Alva');
   await page.getByRole('combobox', {name:'Art / species',exact:true}).selectOption({label:species});
   await page.getByRole('combobox', {name:'Klasse',exact:true}).selectOption({label:className});
   await page.getByRole('spinbutton', {name:'Klassenivå',exact:true}).fill(String(level));
   await page.getByRole('spinbutton', {name:'Maks HP fra karakterarket',exact:true}).fill('42');
-  await page.getByRole('spinbutton', {name:'DEX',exact:true}).fill('16');
-  await page.getByRole('spinbutton', {name:'CON',exact:true}).fill('14');
-  await page.getByRole('spinbutton', {name:'WIS',exact:true}).fill('16');
+  for (const [name,value] of [['DEX','16'],['CON','14'],['WIS','16']]) await page.getByRole('spinbutton',{name,exact:true}).fill(value);
 }
 async function addEquipment(page: Page, name: string) {
   await page.getByRole('button', {name:'+ Utstyr',exact:true}).click();
   await page.getByRole('combobox', {name:'Utstyr',exact:true}).last().selectOption({label: name});
 }
 async function save(page: Page) {
-  await page.getByRole('button', {name:'Lagre',exact:true}).click();
+  await page.getByRole('dialog').getByRole('button', {name:'Lagre',exact:true}).click();
   await expect(page.getByRole('dialog')).not.toBeVisible();
   await expect(page.getByRole('heading', {name:'Alva',exact:true})).toBeVisible();
 }
-test('creation shows derived AC/speed, initializes HP, and separates owned and equipped gear', async ({page}) => {
+async function equipment(page: Page) { await page.getByRole('button',{name:'Rediger utstyr',exact:true}).click(); }
+test('minimal creation, five read-only status values, equipment edited inside app and uniform pills', async ({page}) => {
   await openCharacter(page);
-  await expect(page.locator('[name="acOverride"], [name="speed"], [name="hpCurrent"], [name="hpTemp"]')).toHaveCount(0);
-  await addEquipment(page, 'Leather · armor');
-  await addEquipment(page, 'Shield · shield');
-  await expect(page.locator('#derived-preview')).toContainText('AC 16');
-  await expect(page.locator('#derived-preview')).toContainText('Speed 30 ft');
+  await expect(page.locator('#species-info, #derived-preview, #equipment-rows, [name="hpCurrent"], [name="hpTemp"], [name="acOverride"]')).toHaveCount(0);
+  await expect(page.getByRole('dialog')).not.toContainText('grunnfart');
+  await expect(page.getByRole('dialog')).not.toContainText('Darkvision');
   await save(page);
-  await expect(page.locator('[data-action="hp"]')).toContainText('42 / 42');
-  await expect(page.locator('[data-action="temp-hp"]')).toContainText('0');
-  await page.getByRole('button', {name:'Shield · utstyrt',exact:true}).click();
-  await expect(page.getByRole('button', {name:'Shield · eid',exact:true})).toBeVisible();
-  await expect(page.getByLabel('Karakterstatus')).toContainText('AC14');
-  await page.reload();
-  await expect(page.getByRole('button', {name:'Shield · eid',exact:true})).toBeVisible();
-  await page.getByRole('button', {name:'Rediger karakter'}).click();
-  await page.getByRole('combobox', {name:'Art / species',exact:true}).selectOption({label:'Dwarf'});
-  await addEquipment(page, 'Plate · armor');
-  await expect(page.locator('#derived-preview')).toContainText('AC 18');
-  await expect(page.locator('#derived-preview')).toContainText('Speed 25 ft');
-  await expect(page.locator('#derived-preview')).toContainText('Flere rustninger');
-  await save(page);
-});
-test('Monk AC and speed follow class level and shield use with visible explanations', async ({page}) => {
-  await openCharacter(page,'Human','Monk',6);
-  await expect(page.locator('#derived-preview')).toContainText('AC 16');
-  await expect(page.locator('#derived-preview')).toContainText('Speed 45 ft');
-  await expect(page.locator('#derived-preview')).toContainText('Unarmored Defense');
-  await addEquipment(page,'Shield · shield');
-  await expect(page.locator('#derived-preview')).toContainText('AC 15');
-  await expect(page.locator('#derived-preview')).toContainText('Speed 30 ft');
-  await save(page);
+  await expect(page.getByRole('button',{name:'Rediger karakter',exact:true})).not.toBeVisible();
+  await expect(page.getByRole('combobox',{name:'Bytt karakter',exact:true})).not.toBeVisible();
+  await expect(page.locator('[data-action="hp"], [data-action="temp-hp"]')).toHaveCount(0);
+  await expect(page.getByLabel('Karakterstatus')).toContainText('42 / 42');
+  await expect(page.getByLabel('Karakterstatus').locator(':scope > *')).toHaveCount(5);
+  await equipment(page); await addEquipment(page,'Leather · armor'); await addEquipment(page,'Shield · shield');
+  await expect(page.locator('#derived-preview')).toContainText('AC 16'); await save(page);
   await page.getByRole('button',{name:'Shield · utstyrt',exact:true}).click();
-  await expect(page.getByRole('button',{name:'Shield · eid',exact:true})).toBeVisible();
+  await page.getByRole('checkbox',{name:'Utstyrt',exact:true}).uncheck(); await save(page);
+  await expect(page.getByLabel('Karakterstatus')).toContainText('AC14');
+  await page.reload(); await expect(page.getByRole('button',{name:'Shield · eid',exact:true})).toBeVisible();
+  for (const title of ['Kort notat', 'En lang overskrift som skal kunne leses uten at pillene får forskjellig størrelse']) {
+    await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
+    await page.getByRole('textbox',{name:'Tittel',exact:true}).fill(title); await save(page);
+  }
+  for (const width of [320,360,390,768]) {
+    await page.setViewportSize({width,height:844});
+    const rects = await page.getByLabel('Karakterstatus').locator(':scope > *').evaluateAll(els => els.map(el => {const r=el.getBoundingClientRect();return {y:r.y,w:r.width,h:r.height};}));
+    expect(new Set(rects.map(r=>r.y)).size).toBe(1);
+    expect(Math.max(...rects.map(r=>r.w))-Math.min(...rects.map(r=>r.w))).toBeLessThan(1);
+    const groups = await page.locator('.pills').evaluateAll(groups=>groups.map(group=>[...group.children].map(el=>{const r=el.getBoundingClientRect();return {w:r.width,h:r.height};})));
+    for (const rects of groups) {
+      expect(Math.max(...rects.map(r=>r.w))-Math.min(...rects.map(r=>r.w))).toBeLessThan(1);
+      expect(Math.max(...rects.map(r=>r.h))-Math.min(...rects.map(r=>r.h))).toBeLessThan(1);
+    }
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  }
+});
+test('subclass lists follow class, custom subclasses persist, core editing preserves equipment', async ({page}) => {
+  await openCharacter(page);
+  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption({label:'Champion'});
+  await page.getByRole('combobox',{name:'Klasse',exact:true}).selectOption({label:'Wizard'});
+  await expect(page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true})).toHaveValue('');
+  await expect(page.locator('[name="subclassChoice"] option')).not.toContainText(['Champion']);
+  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption('custom');
+  await page.getByRole('textbox',{name:'Egen subclass',exact:true}).fill('Min skole');
+  await save(page); await equipment(page); await addEquipment(page,'Shield · shield'); await save(page);
+  await menuAction(page,'Rediger karakter');
+  await expect(page.getByRole('textbox',{name:'Egen subclass',exact:true})).toHaveValue('Min skole');
+  await page.getByRole('combobox',{name:'Art / species',exact:true}).selectOption({label:'Dwarf'});
+  await save(page); await page.reload();
+  await expect(page.locator('header')).toContainText('Min skole');
+  await expect(page.getByRole('button',{name:'Shield · utstyrt',exact:true})).toBeVisible();
+  await expect(page.getByLabel('Karakterstatus')).toContainText('Speed25 ft');
+});
+test('Monk AC and speed follow class level and equipped shield', async ({page}) => {
+  await openCharacter(page,'Human','Monk',6); await save(page);
+  await expect(page.getByLabel('Karakterstatus')).toContainText('AC16');
+  await expect(page.getByLabel('Karakterstatus')).toContainText('Speed45 ft');
+  await equipment(page); await addEquipment(page,'Shield · shield');
+  await expect(page.locator('#derived-preview')).toContainText('AC 15');
+  await expect(page.locator('#derived-preview')).toContainText('Speed 30 ft'); await save(page);
+  await page.getByRole('button',{name:'Shield · utstyrt',exact:true}).click();
+  await page.getByRole('checkbox',{name:'Utstyrt',exact:true}).uncheck(); await save(page);
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC16');
   await expect(page.getByLabel('Karakterstatus')).toContainText('Speed45 ft');
 });
-test('custom species and custom armor remain editable and do not silently become SRD definitions', async ({page}) => {
+test('custom species and custom armor remain editable separately', async ({page}) => {
   await openCharacter(page);
   await page.getByRole('combobox',{name:'Art / species',exact:true}).selectOption('custom');
   await page.getByRole('textbox',{name:'Navn på art / underart',exact:true}).fill('Min art');
-  await page.getByRole('spinbutton',{name:'Grunnfart for arten (ft)',exact:true}).fill('35');
-  await page.getByRole('button',{name:'+ Utstyr',exact:true}).click();
+  await page.getByRole('spinbutton',{name:'Grunnfart for arten (ft)',exact:true}).fill('35'); await save(page);
+  await equipment(page); await page.getByRole('button',{name:'+ Utstyr',exact:true}).click();
   await page.getByRole('combobox',{name:'Utstyr',exact:true}).selectOption('custom');
   await page.getByRole('textbox',{name:'Navn på utstyr',exact:true}).fill('Min rustning');
   await page.getByRole('combobox',{name:'Kategori',exact:true}).selectOption('armor');
   await page.getByRole('spinbutton',{name:'Base AC for rustningen',exact:true}).fill('15');
   await page.getByRole('spinbutton',{name:'Maks Dexterity-bonus (tomt = ingen grense)',exact:true}).fill('2');
-  await expect(page.locator('#derived-preview')).toContainText('AC 17');
-  await expect(page.locator('#derived-preview')).toContainText('Speed 35 ft');
-  await save(page); await page.reload();
-  await page.getByRole('button',{name:'Rediger karakter'}).click();
-  await expect(page.getByRole('textbox',{name:'Navn på art / underart',exact:true})).toHaveValue('Min art');
-  await expect(page.getByRole('textbox',{name:'Navn på utstyr',exact:true})).toHaveValue('Min rustning');
-  await save(page);
+  await expect(page.locator('#derived-preview')).toContainText('AC 17'); await save(page); await page.reload();
+  await menuAction(page,'Rediger karakter');
+  await expect(page.getByRole('textbox',{name:'Navn på art / underart',exact:true})).toHaveValue('Min art'); await save(page);
+  await equipment(page); await expect(page.getByRole('textbox',{name:'Navn på utstyr',exact:true})).toHaveValue('Min rustning'); await save(page);
 });
-test('HP changes preview before commit, damage uses temp HP first and undo is atomic', async ({page}) => {
+test('damage and temp HP only in Combat, preview/cancel and atomic undo', async ({page}) => {
   await openCharacter(page); await save(page);
+  await page.getByRole('button',{name:'Combat',exact:true}).click();
   await page.locator('[data-action="temp-hp"]').click();
   await page.getByRole('spinbutton',{name:'Temporary HP',exact:true}).fill('5'); await save(page);
   await page.locator('[data-action="hp"]').click();
@@ -89,29 +114,88 @@ test('HP changes preview before commit, damage uses temp HP first and undo is at
   await page.getByRole('slider',{name:'Endring i HP',exact:true}).fill('-8');
   await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();
   await expect(page.locator('[data-action="hp"]')).toContainText('39 / 42');
-  await expect(page.locator('[data-action="temp-hp"]')).toContainText('0');
-  await page.getByText('Karakteradministrasjon',{exact:true}).click();
-  await page.getByRole('button',{name:'Angre siste endring'}).click();
+  await menuAction(page,'Angre siste endring');
   await expect(page.locator('[data-action="hp"]')).toContainText('42 / 42');
   await expect(page.locator('[data-action="temp-hp"]')).toContainText('5');
-  await page.getByRole('button',{name:'Rediger karakter'}).click();
-  await page.getByRole('spinbutton',{name:'Maks HP fra karakterarket',exact:true}).fill('50');
-  await save(page);
+  await menuAction(page,'Rediger karakter');
+  await page.getByRole('spinbutton',{name:'Maks HP fra karakterarket',exact:true}).fill('50'); await save(page);
   await expect(page.locator('[data-action="hp"]')).toContainText('42 / 50');
   await expect(page.locator('[data-action="temp-hp"]')).toContainText('5');
+  await page.getByRole('button',{name:'Character',exact:true}).click();
+  await expect(page.getByLabel('Karakterstatus')).toContainText('42 / 50');
+  await expect(page.getByRole('main')).not.toContainText('Temporary HP');
 });
-test('manual overrides can be removed to return to equipment-derived values', async ({page}) => {
+test('manual overrides can be removed through the menu', async ({page}) => {
   await openCharacter(page); await save(page);
-  await page.getByRole('button',{name:'Beregninger og overstyringer',exact:true}).click();
+  await menuAction(page,'Beregninger og overstyringer');
   await page.getByRole('spinbutton',{name:'Manuell AC (valgfritt)',exact:true}).fill('21');
-  await page.getByRole('spinbutton',{name:'Manuell speed (ft, valgfritt)',exact:true}).fill('50');
-  await save(page);
+  await page.getByRole('spinbutton',{name:'Manuell speed (ft, valgfritt)',exact:true}).fill('50'); await save(page);
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC21');
+  await expect(page.getByRole('main')).toContainText('Manuelle verdier er aktive.');
   await expect(page.getByLabel('Karakterstatus')).toContainText('Speed50 ft');
-  await page.getByRole('button',{name:'Beregninger og overstyringer',exact:true}).click();
+  await menuAction(page,'Beregninger og overstyringer');
   await page.getByRole('spinbutton',{name:'Manuell AC (valgfritt)',exact:true}).fill('');
-  await page.getByRole('spinbutton',{name:'Manuell speed (ft, valgfritt)',exact:true}).fill('');
-  await save(page);
+  await page.getByRole('spinbutton',{name:'Manuell speed (ft, valgfritt)',exact:true}).fill(''); await save(page);
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC13');
   await expect(page.getByLabel('Karakterstatus')).toContainText('Speed30 ft');
+});
+test('Level Up requires manually entered HP, persists level/subclass, and undoes together', async ({page}) => {
+  await openCharacter(page,'Human','Fighter',2); await save(page);
+  await menuAction(page,'Level Up');
+  await expect(page.getByRole('spinbutton',{name:'Ny samlet maks HP',exact:true})).toHaveValue('');
+  await page.getByRole('spinbutton',{name:'Ny samlet maks HP',exact:true}).fill('49');
+  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption({label:'Champion'});
+  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await expect(page.locator('header')).toContainText('Fighter 2');
+  await menuAction(page,'Level Up');
+  await page.getByRole('spinbutton',{name:'Ny samlet maks HP',exact:true}).fill('49');
+  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption({label:'Champion'});
+  await page.getByRole('button',{name:'Bekreft Level Up',exact:true}).click();
+  await expect(page.locator('header')).toContainText('Fighter 3 · Champion');
+  await expect(page.getByLabel('Karakterstatus')).toContainText('42 / 49');
+  await page.reload(); await expect(page.locator('header')).toContainText('Fighter 3 · Champion');
+  await menuAction(page,'Endringslogg');
+  await expect(page.getByRole('dialog')).toContainText('maks HP 42 → 49');
+  await page.getByRole('button',{name:'Lukk',exact:true}).click();
+  await menuAction(page,'Angre siste endring');
+  await expect(page.locator('header')).toContainText('Fighter 2');
+  await expect(page.locator('header')).not.toContainText('Champion');
+  await expect(page.getByLabel('Karakterstatus')).toContainText('42 / 42');
+});
+test('cancelled forms leave no stale listeners or errors in the next dialog', async ({page}) => {
+  const errors: string[] = []; page.on('pageerror', error=>errors.push(error.message));
+  await openCharacter(page); await save(page);
+  await menuAction(page,'Rediger karakter');
+  await page.getByRole('combobox',{name:'Klasse',exact:true}).selectOption('custom');
+  await page.getByRole('textbox',{name:'Egen klasse',exact:true}).fill('Min klasse');
+  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await equipment(page); await addEquipment(page,'Leather · armor'); await save(page);
+  await menuAction(page,'Rediger karakter');
+  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await page.getByRole('button',{name:'Combat',exact:true}).click();
+  await page.locator('[data-action="hp"]').click();
+  await page.getByRole('slider',{name:'Endring i HP',exact:true}).fill('-3');
+  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await menuAction(page,'Rediger karakter');
+  await page.getByRole('combobox',{name:'Klasse',exact:true}).selectOption('custom');
+  await page.getByRole('textbox',{name:'Egen klasse',exact:true}).fill('Fighter'); await save(page);
+  await menuAction(page,'Rediger karakter');
+  await expect(page.getByRole('combobox',{name:'Klasse',exact:true})).toHaveValue('custom');
+  expect(errors).toEqual([]);
+});
+test('four modifier favorites show full names, can be changed and persist offline', async ({page,context}) => {
+  await openCharacter(page); await save(page);
+  await expect(page.locator('[data-modifier]')).toHaveCount(4);
+  await expect(page.locator('[data-modifier="2"]')).toContainText('Stealth+3');
+  await page.locator('[data-modifier="2"]').click();
+  await page.getByRole('button',{name:'Animal Handling +3',exact:true}).click();
+  await expect(page.locator('[data-modifier="2"]')).toContainText('Animal Handling+3');
+  await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();
+  await page.waitForFunction(()=>navigator.serviceWorker.controller !== null);
+  await context.setOffline(true);await page.reload();
+  await expect(page.locator('[data-modifier="2"]')).toContainText('Animal Handling+3');
+  await page.setViewportSize({width:320,height:844});
+  await page.evaluate(()=>document.documentElement.style.fontSize='200%');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expect(page.locator('[data-modifier="2"]')).toContainText('Animal Handling');
 });

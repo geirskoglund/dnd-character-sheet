@@ -18,7 +18,7 @@
 
 - To hovedvisninger: **Character** (verdier, redigering, oppslag) og **Combat** (rask handling-/regeloversikt); behold separat scrollposisjon.
 - Kort/piller fremfor lange tekstblokker; detaljer åpnes ved trykk. Unngå overflødige overskrifter og tellere.
-- Statusfelt høyt på Character: HP, AC, initiative og GP; **Temporary HP har egen kompakt pille ved HP**. GP med to desimaler, internt heltall kobbermynter.
+- Statusfelt høyt på Character: fem like store piller på én rad: HP, AC, Initiative, GP og Speed. **Temporary HP og HP-endring ligger i Combat** (senere avklart). GP med to desimaler, internt heltall kobbermynter.
 - **Modifiers:** Fire kompakte, tilpassbare favorittkort med fullt navn. Trykk for alfabetisk liste over ferdigheter, ability modifiers, saves, initiative m.m., og bytt kortets innhold. Ikke separat permanent søkefelt/duplikatknapp her.
 - **Pluss-pille-mønster:** Hver redigerbare samling får en pille med stort «+», identisk pilleform og **inline rett etter siste element**, naturlig linjebryting; ikke egen sirkel eller dedikerte «Legg til»-knapper. Gjelder Weapons, Armor, annet utstyr, Features/Feats, Spells, Cantrips, ressurser, handlinger, notater og andre samlinger.
 - For store biblioteker: søkbar, mobilvennlig velger med relevante filtre, og «Opprett egen». Ikke lange demolister i liten popup. Egne feats skal faktisk kunne legges til.
@@ -122,6 +122,18 @@
 
 ## Presisering etter gjennomgang av fase 1
 
-Brukeren har påpekt at opprettelsen feilaktig ba om AC, speed og temporary HP som uavhengige grunnverdier. Opprettelse skal registrere art, klasse/nivå, ability scores og utstyr, vise avledede verdier med grunnlag og håndtere løpende spilltilstand på karakterarket. Manuelle overstyringer er egne, eksplisitte korreksjoner. Eksisterende karakterer kan fortsatt registreres direkte uten automatisk karakterbygging eller rekonstruksjon av tidligere levels. Se [implementert kontrakt og avgrensning](CHARACTER_FOUNDATIONS.md).
+Brukeren har påpekt at opprettelsen feilaktig ba om AC, speed og temporary HP som uavhengige grunnverdier. Denne første rettelsen ble senere presisert ytterligere: Opprettelse registrerer bare identitet, art, klasse/subclass/nivå, ability scores og maks HP. Utstyr legges til inne i appen, og løpende HP-tilstand håndteres i Combat. Se siste avklaring nedenfor. Manuelle overstyringer er egne, eksplisitte korreksjoner. Eksisterende karakterer kan fortsatt registreres direkte uten automatisk karakterbygging eller rekonstruksjon av tidligere levels. Se [implementert kontrakt og avgrensning](CHARACTER_FOUNDATIONS.md).
 
 Brukeren har også overlatt kodegjennomgang og merge av testede endringer til Codex. Produkt- og designavgjørelser ligger fortsatt hos brukeren.
+
+## Seneste brukeravklaringer om arbeidsflate og opprettelse
+
+Disse presiserer og erstatter eldre plasseringer i prototypebeslutningene:
+
+- All karakteradministrasjon i menyen; grunnlagsredigering og Level Up under «Denne karakteren», uten permanent panel på arbeidsflaten.
+- Character har fem statusverdier på én rad: HP, AC, Initiative, GP og Speed. HP er lesbar status; skade/healing og Temporary HP er i Combat, også for skade utenfor kamp.
+- Like store piller med lik form og ramme innen hver seksjon, inkludert inline +.
+- Opprettelse har tomt navn med grått hint som skjules ved fokus, species-listen uten speed/artsdetaljer, klasse/subclass-lister med egne alternativer, nivå, grunnverdier og manuelt maks HP. Utstyr og features hører til inne i appen.
+- Maks HP kan bygge på fysisk Hit Die-kast eller fast verdi. Manuell Level Up må derfor ha felt for ny maks HP. Ingen digital kasting eller automatisk karakterbygger.
+- Brukeren ønsker å kunne fullføre en tankeprosess før koding: kommentarer er ikke i seg selv en kodebestilling. Denne endringen ble uttrykkelig bestilt med «nå starter å kode».
+- Brukeren la v0.11-prototypen i `prototypes/dnd-character-companion-v0.11.html`. Den er lest og åpnet i nettleser; se [konkret gjennomgang og avgrensning](PROTOTYPE_REVIEW.md). Gammel app.js er ikke samme referanse.
