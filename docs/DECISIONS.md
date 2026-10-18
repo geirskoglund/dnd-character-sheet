@@ -126,3 +126,11 @@ Status: Tilbakemelding ferdig. Ingen v0.4 bygget ennå.
 
 ## Vedlikehold
 Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig **besluttet**, **foreløpig** og **åpent**, og legg vesentlige omgjøringer i historikken. Denne filen er kilden til prosjektbeslutninger på tvers av chat-komprimering og kan deles med Codex.
+
+
+## Produktavklaring – digitalt papirark (2026-10-18)
+- **Primærmål:** Erstatte papirkarakterarket med et oversiktlig, raskt og manuelt redigerbart digitalt ark; **ikke** lage en helautomatisk D&D-regelmotor eller karakterbygger.
+- **Level-up:** Kan gjennomføres manuelt med DM. Brukeren skal kunne endre level, verdier, spell slots, spells, features, feats og utstyr direkte, uten at appen må utlede alle regelkonsekvenser.
+- **Automatisering:** Kun som praktisk hjelp når den er enkel, forutsigbar og pålitelig (f.eks. ability modifiers). DM og spilleren har autoritet over verdiene; automatiske beregninger må ikke blokkere manuelle justeringer.
+- **Combat:** Rask oversikt/ressursstyring snarere enn full validering og håndheving av regler.
+- **Evaluering av alternativer:** Vektlegg redigerbarhet, oversikt, mobilbruk og fart over automatisert karakterbygging/level-up.
