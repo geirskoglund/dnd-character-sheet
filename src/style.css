@@ -65,3 +65,7 @@ fieldset label + label, [data-custom-species], [data-custom-item], [data-custom-
 .warning { color: #f2c58b; }
 input[type="range"] { padding: .5rem 0; }
 a { color: var(--accent); }
+#app-update { position: fixed; z-index: 10; inset: .75rem .75rem auto; max-width: 680px; margin-inline: auto; padding: 1rem; background: #27343b; border: 2px solid var(--accent); border-radius: .7rem; box-shadow: 0 4px 24px #0008; }
+#app-update p { margin: 0 0 .6rem; }
+#app-update button { margin-right: .5rem; }
+footer button { margin-top: .4rem; }
