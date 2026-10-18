@@ -1,7 +1,8 @@
+import { menuAction, openMenu } from './helpers';
 import { test, expect } from '@playwright/test';
 
 async function create(page: import('@playwright/test').Page, name = 'Alva') {
-  await page.getByRole('button', { name: 'Ny karakter', exact: true }).click();
+  await menuAction(page, 'Ny karakter');
   await expect(page.getByRole('textbox', { name: 'Navn', exact: true })).toHaveValue('');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill(name);
   await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({label:'Human'});
@@ -22,30 +23,31 @@ test('mobile character lifecycle, isolated copy, cancellation, notes, undo and p
   await page.getByRole('textbox', { name: 'Tittel' }).fill('Bakgrunn');
   await page.getByRole('textbox', { name: 'Tekst' }).fill('Reisende fra nord.');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
-  await page.getByText('Karakteradministrasjon', { exact: true }).click();
+  await openMenu(page);
   await page.getByRole('button', { name: 'Kopier karakter' }).click();
   await expect(page.getByRole('heading', { name: 'Alva (kopi)', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Bakgrunn', exact: true }).click();
   await page.getByRole('textbox', { name: 'Tekst' }).fill('Kopiens historie');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Karakter', exact: true }).selectOption({ label: 'Alva' });
+  await openMenu(page);
+  await page.getByRole('combobox', { name: 'Bytt karakter', exact: true }).selectOption({ label: 'Alva' });
   await page.getByRole('button', { name: 'Bakgrunn', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Tekst' })).toHaveValue('Reisende fra nord.');
   await page.getByRole('button', { name: 'Avbryt' }).click();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Alva', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Rediger karakter' }).click();
+  await menuAction(page, 'Rediger karakter');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Should not save');
   await page.getByRole('button', { name: 'Avbryt' }).click();
   await expect(page.getByRole('heading', { name: 'Alva', exact: true })).toBeVisible();
-  await page.getByText('Karakteradministrasjon', { exact: true }).click();
+  await openMenu(page);
   await page.getByRole('button', { name: 'Angre siste endring' }).click();
   await expect(page.getByRole('button', { name: 'Bakgrunn', exact: true })).toHaveCount(0);
-  await page.getByText('Karakteradministrasjon', { exact: true }).click();
-  await page.getByRole('button', { name: 'Slett karakter', exact: true }).click();
+  await openMenu(page);
+  await menuAction(page, 'Slett karakter');
   await page.getByRole('button', { name: 'Avbryt' }).click();
   await expect(page.getByRole('heading', { name: 'Alva', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Slett karakter', exact: true }).click();
+  await menuAction(page, 'Slett karakter');
   await page.getByRole('dialog').getByRole('button', { name: 'Slett karakter', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Alva (kopi)', exact: true })).toBeVisible();
   expect(errors).toEqual([]);
@@ -63,7 +65,7 @@ test('production PWA works offline on a GitHub Pages subpath and has no horizont
   await page.getByRole('button', { name: 'Reaction', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Reaction', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Character', exact: true }).click();
-  await page.getByRole('button', { name: 'Rediger karakter' }).click();
+  await menuAction(page, 'Rediger karakter');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Offline Alva');
   await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({label:'Dwarf'});
   await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({label:'Monk'});
@@ -77,25 +79,25 @@ test('production PWA works offline on a GitHub Pages subpath and has no horizont
   for (const width of [320, 360, 390, 768]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.getByRole('button', { name: 'Rediger karakter' }).click();
+    await menuAction(page, 'Rediger karakter');
     expect(await page.getByRole('dialog').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     await page.getByRole('button', { name: 'Avbryt' }).click();
   }
 });
 test('UI backup round-trip, ID collision and malformed-file feedback', async ({ page, browser }) => {
   await page.goto('./'); await create(page);
-  await page.getByText('Karakteradministrasjon', { exact: true }).click();
+  await openMenu(page);
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Eksporter backup' }).click();
   const path = await (await downloadPromise).path();
   const other = await browser.newContext(); const target = await other.newPage();
   await target.goto('./');
-  await target.getByText('Karakteradministrasjon', { exact: true }).click();
+  await openMenu(target);
   await target.getByRole('button', { name: 'Importer backup' }).click();
   await target.getByLabel('JSON-fil').setInputFiles(path!);
   await target.getByRole('button', { name: 'Importer', exact: true }).click();
   await expect(target.getByRole('heading', { name: 'Alva', exact: true })).toBeVisible();
-  await target.getByText('Karakteradministrasjon', { exact: true }).click();
+  await openMenu(target);
   await target.getByRole('button', { name: 'Importer backup' }).click();
   await target.getByLabel('JSON-fil').setInputFiles(path!);
   await target.getByRole('button', { name: 'Importer', exact: true }).click();
@@ -108,7 +110,7 @@ test('UI backup round-trip, ID collision and malformed-file feedback', async ({ 
 
 test('multiclass totals and separate navigation scroll positions', async ({ page }) => {
   await page.goto('./'); await create(page);
-  await page.getByRole('button', { name: 'Rediger karakter' }).click();
+  await menuAction(page, 'Rediger karakter');
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).fill('3');
   await expect(page.locator('#total-level')).toHaveText('Totalt level: 3');
   await page.getByRole('button', { name: '+ Klasse', exact: true }).click();
@@ -116,7 +118,7 @@ test('multiclass totals and separate navigation scroll positions', async ({ page
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).nth(1).fill('2');
   await expect(page.locator('#total-level')).toHaveText('Totalt level: 5');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
-  await expect(page.getByRole('main')).toContainText('Fighter 3 / Wizard 2');
+  await expect(page.locator('header')).toContainText('Fighter 3 / Wizard 2');
   await page.setViewportSize({ width: 390, height: 500 });
   await page.evaluate(() => window.scrollTo(0, 200));
   const characterScroll = await page.evaluate(() => scrollY);
@@ -132,7 +134,7 @@ test('multiclass totals and separate navigation scroll positions', async ({ page
 
 test('storage failure does not claim success or discard the edited form', async ({ page }) => {
   await page.goto('./'); await create(page);
-  await page.getByRole('button', { name: 'Rediger karakter' }).click();
+  await menuAction(page, 'Rediger karakter');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Unsaved');
   await page.evaluate(() => {
     const original = IDBObjectStore.prototype.put;

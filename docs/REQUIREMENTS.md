@@ -18,7 +18,7 @@ Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, t
 ## 2. Character
 - To hovedfaner **Character** og **Combat** med separat bevart scrollposisjon.
 - Kompakt identitet med valgfritt portrett; klassenivå, species/race, subclass, background som notat etter ønske.
-- Øverst: kompakte statuspiller for HP, Temporary HP ved HP, AC, initiative og GP. GP vises med to desimaler; lagres som heltall copper pieces. HP endres med sentrert endringsslider, ±1, forhåndsvisning og bekreftelse. Healing påvirker ikke temporary HP; temp HP absorberer skade først.
+- Øverst: fem like store statuspiller på én rad: HP, AC, Initiative, GP og Speed. GP vises med to desimaler; lagres som heltall copper pieces. HP er lesbar status på Character. Skade, healing og Temporary HP håndteres i Combat med sentrert endringsslider, ±1, forhåndsvisning og bekreftelse. Healing påvirker ikke temporary HP; temp HP absorberer skade først.
 - Fire konfigurerbare modifier-kort med **fullstendige navn** (f.eks. Perception). Trykk viser alfabetisk, kort oversikt over skills, saving throws, abilities, passive perception og initiative som kan velges til kortet. Ikke ekstra fast søkefelt eller dupliserte Skills/Saves-knapper i denne seksjonen.
 - Class Features & Feats **før** Weapons/Armor/Equipment; equipped først. Skill eid fra equipped.
 - Hver redigerbare samling bruker **inline, pilleformet +** på samme flex/wrap-rad, etter siste element. Ikke rundt +, ikke på egen rad med mindre naturlig wrap. Klikk på element for detaljer/redigering; + for legg til.
@@ -28,7 +28,9 @@ Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, t
 - Death Saves (3 suksesser/3 feilslag), Inspiration, Conditions, Exhaustion og tilpassbare ressurser skal være redigerbare.
 - Vilkårlig mange navngitte notater med fritekst. Bakgrunn er **ikke** en separat duplisert datadel. Ingen «Rediger øvrige felt»-popup med redundante felt.
 - **Separate strukturerte felt:** languages, armor/weapon/tool proficiencies, skill/save proficiencies/expertise, damage resistance/vulnerability/immunity per damage type, og condition immunity per condition. Strukturerte data må ha fungerende create/edit/delete-UI og persistering.
-- Character-meny: «Denne karakteren» med manuell Level Up/rediger level; generell administrasjon separat (bytt, importer/eksporter osv.).
+- All karakteradministrasjon ligger i menyen. «Denne karakteren» har grunnlagsredigering og manuell Level Up med ny maks HP; bytt/opprett/importer/eksporter osv. ligger i egen gruppe. Ingen permanente redigerings- eller byttepaneler på arbeidsflaten.
+- Opprettelse: tomt navn med grått hint som skjules ved fokus, species fra liste uten etterfølgende artsdetaljer, klasse/subclass fra lister (egne valg tillatt), nivå, endelige ability scores og manuelt angitt maks HP. Utstyr og egenskaper registreres inne i appen etterpå.
+- Innen hver pilleseksjon: lik størrelse, form og ramme, inkludert inline +.
 
 ## 3. Combat
 - **Action | Bonus | Reaction** er tre kompakte faner som kan sveipes mellom. Ingen duplisert kategorioverskrift etter tab-raden. Under finnes kompakt seksjon **Andre egenskaper** for Action Surge, passive/andre features.
