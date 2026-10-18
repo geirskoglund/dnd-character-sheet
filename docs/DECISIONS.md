@@ -201,3 +201,10 @@ Dette føres som delvis støtte og åpne avvik i matrisen, med separate scenario
 Brukeren opplever at det generelt er tungvint å legge til innhold og at mange felt må håndteres. Dette føres som et gjennomgående UX-behov, knyttet til målet om enkel føring på et digitalt papirark. Gjennomgangen skal vurdere både synlig feltmengde og faktisk nødvendig utfylling i hver berørt flyt.
 
 Sikre katalog-/kontekstverdier, korte minimumsskjemaer og detaljer/overstyringer ved behov er mulige forenklinger som skal vurderes. Konkret feltsett og utforming per flyt er ikke besluttet. Nødvendig informasjon, eksisterende avklaringer om opprettelse og spillerens manuelle kontroll skal bevares. Ingen funksjonskode er bestilt eller endret i denne dokumentasjonsrunden.
+
+
+## Utstyrskombinasjoner er sentrale for karakterarket (2026-10-19)
+
+Brukeren presiserte behovet for å kunne kombinere eksempelvis brynje og kappe etter hvordan gjenstandene faktisk bæres, og bekreftet at dette er kompliserende, men svært viktig. Dette føres som et sentralt funksjonskrav: gjenstandstype, relevant plassering/håndbruk, eid/utstyrt-status, eventuell attunement og kildebaserte virkninger må ses samlet. Spilleren skal få enkel føring og forståelige samlede verdier med bidrag fra de enkelte gjenstandene. Advarsler og manuell DM-overstyring beholdes.
+
+Kombinasjonene vurderes etter D&D 2014-reglene; konkrete felt, UI og implementasjonsrekkefølge er ikke fastsatt. Et kontrollscenario er Chain Mail + Shield + båret/attuned Cloak of Protection: AC 16 + 2 + 1 = 19, med kappens +1 på saving throws. Samme oppsett med vanlig kappe eller uten nødvendig attunement gir ikke kappens magiske bonus. Dette er dokumenterte forventninger til videre arbeid, ikke implementert funksjon eller en ny kodebestilling.
