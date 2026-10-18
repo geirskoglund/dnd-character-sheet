@@ -2,6 +2,24 @@
 
 Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISIONS, CODEX_HANDOFF, brukerens forklaringsdokument og `prototypes/dnd-character-companion-v0.11.html`. Nyeste brukeravklaringer har forrang. Dette er leveransestatus, ikke en erstatning for kravene.
 
+## Overordnet mål: erstatte papirkarakterarket
+
+[Produktmålet i krav §1](REQUIREMENTS.md#1-produkt-og-akseptansekriterier) er øverste føring: rask oversikt, oppslag, notater og manuell føring ved et fysisk D&D-bord. Spilleren beholder kontrollen over karakterdata og DM-godkjente unntak. Hver berørt user story og produktgjennomgang skal konkretisere hvordan flyten hjelper spilleren med dette. Kontekstprinsippet nedenfor skal gjøre det digitale arket enklere å bruke.
+
+## Gjennomgående prinsipp: karakterens kontekst
+
+[Produktprinsippet i krav §1](REQUIREMENTS.md#overordnet-prinsipp-karakterens-kontekst) gjelder hele appen og skal konkretiseres i hver berørt user story. Prinsippet styrer hvilke valg, verdier og oppslag som er relevante i flyten. Generelle valg, tilgang fra ulike kilder, ukjente vilkår og manuelle DM-unntak skal ivaretas. Spesifikke regler vurderes per område; egenskaps-/featvelgeren er ett av flere bruksområder.
+
+| Område | Prinsippet skal undersøkes gjennom | Faktisk status / kontrollbehov |
+| --- | --- | --- |
+| Lett registrering på tvers av samlinger | Antall steg, synlige felt og nødvendig utfylling; sikre katalog-/kontekstdata, minimumsregistrering og tilgang til detaljer/manuelle overstyringer | Brukeren rapporterer tungvinte registreringsflyter. En samlet gjennomgang av feltmengde og konkrete forenklinger er ikke gjennomført; løsning vurderes per flyt |
+| Egenskaper og feats | Klasse/subclass/klassenivå, art og faktiske forutsetninger; generelle feats bevares | Kjente avvik i listen og klassefilteret står nedenfor; rettelsen er ikke implementert |
+| Cantrips og spells | Tilgang fra klasse, subclass, art, feats og DM; formål som registrering, læring, prepared og kampoppslag; relevante nivåer og multiclass | Manuell registrering og enkelte oppslag finnes. Full kontekstrelevans på tvers av kilder er ikke verifisert og må få egne scenarioer |
+| Utstyr og proficiencies | Skill mellom eid, utstyrt og brukt; manglende proficiency stopper ikke eierskap; konsekvenser ved bruk vurderes etter faktisk regel | Enkel AC/speed og utstyrskategorier er testet i tidligere leveranse. Dette er ikke bevis for hele prinsippet i alle utstyrsflyter |
+| Ressurser og Combat-oppslag | Karakterens faktiske innhold, riktig kilde/klasse/system, registrert tilstand og relevante hvilevilkår | Enkelte flyter er testet tidligere; samlet dekning mot prinsippet må dokumenteres per berørt flyt |
+
+Dette er en oversikt over hvor prinsippet skal brukes, ikke en uttømmende liste over funksjoner eller en erklæring om verifisert støtte. Den konkrete akseptansen føres i scenarioformatet nedenfor.
+
 ## Levert Character-versjon (PR #8)
 
 | Krav / avklaring | Konkret løsning | Verifikasjon |
@@ -9,7 +27,7 @@ Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISION
 | Tette, uniforme samlinger, inline + | Fire kolonner ved 360/390 px, tre ved 320 px; like celler innen samlingen, samme form/ramme for + | Mobilgeometri og lesbare eksempelnavn i nettlesertester |
 | Artsegenskaper | Katalogoppslag med én Lukk; egne artsegenskaper legges til/redigeres som feature-instanser | Oppslag, egenregistrering, lagring |
 | Class Features & Feats før utstyr | Søkbar SRD-velger og egenregistrering; redigering/fjerning fra egen pille. **Delvis:** standardlisten tar ennå ikke hensyn til karakterens klasse, subclass, klassenivå eller forutsetninger | Feat-CRUD, betinget effekt, handling/ressurs og angre testet. Kontekstrelevans og forutsetninger er ikke verifisert; se åpne avvik nedenfor |
-| Weapons / Armor og skjold / Annet utstyr | Egne grupper, equipped først, filtrert direktevalg og eget utstyr | Kategori, gruppetilhørighet, konfliktadvarsler, mobil |
+| Weapons / Armor og skjold / Annet utstyr | Egne grupper og individuelle utstyrsposter, equipped først, filtrert direktevalg og eget utstyr. **Delvis:** karakterens våpenangrep/skadebonuser beregnes ikke | Kategorier, AC/speed og grupper testet tidligere. Karaktertilpasset våpenoppslag og tydelig visning av utstyrsverdier gjenstår |
 | Languages | Separate navngitte instanser; artens basisvalg materialiseres ved første språkendring | Redigering/fjerning/backup; ingen duplisering |
 | Proficiencies | Skill/save med proficiency/expertise og totaloverride; weapon/armor/tool/other som egne objekter | Beregnede favoritter/saves, persistering |
 | Skadeegenskaper / tilstandsimmunitet | Separate objekter og redigeringsflater; resistance og vulnerability kan sameksistere; vilkår true/false/unknown | CRUD og backup; ingen automatisk skadereduksjon ennå |
@@ -28,6 +46,7 @@ Verifikasjonskolonnen beskriver kontrollene. Faktiske kjøreresultater og mobilg
 
 - **Relevante egenskaps-/featvalg:** Standardlisten er for lang og viser valg som ikke gjelder karakteren. Eksisterende manuelt klassefilter gir ikke automatisk relevans etter subclass, klassenivå, art eller andre faktiske forutsetninger. Generelle feats må beholdes også ved klassefilter; dagens manuelle klassefilter utelater poster uten klasseliste. Dette er åpne produktavvik, selv om opprettelse og lagring fungerer. Se scenarioene nedenfor.
 
+- **Konkrete utstyrsoppslag:** Våpen har egne lagrede instanser, men mangler beregnet angreps-/skadebonus for karakteren. Nye katalogvåpen har grunnskade, mens eldre poster fra den tidligere katalogen kan mangle den. Utstyrsverdier er gjemt i et detaljfelt i editoren. Rustningsprofil brukes allerede i AC/speed; tydelig forklaring og relevante våpenverdier ved trykk må gjennomgås som brukerflyt. Bevar manuelle verdier ved videre rettelse.
 - **Combat:** Manuelle handlingsinstanser og tilgjengelige spells kan vises som oppslag etter action economy. Automatisk genererte våpenhandlinger, off-hand, standardhandlinger (Unarmed Strike/Grapple/Shove osv.) og komplett sammenstilling av katalogregler gjenstår. Ingen turstyrer innføres.
 - **Ta skade:** Den eksisterende HP-justeringen med temp HP først er beholdt. Sammensatt skade, individuelt valgbare passive effekter, bekreftelse ved ukjente vilkår, flat reduksjon, korrekt resistance/vulnerability-rekkefølge og forklaring til DM gjenstår. Lagrede skadeegenskaper/effekter brukes ikke i denne HP-justeringen.
 - **SRD:** Lokal karakterkatalog omfatter 319 spells/cantrips, 407 klasseegenskapsoppføringer, én SRD-feat og 237 vanlige utstyrsoppføringer, i tillegg til eksisterende species/klassegrunnlag. Dette er ikke et komplett SRD-regelbibliotek: øvrige regelkapitler, monster- og magic-item-bibliotek og full trait-/subrace-dekning gjenstår. Ingen automatisk regelkonvertering fra prosatekst.
@@ -82,11 +101,11 @@ Fyll inn én rad per scenario før koding; oppdater med faktisk resultat ved kon
 
 | Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
 | --- | --- | --- | --- | --- | --- |
-| Fyll inn berørt flyt | Krav/avklaring/regelkilde; klasse, subclass, klassenivå og øvrig relevant tilstand | Konkret forventet resultat, tilgjengelige valg og unntak | Faktisk test og resultat, eller «ikke kjørt» | Faktisk observasjon og begrunnelse, eller «ikke gjennomført» | Verifisert / delvis / åpent avvik / avklart utenfor omfang |
+| Fyll inn berørt flyt | Krav/avklaring/regelkilde; klasse, subclass, klassenivå og øvrig relevant tilstand | Konkret forventet resultat ut fra flytens formål og karakterkontekst, med generelle valg, tilgangskilder og unntak der relevant | Faktisk test og resultat, eller «ikke kjørt» | Faktisk observasjon og begrunnelse, eller «ikke gjennomført» | Verifisert / delvis / åpent avvik / avklart utenfor omfang |
 
-### Kjent mangel som den nye kontrollen må fange
+### Kjente mangler som den nye kontrollen må fange
 
-Dette er akseptansescenarier for videre arbeid med egenskaps-/featvelgeren. De er ikke nye kjørte tester eller en bestilling på funksjonskode i denne dokumentasjonsendringen. Detaljert regelgrunnlag og testreferanser må fylles inn før en implementasjon.
+Dette er akseptansescenarier for videre arbeid med egenskaps-/featvelgeren og konkrete utstyrsoppslag. De er ikke nye kjørte tester eller en bestilling på funksjonskode i denne dokumentasjonsendringen. Detaljert regelgrunnlag og testreferanser må fylles inn før en implementasjon.
 
 | Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
 | --- | --- | --- | --- | --- | --- |
@@ -94,7 +113,10 @@ Dette er akseptansescenarier for videre arbeid med egenskaps-/featvelgeren. De e
 | Generelle feats beholdes | Brukerpresisering 2026-10-19; klassenøytral feat med eventuelle øvrige krav oppfylt, prøvd med ulike klasser | Generelle feats blir værende ved klassefilter. Bare faktiske forutsetninger begrenser; uavklarte krav merkes og valget beholdes tilgjengelig | Ikke testet for dette kriteriet; må inngå i rettelsen sammen med begrensede feats | Kodegjennomgang viser at manuelt klassefilter utelater katalogposter med tom klasseliste | **Åpent avvik:** generelle feats kan forsvinne ved klassefilter |
 | Multiclass og nivågrenser | Samme review; Fighter 3 / Wizard 2, samlet level 5 | Hver klasseegenskap vurderes mot nivået i sin aktuelle klasse; endring over en nivågrense prøves særskilt | Ikke implementert eller testet for relevans | Ikke gjennomført med dette akseptansekriteriet | **Ikke verifisert:** inngår i videre rettelse av velgeren |
 | Feats og øvrige forutsetninger | Samme review; konkrete feats med faktiske krav til eksempelvis ability scores, proficiencies eller art | Vis relevante valg ut fra de faktiske kravene. Uavklarte krav synliggjøres; manuelle valg og DM-unntak bevares | Ingen test av forutsetninger kjørt. Regler, grensetilfeller og nøyaktig unntaksflyt må beskrives før koding | Ikke gjennomført med dette akseptansekriteriet | **Åpent avvik:** forutsetninger vurderes ikke av dagens velger |
+| Våpenets verdier for karakteren | Brukerreview 2026-10-19; Fighter med STR 16, proficiency bonus +2 og proficiency med longsword, én hånd og ingen andre bonuser; krav §3 / SRD 5.1 angreps- og skaderuller | Ved trykk på eget longsword: angrepskast d20 +5, skade 1d8 +3 slashing, med forståelig grunnlag og mulighet for manuell korrigering | Ingen test av beregnet våpenangrep/skade kjørt; implementasjonen har manuelle attack/damage-felt | Kodegjennomgang bekrefter grunnskade for nye katalogvåpen, men ingen karakterberegning; feltene ligger under lukket «Utstyrsverdier» | **Åpent avvik:** våpenets karaktertilpassede verdier mangler |
+| Rustningsprofil og karakterens AC | Samme review; Fighter med DEX 16, Leather utstyrt, uten skjold eller andre AC-bonuser; krav §2–3 | Oppslaget forklarer Leather 11 + DEX 3 = AC 14; relevant Dexterity-regel og manuelle endringer er forståelige | AC-beregning testet i tidligere leveranse; brukervennlig visning av grunnlaget er ikke verifisert med dette kriteriet | AC/speed beregnes; editorens AC-profil ligger under «Utstyrsverdier» | **Delvis:** beregningen finnes, konkret oppslags-UX må gjennomgås |
+| Rask tillegging og egenregistrering | Brukerreview 2026-10-19; legg til en katalogpost og en egen post i berørte samlinger, eksempelvis en spell | Føringen krever få relevante valg og lite utfylling, med kjente verdier tilgjengelige og enkel tilgang til detaljer/overstyringer. Konkret minimumssett av felt bestemmes ved gjennomgangen | Ingen ny felttellings-/brukerflyttest kjørt. Eksisterende direkte katalogvalg dokumenterer ikke enkelheten i alle registreringsskjemaer | Brukeren rapporterer mange felt og tungvint tillegging; samlet gjennomgang av formene og forenklingsforslag gjenstår | **Åpent UX-behov:** konkret løsning ikke besluttet |
 
 ### Denne dokumentasjonsendringen
 
-Arbeidsinstruks, matrise, kravspesifikasjon og beslutningslogg oppdateres med den vedtatte leveringskontrollen. Ingen brukerflyt eller funksjonskode endres. Kontroll for denne endringen: tekst, konsistens, relative lenker og `git diff --check`. Nye spilltester og mobilgjennomgang er ikke kjørt for dokumentasjonsendringen; eksisterende testresultater ovenfor beholdes som historikk fra PR #8.
+Arbeidsinstruks, matrise, kravspesifikasjon og beslutningslogg beskriver den vedtatte leveringskontrollen og det gjennomgående prinsippet om karakterens kontekst. Ingen brukerflyt eller funksjonskode endres. Kontroll for denne endringen: tekst, konsistens, relative lenker og `git diff --check`. Nye spilltester og mobilgjennomgang er ikke kjørt for dokumentasjonsendringen; eksisterende testresultater ovenfor beholdes som historikk fra PR #8.

@@ -173,3 +173,31 @@ Denne bestillingen gjelder dokumentasjon av arbeidsmåten og status. Den autoris
 ### Presisering: generelle feats skal beholdes (2026-10-19)
 
 Brukeren presiserte at filtreringen ikke må være så streng at feats som gjelder for alle, forsvinner. **Generelle feats uten klassekrav skal beholdes uansett klassefilter.** En manglende klassebegrensning er ikke grunnlag for å skjule en feat. Eventuelle andre faktiske forutsetninger vurderes fortsatt; uavklarte krav merkes og valget beholdes tilgjengelig. Matrisen skal ha scenarioer for både generelle feats og feats med reelle begrensninger. Dette er ført som krav og åpent kontrollpunkt, uten å implementere ny filtrering i denne dokumentasjonsendringen.
+
+
+## Karakterens kontekst er et overordnet produktprinsipp (2026-10-19)
+
+Brukeren presiserte at relevans gjelder gjennomgående, blant annet cantrips og spells, og skal ligge over enkeltstående user stories. Feats er et eksempel på det samme prinsippet. Dette er derfor ført i [krav §1](REQUIREMENTS.md#overordnet-prinsipp-karakterens-kontekst), arbeidsinstruksen og matrisen.
+
+Appen skal bruke karakterens kjente kontekst og formålet med den aktuelle flyten til å presentere relevante valg, verdier og oppslag. Generelle valg skal beholdes; faktiske regler og flere mulige tilgangskilder må vurderes per område. Uavklarte forhold merkes, og manuelle valg og DM-unntak beholdes. Eierskap/registrering, læring/valg og bruk har ulike forutsetninger. Tidligere registrerte data skal bevares ved kontekstendringer.
+
+Hver berørt user story skal konkretisere prinsippet i forventet spilleropplevelse og kontrollscenarioer. De fire vedtatte kravene før levering/merge gjelder fortsatt. Denne presiseringen dokumenterer produktgrunnlaget; ingen funksjonskode implementeres i denne dokumentasjonsendringen.
+
+
+## Øverste produktmål: erstatte papirkarakterarket (presisert 2026-10-19)
+
+Brukeren minnet om at hele produktet skal erstatte et papirkarakterark. Dette eksisterende målet er nå fremhevet som øverste føring i krav §1, arbeidsinstruksen og matrisen. Konteksttilpasning og kommende user stories skal vurderes etter hvordan de støtter rask oversikt, oppslag, notater og manuell føring under fysisk spill, med spillerens kontroll og DM som autoritet. Tidligere vedtatte grenser for automatisk karakterbygging, regelmotor og turstyring gjelder fortsatt.
+
+
+## Konkrete våpen- og rustningsoppslag (brukerreview 2026-10-19)
+
+Brukeren opplever at våpen og rustning fremstår som generiske typer og savner blant annet damage modifiers. Gjennomgangen av kode bekrefter at utstyr allerede lagres som egne instanser, med redigerbart navn og verdier. Mangelen er karaktertilpasset våpenoppslag: angreps-/skadebonus beregnes ikke, og utstyrsverdiene ligger under et lukket detaljfelt. Nye katalogvåpen har grunnskade; eldre poster fra den tidligere katalogen kan mangle den. Rustningsprofil brukes allerede til beregnet AC/speed.
+
+Dette føres som delvis støtte og åpne avvik i matrisen, med separate scenarioer for våpenverdier og tydelig rustningsoppslag. Manuelle overstyringer og eksisterende karakterdata bevares. Det er ikke bestilt ny funksjonskode i denne gjennomgangen. Dette er også et konkret eksempel på produktprinsippene: det digitale arket skal gjøre karakterens faktiske spillverdier tilgjengelige under spill.
+
+
+## Lettere registrering og færre felt (brukerreview 2026-10-19)
+
+Brukeren opplever at det generelt er tungvint å legge til innhold og at mange felt må håndteres. Dette føres som et gjennomgående UX-behov, knyttet til målet om enkel føring på et digitalt papirark. Gjennomgangen skal vurdere både synlig feltmengde og faktisk nødvendig utfylling i hver berørt flyt.
+
+Sikre katalog-/kontekstverdier, korte minimumsskjemaer og detaljer/overstyringer ved behov er mulige forenklinger som skal vurderes. Konkret feltsett og utforming per flyt er ikke besluttet. Nødvendig informasjon, eksisterende avklaringer om opprettelse og spillerens manuelle kontroll skal bevares. Ingen funksjonskode er bestilt eller endret i denne dokumentasjonsrunden.
