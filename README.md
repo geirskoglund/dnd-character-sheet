@@ -22,21 +22,24 @@ npm run preview          # Lokalt produksjonsbygg
 
 Bruk `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` hvis Chromium allerede er installert. I miljøer med skrivebeskyttet hjemmemappe: `npm ci --cache /tmp/dnd-npm-cache`. Service worker er aktiv i produksjonsbygget, ikke under vanlig Vite-utvikling.
 
-## Fase 1
+## Karaktergrunnlag og spill
 
-- Opprette, redigere, velge, kopiere og slette karakterer med bekreftelse.
-- Manuell registrering av identitet, level, flere klasser/subclasses, ability scores, HP/temp HP, AC, speed og GP (heltall copper pieces).
-- Navngitte notater, atomisk endringslogg med før/etter og angre siste redigering.
-- IndexedDB med versjonert oppgradering, konfliktkontroll mellom faner og bevart karaktervalg.
-- Validert, versjonert JSON-backup av alle karakterer, inklusive refererte portrettdata. ID-kollisjoner avviser hele importen.
-- Character/Combat-navigasjon med separate scrollposisjoner; Action/Bonus/Reaction er foreløpig tomme oppslagsflater.
-- Produksjons-PWA med cache av alle appfiler og offline bruk etter første vellykkede lasting.
+- Art fra SRD 5.1 eller egen art/underart med grunnfart.
+- Klassevalg og nåværende klassenivå, inkludert multiclass uten rekonstruksjon av level-ups.
+- Endelige ability scores og maksimal HP fra karakterarket.
+- Rustning, skjold og eget utstyr med separat eid/utstyrt-status.
+- AC og walking speed beregnes fra disse dataene og forklares synlig. Se [støttede 2014-regler og begrensninger](docs/CHARACTER_FOUNDATIONS.md).
+- Current HP, temporary HP og penger håndteres på karakterarket under spill.
+- Manuelle korreksjoner er tilgjengelige som eksplisitte overstyringer.
+- Opprette, redigere, velge, kopiere og slette karakterer, navngitte notater, audit-logg og angre.
+- IndexedDB med atomisk versjonsoppgradering, konfliktkontroll og versjonert JSON-backup.
+- Character/Combat-navigasjon og offline produksjons-PWA. Kampoppslag og full SRD-dekning gjenstår.
 
-Dette er et teknisk grunnlag med foreløpig visuell utforming, ikke hele produktet. Se [arkitektur og avgrensning](docs/ARCHITECTURE.md).
+Utformingen er fortsatt foreløpig. Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
 
 ## Data og backup
 
-Data finnes bare i nettleseren på samme origin. Sletting av nettleserdata fjerner karakterene; privatmodus kan være midlertidig. Ta JSON-backup via Karakteradministrasjon. Import legger til og overskriver aldri. Hendelsesloggen beholdes lokalt, men følger ikke med i fase 1-backup; import starter en ny historikk med en importhendelse. Portrettopplasting har ennå ikke eget UI.
+Data finnes bare i nettleseren på samme origin. Sletting av nettleserdata fjerner karakterene; privatmodus kan være midlertidig. Ta JSON-backup via Karakteradministrasjon. Import legger til og overskriver aldri. Schema v2 støtter også import og migrering av v1-backuper fra denne appen; prototype-JSON er et separat format. Hendelsesloggen beholdes lokalt, men følger ikke med i fase 1-backup; import starter en ny historikk med en importhendelse. Portrettopplasting har ennå ikke eget UI.
 
 Eksisterende prototype-data i `localStorage` røres ikke og konverteres ikke automatisk. Ved funn vises en advarsel. Eksporter fra den gamle versjonen før overgang; prototype-JSON er ikke kompatibel med det nye formatet. Oppbevar originalfilen og registrer karakterens grunnverdier manuelt. Fjern aldri IndexedDB eller nettleserdata som feilsøking uten backup.
 

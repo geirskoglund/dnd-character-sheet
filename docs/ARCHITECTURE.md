@@ -1,3 +1,5 @@
+> Oppdatert karaktergrunnlag: [CHARACTER_FOUNDATIONS.md](CHARACTER_FOUNDATIONS.md) beskriver den nåværende opprettelsesflyten, AC/speed, spilltilstand og migrering til Character/backup v2 og IndexedDB v3. Avsnittene nedenfor dokumenterer den opprinnelige fase 1-leveransen og må leses med denne oppdateringen.
+
 # Fase 1 – arkitektur og gjennomføring
 
 ## Valg

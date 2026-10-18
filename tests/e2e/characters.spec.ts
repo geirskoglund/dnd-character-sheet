@@ -4,14 +4,17 @@ async function create(page: import('@playwright/test').Page, name = 'Alva') {
   await page.getByRole('button', { name: 'Ny karakter', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Navn', exact: true })).toHaveValue('');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill(name);
-  await page.getByRole('spinbutton', { name: 'Level', exact: true }).fill('5');
+  await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({label:'Human'});
+  await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({label:'Fighter'});
+  await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).fill('5');
+  await page.getByRole('spinbutton', { name: 'Maks HP fra karakterarket', exact: true }).fill('42');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
   await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
 }
 test('mobile character lifecycle, isolated copy, cancellation, notes, undo and persisted selection', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('./'); await create(page);
-  await page.getByRole('button', { name: 'Rediger karakter' }).click();
+  await page.locator('[data-action="money"]').click();
   await page.getByRole('spinbutton', { name: 'GP', exact: true }).fill('12.34');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
   await expect(page.getByLabel('Karakterstatus')).toContainText('12.34');
@@ -62,11 +65,15 @@ test('production PWA works offline on a GitHub Pages subpath and has no horizont
   await page.getByRole('button', { name: 'Character', exact: true }).click();
   await page.getByRole('button', { name: 'Rediger karakter' }).click();
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Offline Alva');
+  await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({label:'Dwarf'});
+  await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({label:'Monk'});
+  await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).fill('6');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
   // The heading updates only after the IndexedDB transaction commits and the list refreshes.
   await expect(page.getByRole('heading', { name: 'Offline Alva', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Offline Alva', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Karakterstatus')).toContainText('Speed40 ft');
   for (const width of [320, 360, 390, 768]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -99,17 +106,15 @@ test('UI backup round-trip, ID collision and malformed-file feedback', async ({ 
   await other.close();
 });
 
-test('multiclass validation and separate navigation scroll positions', async ({ page }) => {
+test('multiclass totals and separate navigation scroll positions', async ({ page }) => {
   await page.goto('./'); await create(page);
   await page.getByRole('button', { name: 'Rediger karakter' }).click();
-  await page.getByRole('button', { name: '+ Klasse', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Klasse', exact: true }).fill('Fighter');
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).fill('3');
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
-  await expect(page.getByRole('alert')).toContainText('Summen av klassenivå');
+  await expect(page.locator('#total-level')).toHaveText('Totalt level: 3');
   await page.getByRole('button', { name: '+ Klasse', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Klasse', exact: true }).nth(1).fill('Wizard');
+  await page.getByRole('combobox', { name: 'Klasse', exact: true }).nth(1).selectOption({label:'Wizard'});
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).nth(1).fill('2');
+  await expect(page.locator('#total-level')).toHaveText('Totalt level: 5');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();
   await expect(page.getByRole('main')).toContainText('Fighter 3 / Wizard 2');
   await page.setViewportSize({ width: 390, height: 500 });

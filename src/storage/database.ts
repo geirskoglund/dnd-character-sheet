@@ -1,7 +1,8 @@
+import { migrateCharacter } from '../domain/migrations';
 import { characterSchema, type Character, type ChangeEvent } from '../domain/model';
 
 export const DB_NAME = 'dnd-character-companion';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 export const request = <T>(req: IDBRequest<T>) => new Promise<T>((resolve, reject) => {
   req.onsuccess = () => resolve(req.result);
   req.onerror = () => reject(req.error);
@@ -22,6 +23,26 @@ export function openDatabase(name = DB_NAME): Promise<IDBDatabase> {
       }
       const events = req.transaction!.objectStore('events');
       if (!events.indexNames.contains('characterId')) events.createIndex('characterId', 'characterId');
+      // v3 migrates both aggregates and audit snapshots in the same upgrade transaction.
+      for (const name of ['characters', 'events']) {
+        const cursor = req.transaction!.objectStore(name).openCursor();
+        cursor.onsuccess = () => {
+          const row = cursor.result;
+          if (!row) return;
+          try {
+            const value = row.value;
+            if (name === 'characters') row.update(migrateCharacter(value));
+            else {
+              for (const change of value.changes ?? []) {
+                if (change.before) change.before = migrateCharacter(change.before);
+                if (change.after) change.after = migrateCharacter(change.after);
+              }
+              row.update(value);
+            }
+            row.continue();
+          } catch { req.transaction!.abort(); }
+        };
+      }
     };
     req.onerror = () => reject(req.error);
     req.onblocked = () => reject(new Error('Lukk andre faner med appen og prøv igjen for å oppgradere databasen.'));

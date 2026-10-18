@@ -59,6 +59,9 @@ describe('character aggregate and persistence', () => {
     expect(copy.features[0].actionRefs).toEqual([copy.actions[0].id]);
     expect(copy.actions[0].sourceRef?.id).toBe(copy.features[0].id);
     expect(copy.resources[0].ownerCharacterId).toBe(copy.id);
+    expect(copy.resources[0].id).not.toBe(poolId);
+    expect(copy.features[0].resourceRefs).toEqual([copy.resources[0].id]);
+    expect(copy.actions[0].resourceRefs).toEqual([copy.resources[0].id]);
     expect(copy.features[0].sourceRef?.id).toBe('srd:test');
     copy.resources[0].current = 0;
     expect(c.resources[0].current).toBe(1);
@@ -83,7 +86,7 @@ describe('character aggregate and persistence', () => {
     await done; old.close();
     const db = await openDatabase(name); dbs.push(db);
     const repo = new CharacterRepository(db);
-    expect(db.version).toBe(2);
+    expect(db.version).toBe(3);
     expect(await repo.list()).toEqual([c]);
     expect(await repo.history(c.id)).toHaveLength(1);
   });
@@ -105,7 +108,7 @@ describe('versioned backup', () => {
   });
   it('rolls back an entire import when a later character collides', async () => {
     const repo = await setup(), existing = await repo.save(createCharacter('Existing')), fresh = createCharacter('Fresh');
-    const raw = JSON.stringify({ schemaVersion: 1, exportedAt: new Date().toISOString(), characters: [fresh, existing], portraitAssets: [] });
+    const raw = JSON.stringify({ schemaVersion: 2, exportedAt: new Date().toISOString(), characters: [fresh, existing], portraitAssets: [] });
     await expect(importBackup(repo.db, raw)).rejects.toThrow('samme ID');
     expect(await repo.list()).toEqual([existing]);
     expect(await repo.history(fresh.id)).toEqual([]);
@@ -115,7 +118,7 @@ describe('versioned backup', () => {
     await expect(importBackup(repo.db, '{bad')).rejects.toThrow();
     await expect(importBackup(repo.db, JSON.stringify({ schemaVersion: 9 }))).rejects.toThrow('skjemaversjon');
     const c = createCharacter(); c.portraitAssetId = crypto.randomUUID();
-    await expect(importBackup(repo.db, JSON.stringify({ schemaVersion: 1, exportedAt: new Date().toISOString(), characters: [c], portraitAssets: [] }))).rejects.toThrow('portrett');
+    await expect(importBackup(repo.db, JSON.stringify({ schemaVersion: 2, exportedAt: new Date().toISOString(), characters: [c], portraitAssets: [] }))).rejects.toThrow('portrett');
     expect(await repo.list()).toEqual([]);
   });
 });

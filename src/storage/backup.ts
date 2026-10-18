@@ -1,14 +1,19 @@
 import { z } from 'zod';
 import { characterSchema, type Character } from '../domain/model';
+import { migrateCharacter } from '../domain/migrations';
+import { characterSchema as legacySchema } from '../domain/legacy-model';
 import { completed, request } from './database';
 
 const portraitSchema = z.object({ id: z.uuid(), mimeType: z.enum(['image/png', 'image/jpeg', 'image/webp']),
   dataUrl: z.string().max(3_000_000).regex(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/) });
-const backupSchema = z.object({ schemaVersion: z.literal(1), exportedAt: z.iso.datetime(),
+const backupSchema = z.object({ schemaVersion: z.literal(2), exportedAt: z.iso.datetime(),
   characters: z.array(characterSchema).min(1).max(100), portraitAssets: z.array(portraitSchema).max(100) }).strict();
+const legacyBackupSchema = backupSchema.extend({ schemaVersion: z.literal(1), characters: z.array(legacySchema).min(1).max(100) })
+  .transform(backup => ({ ...backup, schemaVersion: 2 as const, characters: backup.characters.map(migrateCharacter) }));
+const backupInputSchema = z.union([backupSchema, legacyBackupSchema]);
 export function parseBackup(raw: string) {
   if (raw.length > 20_000_000) throw new Error('Backup er for stor (maks 20 MB).');
-  const result = backupSchema.safeParse(JSON.parse(raw));
+  const result = backupInputSchema.safeParse(JSON.parse(raw));
   if (!result.success) throw new Error('Ugyldig backup eller ukjent skjemaversjon. Ingen data er importert.');
   const ids = result.data.characters.map(c => c.id);
   if (new Set(ids).size !== ids.length) throw new Error('Backup inneholder dupliserte karakter-ID-er.');
@@ -22,7 +27,7 @@ export function parseBackup(raw: string) {
 export async function exportBackup(db: IDBDatabase, characters: Character[]) {
   const tx = db.transaction('assets');
   const assets = await request(tx.objectStore('assets').getAll());
-  return JSON.stringify(backupSchema.parse({ schemaVersion: 1, exportedAt: new Date().toISOString(), characters,
+  return JSON.stringify(backupSchema.parse({ schemaVersion: 2, exportedAt: new Date().toISOString(), characters,
     portraitAssets: assets.filter(a => characters.some(c => c.portraitAssetId === a.id)) }), null, 2);
 }
 /** All-or-nothing restore. Collisions are rejected, never overwritten. */
