@@ -47,7 +47,7 @@ Eksisterende prototype-data i `localStorage` røres ikke og konverteres ikke aut
 
 Velg **Settings → Pages → Source → GitHub Actions** i GitHub. Etter merge til `master` bygger og publiserer `pages.yml` innholdet i `dist/`. Ingen backend eller hemmeligheter kreves. Vite bruker relative asset-stier; nettlesertestene kjører under `/dnd-character-sheet/` for å kontrollere Pages-understien. Publisering krever tilgang til Pages og godkjenning av GitHub-miljøet dersom repositoriet krever det. PR-er valideres av `ci.yml` og publiseres ikke.
 
-En gammel prototype-service-worker erstattes av den nye Workbox-worker ved samme `sw.js`-sti. Lukk alle gamle appfaner etter oppdatering. Den nye appen sletter ikke prototype-cache eller prototype-data. Fremtidige oppdateringer venter til åpne faner er lukket for å unngå å avbryte redigering.
+Appen viser versjons-ID og «Se etter oppdatering» i footeren. Når en ny versjon er nedlastet, bruk «Oppdater appen». Lagre redigering og lukk andre appfaner først. Karakterdata beholdes; slett aldri nettleserdata for å oppdatere. Se [oppdatering og publiseringskilde](docs/UPDATES.md) for første overgang fra eldre versjoner og feilsøking.
 
 ## Gjeldende produktgrunnlag
 

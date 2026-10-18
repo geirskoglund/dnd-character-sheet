@@ -1,4 +1,4 @@
-import { registerSW } from 'virtual:pwa-register';
+import { installUpdates } from './ui/updates';
 import { characterSchema, copyCharacter, createCharacter, type Character } from './domain/model';
 import { CharacterRepository, openDatabase } from './storage/database';
 import { exportBackup, importBackup } from './storage/backup';
@@ -9,6 +9,7 @@ import { escapeHtml as esc, field, select } from './ui/html';
 import './style.css';
 
 const root = document.querySelector<HTMLDivElement>('#app')!;
+const updates = installUpdates();
 let repo: CharacterRepository;
 let characters: Character[] = [];
 let selected: string | undefined;
@@ -32,7 +33,7 @@ function render() {
     <details><summary>Karakteradministrasjon</summary><div class="actions">${c ? '<button data-action="copy">Kopier karakter</button><button data-action="delete">Slett karakter</button>' : ''}<button data-action="export" ${characters.length ? '' : 'disabled'}>Eksporter backup</button><button data-action="import">Importer backup</button>${c ? '<button data-action="history">Endringslogg</button><button data-action="undo">Angre siste endring</button>' : ''}</div></details></header>
     <p id="status" role="status" aria-live="polite">${esc(message)}</p>
     <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : combatView(category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
-    <footer>Lokalt lagret · Ingen konto eller synkronisering. Ta JSON-backup før du rydder nettleserdata. <a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a></footer></div>
+    <footer>Lokalt lagret · Ingen konto eller synkronisering. Ta JSON-backup før du rydder nettleserdata. <a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p>Versjon ${__APP_VERSION__} · <button data-action="check-update">Se etter oppdatering</button></p></footer></div>
     <nav aria-label="Hovednavigasjon">${['character', 'combat'].map(tab => `<button data-page="${tab}" ${page === tab ? 'aria-current="page"' : ''}>${tab === 'character' ? 'Character' : 'Combat'}</button>`).join('')}</nav>
     <dialog aria-labelledby="dialog-title"><form><h2 id="dialog-title" tabindex="-1"></h2><div id="dialog-body"></div><p id="dialog-error" role="alert"></p><div class="dialog-actions"><button type="button" id="cancel">Avbryt</button><button id="submit" type="submit">Lagre</button></div></form></dialog>`;
   root.querySelectorAll<HTMLButtonElement>('[data-page]').forEach(button => button.onclick = () => {
@@ -169,6 +170,7 @@ function editNote(id?: string) {
 async function action(name: string) {
   const c = current();
   switch (name) {
+    case 'check-update': await updates.check(); break;
     case 'create': editCharacter(); break;
     case 'edit': editCharacter(c); break;
     case 'edit-equipment': editCharacter(c, true); break;
@@ -226,7 +228,4 @@ async function start() {
     root.innerHTML = `<main><h1>Kunne ikke åpne lokal lagring</h1><p role="alert">${esc(error instanceof Error ? error.message : error)}</p><p>Ikke slett nettleserdata. Tillat lokal lagring og prøv igjen.</p><button onclick="location.reload()">Prøv igjen</button></main>`;
   }
 }
-registerSW({ onOfflineReady() { tell('Appen er klar for bruk uten nett.'); },
-  onNeedRefresh() { tell('En ny versjon er klar. Lagre endringer og lukk alle appfaner før du åpner appen igjen.'); },
-  onRegisterError() { tell('Offline-cache kunne ikke oppdateres. Karakterdata er fortsatt lokale.'); } });
 void start();
