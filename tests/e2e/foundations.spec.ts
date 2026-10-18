@@ -20,7 +20,7 @@ async function save(page: Page) {
   await expect(page.getByRole('dialog')).not.toBeVisible();
   await expect(page.getByRole('heading', {name:'Alva',exact:true})).toBeVisible();
 }
-async function equipment(page: Page) { await page.getByRole('button',{name:'Legg til utstyr',exact:true}).click(); }
+async function equipment(page: Page) { await page.getByRole('button',{name:'Legg til armor og skjold',exact:true}).click(); }
 test('minimal creation, five read-only status values, equipment edited inside app and uniform pills', async ({page}) => {
   await openCharacter(page);
   await expect(page.locator('#species-info, #derived-preview, #equipment-rows, [name="hpCurrent"], [name="hpTemp"], [name="acOverride"]')).toHaveCount(0);

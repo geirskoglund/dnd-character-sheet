@@ -158,3 +158,39 @@ describe('unchanged saves', () => {
     expect(await repo.history(original.id)).toHaveLength(2);
   });
 });
+
+describe('atomic portrait save',()=>{
+  it('stores immutable image and character together, preserves old image for undo and copy',async()=>{
+    const repo=await setup();let c=await repo.save(createCharacter('Portrait'));
+    const asset={id:crypto.randomUUID(),mimeType:'image/png' as const,dataUrl:'data:image/png;base64,aGVsbG8='};
+    c=await repo.save({...c,portraitAssetId:asset.id},'portrait','Portrett endret',asset);
+    expect(await repo.portrait(asset.id)).toEqual(asset);
+    const copied=copyCharacter(c);expect(copied.portraitAssetId).toBe(asset.id);
+    const after=await repo.undo(c);expect(after.portraitAssetId).toBeUndefined();expect(await repo.portrait(asset.id)).toEqual(asset);
+  });
+  it('rejects a stale portrait save without leaving its asset or event behind',async()=>{
+    const repo=await setup();const c=await repo.save(createCharacter());await repo.save({...c,name:'Newer'});
+    const asset={id:crypto.randomUUID(),mimeType:'image/png' as const,dataUrl:'data:image/png;base64,aGVsbG8='};
+    await expect(repo.save({...c,portraitAssetId:asset.id},'portrait','Portrett endret',asset)).rejects.toThrow('annen fane');
+    expect(await repo.portrait(asset.id)).toBeUndefined();expect(await repo.history(c.id)).toHaveLength(2);
+  });
+});
+
+describe('complete Character workspace backup',()=>{
+  it('retains linked feats, spells, pools, modifiers and separate defenses on restore and independent copy',async()=>{
+    const repo=await setup(),target=await setup(),c=createCharacter('Complete');
+    const featureId=crypto.randomUUID(),poolId=crypto.randomUUID(),actionId=crypto.randomUUID(),effectId=crypto.randomUUID();
+    c.features=[{id:featureId,name:'DM feat',category:'feat',description:'Manual',actionRefs:[actionId],resourceRefs:[poolId],effectRefs:[effectId]}];
+    c.resources=[{id:poolId,ownerCharacterId:c.id,name:'Pact Magic',kind:'spellSlot',spellLevel:1,systemRef:'Pact Magic',current:1,max:2,recharge:{kind:'shortRest'}}];
+    c.actions=[{id:actionId,name:'Reaction',actionEconomy:'reaction',summary:'Rule',detail:'Details',damageRolls:['1d6 fire'],resourceRefs:[poolId],sourceRef:{kind:'feature',id:featureId}}];
+    c.effects=[{id:effectId,sourceRef:{kind:'feature',id:featureId},target:'damage',operation:'flatReduction',amount:3,damageTypes:['Slashing'],condition:{description:'Nonmagical',state:'unknown'},scope:'event',description:'DM'}];
+    c.languages=[{id:crypto.randomUUID(),name:'Elvish'}];c.proficiencies=[{id:crypto.randomUUID(),name:'Tools',category:'tool',level:'proficient'}];c.skills=[{skillId:'Perception',proficiencyLevel:'expertise',override:8}];c.saves=[{abilityId:'CON',proficiencyLevel:'proficient'}];
+    c.damageDefenses=['resistance','vulnerability'].map(kind=>({id:crypto.randomUUID(),damageType:'Fire',kind:kind as 'resistance'|'vulnerability'}));c.conditionImmunities=[{id:crypto.randomUUID(),conditionId:'Poisoned'}];
+    c.spells=[{id:crypto.randomUUID(),name:'DM spell',spellLevel:1,castingTime:'1 reaction',actionEconomy:'reaction',range:'Self',duration:'1 round',concentration:false,ritual:false,components:['V'],description:'Own rule',known:true,inSpellbook:true,prepared:true,resourceSystemRef:'Pact Magic'}];
+    c.inspiration=true;c.deathSaves={successes:2,failures:1};c.conditions=['Prone'];c.exhaustionLevel=1;
+    const saved=await repo.save(c);await importBackup(target.db,await exportBackup(repo.db,[saved]));
+    expect(await target.list()).toEqual([saved]);
+    const copy=copyCharacter(saved);expect(copy.features[0].actionRefs).toEqual([copy.actions[0].id]);expect(copy.features[0].effectRefs).toEqual([copy.effects[0].id]);expect(copy.resources[0].ownerCharacterId).toBe(copy.id);
+    copy.spells[0].prepared=false;copy.resources[0].current=0;expect(saved.spells[0].prepared).toBe(true);expect(saved.resources[0].current).toBe(1);
+  });
+});

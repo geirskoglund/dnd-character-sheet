@@ -1,3 +1,5 @@
+> Gjeldende Character-status: [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md). Nye moduler: `domain/records.ts` (koblinger, Hit Dice/hvile), `domain/character-library.ts` + `data/srd-*.json` (immutable katalog), `ui/record-editors.ts` (strukturerte brukerflyter), `ui/library-picker.ts` (direkte søk/valg), `ui/portrait.ts` (lokal bildevalidering/skalering). Repository lagrer nå portrettasset og karakter atomisk. Ingen ny DB-/Character-versjon er nødvendig. Beskrivelsen under er historikk fra opprinnelig fase 1; mangellisten der er erstattet av den gjeldende kravmatrisen.
+
 > Oppdatert karaktergrunnlag: [CHARACTER_FOUNDATIONS.md](CHARACTER_FOUNDATIONS.md) beskriver den nåværende opprettelsesflyten, AC/speed, spilltilstand og migrering til Character/backup v2 og IndexedDB v3. Avsnittene nedenfor dokumenterer den opprinnelige fase 1-leveransen og må leses med denne oppdateringen.
 
 # Fase 1 – arkitektur og gjennomføring

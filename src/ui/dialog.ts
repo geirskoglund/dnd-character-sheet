@@ -7,6 +7,7 @@ document.body.append(host);
 let opener: HTMLElement | null = null;
 let openerSelector = '';
 let returnScroll = 0;
+let collectionSelector = '';
 let cancelHandler: CancelHandler;
 let pending = false;
 
@@ -18,14 +19,17 @@ function visible(element: HTMLElement | null): element is HTMLElement {
 function captureOpener() {
   const active = document.activeElement as HTMLElement | null;
   opener = active?.matches('button, summary, input, select, textarea, a[href], [tabindex]') ? active : null;
-  const attributes = ['data-item', 'data-note', 'data-trait', 'data-modifier', 'data-action', 'data-page'];
+  const attributes = ['data-lookup', 'data-record', 'data-add', 'data-equipment-group', 'data-item', 'data-note', 'data-trait', 'data-modifier', 'data-action', 'data-page'];
   const attribute = attributes.find(name => opener?.hasAttribute(name));
   openerSelector = attribute ? `[${attribute}="${CSS.escape(opener!.getAttribute(attribute)!)}"]` : '';
+  const equipmentGroup=opener?.closest('.equipment-group')?.querySelector<HTMLButtonElement>('[data-equipment-group]')?.dataset.equipmentGroup;
+  const region=opener?.closest('section')?.querySelector<HTMLButtonElement>('[data-add]')?.dataset.add;
+  collectionSelector=equipmentGroup ? `[data-equipment-group="${equipmentGroup}"]` : region ? `[data-add="${region}"]` : opener?.hasAttribute('data-note') ? '[data-action="note"]' : '';
   returnScroll = window.scrollY;
 }
 function restoreFocus() {
   const target = visible(opener) ? opener : openerSelector ? document.querySelector<HTMLElement>(openerSelector) : null;
-  const collection = opener?.hasAttribute('data-item') ? '[data-action="edit-equipment"]' : opener?.hasAttribute('data-note') ? '[data-action="note"]' : '';
+  const collection = collectionSelector;
   const fallback = (collection ? document.querySelector<HTMLElement>(collection) : null) ?? document.querySelector<HTMLElement>('.app-menu > summary');
   (visible(target) ? target : fallback)?.focus({preventScroll:true});
   window.scrollTo(0, returnScroll);
@@ -71,6 +75,7 @@ export async function commitDialog(action: () => Promise<void>) {
   const buttons = [...form.querySelectorAll('button')].map(button => ({button, disabled:button.disabled}));
   buttons.forEach(({button}) => button.disabled = true);
   form.setAttribute('aria-busy', 'true');
+  const body=form.querySelector<HTMLElement>('#dialog-body')!;body.inert=true;
   const primary = form.querySelector<HTMLButtonElement>('#submit');
   const label = primary?.textContent;
   if (primary) primary.textContent = 'Lagrer …';
@@ -83,6 +88,7 @@ export async function commitDialog(action: () => Promise<void>) {
     pending = false;
     buttons.forEach(({button, disabled}) => button.disabled = disabled);
     if (primary) primary.textContent = label!;
+    body.inert=false;
     form.removeAttribute('aria-busy');
   }
 }

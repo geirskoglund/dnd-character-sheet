@@ -1,3 +1,4 @@
+import equipment from '../data/srd-equipment.json';
 import type { Character } from './model';
 
 // Curated SRD 5.1 (2014) facts. Adapted summaries; attribution: public/SRD-LICENSE.txt.
@@ -25,7 +26,7 @@ const armor = (name: string, kind: 'light' | 'medium' | 'heavy', baseAc: number,
   catalogId: `srd51:equipment:${name.toLowerCase().replaceAll(' ', '-')}`, name, category: 'armor', handUsage: undefined,
   armorProfile: { kind, baseAc, addDex: kind !== 'heavy', dexCap: kind === 'medium' ? 2 : null, strength, stealthDisadvantage }, effectRefs: [], resourceRefs: [],
 });
-export const equipmentCatalog: EquipmentDefinition[] = [
+const foundationEquipment: EquipmentDefinition[] = [
   armor('Padded', 'light', 11, 0, true), armor('Leather', 'light', 11), armor('Studded Leather', 'light', 12),
   armor('Hide', 'medium', 12), armor('Chain Shirt', 'medium', 13), armor('Scale Mail', 'medium', 14, 0, true),
   armor('Breastplate', 'medium', 14), armor('Half Plate', 'medium', 15, 0, true),
@@ -38,6 +39,10 @@ export const equipmentCatalog: EquipmentDefinition[] = [
     effectRefs: [], resourceRefs: [],
   })),
 ];
+export const equipmentCatalog: EquipmentDefinition[] = equipment.map(row => {
+  const foundation = foundationEquipment.find(existing => existing.catalogId === row.catalogId);
+  return {...row,...foundation,notes:row.notes,damage:row.damage} as EquipmentDefinition;
+});
 export function instantiateEquipment(catalogId: string, equipped = true): Item {
   const definition = equipmentCatalog.find(d => d.catalogId === catalogId);
   if (!definition) throw new Error('Ukjent utstyr.');

@@ -1,7 +1,10 @@
 import { installUpdates } from './ui/updates';
-import { characterSchema, copyCharacter, createCharacter, type Character } from './domain/model';
+import { choosePortrait } from './ui/portrait';
+import { characterSchema, copyCharacter, createCharacter, type Character, type PortraitAsset } from './domain/model';
 import { CharacterRepository, openDatabase } from './storage/database';
 import { exportBackup, importBackup } from './storage/backup';
+import { libraryPicker } from './ui/library-picker';
+import { createRecordEditors } from './ui/record-editors';
 import { characterView, combatView } from './ui/views';
 import { characterForm, bindCharacterForm, readCharacterForm, subclassFields, bindSubclass, readSubclass } from './ui/character-form';
 import { equipmentForm, bindEquipment, readEquipment, newEquipment } from './ui/equipment-form';
@@ -20,12 +23,38 @@ const updates = installUpdates();
 let repo: CharacterRepository;
 let characters: Character[] = [];
 let selected: string | undefined;
+let portrait: PortraitAsset | undefined;
 let page: 'character' | 'combat' = 'character';
 let category = 'Action';
 const scroll = { character: 0, combat: 0 };
 let busy = false;
 let message = '';
 const current = () => characters.find(c => c.id === selected);
+const editorContext = {current: () => current()!, save: async (draft: Character,type: string,description: string) => {
+  await repo.save(draft,type,description); message = 'Endring lagret.'; await refresh();
+}};
+const editors = createRecordEditors(editorContext);
+function openRecord(kind: string, id?: string) {
+  switch (kind) {
+    case 'action': editors.action(id); break;
+    case 'feature': editors.feature(id); break;
+    case 'species': editors.feature(id,'species'); break;
+    case 'language': editors.language(id); break;
+    case 'proficiency': editors.proficiency(id); break;
+    case 'defense': editors.defense(id); break;
+    case 'immunity': editors.immunity(id); break;
+    case 'spell': editors.spell(id); break;
+    case 'cantrip': editors.spell(id,true); break;
+    case 'resource': editors.resource(id); break;
+    case 'resource-custom': editors.resource(undefined,'custom'); break;
+    case 'resource-spellSlot': editors.resource(undefined,'spellSlot'); break;
+    case 'resource-hitDie': editors.resource(undefined,'hitDie'); break;
+    case 'conditions': editors.conditions(); break;
+    case 'deathSaves': editors.deathSaves(); break;
+    case 'rest': editors.rest(); break;
+    case 'inspiration': void run(editors.inspiration); break;
+  }
+}
 function tell(text: string) {
   message = text;
   const status = document.querySelector('#status');
@@ -43,9 +72,9 @@ function render() {
     if (!(event.target as HTMLElement).closest('.app-menu')) root.querySelector('details.app-menu')?.removeAttribute('open');
   };
   root.innerHTML = `<a href="#content" class="skip-link">Til innhold</a><div class="shell">
-    <header><div class="identity"><p class="eyebrow">D&D · 5e 2014</p><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c ? `<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl => `${esc(cl.name)} ${cl.level}${cl.subclass ? ' · ' + esc(cl.subclass) : ''}`).join(' / ')}</p>` : ''}</div>
+    <header>${portrait ? `<button class="portrait" data-action="portrait" aria-label="Vis portrett"><img src="${portrait.dataUrl}" alt="Portrett av ${esc(c?.name)}"></button>` : ''}<div class="identity"><p class="eyebrow">D&D · 5e 2014</p><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c ? `<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl => `${esc(cl.name)} ${cl.level}${cl.subclass ? ' · ' + esc(cl.subclass) : ''}`).join(' / ')}</p>` : ''}</div>
     <details class="app-menu"><summary>Meny</summary><div class="menu-panel">
-    ${c ? '<h2>Denne karakteren</h2><div class="menu-actions"><button data-action="edit">Rediger karakter</button><button data-action="level-up">Level Up</button><button data-action="overrides">Beregninger og overstyringer</button><button data-action="history">Endringslogg</button><button data-action="undo">Angre siste endring</button></div>' : ''}
+    ${c ? '<h2>Denne karakteren</h2><div class="menu-actions"><button data-action="edit">Rediger karakter</button><button data-action="portrait">Portrett</button><button data-action="level-up">Level Up</button><button data-action="overrides">Beregninger og overstyringer</button><button data-action="history">Endringslogg</button><button data-action="undo">Angre siste endring</button></div>' : ''}
     <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch => `<option value="${ch.id}" ${selected === ch.id ? 'selected' : ''}>${esc(ch.name)}</option>`).join('')}</select></label>
     <div class="menu-actions"><button data-action="create">Ny karakter</button>${c ? '<button data-action="copy">Kopier karakter</button><button data-action="delete">Slett karakter</button>' : ''}<button data-action="export" ${characters.length ? '' : 'disabled'}>Eksporter backup</button><button data-action="import">Importer backup</button></div>
     <p class="muted">Lokalt lagret på denne enheten. Ta JSON-backup før du rydder nettleserdata.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p class="muted">Versjon ${__APP_VERSION__}</p><button data-action="check-update">Se etter oppdatering</button></div></details></header>
@@ -68,7 +97,7 @@ function render() {
     const next = (event.target as HTMLSelectElement).value;
     if (!next || next === selected) return;
     selected = next;
-    await repo.setSetting('selectedCharacter', selected); render();
+    await refresh();
   });
   root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(button => button.onclick = () => {
     root.querySelector('details.app-menu')?.removeAttribute('open');
@@ -91,12 +120,35 @@ function render() {
     viewDialog(trait.name, `<p>${esc(trait.description)}</p>`);
   });
   root.querySelectorAll<HTMLButtonElement>('[data-note]').forEach(button => button.onclick = () => editNote(button.dataset.note));
+  root.querySelectorAll<HTMLButtonElement>('[data-lookup]').forEach(button=>button.onclick=()=>{
+    const [kind,id]=button.dataset.lookup!.split(':');
+    const c=current()!;
+    if (kind==='spell') {
+      const row=c.spells.find(row=>row.id===id)!;
+      viewDialog(row.name,`<p>${row.spellLevel ? `Level ${row.spellLevel}` : 'Cantrip ∞'} · ${esc(row.castingTime)} · ${esc(row.range)}</p><p>${esc(row.duration)}${row.concentration?' · Concentration':''}${row.ritual?' · Ritual':''}</p><p>${esc(row.components.join(', '))}</p><p>${esc([row.attack,row.save,row.damage].filter(Boolean).join(' · '))}</p><p class="rule-text">${esc(row.description)}</p>`);
+    } else {
+      const row=c.actions.find(row=>row.id===id)!;
+      viewDialog(row.name,`<p>${esc([row.attackRoll,...row.damageRolls,row.saveDC ? `Save DC ${row.saveDC}` : '',row.range].filter(Boolean).join(' · '))}</p><p class="rule-text">${esc(row.detail || row.summary)}</p>${row.requirements?`<p>Krav: ${esc(row.requirements)}</p>`:''}<div class="pills">${row.resourceRefs.map(id=>c.resources.find(pool=>pool.id===id)).filter(pool=>!!pool).map(pool=>`<button type="button" class="pill" data-lookup-resource="${pool.id}">${esc(pool.name)} · ${pool.current}/${pool.max}</button>`).join('')}</div>`);
+      document.querySelectorAll<HTMLButtonElement>('[data-lookup-resource]').forEach(button=>button.onclick=()=>editors.resource(button.dataset.lookupResource));
+    }
+  });
+  root.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(button => button.onclick = () => {
+    const kind=button.dataset.add!;
+    if (kind==='feature' || kind==='spell' || kind==='cantrip') libraryPicker(editorContext,kind,()=>openRecord(kind));
+    else openRecord(kind);
+  });
+  root.querySelectorAll<HTMLButtonElement>('[data-record]').forEach(button => button.onclick = () => {
+    const key = button.dataset.record!, separator = key.indexOf(':');
+    openRecord(separator < 0 ? key : key.slice(0,separator), separator < 0 ? undefined : key.slice(separator+1) || undefined);
+  });
+  root.querySelectorAll<HTMLButtonElement>('[data-equipment-group]').forEach(button => button.onclick = () => addEquipment(current()!,button.dataset.equipmentGroup));
   root.querySelectorAll<HTMLButtonElement>('[data-item]').forEach(button => button.onclick = () => inspectEquipment(button.dataset.item!));
 }
 async function refresh() {
   characters = await repo.list();
   if (!current()) selected = characters[0]?.id;
   await repo.setSetting('selectedCharacter', selected);
+  portrait = current()?.portraitAssetId ? await repo.portrait(current()!.portraitAssetId!) : undefined;
   render();
 }
 async function run(fn: () => Promise<void>) {
@@ -124,16 +176,16 @@ function editCharacter(source?: Character) {
   bindCharacterForm(d.querySelector('form')!, draft, creating);
 }
 function inspectEquipment(id: string) { editEquipment(current()!, id); }
-function addEquipment(c: Character) {
-  const d = viewDialog('Legg til utstyr', equipmentPicker(), '[name="equipmentSearch"]');
+function addEquipment(c: Character, group = '') {
+  const d = viewDialog('Legg til utstyr', equipmentPicker(group), '[name="equipmentSearch"]');
   bindEquipmentPicker(d, async catalogId => {
     const item = instantiateEquipment(catalogId);
     await repo.save({...c, items:[...c.items, item]}, 'equipment', `${item.name} lagt til`);
     message = `${item.name} lagt til.`; await refresh();
-  }, () => editEquipment(c));
+  }, () => editEquipment(c,undefined,group));
 }
-function editEquipment(c: Character, id?: string) {
-  const source = id ? c.items.find(i => i.id === id)! : newEquipment();
+function editEquipment(c: Character, id?: string, group = '') {
+  const source = id ? c.items.find(i => i.id === id)! : {...newEquipment(),category:(group === 'weapon' ? 'weapon' : group === 'armor' ? 'armor' : 'equipment') as Character['items'][number]['category']};
   const d = dialog(id ? source.name : 'Nytt utstyr', equipmentForm(source, !id), async form => {
     const item = readEquipment(form, source);
     const items = id ? c.items.map(i => i.id === id ? item : i) : [...c.items, item];
@@ -205,10 +257,14 @@ function editOverrides(c: Character) {
     <p>${esc(stats.acExplanation)}</p><p>${esc(stats.speedExplanation)}</p>${stats.warnings.map(w => `<p class="warning">${esc(w)}</p>`).join('')}
     ${field('Manuell AC (valgfritt)', 'ac', c.acOverride ?? '', 'type="number" min="0"')}
     ${field('Manuell speed (ft, valgfritt)', 'speed', c.speedOverride ?? '', 'type="number" min="0"')}
+    ${field('Manuell proficiency bonus (valgfritt)', 'proficiencyBonus', c.proficiencyBonusOverride ?? '', 'type="number" step="1"')}
+    ${field('Manuell Initiative (valgfritt)', 'initiative', c.derivedOverrides.initiative ?? '', 'type="number" step="1"')}
+    ${field('Manuell Passive Perception (valgfritt)', 'passivePerception', c.derivedOverrides.passivePerception ?? '', 'type="number" step="1"')}
     ${select('Unarmored Defense', 'unarmoredDefense', c.unarmoredDefense, [{ value: 'auto', label: 'Fra registrert klasse' }, { value: 'none', label: 'Vanlig AC / rustning' }, { value: 'barbarian', label: 'Fra Barbarian' }, { value: 'monk', label: 'Fra Monk' }])}
     <p>Multiclass: Du kan ikke få Unarmored Defense en gang til fra en annen klasse. Velg den karakteren faktisk har. Rustning og skjold må fortsatt oppfylle egenskapens vilkår.</p>`, async form => {
     const data = new FormData(form), ac = String(data.get('ac')), speed = String(data.get('speed'));
-    const draft = characterSchema.parse({ ...c, acOverride: ac === '' ? null : Number(ac), speedOverride: speed === '' ? null : Number(speed), unarmoredDefense: data.get('unarmoredDefense') });
+    const draft = characterSchema.parse({ ...c, acOverride: ac === '' ? null : Number(ac), speedOverride: speed === '' ? null : Number(speed), unarmoredDefense: data.get('unarmoredDefense'),proficiencyBonusOverride:String(data.get('proficiencyBonus'))===''?undefined:Number(data.get('proficiencyBonus')) });
+    for (const name of ['initiative','passivePerception']) { const value=String(data.get(name)); if (value==='') delete draft.derivedOverrides[name]; else draft.derivedOverrides[name]=Number(value); }
     await repo.save(draft, 'override', 'Beregningsvalg endret'); message = 'Beregninger oppdatert.'; await refresh();
   });
 }
@@ -234,6 +290,22 @@ function editNote(id?: string) {
 async function action(name: string) {
   const c = current();
   switch (name) {
+    case 'portrait': {
+      const upload = async () => {
+        const asset = await choosePortrait();
+        if (!asset) return;
+        await repo.save({...c!,portraitAssetId:asset.id},'portrait','Portrett endret',asset);
+        message = 'Portrett lagret.'; await refresh();
+      };
+      if (!portrait) { await upload(); break; }
+      const d = viewDialog('Portrett', `<img class="portrait-large" src="${portrait.dataUrl}" alt="Portrett av ${esc(c!.name)}"><div class="actions"><button type="button" id="change-portrait">Bytt portrett</button><button type="button" id="remove-portrait">Fjern portrett</button></div>`);
+      d.querySelector<HTMLButtonElement>('#change-portrait')!.onclick = () => void commitDialog(upload);
+      d.querySelector<HTMLButtonElement>('#remove-portrait')!.onclick = () => confirmDialog('Fjern portrett?', '<p>Bildet fjernes fra denne karakteren.</p>', async () => {
+        const draft=structuredClone(c!); delete draft.portraitAssetId;
+        await repo.save(draft,'portrait','Portrett fjernet'); await refresh();
+      }, 'Fjern');
+      break;
+    }
     case 'check-update': await updates.check(); break;
     case 'create': editCharacter(); break;
     case 'edit': editCharacter(c); break;

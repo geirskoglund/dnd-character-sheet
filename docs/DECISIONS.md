@@ -141,3 +141,18 @@ Disse presiserer og erstatter eldre plasseringer i prototypebeslutningene:
 ## Avklart opprydding av eksisterende brukerflyter
 
 Brukeren aksepterte at Combat-oppslag ennå ikke var implementert innen den opprinnelige faseavgrensningen, og bestilte deretter en grundig rettelse av unødvendige mellomsteg og dårlig UX i eksisterende funksjoner. Katalogutstyr velges direkte fra inline +; eget utstyr kan opprettes fra velgeren. Eksisterende utstyr redigeres/fjernes fra sin egen pille. Rene oppslag har bare Lukk. Se [konkret gjennomgang, rettelser og kontroll](UX_REVIEW.md). Dette erstatter den tidligere samlede utstyrsredigeringsdialogen.
+
+## Samlet gjennomgang etter brukerens tilbakemeldinger (2026-10-18)
+
+Disse avklaringene må bevares mellom arbeidsøkter og eventuell komprimering av samtalen:
+
+- **Dokumentene er varig prosjektminne.** Kravspesifikasjonen og beslutningsloggen skal oppdateres fortløpende med vedtatte avklaringer. Implementasjonsstatus føres separat; et uimplementert krav skal ikke fjernes eller omskrives til en ny avgrensning uten brukerens beslutning.
+- **Alt må ses i sammenheng:** kravspesifikasjon, datamodell, gjeldende beslutninger, forklaringsfil og faktisk v0.11-prototype. Brukeren skal ikke måtte spesifisere på nytt funksjoner som allerede finnes der. Nyeste eksplisitte brukeravklaring går foran eldre prototypeutforming.
+- **Tette pillesamlinger:** To faste kolonner for artsegenskaper og utstyr er for glissent. Bruk plass til omtrent fire piller på normal mobilbredde, tre på de smaleste skjermene, med lesbare navn og tilstrekkelige trykkflater. Behold lik størrelse, utforming og ramme innen samlingen. + er neste pille i samme grid.
+- **Utstyr følger prototypens inndeling:** Weapons, Armor og skjold, Annet utstyr. Vis utstyrt først innen hver gruppe. Gruppens + åpner relevante søkbare valg direkte. Egenregistrering skal alltid være tilgjengelig.
+- **Features/feats, languages og proficiencies er påkrevde brukerflyter.** Det er utilstrekkelig at de bare finnes i datamodellen. Det samme gjelder spesifikasjonens separate skadeegenskaper og tilstandsimmuniteter. Skill-/save-proficiency, expertise og manuelle modifiers må påvirke de viste verdiene.
+- Brukeren bestilte uttrykkelig **en ny implementert versjon basert på den samlede gjennomgangen og tilbakemeldingene**. Dette autoriserer denne endringen. Det opphever ikke regelen om at senere løpende kommentarer skal få fullføres før ny koding settes i gang.
+- Tidligere aksept av en fasevis implementering av Combat står ved lag: genererte standard-/våpenhandlinger og den avanserte skadekalkulatoren er fortsatt krav, men inngår ikke i denne Character-rettelsen. Manuelt registrerte handlinger og spells kan allerede brukes som oppslag. Ikke beskriv dette som full Combat-paritet eller komplett SRD-dekning.
+- Codex skal gjennomgå de konkrete brukerflytene og regresjonene selv før levering. Grønne tester er nødvendig, men erstatter ikke sammenligning med krav og prototype eller vurdering av mellomsteg, plassbruk og knappeformål.
+
+Se [kravmatrise og faktisk leveransestatus](CHARACTER_WORKSPACE.md). Dette dokumentet bevarer produktbeslutningene; matrisen skiller implementert funksjon, delvis støtte og gjenstående arbeid.
