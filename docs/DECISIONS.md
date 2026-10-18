@@ -173,3 +173,9 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - **Action Surge** ligger under Other: teknisk korrekt at evnen ikke koster Action/Bonus Action, men «Other» er ikke en egen rundedel. Forslag til vurdering: endre fanen til «Features» for passive/spesielle egenskaper; de tre øvrige fanene er Action, Bonus og Reaction. **Navnevalget er ennå ikke godkjent.**
 - Videre testscenarier: Fighter våpenangrep + Action Surge + short rest; Wizard cantrip, leveled spell + slot-justering; dual wielding med bonus-angrep. Tohåndsvåpen viktig for regeldata, mindre for ny UX.
 - Avvent v0.9 og Codex-kravspesifikasjon til bruker har vurdert videre.
+
+
+## Forsvarskalkulator og Combat-layout – forslag til v0.9 (2026-10-18)
+- Brukeren ønsker en **Forsvar**-knapp: angi innkommende skadeverdi og skadetype, beregn skade etter resistance/immunity/vulnerability og temporary HP, forhåndsvis faktisk HP-effekt, og tilby eksplisitt «Oppdater HP» (ikke automatisk mutasjon). Tillat manuell overstyring; utvidbar til sammensatt skade.
+- Undersøk å flytte «Other» ut av Combat-fanene: behold Action/Bonus/Reaction som faner, med spesielle/passive Features i egen kompakt seksjon over eller under; Action Surge skal fortsatt være lett å finne og krysse av. **Plassering ikke endelig avgjort.**
+- Forsvar er en beregnings-/registreringshjelp, ikke en egen action/reaction.
