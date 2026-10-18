@@ -2,6 +2,10 @@
 
 Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISIONS, CODEX_HANDOFF, brukerens forklaringsdokument og `prototypes/dnd-character-companion-v0.11.html`. Nyeste brukeravklaringer har forrang. Dette er leveransestatus, ikke en erstatning for kravene.
 
+## Overordnet mål: erstatte papirkarakterarket
+
+[Produktmålet i krav §1](REQUIREMENTS.md#1-produkt-og-akseptansekriterier) er øverste føring: rask oversikt, oppslag, notater og manuell føring ved et fysisk D&D-bord. Spilleren beholder kontrollen over karakterdata og DM-godkjente unntak. Hver berørt user story og produktgjennomgang skal konkretisere hvordan flyten hjelper spilleren med dette. Kontekstprinsippet nedenfor skal gjøre det digitale arket enklere å bruke.
+
 ## Gjennomgående prinsipp: karakterens kontekst
 
 [Produktprinsippet i krav §1](REQUIREMENTS.md#overordnet-prinsipp-karakterens-kontekst) gjelder hele appen og skal konkretiseres i hver berørt user story. Prinsippet styrer hvilke valg, verdier og oppslag som er relevante i flyten. Generelle valg, tilgang fra ulike kilder, ukjente vilkår og manuelle DM-unntak skal ivaretas. Spesifikke regler vurderes per område; egenskaps-/featvelgeren er ett av flere bruksområder.

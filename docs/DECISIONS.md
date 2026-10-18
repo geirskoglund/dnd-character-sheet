@@ -182,3 +182,8 @@ Brukeren presiserte at relevans gjelder gjennomgående, blant annet cantrips og 
 Appen skal bruke karakterens kjente kontekst og formålet med den aktuelle flyten til å presentere relevante valg, verdier og oppslag. Generelle valg skal beholdes; faktiske regler og flere mulige tilgangskilder må vurderes per område. Uavklarte forhold merkes, og manuelle valg og DM-unntak beholdes. Eierskap/registrering, læring/valg og bruk har ulike forutsetninger. Tidligere registrerte data skal bevares ved kontekstendringer.
 
 Hver berørt user story skal konkretisere prinsippet i forventet spilleropplevelse og kontrollscenarioer. De fire vedtatte kravene før levering/merge gjelder fortsatt. Denne presiseringen dokumenterer produktgrunnlaget; ingen funksjonskode implementeres i denne dokumentasjonsendringen.
+
+
+## Øverste produktmål: erstatte papirkarakterarket (presisert 2026-10-19)
+
+Brukeren minnet om at hele produktet skal erstatte et papirkarakterark. Dette eksisterende målet er nå fremhevet som øverste føring i krav §1, arbeidsinstruksen og matrisen. Konteksttilpasning og kommende user stories skal vurderes etter hvordan de støtter rask oversikt, oppslag, notater og manuell føring under fysisk spill, med spillerens kontroll og DM som autoritet. Tidligere vedtatte grenser for automatisk karakterbygging, regelmotor og turstyring gjelder fortsatt.

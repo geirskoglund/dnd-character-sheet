@@ -10,6 +10,8 @@
 
 ## Gjennomgående produktprinsipp
 
+Øverste føring er å [erstatte papirkarakterarket](docs/REQUIREMENTS.md#1-produkt-og-akseptansekriterier) ved det fysiske spillebordet. Vurder forslag og user stories etter hvordan de gjør oversikt, oppslag, notater og manuell føring enklere under spill. Bevar spillerens frihet til å registrere og overstyre etter avtale med DM. Konteksttilpasningen nedenfor skal støtte dette målet.
+
 Bruk det overordnede prinsippet [karakterens kontekst](docs/REQUIREMENTS.md#overordnet-prinsipp-karakterens-kontekst) i alle funksjonsområder og user stories. Vurder forventede valg, verdier og oppslag ut fra karakterens relevante tilstand og formålet med flyten. Feats, cantrips og spells er eksempler; den samme kontrollen gjelder blant annet utstyr, proficiencies, ressurser og Combat-oppslag. Ta med gyldige generelle valg, alternative kilder til tilgang, uavklarte forutsetninger og DM-unntak i relevante scenarioer. Skill mellom eierskap/registrering, valg/læring og bruk. Bruk områdets faktiske regler; kontekstfiltrering skal bevare registrerte data.
 
 ## Obligatorisk produktkontroll før levering og merge

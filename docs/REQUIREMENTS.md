@@ -3,11 +3,13 @@
 **Spill:** D&D 5e (2014). Mobilførst, offline-først, fysisk terningkast og DM som autoritet.
 
 ## 1. Produkt og akseptansekriterier
+**Overordnet mål: erstatte papirkarakterarket ved det fysiske spillebordet.** Appen skal gjøre det enkelt å lese, slå opp, notere og endre karakterinformasjon under spill, med spillerens manuelle kontroll og DM som autoritet. Nye funksjoner og brukerflyter vurderes først etter hvordan de støtter dette målet.
+
 Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, turstyrer, VTT eller karakterbygger. Eksisterende karakterer registreres uten å rekonstruere tidligere levels. Brukeren skal kunne overstyre beregninger og lagre egne egenskaper fra DM. Ingen backend, konto, digitale terninger, stemmestyrt mutasjon eller obligatorisk level-up-veiviser.
 
 ### Overordnet prinsipp: karakterens kontekst
 
-Hele appen skal bruke kjent informasjon om karakteren til å presentere relevante valg, verdier og oppslag i den aktuelle spillerflyten. Dette gjelder på tvers av Character og Combat, blant annet egenskaper/feats, cantrips/spells, utstyr, proficiencies og ressurser. Hver user story skal beskrive hvordan prinsippet gjelder for sin flyt.
+Konteksttilpasning skal støtte målet om et digitalt papirkarakterark og gjøre føring og oppslag enklere. Hele appen skal bruke kjent informasjon om karakteren til å presentere relevante valg, verdier og oppslag i den aktuelle spillerflyten. Dette gjelder på tvers av Character og Combat, blant annet egenskaper/feats, cantrips/spells, utstyr, proficiencies og ressurser. Hver user story skal beskrive hvordan prinsippet gjelder for sin flyt.
 
 - Relevans vurderes etter flytens formål og faktiske regler, med klasse/subclass, nivå i den aktuelle klassen, art, registrerte egenskaper, proficiencies, utstyr og øvrig relevant tilstand som grunnlag.
 - Generelle valg skal beholdes. Bare reelle forutsetninger kan begrunne en begrensning; ukjente eller uavklarte forhold merkes og valget beholdes tilgjengelig.
