@@ -5,6 +5,18 @@
 ## 1. Produkt og akseptansekriterier
 Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, turstyrer, VTT eller karakterbygger. Eksisterende karakterer registreres uten å rekonstruere tidligere levels. Brukeren skal kunne overstyre beregninger og lagre egne egenskaper fra DM. Ingen backend, konto, digitale terninger, stemmestyrt mutasjon eller obligatorisk level-up-veiviser.
 
+### Overordnet prinsipp: karakterens kontekst
+
+Hele appen skal bruke kjent informasjon om karakteren til å presentere relevante valg, verdier og oppslag i den aktuelle spillerflyten. Dette gjelder på tvers av Character og Combat, blant annet egenskaper/feats, cantrips/spells, utstyr, proficiencies og ressurser. Hver user story skal beskrive hvordan prinsippet gjelder for sin flyt.
+
+- Relevans vurderes etter flytens formål og faktiske regler, med klasse/subclass, nivå i den aktuelle klassen, art, registrerte egenskaper, proficiencies, utstyr og øvrig relevant tilstand som grunnlag.
+- Generelle valg skal beholdes. Bare reelle forutsetninger kan begrunne en begrensning; ukjente eller uavklarte forhold merkes og valget beholdes tilgjengelig.
+- Tilgang og egenskaper kan komme fra flere kilder. Cantrips/spells kan for eksempel komme fra klasse, subclass, art, feats, utstyr eller en avtale med DM. Et klassefilter alene skal ikke skjule andre gyldige tilganger.
+- Skille mellom å eie/registrere, velge/lære og bruke noe er del av relevansvurderingen. Manglende proficiency for et våpen hindrer for eksempel ikke eierskap; eventuelle konsekvenser ved bruk håndteres i den aktuelle flyten.
+- Manuelle valg, «Opprett egen» og DM-unntak skal fortsatt være tilgjengelige. Endret kontekst skal bevare tidligere registrerte data.
+
+De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsippet følger produktets eksisterende grenser for manuell kontroll og avgrensede beregninger.
+
 **Må fungere end-to-end**, ikke bare demonstreres visuelt:
 1. Opprette, redigere, bytte, kopiere og slette karakterer, med eksplisitt bekreftelse ved sletting.
 2. Registrere en eksisterende karakter direkte; endre level og tilhørende felt manuelt.

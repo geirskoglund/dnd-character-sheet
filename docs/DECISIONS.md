@@ -173,3 +173,12 @@ Denne bestillingen gjelder dokumentasjon av arbeidsmåten og status. Den autoris
 ### Presisering: generelle feats skal beholdes (2026-10-19)
 
 Brukeren presiserte at filtreringen ikke må være så streng at feats som gjelder for alle, forsvinner. **Generelle feats uten klassekrav skal beholdes uansett klassefilter.** En manglende klassebegrensning er ikke grunnlag for å skjule en feat. Eventuelle andre faktiske forutsetninger vurderes fortsatt; uavklarte krav merkes og valget beholdes tilgjengelig. Matrisen skal ha scenarioer for både generelle feats og feats med reelle begrensninger. Dette er ført som krav og åpent kontrollpunkt, uten å implementere ny filtrering i denne dokumentasjonsendringen.
+
+
+## Karakterens kontekst er et overordnet produktprinsipp (2026-10-19)
+
+Brukeren presiserte at relevans gjelder gjennomgående, blant annet cantrips og spells, og skal ligge over enkeltstående user stories. Feats er et eksempel på det samme prinsippet. Dette er derfor ført i [krav §1](REQUIREMENTS.md#overordnet-prinsipp-karakterens-kontekst), arbeidsinstruksen og matrisen.
+
+Appen skal bruke karakterens kjente kontekst og formålet med den aktuelle flyten til å presentere relevante valg, verdier og oppslag. Generelle valg skal beholdes; faktiske regler og flere mulige tilgangskilder må vurderes per område. Uavklarte forhold merkes, og manuelle valg og DM-unntak beholdes. Eierskap/registrering, læring/valg og bruk har ulike forutsetninger. Tidligere registrerte data skal bevares ved kontekstendringer.
+
+Hver berørt user story skal konkretisere prinsippet i forventet spilleropplevelse og kontrollscenarioer. De fire vedtatte kravene før levering/merge gjelder fortsatt. Denne presiseringen dokumenterer produktgrunnlaget; ingen funksjonskode implementeres i denne dokumentasjonsendringen.

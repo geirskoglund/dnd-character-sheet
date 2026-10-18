@@ -2,6 +2,19 @@
 
 Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISIONS, CODEX_HANDOFF, brukerens forklaringsdokument og `prototypes/dnd-character-companion-v0.11.html`. Nyeste brukeravklaringer har forrang. Dette er leveransestatus, ikke en erstatning for kravene.
 
+## Gjennomgående prinsipp: karakterens kontekst
+
+[Produktprinsippet i krav §1](REQUIREMENTS.md#overordnet-prinsipp-karakterens-kontekst) gjelder hele appen og skal konkretiseres i hver berørt user story. Prinsippet styrer hvilke valg, verdier og oppslag som er relevante i flyten. Generelle valg, tilgang fra ulike kilder, ukjente vilkår og manuelle DM-unntak skal ivaretas. Spesifikke regler vurderes per område; egenskaps-/featvelgeren er ett av flere bruksområder.
+
+| Område | Prinsippet skal undersøkes gjennom | Faktisk status / kontrollbehov |
+| --- | --- | --- |
+| Egenskaper og feats | Klasse/subclass/klassenivå, art og faktiske forutsetninger; generelle feats bevares | Kjente avvik i listen og klassefilteret står nedenfor; rettelsen er ikke implementert |
+| Cantrips og spells | Tilgang fra klasse, subclass, art, feats og DM; formål som registrering, læring, prepared og kampoppslag; relevante nivåer og multiclass | Manuell registrering og enkelte oppslag finnes. Full kontekstrelevans på tvers av kilder er ikke verifisert og må få egne scenarioer |
+| Utstyr og proficiencies | Skill mellom eid, utstyrt og brukt; manglende proficiency stopper ikke eierskap; konsekvenser ved bruk vurderes etter faktisk regel | Enkel AC/speed og utstyrskategorier er testet i tidligere leveranse. Dette er ikke bevis for hele prinsippet i alle utstyrsflyter |
+| Ressurser og Combat-oppslag | Karakterens faktiske innhold, riktig kilde/klasse/system, registrert tilstand og relevante hvilevilkår | Enkelte flyter er testet tidligere; samlet dekning mot prinsippet må dokumenteres per berørt flyt |
+
+Dette er en oversikt over hvor prinsippet skal brukes, ikke en uttømmende liste over funksjoner eller en erklæring om verifisert støtte. Den konkrete akseptansen føres i scenarioformatet nedenfor.
+
 ## Levert Character-versjon (PR #8)
 
 | Krav / avklaring | Konkret løsning | Verifikasjon |
@@ -82,7 +95,7 @@ Fyll inn én rad per scenario før koding; oppdater med faktisk resultat ved kon
 
 | Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
 | --- | --- | --- | --- | --- | --- |
-| Fyll inn berørt flyt | Krav/avklaring/regelkilde; klasse, subclass, klassenivå og øvrig relevant tilstand | Konkret forventet resultat, tilgjengelige valg og unntak | Faktisk test og resultat, eller «ikke kjørt» | Faktisk observasjon og begrunnelse, eller «ikke gjennomført» | Verifisert / delvis / åpent avvik / avklart utenfor omfang |
+| Fyll inn berørt flyt | Krav/avklaring/regelkilde; klasse, subclass, klassenivå og øvrig relevant tilstand | Konkret forventet resultat ut fra flytens formål og karakterkontekst, med generelle valg, tilgangskilder og unntak der relevant | Faktisk test og resultat, eller «ikke kjørt» | Faktisk observasjon og begrunnelse, eller «ikke gjennomført» | Verifisert / delvis / åpent avvik / avklart utenfor omfang |
 
 ### Kjent mangel som den nye kontrollen må fange
 
@@ -97,4 +110,4 @@ Dette er akseptansescenarier for videre arbeid med egenskaps-/featvelgeren. De e
 
 ### Denne dokumentasjonsendringen
 
-Arbeidsinstruks, matrise, kravspesifikasjon og beslutningslogg oppdateres med den vedtatte leveringskontrollen. Ingen brukerflyt eller funksjonskode endres. Kontroll for denne endringen: tekst, konsistens, relative lenker og `git diff --check`. Nye spilltester og mobilgjennomgang er ikke kjørt for dokumentasjonsendringen; eksisterende testresultater ovenfor beholdes som historikk fra PR #8.
+Arbeidsinstruks, matrise, kravspesifikasjon og beslutningslogg beskriver den vedtatte leveringskontrollen og det gjennomgående prinsippet om karakterens kontekst. Ingen brukerflyt eller funksjonskode endres. Kontroll for denne endringen: tekst, konsistens, relative lenker og `git diff --check`. Nye spilltester og mobilgjennomgang er ikke kjørt for dokumentasjonsendringen; eksisterende testresultater ovenfor beholdes som historikk fra PR #8.
