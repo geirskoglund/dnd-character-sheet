@@ -5,9 +5,9 @@ import { CharacterRepository, openDatabase } from './storage/database';
 import { exportBackup, importBackup } from './storage/backup';
 import { libraryPicker } from './ui/library-picker';
 import { createRecordEditors } from './ui/record-editors';
-import { characterView, combatView } from './ui/views';
+import { characterView, combatView, equipmentView } from './ui/views';
 import { characterForm, bindCharacterForm, readCharacterForm, subclassFields, bindSubclass, readSubclass } from './ui/character-form';
-import { equipmentForm, bindEquipment, readEquipment, newEquipment } from './ui/equipment-form';
+import { equipmentForm, bindEquipment, readEquipment, newEquipment, weaponSummary } from './ui/equipment-form';
 import { editDialog as dialog, viewDialog, confirmDialog, commitDialog } from './ui/dialog';
 import { equipmentPicker, bindEquipmentPicker } from './ui/equipment-picker';
 import { instantiateEquipment } from './domain/catalog';
@@ -24,9 +24,9 @@ let repo: CharacterRepository;
 let characters: Character[] = [];
 let selected: string | undefined;
 let portrait: PortraitAsset | undefined;
-let page: 'character' | 'combat' = 'character';
+let page: 'character' | 'combat' | 'equipment' = 'character';
 let category = 'Action';
-const scroll = { character: 0, combat: 0 };
+const scroll = { character: 0, combat: 0, equipment: 0 };
 let busy = false;
 let message = '';
 const current = () => characters.find(c => c.id === selected);
@@ -81,9 +81,9 @@ function render() {
     <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch => `<option value="${ch.id}" ${selected === ch.id ? 'selected' : ''}>${esc(ch.name)}</option>`).join('')}</select></label>
     <div class="menu-actions"><button data-action="create">Ny karakter</button>${c ? '<button data-action="copy">Kopier karakter</button><button data-action="delete">Slett karakter</button>' : ''}<button data-action="export" ${characters.length ? '' : 'disabled'}>Eksporter backup</button><button data-action="import">Importer backup</button></div>
     <p class="muted">Lokalt lagret på denne enheten. Ta JSON-backup før du rydder nettleserdata.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p class="muted">Versjon ${__APP_VERSION__}</p><button data-action="check-update">Se etter oppdatering</button></div></details></header>
-    <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
+    <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : page === 'equipment' ? equipmentView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
     <p id="status" role="status" aria-live="polite">${esc(message)}</p></div>
-    <nav aria-label="Hovednavigasjon">${['character', 'combat'].map(tab => `<button data-page="${tab}" ${page === tab ? 'aria-current="page"' : ''}>${tab === 'character' ? 'Character' : 'Combat'}</button>`).join('')}</nav>
+    <nav aria-label="Hovednavigasjon">${['character', 'combat', 'equipment'].map(tab => `<button data-page="${tab}" ${page === tab ? 'aria-current="page"' : ''}>${tab === 'character' ? 'Character' : tab === 'combat' ? 'Combat' : 'Utstyr'}</button>`).join('')}</nav>
     `;
   root.querySelectorAll<HTMLButtonElement>('[data-page]').forEach(button => button.onclick = () => {
     scroll[page] = window.scrollY;
@@ -126,7 +126,10 @@ function render() {
   root.querySelectorAll<HTMLButtonElement>('[data-lookup]').forEach(button=>button.onclick=()=>{
     const [kind,id]=button.dataset.lookup!.split(':');
     const c=current()!;
-    if (kind==='spell') {
+    if (kind==='weapon' || kind==='offhand') {
+      const item=c.items.find(row=>row.id===id)!;
+      viewDialog(item.name + (kind==='offhand' ? ' · Off-hand' : ''), weaponSummary(c,item,kind==='offhand') + (item.notes ? `<p class="rule-text">${esc(item.notes)}</p>` : ''));
+    } else if (kind==='spell') {
       const row=c.spells.find(row=>row.id===id)!;
       viewDialog(row.name,`<p>${row.spellLevel ? `Level ${row.spellLevel}` : 'Cantrip ∞'} · ${esc(row.castingTime)} · ${esc(row.range)}</p><p>${esc(row.duration)}${row.concentration?' · Concentration':''}${row.ritual?' · Ritual':''}</p><p>${esc(row.components.join(', '))}</p><p>${esc([row.attack,row.save,row.damage].filter(Boolean).join(' · '))}</p><p class="rule-text">${esc(row.description)}</p>`);
     } else {

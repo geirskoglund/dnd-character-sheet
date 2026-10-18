@@ -2,6 +2,7 @@ import { abilities, type Character } from '../domain/model';
 import { escapeHtml as esc } from './html';
 import { abilityModifier, modifiers, signed } from '../domain/modifiers';
 import { deriveStats } from '../domain/derived';
+import { armorClass, deriveWeapon, inUse, offhandWeapons } from '../domain/equipment';
 const pill = (attributes: string, name: string, detail = '') => `<button class="pill" ${attributes}><span>${esc(name)}</span>${detail ? `<small>${esc(detail)}</small>` : ''}</button>`;
 const add = (collection: string, label: string) => pill(`data-add="${collection}" aria-label="${esc(label)}"`, '+');
 const record = (collection: string, id: string, name: string, detail = '') => pill(`data-record="${collection}:${esc(id)}"`, name, detail);
@@ -26,9 +27,6 @@ export function characterView(c: Character) {
   ${section('Cantrips',c.spells.filter(row=>row.spellLevel===0).map(row=>record('spell',row.id,row.name,'∞')).join(''),add('cantrip','Legg til cantrip'))}
   ${section('Spells',c.spells.filter(row=>row.spellLevel>0).sort((a,b)=>a.spellLevel-b.spellLevel || a.name.localeCompare(b.name)).map(row=>record('spell',row.id,row.name,`Lvl ${row.spellLevel}${row.prepared ? ' · prepared' : ''}`)).join(''),add('spell','Legg til spell'))}
   ${resourceGroup('spellSlot','Spell slots')}
-  <section aria-label="Utstyr"><h2>Utstyr</h2>${([
-    ['weapon','Weapons',['weapon']], ['armor','Armor og skjold',['armor','shield']], ['other','Annet utstyr',['equipment','magic']],
-  ] as const).map(([group,label,categories])=>`<div class="equipment-group" role="group" aria-label="${label}"><h3>${label}</h3><div class="pills">${[...c.items].filter(item=>(categories as readonly string[]).includes(item.category)).sort((a,b)=>Number(b.equipped)-Number(a.equipped)).map(item=>pill(`data-item="${item.id}" aria-pressed="${item.equipped}"`,item.name,`· ${item.equipped?'utstyrt':'eid'}${item.quantity!==1?` · ×${item.quantity}`:''}`)).join('')}${pill(`data-equipment-group="${group}" aria-label="Legg til ${label.toLowerCase()}"`,'+')}</div></div>`).join('')}</section>
   ${resourceGroup('hitDie','Hit Dice')}
   ${resourceGroup('custom','Ressurser')}
   ${section('Egne handlinger',c.actions.filter(row=>!row.sourceRef).map(row=>record('action',row.id,row.name,({action:'Action',bonus:'Bonus',reaction:'Reaction',none:'Annen',passive:'Passiv'})[row.actionEconomy])).join(''),add('action','Legg til egen handling'))}
@@ -39,14 +37,29 @@ export function characterView(c: Character) {
   ${section('Tilstandsimmuniteter',c.conditionImmunities.map(row=>record('immunity',row.id,row.conditionId)).join(''),add('immunity','Legg til tilstandsimmunitet'))}
   ${section('Notater',c.notes.map(n=>pill(`data-note="${n.id}"`,n.title)).join(''),pill('data-action="note" aria-label="Legg til notat"','+'))}`;
 }
+export function equipmentView(c: Character) {
+  const stats = deriveStats(c);
+  return `<section aria-label="Utstyrsoversikt"><h2>Utstyr</h2><p><strong>AC ${stats.ac}</strong></p><details><summary>AC-grunnlag</summary><p>${esc(stats.acExplanation)}</p></details>
+    ${stats.warnings.map(w=>`<p class="warning">${esc(w)}</p>`).join('')}</section>
+    ${([
+      ['weapon','Weapons',['weapon']], ['armor','Armor og skjold',['armor','shield']], ['other','Annet utstyr',['equipment','magic']],
+    ] as const).map(([group,label,categories])=>`<section class="equipment-group" role="group" aria-label="${label}"><h2>${label}</h2><div class="pills">${[...c.items].filter(item=>(categories as readonly string[]).includes(item.category)).sort((a,b)=>Number(inUse(b))-Number(inUse(a))).map(item=>{
+      const weapon = item.category === 'weapon' ? deriveWeapon(c,item) : undefined;
+      const armorValue = armorClass(c,item);
+      const detail = weapon ? `${weapon.attack} · ${weapon.damage}` : item.armorProfile ? `AC ${armorValue}` : item.category === 'shield' ? `AC +${(item.acContribution ?? 2) + ((!item.requiresAttunement || item.attuned) ? item.bonuses?.ac ?? 0 : 0)}` : item.requiresAttunement ? item.attuned ? 'Attuned' : 'Krever attunement' : '';
+      return pill(`data-item="${item.id}" aria-label="${esc(item.name)} · ${inUse(item)?'i bruk':'eid'}${item.quantity!==1?` · ×${item.quantity}`:''}" aria-pressed="${inUse(item)}"`,item.name,`${inUse(item)?'I bruk':'I sekken'}${detail ? ' · '+detail : ''}`);
+    }).join('')}${pill(`data-equipment-group="${group}" aria-label="Legg til ${label.toLowerCase()}"`,'+')}</div></section>`).join('')}`;
+}
 export function combatView(c: Character, category: string) {
   const stats = deriveStats(c);
   const economy = ({Action:'action',Bonus:'bonus',Reaction:'reaction'} as const)[category as 'Action'|'Bonus'|'Reaction'];
   const actionPills = (rows: Character['actions']) => rows.map(row=>pill(`data-lookup="action:${row.id}"`,row.name,row.resourceRefs.map(id=>c.resources.find(pool=>pool.id===id)).filter(pool=>!!pool).map(pool=>`${pool.name}: ${pool.current}/${pool.max}`).join(' · '))).join('');
+  const weapons = economy === 'action' ? c.items.filter(i=>inUse(i) && i.category==='weapon') : economy === 'bonus' ? offhandWeapons(c) : [];
+  const weaponPills = weapons.map(i=>{const v=deriveWeapon(c,i,economy==='bonus');return pill(`data-lookup="${economy==='bonus'?'offhand':'weapon'}:${i.id}"`,`${i.name}${economy==='bonus'?' · Off-hand':''}`,`${v.attack} · ${v.damage}`);}).join('');
   const actions=c.actions.filter(row=>row.actionEconomy===economy);
   const spells=c.spells.filter(row=>row.actionEconomy===economy && (row.spellLevel===0 || row.prepared || (row.known && !row.inSpellbook)));
   return `<section aria-label="HP i Combat" class="combat-health"><button data-action="hp"><small>HP</small><strong>${c.hp.current} / ${c.hp.max}</strong></button><button data-action="temp-hp"><small>Temporary HP</small><strong>${c.hp.temp}</strong></button><div><small>AC</small><strong>${stats.ac}</strong></div><div><small>Initiative</small><strong>${signed(c.derivedOverrides.initiative ?? abilityModifier(c.abilityScores.DEX))}</strong></div></section>
     <section aria-label="Kampoppslag"><div class="combat-tabs" role="group" aria-label="Handlingskategori">${['Action', 'Bonus', 'Reaction'].map(name => `<button aria-pressed="${category === name}" data-category="${name}">${name}</button>`).join('')}</div>
-    ${actions.length || spells.length ? `<div class="pills combat-choices">${actionPills(actions)}${spells.map(row=>pill(`data-lookup="spell:${row.id}"`,row.name,row.spellLevel ? `Lvl ${row.spellLevel}` : '∞')).join('')}</div>` : '<p class="empty muted">Ingen registrerte oppslag i denne kategorien.</p>'}</section>
+    ${weapons.length || actions.length || spells.length ? `<div class="pills combat-choices">${weaponPills}${actionPills(actions)}${spells.map(row=>pill(`data-lookup="spell:${row.id}"`,row.name,row.spellLevel ? `Lvl ${row.spellLevel}` : '∞')).join('')}</div>` : '<p class="empty muted">Ingen registrerte oppslag i denne kategorien.</p>'}</section>
     ${section('Andre egenskaper',actionPills(c.actions.filter(row=>['none','passive'].includes(row.actionEconomy))),pill('data-record="rest"','Hvile'))}`;
 }

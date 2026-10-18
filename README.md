@@ -28,7 +28,7 @@ Bruk `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` hvis Chromium allerede e
 - Klasse og subclass fra lister eller egenregistrering; nåværende klassenivå og multiclass uten rekonstruksjon av level-ups.
 - Endelige ability scores og maksimal HP fra karakterarket.
 - Opprettelsen inneholder bare identitet, klasse/nivå, ability scores og maks HP. Utstyrs-+ åpner søk/valg direkte; eksisterende utstyr redigeres fra sin egen pille.
-- Rustning/skjold og separat eid/utstyrt-status gir beregnet AC og walking speed. Forklaringer finnes i utstyrsdialogen og menyens beregningsvalg. Se [støttede 2014-regler og begrensninger](docs/CHARACTER_FOUNDATIONS.md).
+- Egen Utstyr-fane med direkte katalogvalg, normalt samlet rustningssett og enkel «I bruk»/håndbruk/attunement. Regelverdier følger med; egne navn, bonuser og overstyringer åpnes ved behov. Rustning/skjold og øvrige faste gjenstandsbonuser gir beregnet AC, saves og walking speed. Forklaringer finnes i utstyrsdialogen og menyens beregningsvalg. Se [støttede 2014-regler og begrensninger](docs/CHARACTER_FOUNDATIONS.md).
 - Character viser HP, AC, Initiative, GP og Speed på én rad. Skade, healing og temporary HP håndteres i Combat; GP fra Character.
 - Meny → Denne karakteren: redigering, manuell Level Up med ny samlet maks HP, beregninger, historikk og angre. Level Up gir ingen automatisk healing, spells eller features.
 - Fire lagrede modifierfavoritter med alfabetisk velger og fullstendige navn, samt ability modifiers.
@@ -38,7 +38,7 @@ Bruk `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` hvis Chromium allerede e
 - Egenskaper/feats med egne handlinger, ressurser og betingede skadeeffekter; strukturerte languages, proficiencies/expertise, skadeegenskaper og tilstandsimmuniteter.
 - Spells/cantrips fra søkbar lokal SRD-katalog eller egenregistrering; separate spell-slot/Pact Magic-pools, Hit Dice, hvile og øvrige manuelle ressurser.
 - Inspiration, death saves, conditions og exhaustion, lokalt portrett inkludert i JSON-backup.
-- Character/Combat-navigasjon og offline produksjons-PWA. Registrerte handlinger og tilgjengelige spells kan slås opp i Combat. Genererte våpen-/standardhandlinger, avansert skadekalkulator og full SRD-dekning gjenstår.
+- Character/Combat/Utstyr-navigasjon og offline produksjons-PWA. Våpen i bruk gir beregnet attack/damage og Combat-oppslag, også relevante off-hand-valg. Finesse, ranged/thrown, proficiency/multiclass, håndbruk, faste magiske bonuser og utvalgte Fighting Styles/Martial Arts støttes. Registrerte handlinger og tilgjengelige spells beholdes. Sammensatte effekter er tekst/manuelle tilpasninger; standardhandlinger, avansert skadekalkulator og full SRD-dekning gjenstår. Se [beregningskontrakten](docs/EQUIPMENT.md).
 
 Arbeidsflaten er sammenholdt med [v0.11-prototypen](docs/PROTOTYPE_REVIEW.md), med nyere brukeravklaringer som føring. En [UX-gjennomgang av eksisterende flyter](docs/UX_REVIEW.md) dokumenterer videre opprydding av tillegg, oppslag, redigering, avbryt, fokus og historikk. Se [samlet kravmatrise og faktisk status](docs/CHARACTER_WORKSPACE.md). Utformingen er fortsatt foreløpig. Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
 

@@ -1,3 +1,4 @@
+import { itemBonuses } from './equipment';
 import { abilities, type Character } from './model';
 
 const abilityNames = {STR:'Strength', DEX:'Dexterity', CON:'Constitution', INT:'Intelligence', WIS:'Wisdom', CHA:'Charisma'};
@@ -10,6 +11,7 @@ export const abilityModifier = (score: number) => Math.floor((score - 10) / 2);
 export const signed = (value: number) => `${value >= 0 ? '+' : ''}${value}`;
 const normalize = (value: string) => value.split(':').at(-1)!.replaceAll('-', ' ').toLowerCase();
 export function modifiers(c: Character) {
+  const saveBonus = itemBonuses(c, 'saves').reduce((sum, entry) => sum + entry.amount, 0);
   const proficiency = c.proficiencyBonusOverride ?? Math.ceil(c.level / 4) + 1;
   const base = (ability: typeof abilities[number]) => abilityModifier(c.abilityScores[ability]);
   const bonus = (level?: string) => level === 'expertise' ? proficiency * 2 : level === 'proficient' ? proficiency : 0;
@@ -22,7 +24,7 @@ export function modifiers(c: Character) {
     ...abilities.map(a => ({ref:a, name:abilityNames[a], value:base(a)})),
     ...abilities.map(a => {
       const save = c.saves.find(s => s.abilityId === a);
-      return {ref:`${a} save`, name:`${abilityNames[a]} save`, value:save?.override ?? base(a) + bonus(save?.proficiencyLevel)};
+      return {ref:`${a} save`, name:`${abilityNames[a]} save`, value:save?.override ?? base(a) + bonus(save?.proficiencyLevel) + saveBonus};
     }),
     {ref:'Initiative', name:'Initiative', value:c.derivedOverrides.initiative ?? base('DEX')},
     {ref:'Passive Perception', name:'Passive Perception', value:c.derivedOverrides.passivePerception ?? 10 + skills.find(s=>s.ref === 'Perception')!.value},

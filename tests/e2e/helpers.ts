@@ -16,3 +16,15 @@ export async function createCharacter(page: Page, species = 'Elf') {
   await page.getByRole('button', {name:'Lagre',exact:true}).click();
   await page.getByRole('dialog').waitFor({state:'hidden'});
 }
+
+export async function equipmentTab(page: Page) { await page.getByRole('navigation').getByRole('button',{name:'Utstyr',exact:true}).click(); }
+export async function expectCharacterStatus(page: Page, text: string) {
+  const {expect} = await import('@playwright/test');
+  const equipment = await page.locator('[data-page="equipment"]').getAttribute('aria-current');
+  if (equipment) await page.getByRole('button',{name:'Character',exact:true}).click();
+  await expect(page.getByLabel('Karakterstatus')).toContainText(text);
+  if (equipment) await equipmentTab(page);
+}
+export async function itemDetails(page: Page) {
+  await page.getByRole('dialog').getByText('Tilpass gjenstanden',{exact:true}).click();
+}

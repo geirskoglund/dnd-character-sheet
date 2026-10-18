@@ -1,6 +1,6 @@
 # Character-arbeidsflate: krav, kilde og leveransestatus
 
-Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISIONS, CODEX_HANDOFF, brukerens forklaringsdokument og `prototypes/dnd-character-companion-v0.11.html`. Nyeste brukeravklaringer har forrang. Dette er leveransestatus, ikke en erstatning for kravene.
+Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISIONS, CODEX_HANDOFF, brukerens forklaringsdokument og `prototypes/dnd-character-companion-v0.11.html`. Nyeste brukeravklaringer har forrang. Dette er leveransestatus, ikke en erstatning for kravene. **Nyeste utstyrsleveranse er beskrevet nederst; historiske PR #8-resultater er beholdt som historikk.**
 
 ## Overordnet mål: erstatte papirkarakterarket
 
@@ -47,11 +47,10 @@ Verifikasjonskolonnen beskriver kontrollene. Faktiske kjøreresultater og mobilg
 
 - **Relevante egenskaps-/featvalg:** Standardlisten er for lang og viser valg som ikke gjelder karakteren. Eksisterende manuelt klassefilter gir ikke automatisk relevans etter subclass, klassenivå, art eller andre faktiske forutsetninger. Generelle feats må beholdes også ved klassefilter; dagens manuelle klassefilter utelater poster uten klasseliste. Dette er åpne produktavvik, selv om opprettelse og lagring fungerer. Se scenarioene nedenfor.
 
-- **Konkrete utstyrsoppslag:** Våpen har egne lagrede instanser, men mangler beregnet angreps-/skadebonus for karakteren. Nye katalogvåpen har grunnskade, mens eldre poster fra den tidligere katalogen kan mangle den. Utstyrsverdier er gjemt i et detaljfelt i editoren. Rustningsprofil brukes allerede i AC/speed; tydelig forklaring og relevante våpenverdier ved trykk må gjennomgås som brukerflyt. Bevar manuelle verdier ved videre rettelse.
-- **Samlet utstyrsoppsett:** Et sentralt produktkrav er at eksempelvis brynje, skjold og kappe kan bæres sammen med riktige kildebaserte virkninger og vilkår. Dagens rustning/skjold-beregning og utstyrt-markering dekker bare deler av dette. Bæreplassering, attunement og samlet virkning fra øvrige gjenstander er ikke implementert/verifisert; konkret UI og felter gjenstår å utforme.
-- **Combat:** Manuelle handlingsinstanser og tilgjengelige spells kan vises som oppslag etter action economy. Automatisk genererte våpenhandlinger, off-hand, standardhandlinger (Unarmed Strike/Grapple/Shove osv.) og komplett sammenstilling av katalogregler gjenstår. Ingen turstyrer innføres.
+- **Konkrete utstyrsoppslag og samlet oppsett:** Rettet i utstyrsleveransen nedenfor: egen fane, karakterberegnede angrep/skade, tydelig AC, håndbruk, faste bonuser og attunement. Brukerens senere forenkling erstatter et påkrevd kroppsrutenett med samlet rustning og frivillige enkeltgjenstander. Avanserte/situasjonelle effekter forblir tekst/manuelle verdier etter godkjent avgrensning.
+- **Combat:** Våpen i bruk, standard off-hand for to lette våpen, manuelle handlinger og tilgjengelige spells vises nå. Standardhandlingene Unarmed Strike/Grapple/Shove og komplett sammenstilling av katalogregler gjenstår. Ingen turstyrer innføres.
 - **Ta skade:** Den eksisterende HP-justeringen med temp HP først er beholdt. Sammensatt skade, individuelt valgbare passive effekter, bekreftelse ved ukjente vilkår, flat reduksjon, korrekt resistance/vulnerability-rekkefølge og forklaring til DM gjenstår. Lagrede skadeegenskaper/effekter brukes ikke i denne HP-justeringen.
-- **SRD:** Lokal karakterkatalog omfatter 319 spells/cantrips, 407 klasseegenskapsoppføringer, én SRD-feat og 237 vanlige utstyrsoppføringer, i tillegg til eksisterende species/klassegrunnlag. Dette er ikke et komplett SRD-regelbibliotek: øvrige regelkapitler, monster- og magic-item-bibliotek og full trait-/subrace-dekning gjenstår. Ingen automatisk regelkonvertering fra prosatekst.
+- **SRD:** Lokal karakterkatalog omfatter 319 spells/cantrips, 407 klasseegenskapsoppføringer, én SRD-feat og 237 vanlige utstyrsoppføringer og to kuraterte protection-gjenstander, i tillegg til eksisterende species/klassegrunnlag. Dette er ikke et komplett SRD-regelbibliotek: øvrige regelkapitler, monster- og magic-item-bibliotek og full trait-/subrace-dekning gjenstår. Ingen automatisk regelkonvertering fra prosatekst.
 - **Koblinger:** Feature-editoren støtter egen handling, ressurs, skadeeffekt og eksisterende ressurser. Vilkårlig mange avanserte koblinger/aktive tilstander fra import bevares, men alle har ennå ikke egne fullstendige redigeringsflater. Utstyrsavhengige avanserte effekter gjenstår.
 - **Hvile:** Registrert short/long-rest-recharge følger ressursen. Særregler (inkludert Arcane Recovery/spilledag), exhaustion/conditions og death-save-reset vurderes manuelt med DM. Ingen automatisk spilledagskalender.
 - **Design:** Denne rettelsen harmoniserer eksisterende arbeidsflate med prototype og seneste avklaringer. Den erstatter ikke det senere avklarte valget mellom 2–3 designretninger.
@@ -107,7 +106,7 @@ Fyll inn én rad per scenario før koding; oppdater med faktisk resultat ved kon
 
 ### Kjente mangler som den nye kontrollen må fange
 
-Dette er akseptansescenarier for videre arbeid med egenskaps-/featvelgeren og konkrete utstyrsoppslag. De er ikke nye kjørte tester eller en bestilling på funksjonskode i denne dokumentasjonsendringen. Detaljert regelgrunnlag og testreferanser må fylles inn før en implementasjon.
+Dette er opprinnelige akseptansescenarier for videre arbeid med egenskaps-/featvelgeren og konkrete utstyrsoppslag. Status for utstyr er senere oppdatert i leveranseseksjonen nederst; feat-avvikene er fortsatt åpne. De er ikke nye kjørte tester eller en bestilling på funksjonskode i denne dokumentasjonsendringen. Detaljert regelgrunnlag og testreferanser må fylles inn før en implementasjon.
 
 | Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
 | --- | --- | --- | --- | --- | --- |
@@ -123,3 +122,46 @@ Dette er akseptansescenarier for videre arbeid med egenskaps-/featvelgeren og ko
 ### Denne dokumentasjonsendringen
 
 Arbeidsinstruks, matrise, kravspesifikasjon og beslutningslogg beskriver den vedtatte leveringskontrollen og det gjennomgående prinsippet om karakterens kontekst. Ingen brukerflyt eller funksjonskode endres. Kontroll for denne endringen: tekst, konsistens, relative lenker og `git diff --check`. Nye spilltester og mobilgjennomgang er ikke kjørt for dokumentasjonsendringen; eksisterende testresultater ovenfor beholdes som historikk fra PR #8.
+
+## Utstyr-leveranse: forventninger fastsatt før koding (2026-10-19)
+
+Kilder: godkjent brukerbestilling, REQUIREMENTS §§1–3 og 11, DECISIONS siste avklaring, SRD 5.1 (2014) Equipment/Combat/Classes/Magic Items, samt faktisk prototype (grupper, equipped, Combat-oppslag) og PAPER_SHEET_REVIEW. Nyeste tre-fanevalg erstatter prototypens to faner; ingen kroppsrutenett. Følgende kontroller er planlagt, ikke kjørt.
+
+| Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
+| --- | --- | --- | --- | --- | --- |
+| Navigasjon og enkel føring | Fighter 3; nytt og eksisterende ark | Tre faner med separat scroll; Character uten utstyrsadministrasjon; + åpner filtrert søk direkte; valg lagrer én gang; egne detaljer frivillige | Planlagt nettlesertest; ikke kjørt | Planlagt 320/390 px og stor skrift; forskjell: godkjent egen fane | Før koding |
+| Longsword og håndbruk | Fighter 3, STR16 DEX12, PB2 | d20+5, 1d8+3 slashing; to hender 1d10+3; skjoldkonflikt varsles uten blokkering; viser samme i Combat | Planlagt domene/UI-test; ikke kjørt | Planlagt oppslag og redigering uten mellomdialog | Før koding |
+| Finesse, ranged, thrown og proficiency | Rogue DEX16 STR10; Wizard uten martial proficiency; Fighter3/Wizard2 PB3 | Finesse bruker beste STR/DEX; ranged DEX; thrown melee bruker melee-ability; proficiency bare på angrep; egne valg og manglende proficiency hindrer ikke eierskap | Planlagt domene/UI-test; ikke kjørt | Alle katalogvåpen kan registreres; relevant konsekvens forklares | Før koding |
+| Rustningens faste verdier | DEX16: Leather, Half Plate, Chain Mail; DEX6 negativ modifier | AC14 /17 /16; medium negative DEX beholdes; viser rustning, DEX og skjold separat; manuell AC merkes | Planlagt domene/UI-test; ikke kjørt | AC-grunnlag synlig uten å redigere profil | Før koding |
+| Magiske bonuser og attunement | Chain Mail, Shield, Cloak of Protection i bruk og attuned | AC19, alle saves +1; uten attunement/bruk eller med vanlig kappe ingen kappebonus; antall multipliserer ikke bonus; mer enn tre attuned og håndkonflikter varsles | Planlagt domene/UI-test; ikke kjørt | Kun relevant attunement-kontroll, detaljer ved behov | Før koding |
+| Egenskaper og situasjonsregler | Registrerte Fighting Styles og Monk; betingede effekter | Støttede faste regler med vilkår beregnes; andre beskrives som tekst, uten å bli gjort permanente ved antakelse | Planlagt domene-test; ikke kjørt | Forklar hva som regnes med og vis øvrige merknader | Før koding |
+| Eksisterende data og DM-unntak | Eldre katalogvåpen uten skade, egne attack/damage-tekster, ny profil/bonuser | Sikre kataloggrunnlag brukes som fallback uten omskriving; manuelle totaler bevares; lagre/undo/kopi/backup/offline bevarer nye data og isolasjon | Planlagt lagring/import/UI-test; ikke kjørt | Avbryt og lagringsfeil skal bevare utkast; ingen tvungen migreringsveiviser | Før koding |
+
+Utenfor denne bestillingen: feat-/spellrelevansrettelse, komplett SRD/magic-item-bibliotek, sammensatt skadekalkulator og standardhandlingene Grapple/Shove. De tidligere dokumenterte kravene beholdes. Off-hand-oppslag fra relevante våpen inngår uten tursporing.
+
+## Utstyr: faktisk produktgjennomgang og leveransestatus (2026-10-19)
+
+De syv forventningene i før-koding-tabellen ovenfor er gjennomført. Kilde- og beregningsgrenser står i [EQUIPMENT.md](EQUIPMENT.md). Det er ikke implementert en generell regelmotor. Produktkontrollen nedenfor er separat fra de tekniske testresultatene.
+
+| Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
+| --- | --- | --- | --- | --- | --- |
+| Tre faner, direktevalg og enkel egenregistrering | Godkjent §11; Fighter 3/Champion/Elf | Character uten utstyrsadministrasjon; egne scrollposisjoner; + direkte til gruppens katalog; bare navn nødvendig for eget vanlig utstyr | `equipment.spec.ts` tester tre faner, 2 synlige input for egenregistrering, 3 for longsword-editor, én commit, scroll og offline | Faktisk 390/320 px: grupper og inline + beholdt fra prototypen, egen fane følger ny beslutning. Ingen mellomoppsummering eller dobbel avbryt | Implementert og gjennomgått |
+| Longsword, finesse, ranged/thrown, proficiency og multiclass | STR16 / PB2; Fighter3/Wizard2; Rogue/Wizard, ulike proficiencies | +5 /1d8+3; versatile to hender 1d10+3; klasse-/registrerbare proficiencies, totallevel-PB, korrigerbare unntak | `equipment.test.ts` regeltilfeller, `equipment.spec.ts` faktisk endring/Combat/lagring | Faktisk Fighter3: longsword viser +5/1d8+3 direkte. To hender oppdaterer; skjoldkonflikt varsles uten blokkering. Combat-oppslag har én Lukk | Implementert; første registrerte klasse tolkes som startklasse ved multiclass, forklart og overstyrbar |
+| Rustningsregler og tydelig AC | DEX16 og negativ DEX; Leather/Half Plate/Chain Mail | AC14/17/16; ett rustningssett, ett skjold, forståelige bidrag | `derived.test.ts`, `equipment.test.ts`, foundations- og equipment-nettlesertester | Faktisk Chain Mail vises som samlet rustning. Ingen plaggplassering; gjenstandsprofil og AC-grunnlag kan åpnes ved behov | Implementert innen støttede profiler |
+| Faste magiske bonuser og attunement | Chain Mail+Shield+Cloak of Protection; vanlig kappe, ikke-attuned, antall0, kopier, saves | AC19 og saves+1 når vilkår gjelder; ikke dobbel bonus eller bonus fra vanlig kappe | `equipment.test.ts` kombinasjoner og `equipment.spec.ts` AC19/save+4 fra DEX16, toggling, endring/undo/offline | Faktisk AC19, I bruk og Attuned; bonuskildene kan leses. Ingen tvungen registrering av vanlige klær | Implementert; større magic-item-bibliotek gjenstår |
+| Klasseregler og off-hand | Registrerte Fighting Styles, Monk med riktig klassenivå/utstyr; to lette melee-våpen | Kjente faste bidrag med vilkår; off-hand uten positiv ability med mindre stil; andre effekter som tekst | `equipment.test.ts` egne regeltilfeller, `equipment.spec.ts` off-hand med én Lukk og uten Bruk | Oppslagsmønster følger prototypens idé, men bruker faktisk proficiency og korrigert off-hand. Ikke bruk-/tursporing | Avgrenset støtte som dokumentert; feat-spesifikke unntak kan føres manuelt |
+| Databevaring og DM-tilpasninger | Eldre instans uten profil/damage, egne totaler, nye bonuser/referanser | Ingen omskriving ved oppstart; uendret save uten hendelse; feil bevarer utkast; kopi/backup/undo uavhengig | `equipment.test.ts` lagring/kopi/undo/import; `equipment.spec.ts` eldre fallback, full lagring og retry, manuelle totaler/offline; eksisterende migrations/storage-suite | Faktisk redigering åpner samme post direkte. Skjulte detaljer følger med uten ny utfylling. Avbryt og slett-avbryt beholder utkast | Implementert; v2-feltene er additive, ingen DB-migrering |
+| Liten skjerm og lesbarhet | 320/390 px, også 200 % skrift | Like piller og lesbare verdier uten horisontal overflyt, også utvidede skjemaer | `equipment.spec.ts` geometri, scroll, lukket/utvidet editor; øvrig mobilregresjon | Egen gjennomgang fant overflyt ved 200 % i dialog og avanserte felt; rettet med responsiv padding, tekstbryting og kolonner. Gjenprøvd uten overflyt eller nettleserfeil | Rettet og gjennomgått; ingen full WCAG-revisjon |
+
+Synlige felt er vurdert ved faktisk føring, ikke bare telt: katalogtillegg trenger ingen ekstra utfylling; eget vanlig utstyr trenger navn. Antall, bonuser, profiler og merknader er tilgjengelige ved behov. Våpeneditoren viser egne verdier først og gjentar ikke en irrelevant global Stealth-advarsel. Ordinære kompleksiteter som Sneak Attack og særlige våpenvilkår vises som tekst uten å gjøres til permanent grunnskade.
+
+Bilder fra egen produktgjennomgang med Fighter3/Champion, Elf, STR16 DEX16, longsword i bruk, dagger i sekken, Chain Mail, Shield og attuned Cloak of Protection:
+
+- [Utstyr 390 px](images/equipment-390.png)
+- [Utstyr 320 px](images/equipment-320.png)
+- [Direkte våpenredigering 390 px](images/equipment-weapon-390.png)
+- [Combat-oppslag 390 px](images/equipment-combat-390.png)
+
+Fortsatt utenfor omfang: feat-/spellkontekstfiltrering, komplett SRD/magic-item-katalog, standardhandlingene Unarmed Strike/Grapple/Shove, sammensatt skadekalkulator og endelig designvalg. Disse kravene er ikke slettet eller erklært løst. Proficiency- og effektgrenser er beskrevet eksplisitt i EQUIPMENT.md.
+
+Endelig lokal kontroll av utstyrsleveransen: `CI=1 CHROMIUM_PATH=/usr/bin/chromium npm run check` passerer **85 domene-/lagringstester, TypeScript/produksjonsbygg og 41 Playwright-tester (126 totalt), ingen hoppet over**. Dette inkluderer regresjon for tidligere tomme attack/damage-felt og egne fortryllelser uten falsk proficiency/stacking-antakelse. Dokumentlenker, ankere, tabellkolonner og `git diff --check` er kontrollert. Screenshots og gjennomgang er fra produksjonsbygget under Pages-understien, ikke en påstand om kontroll av offentlig URL. CI og Pages kontrolleres ved PR/merge.

@@ -39,10 +39,16 @@ const foundationEquipment: EquipmentDefinition[] = [
     effectRefs: [], resourceRefs: [],
   })),
 ];
-export const equipmentCatalog: EquipmentDefinition[] = equipment.map(row => {
+const ordinaryEquipment: EquipmentDefinition[] = equipment.map(row => {
   const foundation = foundationEquipment.find(existing => existing.catalogId === row.catalogId);
   return {...row,...foundation,notes:row.notes,damage:row.damage} as EquipmentDefinition;
 });
+// Curated SRD 5.1 magic-item facts, same pinned upstream as the equipment catalog.
+export const equipmentCatalog: EquipmentDefinition[] = [...ordinaryEquipment,
+  ...['Cloak', 'Ring'].map(kind => ({catalogId:`srd51:magic-item:${kind.toLowerCase()}-of-protection`, name:`${kind} of Protection`,
+    category:'magic' as const, requiresAttunement:true, attuned:false, bonuses:{ac:1,saves:1}, effectRefs:[],resourceRefs:[],
+    notes:`Requires attunement. While worn: +1 AC and +1 to saving throws.`})),
+];
 export function instantiateEquipment(catalogId: string, equipped = true): Item {
   const definition = equipmentCatalog.find(d => d.catalogId === catalogId);
   if (!definition) throw new Error('Ukjent utstyr.');

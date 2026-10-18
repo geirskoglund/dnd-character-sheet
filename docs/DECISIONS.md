@@ -16,7 +16,7 @@
 
 ## 2. Navigasjon og visuell UX – besluttet
 
-- To hovedvisninger: **Character** (verdier, redigering, oppslag) og **Combat** (rask handling-/regeloversikt); behold separat scrollposisjon.
+- Tre hovedvisninger: **Character**, **Combat** og **Utstyr** med separat scrollposisjon (senere avklart 2026-10-19; erstatter to faner).
 - Kort/piller fremfor lange tekstblokker; detaljer åpnes ved trykk. Unngå overflødige overskrifter og tellere.
 - Statusfelt høyt på Character: fem like store piller på én rad: HP, AC, Initiative, GP og Speed. **Temporary HP og HP-endring ligger i Combat** (senere avklart). GP med to desimaler, internt heltall kobbermynter.
 - **Modifiers:** Fire kompakte, tilpassbare favorittkort med fullt navn. Trykk for alfabetisk liste over ferdigheter, ability modifiers, saves, initiative m.m., og bytt kortets innhold. Ikke separat permanent søkefelt/duplikatknapp her.
@@ -61,7 +61,7 @@
 - **Spell-slot-piller:** Trykk på nivåets pille åpner *kun dette nivået* med ±1 og tilgjengelig/maks. **Hvile** åpnes via kompakt pille/verktøy, ikke permanent stort panel.
 - **Felles spellvisning med klassetilpassede felt og ressurser**, ikke separate UI-er per klasse. Spell-data må skille cantrip, spell level, known/spellbook/prepared, slots, Pact Magic, concentration, ritual, casting time, range, duration, components, saving throw/attack, damage, upcasting; registrering manuell når nødvendig.
 - Utstyr skiller **eid** fra **utstyrt**, weapons fra armor, equipped først. Utstyr kan endre AC, våpenkast, Combat-alternativer og betingede effekter; advar ved konflikt, **blokker aldri** DM-godkjente valg. Støtt dual wielding og tohåndsvåpen.
-- Class Features & Feats vises **før utstyr**. Feats skal kunne opprettes/redigeres manuelt og eventuelt knyttes til ressurs/handling/betinget effekt.
+- Class Features & Feats vises på **Character**, utstyr i egen **Utstyr**-fane (senere avklart). Feats skal kunne opprettes/redigeres manuelt og eventuelt knyttes til ressurs/handling/betinget effekt.
 - Ikke krev løpende registrering av eksterne buffs/debuffs eller situasjonsforhold. Egne egenskaper som Rage, Concentration og Mage Armor kan ved behov ha enkel status knyttet til feature/spell, men kun der det har praktisk verdi; eksterne/midlertidige skademodifikatorer kan velges direkte i «Ta skade» uten permanent sporing.
 - **Level Up** finnes under «Denne karakteren» i innstillingsmenyen, ikke under generell administrasjon og ikke som stort Progression-panel.
 - Arcane Recovery krever vurdering av spilledag/short rest; ikke anta kalenderdato fra virkeligheten.
@@ -213,3 +213,9 @@ Kombinasjonene vurderes etter D&D 2014-reglene; konkrete felt, UI og implementas
 ## Referer til faktisk bruk av papirark og klassespesifikke ark (2026-10-19)
 
 Brukeren ba om at videre utforming ser til dagens character sheets, merknadsfelt og klassespesifikke ark, med relevante kilder på nett. [PAPER_SHEET_REVIEW.md](PAPER_SHEET_REVIEW.md) dokumenterer konkrete undersøkte sider, observerte føringsmåter og kildebegrensninger. Funn om våpenverdier, merknader, båret utstyr versus lager, attunement og casterbehov inngår i videre produktvurdering. Trykte felt og linjer er ikke nye spillregler; gjeldende D&D 2014-regler, mobilavklaringer og manuell kontroll beholdes. Referansearbeidet fastsetter ikke endelig UI eller bestiller ny funksjonskode.
+
+## Godkjent implementasjon: enkel Utstyr-fane (2026-10-19)
+
+Brukeren godkjente alle tre foreslåtte produktvalg og bestilte koding: (1) Character, Combat og Utstyr som tre faner, (2) korrekte avgrensede AC-/våpenberegninger med relevante egenskaper og vanlige magiske bonuser, forklarte bidrag og mer sammensatte effekter som tekst frem til konkret støtte, (3) enkelt «I bruk», relevant én/to-håndsvalg og attunement, med advarsler og DM-unntak.
+
+Diskusjonen om plassering er forenklet: ingen figur eller påkrevd oppdeling i kroppsdeler/plagg. Rustning føres normalt som et samlet sett med faste regelverdier. Brukeren kan frivillig føre enkeltplagg. Katalogvalg legger til direkte med regelverdier; egne navn/varianter og manuelle korrigeringer finnes ved behov. Implementasjon skal gjøre føringen enklere enn et spill med mange utstyrsmenyer. Karakteropprettelsen forblir uten utstyr. Se krav §11 og konkrete før-koding-scenarioer i matrisen. Ingen utvidelse til full regelmotor eller kampautomatisering.
