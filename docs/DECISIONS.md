@@ -142,3 +142,9 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - Trykk på handlingen viser detaljer/regler/terningkast.
 - **Kun begrensede ressurser registreres som brukt**, med enkel avkryssing. Ved flere bruk vises tilsvarende antall bokser/teller. Relevant short/long rest tilbakestiller ressurser.
 - Avkryssing må også kunne oppheves manuelt; DM og spiller styrer.
+
+
+## Lagringsbeslutning – lokal database (2026-10-18)
+- Velg **IndexedDB** som lokal database i nettleseren for karakterdata og ressursstatus; GitHub Pages brukes fortsatt som statisk hosting, uten backend.
+- Behold **eksport/import av JSON** for sikkerhetskopi og flytting mellom enheter. Lokal nettleserlagring er ikke automatisk synkronisert eller en sikkerhetskopi.
+- Server/synkronisering er ikke del av første versjon; kan vurderes senere. Offline PWA-støtte kan bygges med service worker/cache separat fra databasen.
