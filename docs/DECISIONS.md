@@ -148,3 +148,9 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - Velg **IndexedDB** som lokal database i nettleseren for karakterdata og ressursstatus; GitHub Pages brukes fortsatt som statisk hosting, uten backend.
 - Behold **eksport/import av JSON** for sikkerhetskopi og flytting mellom enheter. Lokal nettleserlagring er ikke automatisk synkronisert eller en sikkerhetskopi.
 - Server/synkronisering er ikke del av første versjon; kan vurderes senere. Offline PWA-støtte kan bygges med service worker/cache separat fra databasen.
+
+
+## Design og datamodell – avklart (2026-10-18)
+- Brukeren bekrefter: enkle modifiers beregnes automatisk, **manuell overstyring alltid mulig**; egne handlinger/ressurser/effekter/notater kan opprettes og redigeres; eksisterende karakterer kan registreres direkte, uten level-1-veiviser.
+- Videre UX: **kompakt, rask, mobilførst**, men også visuelt inspirerende og karakterfullt; ikke bare funksjonelt dashboard.
+- Codex kan foreslå og implementere visuell utforming, men skal følge godkjent funksjonell UX og eksplisitt designretning. Vurder 2–3 alternative visuelle retninger på samme Character- og Combat-skjerm før én velges. Unngå overdreven ornamentikk og tap av lesbarhet.
