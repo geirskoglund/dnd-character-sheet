@@ -134,3 +134,11 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - **Automatisering:** Kun som praktisk hjelp når den er enkel, forutsigbar og pålitelig (f.eks. ability modifiers). DM og spilleren har autoritet over verdiene; automatiske beregninger må ikke blokkere manuelle justeringer.
 - **Combat:** Rask oversikt/ressursstyring snarere enn full validering og håndheving av regler.
 - **Evaluering av alternativer:** Vektlegg redigerbarhet, oversikt, mobilbruk og fart over automatisert karakterbygging/level-up.
+
+
+## Combat-forenkling – oppslagsverk, ikke turstyrer (2026-10-18)
+- Combat viser alle relevante **Action / Bonus Action / Reaction / Other** som en lett tilgjengelig oversikt over hva karakteren kan gjøre.
+- Fjern «Bruk» på ordinære handlinger, markering av brukt action/bonus/reaction og «Ferdig med tur»; ingen turstyring.
+- Trykk på handlingen viser detaljer/regler/terningkast.
+- **Kun begrensede ressurser registreres som brukt**, med enkel avkryssing. Ved flere bruk vises tilsvarende antall bokser/teller. Relevant short/long rest tilbakestiller ressurser.
+- Avkryssing må også kunne oppheves manuelt; DM og spiller styrer.
