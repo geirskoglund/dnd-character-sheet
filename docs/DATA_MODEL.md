@@ -52,6 +52,8 @@ Betingelser er **beskrivbare, og evalueres tri-state**: `true` / `false` / `unkn
 `{id,definitionRef?,name,category:weapon|armor|shield|equipment|magic,quantity,equipped,handUsage?:one|two|versatile,attack?,damage?,acContribution?,effectRefs[],resourceRefs[],notes?}`.
 Eid og utstyrt er ulike tilstander. Equip kan advare om kombinasjonskonflikter, ikke nekte lagring.
 
+Utstyrsoppsett (presisert 2026-10-19) må også kunne representere relevant bæreplassering/håndbruk og eventuell attunement, samt knytte gjenstandens bidrag til beregnede verdier/oppslag via kilde og vilkår. Gjenstandstype, eierskap og aktiv bruk er separate forhold. Konkrete felter og migrering avgjøres ved implementasjon; dagens kode har ikke full støtte. Kombinasjonsregler og advarsler følger D&D 5e 2014 og bevarer DM-unntak. Se [krav §2](REQUIREMENTS.md#2-character) og [åpne kontrollscenarioer](CHARACTER_WORKSPACE.md#kjente-mangler-som-den-nye-kontrollen-må-fange).
+
 ### SpellInstance
 `{id,definitionRef?,name,spellLevel,castingTime,actionEconomy,range,duration,concentration,ritual,components,attack?,save?,damage?,description,known?,inSpellbook?,prepared?,casterClassRef?,resourceSystemRef?}`.
 Bruk felles spellvisning, klasseavhengige felter og separate slotsystemer.
