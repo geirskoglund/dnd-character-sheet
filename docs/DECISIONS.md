@@ -179,3 +179,14 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - Brukeren ønsker en **Forsvar**-knapp: angi innkommende skadeverdi og skadetype, beregn skade etter resistance/immunity/vulnerability og temporary HP, forhåndsvis faktisk HP-effekt, og tilby eksplisitt «Oppdater HP» (ikke automatisk mutasjon). Tillat manuell overstyring; utvidbar til sammensatt skade.
 - Undersøk å flytte «Other» ut av Combat-fanene: behold Action/Bonus/Reaction som faner, med spesielle/passive Features i egen kompakt seksjon over eller under; Action Surge skal fortsatt være lett å finne og krysse av. **Plassering ikke endelig avgjort.**
 - Forsvar er en beregnings-/registreringshjelp, ikke en egen action/reaction.
+
+
+## Evaluering av v0.9 (2026-10-18)
+- **Feil vedvarer:** Tom knapp ved Forsvar/Hvile; må fjernes. Flytt verktøyknappene **under Andre egenskaper**.
+- **Enhetlig legg-til-mønster:** Hver samling av piller får en avsluttende tom **+-pille** under samme seksjonsoverskrift (Weapons, Armor, annet utstyr, Features/Feats, Spells, Cantrips, egne handlinger/ressurser, notater osv.). Fjern separate «Legg til utstyr» og andre dupliserte knapper. Pluss åpner egnet velger/registrering.
+- **Store kataloger:** Ikke lang, uoversiktlig liste i en liten popup. Bruk søkbart mobilvennlig velgerpanel med filtrering for våpen, utstyr, spells, feats; tilbud om egendefinert registrering. Vær tydelig på at biblioteksdekning i prototype er begrenset.
+- **Feats:** v0.9 oppleves fortsatt å mangle fungerende mulighet for å legge til feats; rett funksjonen og test.
+- **Innkommende skade:** Ønske om slider som andre steder (alternativt hjul, uavklart), gjerne nøyaktig ±1-justering. «Forsvar/Beregn skade» er lite godt navn; forslag **«Ta skade»**, ennå ikke endelig avgjort.
+- **Damage defense-valg:** Unngå dropdown for normal/resistance/vulnerability/immunity. Bruk synlige gjensidig utelukkende valg; utled standard fra karakterens strukturerte skadeegenskaper, og tillat manuell overstyring. Unngå å anvende DM-justert skade to ganger.
+- **Strukturering:** Proficiencies, damage resistances/immunities/vulnerabilities og condition immunities mangler tilfredsstillende strukturerte redigeringsfelt i prototypen. Innfør slike felt med kompakt pillevisning, redigering, og kobling til skaderegning der relevant. Nyttig å skille damage immunity fra condition immunity.
+- **Ikke påbegynt implementasjon:** Dette er evalueringspunkter for neste prototype, ikke påstand om ferdig funksjon.
