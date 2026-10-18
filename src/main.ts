@@ -52,7 +52,10 @@ function openRecord(kind: string, id?: string) {
     case 'conditions': editors.conditions(); break;
     case 'deathSaves': editors.deathSaves(); break;
     case 'rest': editors.rest(); break;
-    case 'inspiration': void run(editors.inspiration); break;
+    case 'inspiration': void run(async()=>{
+      const position=window.scrollY;await editors.inspiration();
+      root.querySelector<HTMLElement>('[data-record="inspiration"]')?.focus({preventScroll:true});window.scrollTo(0,position);
+    }); break;
   }
 }
 function tell(text: string) {

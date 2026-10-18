@@ -158,6 +158,7 @@ test('one physical Hit Die changes HP and count together, undo restores both; re
 
 test('inspiration, death saves, conditions and exhaustion are persisted and independently editable',async({page})=>{
   await createCharacter(page);await pill(page,'Tilstander','Inspiration');await expect(page.getByRole('region',{name:'Tilstander',exact:true}).getByRole('button',{name:'Inspiration Ja',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Inspiration Ja',exact:true})).toBeFocused();
   await pill(page,'Tilstander','Death saves');await page.getByRole('spinbutton',{name:'Vellykkede',exact:true}).fill('2');await page.getByRole('spinbutton',{name:'Mislykkede',exact:true}).fill('1');await save(page);
   await pill(page,'Tilstander','Conditions');await page.getByRole('checkbox',{name:'Poisoned',exact:true}).check();await page.getByRole('spinbutton',{name:'Exhaustion level',exact:true}).fill('2');await save(page);
   await page.reload();const c=await state(page);expect(c.inspiration).toBe(true);expect(c.deathSaves).toEqual({successes:2,failures:1});expect(c.conditions).toEqual(['Poisoned']);expect(c.exhaustionLevel).toBe(2);
