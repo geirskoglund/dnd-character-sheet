@@ -7,6 +7,8 @@
 
 Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, turstyrer, VTT eller karakterbygger. Eksisterende karakterer registreres uten å rekonstruere tidligere levels. Brukeren skal kunne overstyre beregninger og lagre egne egenskaper fra DM. Ingen backend, konto, digitale terninger, stemmestyrt mutasjon eller obligatorisk level-up-veiviser.
 
+**Papirarkpraksis som referanse:** Undersøk hvordan vanlige og klassespesifikke karakterark faktisk brukes, inkludert merknadsfelt og klasseavhengige oppslag/ressurser. Kildenes regelversjon og undersøkte sider skal angis. Bruk læringen sammen med vedtatte mobile brukerflyter; papirarkets linjer og felt skal ikke skape nye spillbegrensninger. Se [konkret referansegjennomgang](PAPER_SHEET_REVIEW.md).
+
 **Lett registrering:** Det skal være enkelt å legge til og føre informasjon under spill. Vurder både antall synlige felt og hva spilleren faktisk må fylle ut. Bruk kjent katalog-/karakterinformasjon der den gir et sikkert grunnlag, og vurder et kort minimumsskjema ved egenregistrering med detaljer og overstyringer tilgjengelig ved behov. Konkrete forenklinger vurderes per flyt og skal bevare nødvendig informasjon og manuell kontroll.
 
 ### Overordnet prinsipp: karakterens kontekst

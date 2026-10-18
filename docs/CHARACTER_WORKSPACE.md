@@ -4,7 +4,7 @@ Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISION
 
 ## Overordnet mål: erstatte papirkarakterarket
 
-[Produktmålet i krav §1](REQUIREMENTS.md#1-produkt-og-akseptansekriterier) er øverste føring: rask oversikt, oppslag, notater og manuell føring ved et fysisk D&D-bord. Spilleren beholder kontrollen over karakterdata og DM-godkjente unntak. Hver berørt user story og produktgjennomgang skal konkretisere hvordan flyten hjelper spilleren med dette. Kontekstprinsippet nedenfor skal gjøre det digitale arket enklere å bruke.
+[Produktmålet i krav §1](REQUIREMENTS.md#1-produkt-og-akseptansekriterier) er øverste føring: rask oversikt, oppslag, notater og manuell føring ved et fysisk D&D-bord. Spilleren beholder kontrollen over karakterdata og DM-godkjente unntak. Hver berørt user story og produktgjennomgang skal konkretisere hvordan flyten hjelper spilleren med dette. Kontekstprinsippet nedenfor skal gjøre det digitale arket enklere å bruke. [Papirarkgjennomgangen](PAPER_SHEET_REVIEW.md) dokumenterer undersøkte eksempler, observerte føringsmåter og kildebegrensninger.
 
 ## Gjennomgående prinsipp: karakterens kontekst
 
@@ -12,6 +12,7 @@ Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISION
 
 | Område | Prinsippet skal undersøkes gjennom | Faktisk status / kontrollbehov |
 | --- | --- | --- |
+| Papirark og klassespesifikke referanser | Hva som føres direkte, merknader, ferdige spillverdier, utstyr som bæres/lager og klasseavhengige spell-/ressursbehov | To PDF-eksempler er undersøkt på angitte sider og 2014-prosjektdokumentasjon er lest; se PAPER_SHEET_REVIEW.md. Funnene er referansegrunnlag, ikke testet appfunksjon |
 | Lett registrering på tvers av samlinger | Antall steg, synlige felt og nødvendig utfylling; sikre katalog-/kontekstdata, minimumsregistrering og tilgang til detaljer/manuelle overstyringer | Brukeren rapporterer tungvinte registreringsflyter. En samlet gjennomgang av feltmengde og konkrete forenklinger er ikke gjennomført; løsning vurderes per flyt |
 | Egenskaper og feats | Klasse/subclass/klassenivå, art og faktiske forutsetninger; generelle feats bevares | Kjente avvik i listen og klassefilteret står nedenfor; rettelsen er ikke implementert |
 | Cantrips og spells | Tilgang fra klasse, subclass, art, feats og DM; formål som registrering, læring, prepared og kampoppslag; relevante nivåer og multiclass | Manuell registrering og enkelte oppslag finnes. Full kontekstrelevans på tvers av kilder er ikke verifisert og må få egne scenarioer |

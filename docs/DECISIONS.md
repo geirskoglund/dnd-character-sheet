@@ -208,3 +208,8 @@ Sikre katalog-/kontekstverdier, korte minimumsskjemaer og detaljer/overstyringer
 Brukeren presiserte behovet for å kunne kombinere eksempelvis brynje og kappe etter hvordan gjenstandene faktisk bæres, og bekreftet at dette er kompliserende, men svært viktig. Dette føres som et sentralt funksjonskrav: gjenstandstype, relevant plassering/håndbruk, eid/utstyrt-status, eventuell attunement og kildebaserte virkninger må ses samlet. Spilleren skal få enkel føring og forståelige samlede verdier med bidrag fra de enkelte gjenstandene. Advarsler og manuell DM-overstyring beholdes.
 
 Kombinasjonene vurderes etter D&D 2014-reglene; konkrete felt, UI og implementasjonsrekkefølge er ikke fastsatt. Et kontrollscenario er Chain Mail + Shield + båret/attuned Cloak of Protection: AC 16 + 2 + 1 = 19, med kappens +1 på saving throws. Samme oppsett med vanlig kappe eller uten nødvendig attunement gir ikke kappens magiske bonus. Dette er dokumenterte forventninger til videre arbeid, ikke implementert funksjon eller en ny kodebestilling.
+
+
+## Referer til faktisk bruk av papirark og klassespesifikke ark (2026-10-19)
+
+Brukeren ba om at videre utforming ser til dagens character sheets, merknadsfelt og klassespesifikke ark, med relevante kilder på nett. [PAPER_SHEET_REVIEW.md](PAPER_SHEET_REVIEW.md) dokumenterer konkrete undersøkte sider, observerte føringsmåter og kildebegrensninger. Funn om våpenverdier, merknader, båret utstyr versus lager, attunement og casterbehov inngår i videre produktvurdering. Trykte felt og linjer er ikke nye spillregler; gjeldende D&D 2014-regler, mobilavklaringer og manuell kontroll beholdes. Referansearbeidet fastsetter ikke endelig UI eller bestiller ny funksjonskode.
