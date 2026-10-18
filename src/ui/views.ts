@@ -24,7 +24,7 @@ export function combatView(category: string) {
 }
 export function characterForm(c: Character) {
   return `<p>Registrer en eksisterende karakter direkte. Level og verdier er manuelle; dette er ingen level-up-veiviser.</p>
-    <div class="form-grid">${field('Navn', 'name', c.name, 'required maxlength="100" autocomplete="off"')}
+    <div class="form-grid">${field('Navn', 'name', c.name, 'required maxlength="100" autocomplete="off" placeholder="Karakterens navn"')}
     ${field('Species / race', 'species', c.species, 'maxlength="100"')}
     ${field('Level', 'level', c.level, 'type="number" min="1" max="20" required')}
     ${field('AC (manuell)', 'acOverride', c.acOverride, 'type="number" required')}

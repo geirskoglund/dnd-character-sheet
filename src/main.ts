@@ -32,7 +32,7 @@ function render() {
     <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : combatView(category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
     <footer>Lokalt lagret · Ingen konto eller synkronisering. Ta JSON-backup før du rydder nettleserdata.</footer></div>
     <nav aria-label="Hovednavigasjon">${['character', 'combat'].map(tab => `<button data-page="${tab}" ${page === tab ? 'aria-current="page"' : ''}>${tab === 'character' ? 'Character' : 'Combat'}</button>`).join('')}</nav>
-    <dialog aria-labelledby="dialog-title"><form><h2 id="dialog-title"></h2><div id="dialog-body"></div><p id="dialog-error" role="alert"></p><div class="dialog-actions"><button type="button" id="cancel">Avbryt</button><button id="submit" type="submit">Lagre</button></div></form></dialog>`;
+    <dialog aria-labelledby="dialog-title"><form><h2 id="dialog-title" tabindex="-1"></h2><div id="dialog-body"></div><p id="dialog-error" role="alert"></p><div class="dialog-actions"><button type="button" id="cancel">Avbryt</button><button id="submit" type="submit">Lagre</button></div></form></dialog>`;
   root.querySelectorAll<HTMLButtonElement>('[data-page]').forEach(button => button.onclick = () => {
     scroll[page] = window.scrollY;
     page = button.dataset.page as typeof page;
@@ -83,6 +83,7 @@ function dialog(title: string, html: string, onSubmit: (form: HTMLFormElement) =
     finally { button.disabled = false; }
   };
   d.showModal();
+  d.querySelector<HTMLElement>('#dialog-title')!.focus();
   return d;
 }
 function editCharacter(source?: Character) {

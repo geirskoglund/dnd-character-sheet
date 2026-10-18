@@ -53,3 +53,6 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8rem; }
 .skip-link { position: fixed; top: -100px; background: #111; color: white; padding: 1rem; z-index: 2; }
 .skip-link:focus { top: 0; }
 @media (max-width: 340px) { .form-grid { grid-template-columns: 1fr; } .shell { padding-inline: .65rem; } }
+
+input[name="name"]::placeholder { color: #a8b2b8; opacity: 1; }
+input[name="name"]:focus::placeholder { opacity: 0; }
