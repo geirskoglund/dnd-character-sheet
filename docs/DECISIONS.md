@@ -190,3 +190,6 @@ Oppdater denne filen når et designvalg blir tatt eller omgjort. Marker tydelig 
 - **Damage defense-valg:** Unngå dropdown for normal/resistance/vulnerability/immunity. Bruk synlige gjensidig utelukkende valg; utled standard fra karakterens strukturerte skadeegenskaper, og tillat manuell overstyring. Unngå å anvende DM-justert skade to ganger.
 - **Strukturering:** Proficiencies, damage resistances/immunities/vulnerabilities og condition immunities mangler tilfredsstillende strukturerte redigeringsfelt i prototypen. Innfør slike felt med kompakt pillevisning, redigering, og kobling til skaderegning der relevant. Nyttig å skille damage immunity fra condition immunity.
 - **Ikke påbegynt implementasjon:** Dette er evalueringspunkter for neste prototype, ikke påstand om ferdig funksjon.
+
+## Navneavklaring (2026-10-18)
+- Knappen for beregning og registrering av innkommende skade skal hete **«Ta skade»** (godkjent av bruker).
