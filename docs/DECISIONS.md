@@ -85,8 +85,10 @@
 5. **Aktive effekter – avgrenset:** Ikke bygg generell tracker for buffs/debuffs, eksterne spells, mørke eller andre situasjonsforhold. Registrer bare det som naturlig hører til karakterarket (f.eks. egne begrensede ressurser og eventuelt nyttig aktiv-status), eller er nødvendig for skadekalkulatoren. Videre detalj-UX kan utsettes.
 6. **Endringslogg og angre – besluttet:** Logg faktiske karakterendringer (HP, Temporary HP, spell slots, penger, utstyr og opprettelse/sletting) som strukturerte hendelser med før-/etter-verdier. Ikke logg midlertidige UI-valg som avkryssing i skadeberegning. Vis inspeksjonslogg; støtt enkel «Angre siste endring». Eldre endringer korrigeres manuelt i første versjon; eventuell flerstegs reversering utsettes.
 7. **Backup-sikkerhet – besluttet:** Manuell JSON-eksport/import, med diskret påminnelse når karakteren er endret og det har gått en stund siden siste sikkerhetskopi. Ingen automatisk skybackup eller masete varsler.
-8. **Systematisk funksjonstest:** Death Saves, Hit Dice, Inspiration, Conditions, feats, modifiers, spells og rustning/våpen på ulike klasser.
+8. **Testopplegg – besluttet:** Codex utformer testarkitektur, eksempelkarakterer, scenarier og automatiserte tester ut fra kravene; dekker ulike klasser, ressurser, spells, utstyr, skadeeffekter og grensetilfeller. Brukeren kvalitetssikrer UX manuelt. Vi forhåndsbestemmer ikke detaljert testpakke.
 9. **Innholdsdekning:** Hvilke 2014-/Eberron-opsjoner trengs i første virkelige versjon, kontra manuell registrering?
+
+- **Testing:** Codex har ansvar for å utforme og vedlikeholde automatiserte tester, testdata og scenarier, inklusive grensetilfeller; kravene definerer forventet funksjon. Bruker tester UX manuelt.
 
 ## 8. Beslutningshistorikk – erstattede retninger
 
