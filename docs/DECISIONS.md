@@ -59,7 +59,7 @@
 - HP-popup: slider sentrert på null for skade/healing, ±1, forhåndsvisning, bekreft og angre. Temp HP separeres synlig; skade tar temp HP først; healing bare vanlig HP. Temp HP stables normalt ikke.
 - **Short Rest / Hit Dice:** DM avgjør når hvile skjer; registrer én fysisk kastet Hit Die og dens HP-healing av gangen, med mulighet for flere etterpå og manuell justering. Samlet angre for hver registrering.
 - **Spell-slot-piller:** Trykk på nivåets pille åpner *kun dette nivået* med ±1 og tilgjengelig/maks. **Hvile** åpnes via kompakt pille/verktøy, ikke permanent stort panel.
-- Spell-data må skille cantrip, spell level, known/spellbook/prepared, slots, Pact Magic, concentration, ritual, casting time, range, duration, components, saving throw/attack, damage, upcasting; registrering manuell når nødvendig.
+- **Felles spellvisning med klassetilpassede felt og ressurser**, ikke separate UI-er per klasse. Spell-data må skille cantrip, spell level, known/spellbook/prepared, slots, Pact Magic, concentration, ritual, casting time, range, duration, components, saving throw/attack, damage, upcasting; registrering manuell når nødvendig.
 - Utstyr skiller **eid** fra **utstyrt**, weapons fra armor, equipped først. Utstyr kan endre AC, våpenkast, Combat-alternativer og betingede effekter; advar ved konflikt, **blokker aldri** DM-godkjente valg. Støtt dual wielding og tohåndsvåpen.
 - Class Features & Feats vises **før utstyr**. Feats skal kunne opprettes/redigeres manuelt og eventuelt knyttes til ressurs/handling/betinget effekt.
 - Levende tilstander som Rage, Concentration og Mage Armor må etter hvert knyttes til tilhørende feature/spell, men konkret interaksjonsdesign er åpent.
@@ -79,7 +79,7 @@
 1. **Sammensatt skade – besluttet:** Støtt flere skadeposter/skadetyper i én hendelse. Vis én skadepost som standard; legg til flere via pluss-pille.
 2. **Betingelser for passive skadeeffekter – besluttet:** Vis aktuelle modifikatorer og vilkår. Når vilkår ikke kan avgjøres automatisk, må spilleren bekrefte at effekten gjelder før den brukes i beregningen.
 3. **Hit Dice og hvile – besluttet:** DM avgjør om Short Rest gjennomføres. Spilleren kan bruke én Hit Die av gangen, kaste fysisk og registrere resultatet som healing, og velge å bruke flere etterpå. Tillat også manuell justering av totalsummer. Ingen digital terningkasting.
-4. **Spellcasting-varianter:** Hvordan holde prepared/known/spellbook og Warlock Pact Magic tydelig og praktisk?
+4. **Spellcasting-varianter – besluttet:** Felles spellvisning med klassetilpassede felt og ressurser (known, spellbook, prepared, Pact Magic), og alltid mulighet for manuell redigering.
 5. **Aktive effekter:** Hvordan kombinere av/på-status og begrenset ressurs for Rage, Concentration, Mage Armor osv.?
 6. **Undo:** Bekrefte transaksjonsbasert angre for sammensatte endringer, og hvor langt tilbake man skal kunne gå.
 7. **Backup-sikkerhet:** Hvordan gjøre lokal lagring forståelig og sikkerhetskopiering enkel uten mas.
