@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 async function create(page: import('@playwright/test').Page, name = 'Alva') {
   await page.getByRole('button', { name: 'Ny karakter', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Navn', exact: true })).toHaveValue('');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill(name);
   await page.getByRole('spinbutton', { name: 'Level', exact: true }).fill('5');
   await page.getByRole('button', { name: 'Lagre', exact: true }).click();

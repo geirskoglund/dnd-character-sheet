@@ -86,7 +86,7 @@ function dialog(title: string, html: string, onSubmit: (form: HTMLFormElement) =
   return d;
 }
 function editCharacter(source?: Character) {
-  const draft = structuredClone(source ?? createCharacter());
+  const draft = source ? structuredClone(source) : { ...createCharacter(), name: '' };
   const d = dialog(source ? 'Rediger karakter' : 'Ny karakter', characterForm(draft), async form => {
     const data = new FormData(form);
     const num = (key: string) => Number(data.get(key));
