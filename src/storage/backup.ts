@@ -1,11 +1,9 @@
 import { z } from 'zod';
-import { characterSchema, type Character } from '../domain/model';
+import { characterSchema, portraitSchema, type Character } from '../domain/model';
 import { migrateCharacter } from '../domain/migrations';
 import { characterSchema as legacySchema } from '../domain/legacy-model';
 import { completed, request } from './database';
 
-const portraitSchema = z.object({ id: z.uuid(), mimeType: z.enum(['image/png', 'image/jpeg', 'image/webp']),
-  dataUrl: z.string().max(3_000_000).regex(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/) });
 const backupSchema = z.object({ schemaVersion: z.literal(2), exportedAt: z.iso.datetime(),
   characters: z.array(characterSchema).min(1).max(100), portraitAssets: z.array(portraitSchema).max(100) }).strict();
 const legacyBackupSchema = backupSchema.extend({ schemaVersion: z.literal(1), characters: z.array(legacySchema).min(1).max(100) })

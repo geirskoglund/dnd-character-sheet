@@ -71,3 +71,16 @@ Automatisk karakterbygging/levelup, digital dice roller, rundeteller, AC-treffsj
 ## 8. Kilderangering og ferdigdefinisjon
 Ved motstrid: **Denne spesifikasjonen og vedtatte gjeldende beslutninger** > godkjente arbeidsflyter i prototype > foreslått visuell utforming. Prototype v0.11 inneholder kjente regresjoner og er **ikke fasit**.
 Codex eier testplan, testdata og testimplementasjon; brukeren godkjenner UX. Før markering av ferdig: bygg kjører, tester er grønne, tilgjengelighet/mobilskjermer og offline er prøvd, kravene ovenfor demonstreres praktisk, og ingen godkjent funksjon har falt bort.
+
+## 9. Presiseringer fra samlet brukerreview (2026-10-18)
+
+Disse presiserer eksisterende krav og skal leses sammen med siste avklaringer i [DECISIONS.md](DECISIONS.md):
+
+- Pillesamlinger skal utnytte mobilbredden bedre enn to faste kolonner: normalt fire piller i bredden, tre ved 320 px, med lesbare navn, like celler og inline +. Stor skrift må kunne brukes uten horisontal overflyt.
+- Utstyr har tre synlige grupper: **Weapons**, **Armor og skjold**, **Annet utstyr**, med equipped først innen hver gruppe og direkte, relevant valg fra gruppens +.
+- **Class Features & Feats kommer før utstyr.** Feats/egenskaper, språk, skill-/save-proficiencies (inkludert expertise og manuell total modifier), weapon-/armor-/tool-/other-proficiencies, skadeegenskaper og tilstandsimmuniteter skal ha fungerende opprettelse, redigering, fjerning og persistering. De må ikke erstattes av fritekstfelt eller bare finnes i eksportformatet.
+- Egenskaper skal kunne kobles til handlinger, begrensede ressurser og betingede skadeeffekter. Spells/cantrips og ressurser inngår i den samlede Character-gjennomgangen; registrering forblir manuell, uten automatisk tildeling ved creation eller Level Up.
+- Se både prototype og spesifikasjon før endring, og kontroller komplette brukerflyter etterpå. Rene oppslag har én Lukk, redigering har Lagre/Avbryt. Unødvendige mellomdialoger og dupliserte avbryt-/lukkhandlinger skal fjernes.
+- **Vedlikeholdskrav:** Oppdater denne spesifikasjonen og beslutningsloggen når brukeren avklarer noe. Før leveransestatus og gjenstående arbeid eksplisitt i en kravmatrise. Samtalekomprimering skal ikke medføre tap av vedtatte krav. Nye ideer må merkes som uavklart fremfor å føres som beslutninger.
+
+Fasevis levering endrer ikke ferdigdefinisjonen for hele produktet. Genererte Combat-oppslag, sammensatt skadekalkulator og komplett lokalt SRD-bibliotek står fortsatt som krav der de ennå ikke er implementert. Se [aktuell kravmatrise](CHARACTER_WORKSPACE.md).

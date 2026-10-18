@@ -1,0 +1,16 @@
+import { escapeHtml as esc, field, select } from './html';
+export { field, select, esc };
+export const textArea = (label: string, name: string, value = '', rows = 4) => `<label>${esc(label)}<textarea name="${name}" maxlength="10000" rows="${rows}">${esc(value)}</textarea></label>`;
+export const check = (label: string, name: string, value = false) => `<label class="check"><input type="checkbox" name="${name}" ${value ? 'checked' : ''}>${esc(label)}</label>`;
+export const numberField = (label: string, name: string, value: unknown, attrs = '') => field(label, name, value, `type="number" step="1" ${attrs}`);
+export const options = (values: readonly string[]) => values.map(value => ({value, label:value}));
+export const economies = [{value:'action',label:'Action'}, {value:'bonus',label:'Bonus action'}, {value:'reaction',label:'Reaction'}, {value:'none',label:'Annen egenskap'}, {value:'passive',label:'Passiv'}];
+export const rechargeOptions = [{value:'shortRest',label:'Short Rest / Long Rest'}, {value:'longRest',label:'Long Rest'}, {value:'manual',label:'Manuelt'}, {value:'special',label:'Særregel / spilledag'}];
+export const defenseOptions = [{value:'resistance',label:'Resistance'}, {value:'vulnerability',label:'Vulnerability'}, {value:'immunity',label:'Damage immunity'}];
+export const conditionFields = (condition?: {description:string;state:string}) => `${textArea('Vilkår (valgfritt)', 'condition', condition?.description ?? '', 2)}${select('Vilkåret er', 'conditionState', condition?.state ?? 'unknown', [{value:'unknown',label:'Uavklart – må bekreftes'}, {value:'true',label:'Oppfylt'}, {value:'false',label:'Ikke oppfylt'}])}`;
+export const readCondition = (data: FormData) => str(data,'condition') ? {description:str(data,'condition'),state:str(data,'conditionState') as 'true'|'false'|'unknown'} : undefined;
+export const str = (data: FormData, name: string) => String(data.get(name) ?? '').trim();
+export const num = (data: FormData, name: string) => Number(data.get(name));
+export const optionalNumber = (data: FormData, name: string) => str(data,name) === '' ? undefined : num(data,name);
+export const optionalString = (data: FormData, name: string) => str(data,name) || undefined;
+export const readRefs = (data: FormData, name: string) => data.getAll(name).map(String);

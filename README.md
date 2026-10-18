@@ -34,13 +34,17 @@ Bruk `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` hvis Chromium allerede e
 - Fire lagrede modifierfavoritter med alfabetisk velger og fullstendige navn, samt ability modifiers.
 - Opprette, redigere, velge, kopiere og slette karakterer, navngitte notater, audit-logg og angre.
 - IndexedDB med atomisk versjonsoppgradering, konfliktkontroll og versjonert JSON-backup.
-- Character/Combat-navigasjon og offline produksjons-PWA. Kampoppslag og full SRD-dekning gjenstår.
+- Tette pillesamlinger og utstyr delt i Weapons, Armor og skjold, Annet utstyr.
+- Egenskaper/feats med egne handlinger, ressurser og betingede skadeeffekter; strukturerte languages, proficiencies/expertise, skadeegenskaper og tilstandsimmuniteter.
+- Spells/cantrips fra søkbar lokal SRD-katalog eller egenregistrering; separate spell-slot/Pact Magic-pools, Hit Dice, hvile og øvrige manuelle ressurser.
+- Inspiration, death saves, conditions og exhaustion, lokalt portrett inkludert i JSON-backup.
+- Character/Combat-navigasjon og offline produksjons-PWA. Registrerte handlinger og tilgjengelige spells kan slås opp i Combat. Genererte våpen-/standardhandlinger, avansert skadekalkulator og full SRD-dekning gjenstår.
 
-Arbeidsflaten er sammenholdt med [v0.11-prototypen](docs/PROTOTYPE_REVIEW.md), med nyere brukeravklaringer som føring. En [UX-gjennomgang av eksisterende flyter](docs/UX_REVIEW.md) dokumenterer videre opprydding av tillegg, oppslag, redigering, avbryt, fokus og historikk. Utformingen er fortsatt foreløpig. Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
+Arbeidsflaten er sammenholdt med [v0.11-prototypen](docs/PROTOTYPE_REVIEW.md), med nyere brukeravklaringer som føring. En [UX-gjennomgang av eksisterende flyter](docs/UX_REVIEW.md) dokumenterer videre opprydding av tillegg, oppslag, redigering, avbryt, fokus og historikk. Se [samlet kravmatrise og faktisk status](docs/CHARACTER_WORKSPACE.md). Utformingen er fortsatt foreløpig. Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
 
 ## Data og backup
 
-Data finnes bare i nettleseren på samme origin. Sletting av nettleserdata fjerner karakterene; privatmodus kan være midlertidig. Ta JSON-backup via Meny → Karakteradministrasjon. Import legger til og overskriver aldri. Schema v2 støtter også import og migrering av v1-backuper fra denne appen; prototype-JSON er et separat format. Hendelsesloggen beholdes lokalt, men følger ikke med i fase 1-backup; import starter en ny historikk med en importhendelse. Portrettopplasting har ennå ikke eget UI.
+Data finnes bare i nettleseren på samme origin. Sletting av nettleserdata fjerner karakterene; privatmodus kan være midlertidig. Ta JSON-backup via Meny → Karakteradministrasjon. Import legger til og overskriver aldri. Schema v2 støtter også import og migrering av v1-backuper fra denne appen; prototype-JSON er et separat format. Hendelsesloggen beholdes lokalt, men følger ikke med i fase 1-backup; import starter en ny historikk med en importhendelse. Portrett velges fra Meny → Denne karakteren → Portrett, eller byttes/fjernes fra portrettet ved navnet. PNG/JPEG/WebP under 10 MB skaleres lokalt til høyst 800 px; tidligere bilder beholdes internt for trygg kopi/angre.
 
 Eksisterende prototype-data i `localStorage` røres ikke og konverteres ikke automatisk. Ved funn vises en advarsel. Eksporter fra den gamle versjonen før overgang; prototype-JSON er ikke kompatibel med det nye formatet. Oppbevar originalfilen og registrer karakterens grunnverdier manuelt. Fjern aldri IndexedDB eller nettleserdata som feilsøking uten backup.
 

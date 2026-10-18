@@ -1,0 +1,18 @@
+// Optional content-maintenance tool; normal installs/builds never fetch rule data.
+import {execFileSync} from 'node:child_process';
+import {writeFileSync} from 'node:fs';
+const revision='a6212beb4b278917c2cff41c2b04c4ef4f3e0d6f';
+const read = name => JSON.parse(execFileSync('gh',['api',`repos/5e-bits/5e-database/contents/src/2014/en/5e-SRD-${name}.json?ref=${revision}`,'-H','Accept: application/vnd.github.raw+json'],{maxBuffer:10_000_000,encoding:'utf8'}));
+const rows=[];
+for (const [dataset,kind] of [['Features','class'],['Feats','feat']]) for (const row of read(dataset)) {
+  rows.push({id:`srd51:${kind}:${row.index}`,name:row.name,kind,level:row.level ?? 0,classes:row.class ? [row.class.name] : [],description:[...(row.prerequisites?.length ? ['Prerequisites: '+row.prerequisites.map(p=>p.ability_score ? `${p.ability_score.name} ${p.minimum_score}` : p.name ?? p.type ?? '').join(', ')] : []),...row.desc].join('\n\n')});
+}
+const spells=read('Spells').map(row=>({id:`srd51:spell:${row.index}`,name:row.name,level:row.level,classes:row.classes.map(cl=>cl.name),castingTime:row.casting_time,economy:row.casting_time.includes('bonus')?'bonus':row.casting_time.includes('reaction')?'reaction':row.casting_time==='1 action'?'action':'none',range:row.range,duration:row.duration,concentration:row.concentration,ritual:row.ritual,components:row.components,attack:row.attack_type ? `${row.attack_type} spell attack` : '',save:row.dc ? `${row.dc.dc_type.name} save` : '',damage:(row.damage ?? []).map(d=>`${Object.values(d.damage_at_slot_level ?? d.damage_at_character_level ?? {})[0] ?? ''} ${d.damage_type?.name ?? ''}`).join('; '),description:[...row.desc,...(row.higher_level?.length ? ['At higher levels: '+row.higher_level.join('\n')] : []),...(row.material ? ['Material: '+row.material] : [])].join('\n\n')}));
+const equipment=read('Equipment').map(row=>{
+  const armor=row.armor_category, weapon=row.weapon_category;
+  const name=armor && armor!=='Shield' ? row.name.replace(/ Armor$/, '') : row.name;
+  const props=(row.properties ?? []).map(p=>p.index);
+  return {catalogId:`srd51:equipment:${name.toLowerCase().replaceAll(' ','-')}`,name,category:armor==='Shield'?'shield':armor?'armor':weapon?'weapon':'equipment',effectRefs:[],resourceRefs:[],...(armor && armor!=='Shield'?{armorProfile:{kind:armor.toLowerCase(),baseAc:row.armor_class.base,addDex:row.armor_class.dex_bonus,dexCap:row.armor_class.max_bonus ?? null,strength:row.str_minimum,stealthDisadvantage:row.stealth_disadvantage}}:{}),...(armor==='Shield'?{acContribution:row.armor_class.base,handUsage:'one'}:weapon?{handUsage:props.includes('two-handed')?'two':props.includes('versatile')?'versatile':'one'}:{}),...(row.damage?{damage:`${row.damage.damage_dice} ${row.damage.damage_type.name}${row.two_handed_damage?` / ${row.two_handed_damage.damage_dice} (two-handed)`:''}`} : {}),notes:[...(row.desc??[]),...(props.length?['Properties: '+row.properties.map(p=>p.name).join(', ')]:[]),...(row.range?['Range: '+row.range.normal+(row.range.long?'/'+row.range.long:'')+' ft']:[]),...(row.cost?['Cost: '+row.cost.quantity+' '+row.cost.unit]:[])].join('\n')};
+});
+for (const [name,entries] of Object.entries({features:rows,spells,equipment})) writeFileSync(new URL(`../src/data/srd-${name}.json`,import.meta.url),JSON.stringify(entries)+'\n');
+console.log(`Wrote ${rows.length} features/feats, ${spells.length} spells, ${equipment.length} equipment definitions at ${revision}.`);

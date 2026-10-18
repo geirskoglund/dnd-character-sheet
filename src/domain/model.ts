@@ -88,7 +88,9 @@ export interface ChangeEvent {
   changes: { entityRef: string; path: string; before: Character | null; after: Character | null }[];
 }
 export interface CatalogEntry { id: string; origin: 'srd-5.1' | 'custom'; name: string; license: string; sourceUrl?: string; data: unknown }
-export interface PortraitAsset { id: string; mimeType: 'image/png' | 'image/jpeg' | 'image/webp'; dataUrl: string }
+export const portraitSchema = z.object({ id:z.uuid(), mimeType:z.enum(['image/png','image/jpeg','image/webp']),
+  dataUrl:z.string().max(3_000_000).regex(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/) }).refine(asset => asset.dataUrl.startsWith(`data:${asset.mimeType};base64,`), 'Portrettype stemmer ikke med bildedata.');
+export type PortraitAsset = z.infer<typeof portraitSchema>;
 export function createCharacter(name = 'Ny karakter'): Character {
   const now = new Date().toISOString();
   return characterSchema.parse({ schemaVersion: 2, id: crypto.randomUUID(), revision: 0, name,
