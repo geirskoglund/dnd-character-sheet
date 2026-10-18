@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
 **Oppdatert:** 2026-10-18  
-**Status:** Gjeldende produktbeslutninger. Prototyping er avsluttet etter v0.11; Codex-overlevering er neste fase. **Ikke endelig kravspesifikasjon.**  
+**Status:** Prototyping er avsluttet etter v0.11. Konsolidert implementasjonsgrunnlag finnes i [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken.  
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
