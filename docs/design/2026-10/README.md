@@ -21,7 +21,7 @@ Tre konsepter: **Runesmed** (jern/messing, kantede beslag), **Eventyrjournal** (
 
 `index.html`, `study.css`, `study.js` er en isolert skisseflate, uten tilgang til appens IndexedDB, app-kode eller service worker. Rendres lokalt med Chromium. PNG-bildene er laget fra HTML for presise, lesbare verdier. Portrettet er nygenerert illustrasjon av en fiktiv karakter, brukt likt i alle tre alternativer.
 
-Fonter er lokale og OFL-lisensierte: Cinzel, Cormorant Garamond, Marcellus og Source Sans 3. Fra Google Fonts, fast revisjon `47d54ca1ebb14fd864695f1d39dc734f39017c33`; nedlastinger verifisert mot Git blob-hash. Lisenser ligger sammen med fontene i `assets/`. Ingen eksterne fonter eller nettressurser kreves ved visning.
+Fonter er lokale og OFL-lisensierte: Cinzel, Cormorant Garamond, Marcellus og Source Sans 3. Fra Google Fonts, fast revisjon `47d54ca1ebb14fd864695f1d39dc734f39017c33`; nedlastinger verifisert mot Git blob-hash. Lisenser ligger sammen med fontene i `assets/`; lisensordlyden er beholdt med normalisert linjeslutt og fjernede etterfølgende mellomrom. Ingen eksterne fonter eller nettressurser kreves ved visning.
 
 ## Leveransen
 
