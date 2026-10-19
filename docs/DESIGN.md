@@ -43,3 +43,7 @@ Prototyper v0.2–v0.11 viste og testet **arbeidsflyt**. v0.11 har regresjoner (
 2. Brukeren velger én retning og kommenterer.
 3. Codex bygger konsistent design-system og gjennomfører test av ekte mobilarbeidsflyt.
 Fremdrift og implementasjon trenger ikke stoppe på teknisk grunnarbeid mens designalternativene utformes.
+
+## Pågående designstudie 2026-10-19
+
+Brukeren har bestilt tre visuelle forslag og har ingen sterk preferanse for lyst/mørkt tema. Se [felles karakter, komponentdekning og vurderingsgrunnlag](design/2026-10/README.md). Runesmed, Eventyrjournal og Stjernekart er forslag, ikke valgte temaer. Ved vurderingen inngår også meny tilgjengelig uten scrolling, ulike dialogtyper med fast tilgjengelig avbryt/lukk, Combat-swipe og kontrolltilstander. Endelig tema og eventuelle nye samhandlingsmønstre velges før produksjonsimplementasjon.

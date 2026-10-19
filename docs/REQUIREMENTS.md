@@ -125,3 +125,7 @@ Codex utfører produktkontrollen; brukerens UX-vurdering kommer i tillegg. Se [a
 - Enkelt «I bruk»-valg, én/to hender der relevant, og attunement-valg for gjenstander som krever det. Varsle om konflikter uten å blokkere DM-unntak.
 - Beregn AC, våpenangrep og skade etter 2014-reglene fra relevant karaktergrunnlag, proficiencies, håndbruk og støttede registrerte egenskaper/vanlige magiske bonuser. Vis forklaring og kilder. Attunement-avhengige magiske bonuser gjelder bare når kravet er oppfylt; rustningens normale grunnverdier beholdes.
 - Mer sammensatte effekter beskrives som tekst inntil konkret støtte er implementert. Ikke tolk vilkårlig regeltekst som automatisk effekt. Manuelle totaler og egne varianter bevares og merkes tydelig.
+
+## 12. Bestilt designstudie (2026-10-19)
+
+Tre klart forskjellige fantasy-/D&D-inspirerte utseendeforslag skal vises før endelig designvalg. Brukeren har ingen preferanse for lyst eller mørkt tema. Samme karakter og innhold skal brukes, med Character/Combat-skisser, Utstyr-utsnitt og komponenteksempler for identitet, fem statusfelt, fire modifiers, seks abilities, overskrifter, piller/inline +, dialogtyper, bunnavigasjon, tilgjengelig menyknapp og meny, Combat-tabs/swipe, slidere og tekstfelt. Ta også med ikoner, fonter, farger, fokus, valgt/aktiv/oppbrukt og feiltilstander. Menyplassering og dialogutforming undersøkes som forslag; de er ikke vedtatt gjennom en skisse. Se [designstudien](design/2026-10/README.md). Eksisterende funksjonskrav beholdes; tema skal velges før appens utseende implementeres.
