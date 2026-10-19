@@ -165,3 +165,11 @@ Bilder fra egen produktgjennomgang med Fighter3/Champion, Elf, STR16 DEX16, long
 Fortsatt utenfor omfang: feat-/spellkontekstfiltrering, komplett SRD/magic-item-katalog, standardhandlingene Unarmed Strike/Grapple/Shove, sammensatt skadekalkulator og endelig designvalg. Disse kravene er ikke slettet eller erklært løst. Proficiency- og effektgrenser er beskrevet eksplisitt i EQUIPMENT.md.
 
 Endelig lokal kontroll av utstyrsleveransen: `CI=1 CHROMIUM_PATH=/usr/bin/chromium npm run check` passerer **85 domene-/lagringstester, TypeScript/produksjonsbygg og 41 Playwright-tester (126 totalt), ingen hoppet over**. Dette inkluderer regresjon for tidligere tomme attack/damage-felt og egne fortryllelser uten falsk proficiency/stacking-antakelse. Dokumentlenker, ankere, tabellkolonner og `git diff --check` er kontrollert. Screenshots og gjennomgang er fra produksjonsbygget under Pages-understien, ikke en påstand om kontroll av offentlig URL. CI og Pages kontrolleres ved PR/merge.
+
+## Designstudie: tre forslag, ingen valgt retning (2026-10-19)
+
+| Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
+| --- | --- | --- | --- | --- | --- |
+| Sammenligne tre helhetlige utseender | Brukerens bestilling, krav §12 / DESIGN; samme Elf Rogue5/Thief, HP28/38, temp5, AC16, PB3 | Tre tydelig forskjellige temaer med samme funksjon/innhold og de 13 nevnte komponentene; fantasyfølelse, lesbarhet og kompakt føring | Isolert HTML-render, innhold/geometri og 9 skjermer ved 320 px kontrollert; JS-syntaks og lokale ressurser kontrollert. Ingen spill-/lagringstester for statiske skisser | Faktisk sett Character, Combat, HP-dialog, utstyrs-/felt-/menykomponenter og tre dialogtyper i alle temaene. Ny menyplassering og X-mønstre er forslag; eksisterende app er uendret | Forslag ferdige til vurdering. Tema og samhandlingsvalg ikke valgt; 200 % tekst, full tilgjengelighet og reelle flyter verifiseres ved senere implementasjon |
+
+Se [plansjer, komponentmatrise, faktisk gjennomgang og kilder](design/2026-10/README.md). Skisser endrer ikke status for Combat-swipe, general actions eller andre uimplementerte produktkrav. Ingen appfunksjon erklæres ferdig av et bilde.
