@@ -5,11 +5,23 @@
 ## 1. Produkt og akseptansekriterier
 **Overordnet mål: erstatte papirkarakterarket ved det fysiske spillebordet.** Appen skal gjøre det enkelt å lese, slå opp, notere og endre karakterinformasjon under spill, med spillerens manuelle kontroll og DM som autoritet. Nye funksjoner og brukerflyter vurderes først etter hvordan de støtter dette målet.
 
-Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, turstyrer, VTT eller karakterbygger. Eksisterende karakterer registreres uten å rekonstruere tidligere levels. Brukeren skal kunne overstyre beregninger og lagre egne egenskaper fra DM. Ingen backend, konto, digitale terninger, stemmestyrt mutasjon eller obligatorisk level-up-veiviser.
+Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, turstyrer, VTT eller karakterbygger. Eksisterende karakterer registreres uten å rekonstruere tidligere levels. Brukeren skal kunne overstyre beregninger og lagre egne egenskaper fra DM. Ingen backend, konto, digitale terninger, stemmestyrt mutasjon eller krav om å gjennomføre karakterens tidligere level-ups.
 
 **Papirarkpraksis som referanse:** Undersøk hvordan vanlige og klassespesifikke karakterark faktisk brukes, inkludert merknadsfelt og klasseavhengige oppslag/ressurser. Kildenes regelversjon og undersøkte sider skal angis. Bruk læringen sammen med vedtatte mobile brukerflyter; papirarkets linjer og felt skal ikke skape nye spillbegrensninger. Se [konkret referansegjennomgang](PAPER_SHEET_REVIEW.md).
 
-**Lett registrering:** Det skal være enkelt å legge til og føre informasjon under spill. Vurder både antall synlige felt og hva spilleren faktisk må fylle ut. Bruk kjent katalog-/karakterinformasjon der den gir et sikkert grunnlag, og vurder et kort minimumsskjema ved egenregistrering med detaljer og overstyringer tilgjengelig ved behov. Konkrete forenklinger vurderes per flyt og skal bevare nødvendig informasjon og manuell kontroll.
+**Lett registrering:** Det skal være enkelt å legge til og føre informasjon under spill. Vurder både antall synlige felt og hva spilleren faktisk må fylle ut. Bruk kjent katalog-/karakterinformasjon der den gir et sikkert grunnlag. Flerverdiregistrering følger veiviserprinsippet under; detaljer og manuelle overstyringer skal være tilgjengelige ved behov.
+
+### Overordnet prinsipp: veiviser ved flerverdiregistrering
+
+Når spilleren skal legge inn flere verdier, brukes en kort, forgrenet veiviser fremfor et omfattende skjema. Dette gjelder på tvers av appen, ikke bare våpen. Rene valg fra en liste beholder direkte registrering uten ekstra spørsmål eller bekreftelser.
+
+- Still forståelige spørsmål fra spillerens oppgave. Ja/nei-svar bestemmer hvilke oppfølgingssteg som trengs; sikre katalog-/karakterverdier følger med automatisk.
+- Samle nært beslektede verdier i samme steg, eksempelvis skadeuttrykk og skadetype. Hvert felt trenger ikke en egen skjerm.
+- Spør bare om relevant informasjon. Tilby avslutning så snart nødvendig informasjon er registrert; merknader og øvrige detaljer er valgfrie.
+- Tilbake og Avbryt er tilgjengelige; svar bevares når spilleren går tilbake. Hele registreringen bekreftes samlet, med trygg feilbehandling og Angre etter gjeldende lagringskrav.
+- Veiviseren hjelper med føring på karakterarket; den krever ikke rekonstruksjon av tidligere level-ups eller automatiske regelvalg.
+
+Prinsippet er vedtatt 2026-10-20. Konkrete arbeidsflyter avklares én om gangen før ny appkode bestilles; se [nyeste brukerreview og avklarte flyter](#13-konseptuell-opprydding-og-arbeidsflyter-2026-10-20). Det er ikke implementert gjennom denne dokumentasjonen.
 
 ### Overordnet prinsipp: karakterens kontekst
 
@@ -76,7 +88,7 @@ De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsipp
 
 ## 5. Ressurser, spells og regler
 - Ressurser kan knyttes til class features, feats, spells og items og har count/max, rest-regler og manuell overstyring. Arcane Recovery styres av **spilledag**, ikke kalenderdato.
-- Felles spellvisning; klassespesifikke data (Wizard spellbook/prepared, Warlock Pact Magic, andre known/prepared). Slottelling er manuell ±1; cantrips koster normalt ingen spell slots.
+- Felles spellvisning; klassespesifikke data (Wizard spellbook/prepared, Warlock Pact Magic, andre known/prepared). Slot-beholdning skal følge klasse/nivå med manuell overstyring etter senere avklaring i §13; forbruk føres manuelt med ±1. Cantrips koster normalt ingen spell slots.
 - Egne features kan være handlinger, ressurser, betingede passive effekter og eventuelt aktivstatus. Eksterne buffs, debuffs, darkness/dekning og lignende **skal ikke kreve** løpende registrering; bare tilføy ved behov, særlig for skadeberegning.
 - Full SRD 5.1 som lokalt regelbibliotek med riktig lisensinformasjon og sporbar opprinnelse. Innhold utenfor SRD, inkludert Eberron, er manuelt registrert av bruker; ikke distribuer proprietært innhold.
 
@@ -100,7 +112,7 @@ Disse presiserer eksisterende krav og skal leses sammen med siste avklaringer i 
 - Pillesamlinger skal utnytte mobilbredden bedre enn to faste kolonner: normalt fire piller i bredden, tre ved 320 px, med lesbare navn, like celler og inline +. Stor skrift må kunne brukes uten horisontal overflyt.
 - Utstyr har tre synlige grupper: **Weapons**, **Armor og skjold**, **Annet utstyr**, med equipped først innen hver gruppe og direkte, relevant valg fra gruppens +.
 - **Class Features & Feats ligger på Character; utstyr er flyttet til egen fane etter senere avklaring.** Feats/egenskaper, språk, skill-/save-proficiencies (inkludert expertise og manuell total modifier), weapon-/armor-/tool-/other-proficiencies, skadeegenskaper og tilstandsimmuniteter skal ha fungerende opprettelse, redigering, fjerning og persistering. De må ikke erstattes av fritekstfelt eller bare finnes i eksportformatet.
-- Egenskaper skal kunne kobles til handlinger, begrensede ressurser og betingede skadeeffekter. Spells/cantrips og ressurser inngår i den samlede Character-gjennomgangen; registrering forblir manuell, uten automatisk tildeling ved creation eller Level Up.
+- Egenskaper skal kunne kobles til handlinger, begrensede ressurser og betingede skadeeffekter. Spells/cantrips og ressurser inngår i den samlede Character-gjennomgangen. Valg av spells/egenskaper forblir manuelt; senere presisering i §13 krever automatisk oppsett av spell slots fra klasse/nivå, med manuell overstyring.
 - Se både prototype og spesifikasjon før endring, og kontroller komplette brukerflyter etterpå. Rene oppslag har én Lukk, redigering har Lagre/Avbryt. Unødvendige mellomdialoger og dupliserte avbryt-/lukkhandlinger skal fjernes.
 - **Vedlikeholdskrav:** Oppdater denne spesifikasjonen og beslutningsloggen når brukeren avklarer noe. Før leveransestatus og gjenstående arbeid eksplisitt i en kravmatrise. Samtalekomprimering skal ikke medføre tap av vedtatte krav. Nye ideer må merkes som uavklart fremfor å føres som beslutninger.
 
@@ -171,3 +183,33 @@ Brukeren har nå uttrykkelig bestilt en ny implementert versjon med valgt layout
 Ikonvalget presiseres etter brukerens siste innspill: hver post får ikon, men beslektede poster kan dele kategoriikon. Kjent våpentype, rustningstype, spellens skade/effekt og tilsvarende sikre kategoridata brukes til visuell klassifisering. Der spesifikk kategori mangler brukes familieikon, deretter nøytralt fantasyemblem. Egne poster dekkes også; valgfritt ikonvalg under detaljer gir manuell kontroll uten nye obligatoriske registreringsfelt. Ikonet tildeler aldri regelverdier eller tilgang. Status som «I bruk»/«Forberedt» vises med hake/tekst; hjørnet markerer klikkbarhet. Produksjonsvalg: korte oppslag er kompakte, søk/omfattende redigering får stor flate med fast topp/lukk og relevant bekreftelse. Destruktiv bekreftelse har to ulike handlinger. Ingen duplisert lukk/avbryt.
 
 Tidligere avklarte fasegrenser for avansert skadeberegning, komplett Combat-/SRD-dekning og kontekstfiltrering består; de kravene skal ikke erklæres løst av en ny visuell layout.
+
+## 13. Konseptuell opprydding og arbeidsflyter (2026-10-20)
+
+Etter egen mobilgjennomgang ba brukeren om enklere føring med papirarket som mål. Vi avklarer arbeidsflyter én om gangen. Dette er nye krav og avklaringer, ikke en ny bestilling på appkode eller en erklæring om at de er implementert. Det overordnede veiviserprinsippet i §1 gjelder alle flerverdiregistreringer.
+
+### Avklart: våpen fra katalog og egne varianter
+
+- Utstyr → + under Våpen → søk/velg katalogvåpen → direkte tillegg og lukket velger. Standardverdiene følger med uten obligatorisk skjema eller ekstra bekreftelse.
+- «Tilpass» ved et katalogvåpen bruker det som utgangspunkt for en egen variant. Navn og frivillig merknad er den enkle føringen; relevante grunnverdier følger med. Etter den siste avklaringen brukes veiviser ved flerverdiregistrering, med spørsmål om ytterligere endringer bare ved behov.
+- Flere spillverdier kan endres frivillig; våpenet kan deretter markeres «I bruk» fra utstyrslisten. Tillegging skal være praktisk under spill.
+- Grunnskade følger våpen og relevant karaktermodifier. Ekstra skade føres som egne komponenter med skadeuttrykk og skadetype fra liste, eksempelvis `1d8 + 3 slashing + 1d6 fire`. Flere komponenter tillates.
+- For hver ekstraskade spør veiviseren «Gjelder ekstraskaden bare under en betingelse?». Ja åpner et fritekstfelt. Betingelsen tilhører akkurat den ekstraskaden, ikke hele våpenet eller bare en generell merknad. Den vises sammen med ekstraskaden på våpenkortet, eksempelvis «+ 1d6 fire · Når sverdet brenner».
+- Spilleren/DM vurderer fritekstbetingelsen ved bordet. Registreringen beskriver terningkast; den introduserer ikke automatisk vurdering av vilkåret eller digitale terninger.
+
+### Avklart: velger for egenskaper og feats
+
+- + åpner søkbar liste. To knapper velger Egenskaper eller Feats; én type er aktiv om gangen.
+- Standard er «Mine klasser» og karakterens relevante klassenivåer/øvrige forutsetninger. Generelle feats og andre gyldige tilgangskilder beholdes etter kontekstprinsippet. Kjente nivåkrav vises på oppføringene.
+- Klassefilterets rekkefølge: Mine klasser, Alle klasser, egne enkeltklasser alfabetisk, øvrige klasser alfabetisk. Filtre kan overstyres for manuelle valg/DM-unntak.
+- Trykk registrerer valget og lukker velgeren uten ekstra registreringsdialog. Allerede registrerte valg markeres.
+- Samme overordnede relevansprinsipp gjelder cantrips/spells og andre områder. Den konkrete neste spell-/cantripflyten er ennå ikke gjennomgått og godkjent.
+
+### Bevarte tilbakemeldinger og videre avklaring
+
+- Spell slots skal opprettes/oppdateres fra klassene og nivåene etter 2014-reglene, med manuell overstyring. Dette erstatter tidligere krav om bare manuell opprettelse av slot-beholdning; bruk av slots føres fortsatt manuelt. Konkret flyt, multiclass/Pact Magic og trygg håndtering av eksisterende bruk/overstyringer må avklares og testes før implementasjon.
+- Hit Dice, ressurser, proficiencies, skadeegenskaper og tilstandsimmunitet oppleves tunge og uforståelige. Forklaringene er gitt i samtalen; nye konkrete arbeidsflyter gjenstår. Automatisk oppsett av Hit Dice/andre klasseressurser og detaljert UI er fortsatt forslag, ikke godkjente flyter.
+- AC-beregningsforklaring skal ligge under Utstyr, ikke i Character. Brukeren så Leather-tekst for en gnome monk; det konkrete beregningsgrunnlaget må undersøkes uten å anta at rustningen er feilregistrert.
+- Rutinemessige meldinger som «Utstyr lagret» fjernes; feil skal gi tydelig, merkbar beskjed.
+- Hjørnetrekanten fjernes fra bunnavigasjon/Meny, Combat-faner, lukkekryss og selvforklarende listevalg. Dette presiserer omfanget av den tidligere generelle markøren.
+- Brukeren rapporterer utilsiktet zoom/innhold utenfor skjermen og at HP-slideren ikke kan øke igjen etter at HP-resultatet har nådd 0. Begge står som rapporterte feil som må reproduseres og rettes; tidligere grønne tester beviser ikke at disse situasjonene fungerer.

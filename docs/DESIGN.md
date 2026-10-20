@@ -25,6 +25,7 @@ Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge re
 - Piller/kort for lagret informasjon, åpne detaljer ved trykk.
 - **Inline + i samme pilleform** som dataelementene, rett etter siste element med naturlig wrap; ingen separat sirkel eller egen pluss-rad.
 - Søkbare velgerpaneler for store kataloger; søk og filtre øverst; egenregistrering lett tilgjengelig.
+- Ved flerverdiregistrering gjelder det [vedtatte veiviserprinsippet](REQUIREMENTS.md#overordnet-prinsipp-veiviser-ved-flerverdiregistrering): korte, forgrenede spørsmål, beslektede felt samlet og bare relevante oppfølgingssteg. Direkte listevalg får ingen ekstra veiviser. Detaljer avklares per flyt; dette mønsteret er ennå ikke implementert.
 - Combat har tre faner Action/Bonus/Reaction, ikke gjentatt tittel under. Andre egenskaper utenfor, «Ta skade» og «Hvile» under.
 - Combat som **oppslag**; fysiske terninguttrykk og verdier lesbare ved trykk, ikke ekstra «Bruk»-knapper eller turstatus.
 - Damage dialog: én komponent som standard, flere via +, egne modifikatorlinjer og kompakte on/off/condition-kontroller; synlig og etterprøvbar resultatoppsummering.
@@ -35,7 +36,7 @@ Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge re
 - Primær bredde 360–390 CSS px; vurder 320 px, stor skrift, smale layouts og nettbrett. Horisontal scrolling kun som bevisst interaksjon for Combat faner, ikke for formular.
 - Klare fokusindikatorer, tastaturbetjening for desktop, touch targets omtrent 44px når praktisk mulig, semantiske labels og god skjermleserstøtte.
 - Modals/paneler kan være større for søkbare kataloger, små for én slot/ressurs; unngå å tvinge brukeren gjennom mange dialoger.
-- Feedback ved lagring, undo, tom/oppbrukt ressurs, betingelser som ikke er bekreftet, og tap av lokal data.
+- Tydelige, merkbare feil ved mislykket lagring eller fare for tap av data; ingen rutinemeldinger om vellykket lagring. Undo, tom/oppbrukt ressurs og uavklarte betingelser skal være forståelige.
 
 ## Rolle til referanseprototyper
 Prototyper v0.2–v0.11 viste og testet **arbeidsflyt**. v0.11 har regresjoner (bl.a. skadeegenskaper og generisk redigeringspopup). **Kopier ikke UI eller kode ukritisk.** Krav og gjeldende beslutninger går foran skjermbilder og HTML.

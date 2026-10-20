@@ -1,6 +1,6 @@
 # Beslutningslogg – D&D Character Companion
 
-**Oppdatert:** 2026-10-18  
+**Oppdatert:** 2026-10-20
 **Status:** Prototyping er avsluttet etter v0.11. Konsolidert implementasjonsgrunnlag finnes i [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken.  
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
@@ -265,3 +265,13 @@ Gjeldende bestilling og implementasjonsvalg for dialoger/status står i [krav §
 ## Eventyrjournal implementert og produktkontrollert (2026-10-20)
 
 Den bestilte layouten og de avklarte kontrollendringene er implementert. [EVENTYRJOURNAL.md](EVENTYRJOURNAL.md) beskriver faktisk betjening, kategori-/reserveikoner, valgfri ikonmetadata, lokale fonter, dialogtyper, bunnmeny, Combat-sveip og relativ HP-føring. Produksjonsvalg: større våpenoppslag i Combat, tom «Andre egenskaper»-tittel skjules, tom samling får kortere inline +, og Meny følger journalens rader. Dette gjør ikke tidligere uimplementerte regel-/katalogkrav ferdige. [Kravmatrisen](CHARACTER_WORKSPACE.md#eventyrjournal-faktisk-produktkontroll-og-leveranse-2026-10-20) skiller forventninger, faktisk mobilgjennomgang og testresultater. Ingen karakterdata erstattes med designstudienes eksempler.
+
+## Flerverdiregistrering med veiviser er et overordnet prinsipp (2026-10-20)
+
+Etter faktisk mobilreview ønsket brukeren en konseptuell opprydding før videre koding. Brukeren vedtok deretter veivisertankegangen som et generelt prinsipp alle steder hvor man skal legge inn flere verdier, fremfor bare å velge noe fra en liste. [Prinsippet i krav §1](REQUIREMENTS.md#overordnet-prinsipp-veiviser-ved-flerverdiregistrering) krever korte, forgrenede spørsmål, relevante ja/nei-grener, sikre forhåndsverdier og beslektede felt samlet. Direkte listevalg beholdes. Tilbake bevarer svar, Avbryt og samlet bekreftelse følger vanlig trygg føring. Veiviser er betjeningsmønster, ikke en automatisk karakterbygger eller rekonstruksjon av tidligere level-ups.
+
+Brukeren godkjente arbeidsflytene for direkte katalogvåpen, «Tilpass» fra et eksisterende grunnvåpen, egne ekstraskadekomponenter og konteksttilpasset egenskaps-/featvelger. Betingelser registreres etter et spørsmål per ekstraskade, lagres som fritekst knyttet til akkurat den komponenten og vises sammen med den på våpenkortet. Kategori/skadetype velges fra liste. Dette erstatter tidligere idé om å bruke bare en generell våpenmerknad for slike betingelser.
+
+[Samlede avklaringer og rapporterte feil i krav §13](REQUIREMENTS.md#13-konseptuell-opprydding-og-arbeidsflyter-2026-10-20) bevarer også brukerens krav om automatisk oppsett av spell slots fra klasse/nivå med manuell overstyring, mindre markør-/lagringsstøy og AC-forklaring bare under Utstyr. Nye flyter for spells/cantrips, Hit Dice, ressurser, proficiencies og immuniteter avklares fortsatt én om gangen. Forslag fra forklaringsrunden blir ikke automatisk vedtatte detaljer. HP ved 0 og utilsiktet zoom er rapporterte feil; de er ikke rettet eller verifisert av dokumentasjonen.
+
+Dette vedtar produktprinsipp og beskrevne flyter. Appkode er ikke bestilt i denne gjennomgangen. Krav, designbrief, arbeidsinstruks, handoff og matrise oppdateres som varig prosjektminne; status er avklart, men ikke implementert. Dokumentkontroll: tekst-/beslutningskonsistens, lokale lenker/ankere og diff. Ingen ny brukerflyt eller nye spilltester inngår i dokumentasjonsendringen.
