@@ -20,6 +20,14 @@ async function fixture(page:Page){
   await new Promise<void>((resolve,reject)=>{const tx=db.transaction('characters','readwrite');tx.objectStore('characters').put(c);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();
  });
  await page.reload();
+ // IndexedDB restoration renders the character after the document load event.
+ // fonts.ready can resolve before that render requests either local font.
+ await expect(page.getByRole('heading',{name:'Alva Nattvind',exact:true})).toBeVisible();
+ const loaded=await page.evaluate(async()=>{
+  const faces=await Promise.all([document.fonts.load('16px Journal'),document.fonts.load('16px Source')]);
+  return faces.every(family=>family.length>0&&family.every(face=>face.status==='loaded'));
+ });
+ expect(loaded).toBe(true);
 }
 async function readState(page:Page){return page.evaluate(async()=>{
  const db=await new Promise<IDBDatabase>(resolve=>{const r=indexedDB.open('dnd-character-companion');r.onsuccess=()=>resolve(r.result);});

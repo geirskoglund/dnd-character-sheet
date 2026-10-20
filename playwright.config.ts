@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
+  reporter: process.env.CI ? [['github'], ['line']] : [['list']],
   testDir: './tests/e2e', fullyParallel: true,
   use: { baseURL: 'http://127.0.0.1:4173/dnd-character-sheet/', viewport: { width: 390, height: 844 },
     launchOptions: process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {} },
