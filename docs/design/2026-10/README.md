@@ -4,6 +4,8 @@
 
 Brukeren ønsker en samlet komponentstudie med rader for alle elementfamiliene, også spells/cantrips og utstyr. Små overskriftsikoner, portrett og en pen placeholder uten bilde, meny nederst og bunnfaneikoner videreføres. Klikkbarhet skal ha et subtilt visuelt skille. Myntforkortelsene skal følge buen uniformt. Modifiers uten ramme og omfanget av individuelle ikoner skal diskuteres; ikke generer et stort ikonsett eller endre appen på bakgrunn av kommentarene. HP-forløpsindikatoren er lite viktig. Se [full avklaring](../../REQUIREMENTS.md#valgt-retning-og-videre-designavklaringer-2026-10-20).
 
+**Videre bestilt og levert:** [Komponentplansjer for Eventyrjournal](components/README.md) viser alle familier samlet, modifier-/ikonalternativer og samhandling/tilstander. De tre opprinnelige temabildene nedenfor beholdes som historisk vurderingsgrunnlag.
+
 ## Forventning før utforming
 
 Alva Nattvind, Elf Rogue 5 / Thief. STR10 DEX18 CON14 INT12 WIS14 CHA10; PB3; HP28/38, temp5; Studded Leather AC12+DEX4=16; shortsword/dagger attack+7, vanlig skade1d6+4/1d4+4 piercing. Stealth expertise+10, Perception proficiency+5, Dexterity save+7, Persuasion proficiency+3. Samme grunnlag i alle retninger; ingen feats eller spells fra en ugyldig klasse. Skade8 bruker temp5, så HP28→25.
