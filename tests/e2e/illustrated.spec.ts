@@ -12,6 +12,12 @@ async function snapshot(p:Page){return p.evaluate(async()=>{const db=await new P
 async function closeWizard(p:Page){await click(p,'Lukk veiviseren');await expect(d(p)).not.toBeVisible();}
 async function complete(p:Page){await click(p,'Nei');await click(p,'Fullfør');await expect(d(p)).not.toBeVisible();}
 
+test.afterEach(async({page},info)=>{
+ if(info.status===info.expectedStatus)return;
+ console.log('::error title=Wizard diagnostic::'+JSON.stringify(info.annotations.filter(a=>a.type==='wizard-phase')));
+ try{const state=await Promise.race([page.evaluate(()=>({question:document.querySelector('#wizard-question')?.textContent,error:document.querySelector('#dialog-error')?.textContent,busy:document.querySelector('dialog form')?.getAttribute('aria-busy'),buttons:[...document.querySelectorAll<HTMLButtonElement>('dialog button')].filter(b=>b.getClientRects().length).map(b=>({text:b.textContent,disabled:b.disabled}))})),new Promise(resolve=>setTimeout(()=>resolve('Diagnostic timed out'),1000))]);console.log('::error title=Wizard DOM::'+JSON.stringify(state));}catch{}
+});
+
 test('each weapon question has one decision, illustrated dice choices, explanations and graphical progress',async({page})=>{
  await createCharacter(page);await variant(page);await expect(page.locator('#wizard-question')).toHaveText('Vil du legge til ekstraskade?');await expect(d(page).locator('select:visible,input:visible,textarea:visible')).toHaveCount(0);
  await click(page,'Ja');await expect(page.locator('#wizard-question')).toHaveText('Hvilken terningtype vil du bruke?');for(const die of ['d4','d6','d8','d10','d12'])await expect(d(page).getByRole('button',{name:die,exact:true}).locator('.die-art')).toHaveCount(1);
@@ -29,9 +35,21 @@ test('an unfinished edit never changes equipped weapon or Combat and can be disc
  await createCharacter(page);await equipmentTab(page);await page.getByRole('button',{name:'Legg til weapons',exact:true}).click();await click(page,'Legg til Longsword');await useEquipment(page,'Longsword');const before=await snapshot(page);await page.getByRole('button',{name:'Longsword · i bruk',exact:true}).click();await click(page,'Rediger med veiviser');await fillField(page,'Navn på utstyr','Uferdig sverd');await page.keyboard.press('Escape');await expect(d(page)).not.toBeVisible();
  expect((await snapshot(page)).characters).toEqual(before.characters);await page.getByRole('button',{name:'Combat',exact:true}).click();await expect(page.getByRole('button',{name:/^Longsword/})).toBeVisible();await expect(page.getByRole('main')).not.toContainText('Uferdig sverd');await equipmentTab(page);await page.getByRole('region',{name:'Utstyrsutkast'}).getByRole('button').click();await click(page,'Forkast utkast');await click(page,'Avbryt');await expect(page.getByRole('textbox',{name:'Navn på utstyr',exact:true})).toHaveValue('Uferdig sverd');await expect(d(page)).toHaveAttribute('data-wizard','true');await click(page,'Forkast utkast');await click(page,'Forkast utkast');await expect(d(page)).not.toBeVisible();expect((await snapshot(page)).characters).toEqual(before.characters);expect((await snapshot(page)).drafts).toEqual([]);
 });
-test('failed draft autosave is prominent, X stays open, and retry preserves the typed answer',async({page})=>{
- await createCharacter(page);await variant(page);await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as any).failDraft=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='settings'&&(args[0] as any)?.id?.startsWith('wizard-draft:')&&(window as any).failDraft)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};});
- await click(page,'Ja');await click(page,'Annet');await page.getByRole('textbox',{name:'Skadeuttrykk',exact:true}).fill('1d6+2');await expect(d(page).getByRole('alert')).toContainText('Utkastet kunne ikke lagres');await click(page,'Lukk veiviseren');await expect(d(page)).toBeVisible();await expect(page.getByRole('textbox',{name:'Skadeuttrykk',exact:true})).toHaveValue('1d6+2');await page.evaluate(()=>(window as any).failDraft=false);await closeWizard(page);await page.getByRole('region',{name:'Utstyrsutkast'}).getByRole('button').click();await expect(page.getByRole('textbox',{name:'Skadeuttrykk',exact:true})).toHaveValue('1d6+2');
+test('failed draft autosave is prominent, X stays open, and retry preserves the typed answer',async({page},info)=>{
+ const phase=(name:string)=>info.annotations.push({type:'wizard-phase',description:name});
+ phase('create character');await createCharacter(page);
+ phase('start variant');await variant(page);
+ phase('inject quota failure');await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as any).failDraft=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='settings'&&(args[0] as any)?.id?.startsWith('wizard-draft:')&&(window as any).failDraft)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};});
+ phase('extra damage yes');await click(page,'Ja');
+ phase('custom expression choice');await click(page,'Annet');
+ phase('type expression');await page.getByRole('textbox',{name:'Skadeuttrykk',exact:true}).fill('1d6+2');
+ phase('expect autosave error');await expect(d(page).getByRole('alert')).toContainText('Utkastet kunne ikke lagres');
+ phase('close with failed storage');await click(page,'Lukk veiviseren');
+ phase('expect retained editor');await expect(d(page)).toBeVisible();await expect(page.getByRole('textbox',{name:'Skadeuttrykk',exact:true})).toHaveValue('1d6+2');
+ phase('recover storage');await page.evaluate(()=>(window as any).failDraft=false);
+ phase('close with recovered storage');await closeWizard(page);
+ phase('resume draft');await page.getByRole('region',{name:'Utstyrsutkast'}).getByRole('button').click();
+ phase('expect restored expression');await expect(page.getByRole('textbox',{name:'Skadeuttrykk',exact:true})).toHaveValue('1d6+2');
 });
 test('failed final save retains both draft and original character, then retries without duplication',async({page})=>{
  await createCharacter(page);await variant(page);await extra(page);await click(page,'Nei');await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as any).failItem=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='characters'&&(window as any).failItem)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};});
