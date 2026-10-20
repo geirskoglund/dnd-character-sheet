@@ -9,7 +9,7 @@ No non-SRD setting or proprietary book content is distributed by this catalog. U
 
 Character catalog source: 5e-bits/5e-database, src/2014/en, revision a6212beb4b278917c2cff41c2b04c4ef4f3e0d6f.
 https://github.com/5e-bits/5e-database/tree/a6212beb4b278917c2cff41c2b04c4ef4f3e0d6f/src/2014/en
-Dataset adaptation: names/IDs normalized, descriptions and prerequisites combined, spells/equipment projected to this application's editable instance model. No automatic rule interpretation from prose. Reproducible importer: scripts/import-srd.mjs.
+Dataset adaptation: names/IDs normalized, descriptions and prerequisites combined, spells/equipment projected to this application's editable instance model. No automatic rule interpretation from prose. Reproducible importers: scripts/import-srd.mjs and scripts/import-context.mjs. The context dataset adds the 12 class tables (240 levels), hit-die/casting ability facts, structured feature prerequisites and SRD subclass spell grants from the same pinned 2014 source. Selected spell-slot/multiclass, preparation and rest bookkeeping is adapted from these facts; this is not a complete character builder or interpretation of arbitrary rule text.
 
 5e-database code/data packaging is MIT-licensed:
 MIT License

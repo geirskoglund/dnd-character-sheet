@@ -1,4 +1,6 @@
+import {extraDamageMarkup} from './equipment-wizard';
 import {iconField,readIcon} from './icons';
+import {damageTypes} from '../domain/records';
 import { abilities, type Character } from '../domain/model';
 import { equipmentCatalog, type Item } from '../domain/catalog';
 import { deriveStats } from '../domain/derived';
@@ -17,12 +19,15 @@ export function weaponSummary(c: Character, item: Item, offhand = false) {
   return `<p class="weapon-values"><strong>Angrep: ${esc(stats.attack)}</strong><strong>Skade: ${esc(stats.damage)}</strong></p>
     ${stats.range ? `<p>Rekkevidde: ${esc(stats.range)}</p>` : ''}
     <details><summary>Beregningsgrunnlag</summary><ul>${stats.explanation.map(text=>`<li>${esc(text)}</li>`).join('')}</ul></details>
+    ${extraDamageMarkup(item)}
     ${stats.notes.map(text=>`<p class="muted">${esc(text)}</p>`).join('')}`;
 }
 export function equipmentForm(item: Item, creating = false) {
   const profile = item.armorProfile, weapon = weaponProfile(item);
   return `<div id="equipment-preview" aria-live="polite"></div>
     ${field('Navn på utstyr', 'itemName', item.name, 'required maxlength="100"')}
+    <label>Merknad (valgfritt)<textarea name="userNote" maxlength="10000" rows="2">${esc(item.userNote??'')}</textarea></label>
+    <button type="button" id="guided-damage">Endre skade med veiviser</button>
     <label class="check"><input type="checkbox" name="equipped" ${item.equipped ? 'checked' : ''}>I bruk</label>
     <div data-grip-fields ${item.category === 'weapon' ? '' : 'hidden'}>
       ${select('Brukes med', 'grip', item.grip ?? (item.handUsage === 'two' ? 'two' : 'one'), [{value:'one',label:'Én hånd'}, {value:'two',label:'To hender'}])}
@@ -49,7 +54,7 @@ export function equipmentForm(item: Item, creating = false) {
       <details data-weapon-fields ${item.category === 'weapon' ? '' : 'hidden'}><summary>Våpenets regelverdier og overstyringer</summary>
         ${select('Våpenkategori','weaponCategory',weapon?.category ?? 'custom',[{value:'simple',label:'Simple'},{value:'martial',label:'Martial'},{value:'custom',label:'Egen'}])}
         ${select('Våpentype','weaponKind',weapon?.kind ?? 'melee',[{value:'melee',label:'Melee'},{value:'ranged',label:'Ranged'}])}
-        ${field('Grunnskade (terninger)','weaponDice',weapon?.dice ?? '', 'maxlength="10000"')}${field('Skadetype','weaponDamageType',weapon?.damageType ?? '', 'maxlength="10000"')}
+        ${field('Grunnskade (terninger)','weaponDice',weapon?.dice ?? '', 'maxlength="10000"')}${select('Skadetype','weaponDamageType',weapon?.damageType??'',[{value:'',label:'Velg skadetype'},...damageTypes.map(value=>({value,label:value})),...(weapon?.damageType&&!damageTypes.includes(weapon.damageType)?[{value:weapon.damageType,label:weapon.damageType}]:[])])}
         ${field('Grunnskade med to hender','twoHandedDice',weapon?.twoHandedDice ?? '', 'maxlength="10000"')}
         ${field('Våpenegenskaper (kommadelt)','weaponProperties',weapon?.properties.join(', ') ?? '', 'maxlength="10000"')}
         ${field('Rekkevidde','weaponRange',weapon?.range ?? '', 'maxlength="10000"')}${field('Kasterekkevidde','thrownRange',weapon?.thrownRange ?? '', 'maxlength="10000"')}
@@ -71,7 +76,7 @@ function weaponBaseText(i: Item) {
 export function readEquipment(form: HTMLFormElement, source: Item): Item {
   const data = new FormData(form), item = structuredClone(source);
   const text = (key: string) => String(data.get(key) ?? '');
-  item.name = text('itemName').trim(); item.category = text('itemCategory') as Item['category'];
+  item.name = text('itemName').trim(); if(text('userNote')||source.userNote!==undefined)item.userNote=text('userNote'); item.category = text('itemCategory') as Item['category'];
   const chosenIcon=readIcon(data);if(chosenIcon)item.iconKey=chosenIcon;else delete item.iconKey;
   item.quantity = Number(data.get('itemQuantity')); item.equipped = data.has('equipped');
   const setOptional = (key: 'requiresAttunement' | 'attuned', value: boolean) => { if (value || source[key] !== undefined) item[key] = value; };

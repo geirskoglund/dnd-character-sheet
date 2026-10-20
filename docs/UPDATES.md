@@ -11,7 +11,7 @@ Den gamle «Deploy from a branch»-metoden kan publisere kildefiler parallelt me
 
 ## I appen
 
-Meny → Om appen viser versjonens korte commit-ID. «Se etter oppdatering» ligger direkte i menyen. Appen sjekker også når den får fokus, blir synlig eller kommer på nett. Kontroll av service-worker-kilden omgår HTTP-cachen via `updateViaCache: none`.
+Meny → Om appen viser versjonens korte commit-ID. «Se etter oppdatering» ligger direkte i menyen. Appen sjekker også når den får fokus, blir synlig, gjenopptas eller kommer på nett, og hvert minutt mens den er synlig og på nett. En app som står åpen ved bordet skal dermed oppdage en publisert utgave uten manuelt menyvalg. Kontroll av service-worker-kilden omgår HTTP-cachen via `updateViaCache: none`.
 
 Når en ferdig nedlastet versjon venter, vises «Oppdater appen». Lagre eller avbryt redigering før oppdatering. Andre faner/PWA-vinduer på appens scope må lagres og lukkes først; den ventende workeren teller dem før aktivering. Først etter et eksplisitt klikk aktiveres workeren og denne siden lastes på nytt. Ved en ekstern aktivering viser en åpen side melding og lar redigeringen fortsette uten automatisk reload.
 
@@ -22,3 +22,5 @@ Ved første overgang fra eldre versjoner uten oppdateringsknapp: bekreft Pages-k
 ## Test
 
 `tests/e2e/updates.spec.ts` serverer to produksjonsutgaver med forskjellige precache-revisjoner. Den oppretter og lagrer en karakter i A, lar en annen fane ha et ulagret utkast, gjør B tilgjengelig og bekrefter at oppdateringen venter. Deretter lagres utkastet og den andre fanen lukkes. Oppdateringsknappen aktiverer B, navnet og HP beholdes, og B med karakteren kan lastes uten nett. Testen kontrollerer også offline-/serverfeil uten sletting av data. Førstegangsinstallasjonen skal ikke vise et falskt oppdateringsvarsel.
+
+Ingen oppdateringsmelding er normalt når den nyeste publiserte utgaven allerede er installert. Arbeid som bare ligger lokalt/på en PR-branch publiseres ikke; den får først en ny oppdaterbar service worker når master er bygget og Pages-jobben er ferdig. Testen simulerer nå også minuttkontroll uten manuelt søk, lukket varsel som hentes frem igjen via menyen, redigeringsvern og fortsatt offline-data.

@@ -1,3 +1,4 @@
+import {enhanceNumbers} from './number-wheel';
 import { abilities, type Character } from '../domain/model';
 import { classCatalog, speciesCatalog } from '../domain/catalog';
 import { field, select } from './html';
@@ -20,15 +21,15 @@ export function classRow(cl: ClassEntry = { id: crypto.randomUUID(), name: '', l
 }
 export function characterForm(c: Character, creating: boolean) {
   const choice = speciesCatalog.some(s => s.catalogId === c.species.catalogId) ? c.species.catalogId! : c.species.name ? 'custom' : '';
-  return `<fieldset><legend>Identitet</legend>${field('Navn', 'name', c.name, 'required maxlength="100" autocomplete="off" placeholder="Karakterens navn"')}
+  return `<fieldset><legend tabindex="-1">Identitet</legend>${field('Navn', 'name', c.name, 'required maxlength="100" autocomplete="off" placeholder="Karakterens navn"')}
     ${select('Art / species', 'speciesChoice', choice, [{value:'', label:'Velg art'}, ...speciesCatalog.map(s => ({value:s.catalogId!, label:s.name})), {value:'custom', label:'Opprett egen art / underart'}], 'required')}
     <div data-custom-species ${choice === 'custom' ? '' : 'hidden'}>
       ${field('Navn på art / underart', 'speciesName', c.species.name, 'maxlength="100"')}
       ${field('Grunnfart for arten (ft)', 'speciesSpeed', c.species.walkingSpeed ?? '', 'type="number" min="0"')}
       <label class="check"><input type="checkbox" name="ignoreArmorPenalty" ${c.species.ignoresHeavyArmorSpeedPenalty ? 'checked' : ''}>Heavy armor reduserer ikke artens speed</label>
     </div></fieldset>
-    <fieldset><legend>Klasse og nivå</legend><div id="class-rows">${(c.classes.length ? c.classes : [undefined]).map(cl => classRow(cl)).join('')}</div><button type="button" class="pill" id="add-class">+ Klasse</button><p id="total-level"></p></fieldset>
-    <fieldset><legend>Grunnverdier</legend><p>Angi endelige ability scores, inkludert bonuser.</p><div class="form-grid">${abilities.map(a => field(a, a, c.abilityScores[a], 'type="number" min="0" required')).join('')}</div>
+    <fieldset><legend tabindex="-1">Klasse og nivå</legend><div id="class-rows">${(c.classes.length ? c.classes : [undefined]).map(cl => classRow(cl)).join('')}</div><button type="button" class="pill" id="add-class">+ Klasse</button><p id="total-level"></p></fieldset>
+    <fieldset><legend tabindex="-1">Grunnverdier</legend><p>Angi endelige ability scores, inkludert bonuser.</p><div class="form-grid">${abilities.map(a => field(a, a, c.abilityScores[a], 'type="number" min="0" required')).join('')}</div>
     ${field('Maks HP fra karakterarket', 'hpMax', c.hp.max || '', 'type="number" min="1" required')}
     <p>På level 1: full Hit Die + Constitution modifier. Senere levels: fysisk kast eller fast verdi + Constitution modifier. Angi samlet maks HP her.</p>
     <p>${creating ? 'Karakteren starter med full HP. Utstyr legges til inne i appen.' : 'Nåværende HP og temporary HP beholdes. Skade og healing registreres i Combat.'}</p></fieldset>`;
@@ -82,7 +83,7 @@ export function bindCharacterForm(form: HTMLFormElement, source: Character, crea
     if (target.name === 'classChoice') target.closest('[data-class-id]')!.querySelector('[data-subclass-fields]')!.innerHTML = subclassFields(target.value);
     update();
   });
-  form.querySelector<HTMLButtonElement>('#add-class')!.onclick = () => { form.querySelector('#class-rows')!.insertAdjacentHTML('beforeend', classRow()); update(); form.querySelectorAll<HTMLElement>('[name="classChoice"]')[form.querySelectorAll('[data-class-id]').length - 1].focus(); };
+  form.querySelector<HTMLButtonElement>('#add-class')!.onclick = () => { form.querySelector('#class-rows')!.insertAdjacentHTML('beforeend', classRow()); enhanceNumbers(form);update(); form.querySelectorAll<HTMLElement>('[name="classChoice"]')[form.querySelectorAll('[data-class-id]').length - 1].focus(); };
   form.addEventListener('click', event => {
     const target = event.target as HTMLElement;
     if (target.matches('[data-remove-class]')) { target.closest('[data-class-id]')!.remove(); update(); }

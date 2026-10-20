@@ -1,3 +1,4 @@
+import {characterStep,finish} from './helpers';
 import { menuAction } from './helpers';
 import { test, expect } from '@playwright/test';
 import { createServer } from 'node:http';
@@ -37,9 +38,11 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
     await menuAction(page, 'Ny karakter');
     await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Alva');
     await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({ label: 'Human' });
+    await characterStep(page,1);
     await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({ label: 'Fighter' });
+    await characterStep(page,2);
     await page.getByRole('spinbutton', { name: 'Maks HP fra karakterarket', exact: true }).fill('12');
-    await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+    await finish(page);
     await expect(page.getByRole('heading', { name: 'Alva', exact: true })).toBeVisible();
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
@@ -48,7 +51,11 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
     const other = await context.newPage(); await other.goto(url);
     await menuAction(other, 'Rediger karakter');
     await other.getByRole('textbox', { name: 'Navn', exact: true }).fill('Bevart etter oppdatering');
-    release = 'B';
+    await page.clock.install();release = 'B';
+    await page.clock.fastForward(60_000);
+    await expect(page.locator('#app-update')).toContainText('En ny versjon er klar');
+    await page.getByLabel('Appoppdatering').getByRole('button',{name:'Lukk',exact:true}).click();
+    await page.clock.fastForward(60_000);await expect(page.locator('#app-update')).not.toBeVisible();
     await menuAction(page, 'Se etter oppdatering');
     await expect(page.locator('#app-update')).toContainText('En ny versjon er klar');
     await expect(page).toHaveTitle('Release A');
@@ -56,7 +63,7 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
     await page.getByRole('button', { name: 'Oppdater appen', exact: true }).click();
     await expect(page.locator('#app-update')).toContainText('flere faner');
     await expect(other.getByRole('dialog')).toBeVisible();
-    await other.getByRole('button', { name: 'Lagre', exact: true }).click();
+    await finish(other);
     await expect(other.getByRole('heading', { name: 'Bevart etter oppdatering', exact: true })).toBeVisible();
     await other.close();
     await page.getByRole('button', { name: 'Oppdater appen', exact: true }).click();

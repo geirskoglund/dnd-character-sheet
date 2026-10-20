@@ -1,3 +1,5 @@
+import {extraDamageMarkup} from './equipment-wizard';
+import {spellSources,preparationLimit,spellUsable} from '../domain/magic';
 import {icon, sectionTitle, type UIIcon} from './icons';
 import {traitIcon, featureIcon, spellIcon, itemIcon, damageIcon} from '../domain/iconography';
 import { abilities, type Character } from '../domain/model';
@@ -16,7 +18,7 @@ export function characterView(c: Character) {
   const stats = deriveStats(c), options = modifiers(c);
   const featureDetail=(row: Character['features'][number])=>row.resourceRefs.map(id=>c.resources.find(pool=>pool.id===id)).filter(pool=>!!pool).map(pool=>`${pool.current}/${pool.max}`).join(' · ') || (row.category==='feat'?'Feat':'');
   const baseLanguages = c.species.languages.filter(name => !c.languages.some(row => row.name.toLowerCase() === name.toLowerCase()));
-  const resourceGroup = (kind: Character['resources'][number]['kind'], label: string) => section(label,c.resources.filter(pool=>pool.kind===kind).map(pool=>record('resource',pool.id,pool.name,`${pool.current} / ${pool.max}${pool.kind==='spellSlot' ? ` · lvl ${pool.spellLevel ?? '?'}` : pool.kind==='hitDie' ? ` · ${pool.die ?? '?'}` : ''}`)).join(''),add(`resource-${kind}`,`Legg til ${label.toLowerCase()}`));
+
   return `<section aria-label="Karakterstatus" class="stats">
     <div><small>HP</small><strong>${c.hp.current} <em>/ ${c.hp.max}</em></strong></div>
     <div><small>AC</small><strong>${stats.ac}</strong></div>
@@ -24,16 +26,11 @@ export function characterView(c: Character) {
     <button data-action="money"><small>GP</small><strong>${(c.goldCp / 100).toFixed(2)}</strong></button>
     <div><small>Speed</small><strong>${stats.speed ?? '—'} ft</strong></div>
   </section>
-  ${stats.warnings.length ? `<p class="warning calculation-warning">${stats.warnings.map(esc).join('<br>')}</p>` : ''}
   <section aria-label="Modifierfavoritter" class="modifier-section">${sectionTitle('Modifiers','feather')}<div class="modifier-grid">${c.favoriteModifierRefs.map((ref, i) => {const mod = options.find(m => m.ref === ref); return `<button data-modifier="${i}"><span>${esc(mod?.name ?? ref)}</span><strong>${mod ? signed(mod.value) : '—'}</strong></button>`;}).join('')}</div></section>
   <section aria-label="Ability scores">${sectionTitle('Ability scores','magic')}${abilityCoins(c)}</section>
   ${section('Artsegenskaper',c.species.traits.map((t,i)=>pill(`data-trait="${i}"`,t.name,'',traitIcon(t))).join('') + c.features.filter(row=>row.category==='species').map(row=>record('feature',row.id,row.name,'',featureIcon(row))).join(''),add('species','Legg til artsegenskap'))}
   ${section('Class Features & Feats',c.features.filter(row=>row.category!=='species').map(row=>record('feature',row.id,row.name,featureDetail(row),featureIcon(row))).join(''),add('feature','Legg til egenskap eller feat'))}
-  ${section('Cantrips',c.spells.filter(row=>row.spellLevel===0).map(row=>record('spell',row.id,row.name,'∞',spellIcon(row))).join(''),add('cantrip','Legg til cantrip'))}
-  ${section('Spells',c.spells.filter(row=>row.spellLevel>0).sort((a,b)=>a.spellLevel-b.spellLevel || a.name.localeCompare(b.name)).map(row=>record('spell',row.id,row.name,`Lvl ${row.spellLevel}`,spellIcon(row),row.prepared?'Forberedt':'')).join(''),add('spell','Legg til spell'))}
-  ${resourceGroup('spellSlot','Spell slots')}
-  ${resourceGroup('hitDie','Hit Dice')}
-  ${resourceGroup('custom','Ressurser')}
+  ${resourceGroup(c,'custom','Beholdninger',true)}
   ${section('Egne handlinger',c.actions.filter(row=>!row.sourceRef).map(row=>record('action',row.id,row.name,({action:'Action',bonus:'Bonus',reaction:'Reaction',none:'Annen',passive:'Passiv'})[row.actionEconomy],row.iconKey ?? 'feature')).join(''),add('action','Legg til egen handling'))}
   ${section('Tilstander',pill(`data-record="inspiration" aria-pressed="${c.inspiration}"`,'Inspiration',c.inspiration?'Ja':'Nei','luck') + record('deathSaves','', 'Death saves', `${c.deathSaves.successes} ✓ / ${c.deathSaves.failures} ✕`) + record('conditions','', 'Conditions', c.conditions.length?c.conditions.join(', '):'Ingen') + record('conditions','', 'Exhaustion', String(c.exhaustionLevel)),pill('data-record="rest"','Hvile','','moon'))}
   ${section('Languages',baseLanguages.map(name=>record('language',`base:${c.species.languages.indexOf(name)}`,name)).join('') + c.languages.map(row=>record('language',row.id,row.name)).join(''),add('language','Legg til språk'))}
@@ -48,11 +45,11 @@ export function equipmentView(c: Character) {
     ${stats.warnings.map(w=>`<p class="warning">${esc(w)}</p>`).join('')}</section>
     ${([
       ['weapon','Weapons',['weapon']], ['armor','Armor og skjold',['armor','shield']], ['other','Annet utstyr',['equipment','magic']],
-    ] as const).map(([group,label,categories])=>`<section class="equipment-group" role="group" aria-label="${label}">${sectionTitle(label,group==='weapon'?'sword':group==='armor'?'shield':'equipment')}<div class="pills">${[...c.items].filter(item=>(categories as readonly string[]).includes(item.category)).sort((a,b)=>Number(inUse(b))-Number(inUse(a))).map(item=>{
+    ] as const).map(([group,label,categories])=>`<section class="equipment-group" data-equipment-kind="${group}" role="group" aria-label="${label}">${sectionTitle(label,group==='weapon'?'sword':group==='armor'?'shield':'equipment')}<div class="pills">${[...c.items].filter(item=>(categories as readonly string[]).includes(item.category)).sort((a,b)=>Number(inUse(b))-Number(inUse(a))).map(item=>{
       const weapon = item.category === 'weapon' ? deriveWeapon(c,item) : undefined;
       const armorValue = armorClass(c,item);
       const detail = weapon ? `${weapon.attack} · ${weapon.damage}` : item.armorProfile ? `AC ${armorValue}` : item.category === 'shield' ? `AC +${(item.acContribution ?? 2) + ((!item.requiresAttunement || item.attuned) ? item.bonuses?.ac ?? 0 : 0)}` : item.requiresAttunement ? item.attuned ? 'Attuned' : 'Krever attunement' : '';
-      return pill(`data-item="${item.id}" aria-label="${esc(item.name)} · ${inUse(item)?'i bruk':'eid'}${item.quantity!==1?` · ×${item.quantity}`:''}" aria-pressed="${inUse(item)}"`,item.name,`${detail}${!inUse(item)?`${detail?' · ':''}I sekken`:''}`,itemIcon(item),inUse(item)?'I bruk':'');
+      return pill(`data-item="${item.id}" aria-label="${esc(item.name)} · ${inUse(item)?'i bruk':'eid'}${item.quantity!==1?` · ×${item.quantity}`:''}" aria-pressed="${inUse(item)}"`,item.name,`${detail}${!inUse(item)?`${detail?' · ':''}I sekken`:''}`,itemIcon(item),inUse(item)?'I bruk':'').replace('</button>',extraDamageMarkup(item)+'</button>');
     }).join('')}${pill(`data-equipment-group="${group}" aria-label="Legg til ${label.toLowerCase()}"`,'+')}</div></section>`).join('')}`;
 }
 export function combatView(c: Character, category: string) {
@@ -62,13 +59,27 @@ export function combatView(c: Character, category: string) {
   const weapons = economy === 'action' ? c.items.filter(i=>inUse(i) && i.category==='weapon') : economy === 'bonus' ? offhandWeapons(c) : [];
   const weaponCards=weapons.map(item=>{
     const value=deriveWeapon(c,item,economy==='bonus');
-    return `<button class="weapon-attack" data-lookup="${economy==='bonus'?'offhand':'weapon'}:${item.id}" aria-label="${esc(item.name)}${economy==='bonus'?' · Off-hand':''} · ${esc(value.attack)} · ${esc(value.damage)}"><span class="weapon-name">${icon(itemIcon(item))}<span>${esc(item.name)}${economy==='bonus'?' · Off-hand':''}</span></span><span class="weapon-rolls"><span><small>Angrep</small><strong>${esc(value.attack)}</strong></span><span><small>Skade</small><strong>${esc(value.damage)}</strong></span></span></button>`;
+    return `<button class="weapon-attack" data-lookup="${economy==='bonus'?'offhand':'weapon'}:${item.id}" aria-label="${esc(item.name)}${economy==='bonus'?' · Off-hand':''} · ${esc(value.attack)} · ${esc(value.damage)}"><span class="weapon-name">${icon(itemIcon(item))}<span>${esc(item.name)}${economy==='bonus'?' · Off-hand':''}</span></span><span class="weapon-rolls"><span><small>Angrep</small><strong>${esc(value.attack)}</strong></span><span><small>Skade</small><strong>${esc(value.damage)}</strong></span></span>${extraDamageMarkup(item)}</button>`;
   }).join('');
   const actions=c.actions.filter(row=>row.actionEconomy===economy);
   const others=c.actions.filter(row=>['none','passive'].includes(row.actionEconomy));
-  const spells=c.spells.filter(row=>row.actionEconomy===economy && (row.spellLevel===0 || row.prepared || (row.known && !row.inSpellbook)));
+  const spells=c.spells.filter(row=>row.actionEconomy===economy && spellUsable(c,row));
   return `<section aria-label="HP i Combat" class="combat-health"><button data-action="hp"><small>HP</small><strong>${c.hp.current} / ${c.hp.max}</strong></button><button data-action="temp-hp"><small>Temporary HP</small><strong>${c.hp.temp}</strong></button><div><small>AC</small><strong>${stats.ac}</strong></div><div><small>Initiative</small><strong>${signed(c.derivedOverrides.initiative ?? abilityModifier(c.abilityScores.DEX))}</strong></div></section>
-    <section aria-label="Kampoppslag"><div class="combat-tabs" role="group" aria-label="Handlingskategori">${['Action', 'Bonus', 'Reaction'].map(name => `<button aria-pressed="${category === name}" data-category="${name}">${name}</button>`).join('')}</div>
+    ${resourceGroup(c,'spellSlot','Spell slots')}<section aria-label="Kampoppslag"><div class="combat-tabs" role="group" aria-label="Handlingskategori">${['Action', 'Bonus', 'Reaction'].map(name => `<button aria-pressed="${category === name}" data-category="${name}">${name}</button>`).join('')}</div>
     ${weapons.length?`<div class="combat-attacks">${weaponCards}</div>`:''}${actions.length || spells.length ? `<div class="pills combat-choices">${actionPills(actions)}${spells.map(row=>pill(`data-lookup="spell:${row.id}"`,row.name,row.spellLevel ? `Lvl ${row.spellLevel}` : '∞',spellIcon(row))).join('')}</div>` : weapons.length?'':'<p class="empty muted">Ingen registrerte oppslag i denne kategorien.</p>'}</section>
     ${others.length?section('Andre egenskaper',actionPills(others)):''}<div class="combat-tools"><button data-action="hp-change">${icon('healing')}<span>Ta skade</span></button><button data-record="rest">${icon('moon')}<span>Hvile</span></button></div>`;
+}
+
+export function resourceGroup(c:Character,kind:Character['resources'][number]['kind'],label:string,allowAdd=false){
+ const rows=c.resources.filter(pool=>pool.kind===kind);if(!rows.length&&!allowAdd)return '';
+ return section(label,rows.map(pool=>record('resource',pool.id,pool.name,`${pool.current} / ${pool.max}${pool.die?' · '+pool.die:''}`)).join(''),allowAdd?add(`resource-${kind}`,`Legg til ${label.toLowerCase()}`):'');
+}
+export function magicView(c:Character){
+ const sources=spellSources(c),pb=c.proficiencyBonusOverride??Math.ceil(c.level/4)+1;
+ const casting=sources.filter(s=>s.ability).map(s=>`<div><strong>${esc(s.label)}</strong><span>Spell attack ${signed(pb+abilityModifier(c.abilityScores[s.ability!]))} · Save DC ${8+pb+abilityModifier(c.abilityScores[s.ability!])}</span></div>`).join('');
+ return `<section aria-label="Magi">${sectionTitle('Magi','magic')}<div class="casting-values">${casting}</div><div class="magic-tools">${c.classes.some(cl=>preparationLimit(c,cl)!==null)?'<button data-action="prepare">Forbered spells</button>':''}<button data-record="rest">Hvile</button></div></section>
+ ${section('Cantrips',c.spells.filter(row=>row.spellLevel===0).map(row=>record('spell',row.id,row.name,'∞'+(row.sourceLabel?' · '+row.sourceLabel:''),spellIcon(row))).join(''),add('cantrip','Legg til cantrip'))}
+ ${section('Spells',c.spells.filter(row=>row.spellLevel>0).sort((a,b)=>a.spellLevel-b.spellLevel||a.name.localeCompare(b.name)).map(row=>record('spell',row.id,row.name,`Lvl ${row.spellLevel}${row.inSpellbook?' · Spellbook':''}${row.sourceLabel?' · '+row.sourceLabel:''}`,spellIcon(row),row.alwaysPrepared?'Alltid forberedt':row.prepared?'Forberedt':'')).join(''),add('spell','Legg til spell'))}
+ ${resourceGroup(c,'spellSlot','Spell slots')}
+ <details><summary>Manuelt slotoppsett</summary><button data-add="resource-spellSlot">Legg til egen slotbeholdning</button></details>`;
 }

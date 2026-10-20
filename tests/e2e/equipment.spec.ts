@@ -1,27 +1,29 @@
+import {characterStep,finish,useEquipment} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import {createCharacter,menuAction,equipmentTab,itemDetails,expectCharacterStatus} from './helpers';
 const dialog=(p:Page)=>p.getByRole('dialog');
-async function save(p:Page) {await dialog(p).getByRole('button',{name:'Lagre',exact:true}).click();await expect(dialog(p)).not.toBeVisible();}
+async function save(p:Page) {await finish(p);await expect(dialog(p)).not.toBeVisible();}
 async function setup(p:Page) {
  await createCharacter(p);await menuAction(p,'Rediger karakter');
+ await characterStep(p,2);
  await p.getByRole('spinbutton',{name:'STR',exact:true}).fill('16');await p.getByRole('spinbutton',{name:'DEX',exact:true}).fill('16');await save(p);await equipmentTab(p);
 }
 async function add(p:Page,name:string,group='weapons') {
  await p.getByRole('button',{name:`Legg til ${group}`,exact:true}).click();
  await p.getByRole('searchbox',{name:'Søk i utstyr',exact:true}).fill(name);
- await p.getByRole('button',{name:`Legg til ${name}`,exact:true}).click();await expect(dialog(p)).not.toBeVisible();
+ await p.getByRole('button',{name:`Legg til ${name}`,exact:true}).click();await expect(dialog(p)).not.toBeVisible();await useEquipment(p,name);
 }
 async function count(p:Page) {return p.evaluate(async()=>{
  const db=await new Promise<IDBDatabase>(resolve=>{const r=indexedDB.open('dnd-character-companion');r.onsuccess=()=>resolve(r.result);});
  try{return await new Promise<number>(resolve=>{const r=db.transaction('events').objectStore('events').count();r.onsuccess=()=>resolve(r.result);});}finally{db.close();}
 });}
-test('three tabs: direct catalog selection, useful weapon values, grip and Combat lookup without editing',async({page})=>{
+test('four tabs: direct catalog selection, useful weapon values, grip and Combat lookup without editing',async({page})=>{
  await setup(page);
- await expect(page.getByRole('navigation').getByRole('button')).toHaveCount(3);
+ await expect(page.getByRole('navigation').getByRole('button')).toHaveCount(4);
  await add(page,'Longsword');await expect(page.locator('[data-item]')).toContainText('d20+5 · 1d8+3 slashing');
  const before=await count(page);await page.getByRole('button',{name:'Longsword · i bruk',exact:true}).click();
  await expect(dialog(page)).toContainText('Angrep: d20+5');await expect(dialog(page)).toContainText('Skade: 1d8+3 slashing');
- expect(await dialog(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(3); // name, use, grip
+ expect(await dialog(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(4); // name, use, grip and optional note
  await page.getByRole('combobox',{name:'Brukes med',exact:true}).selectOption('two');await expect(dialog(page)).toContainText('1d10+3 slashing');await save(page);
  expect(await count(page)).toBe(before+1);
  await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:/^Longsword/}).click();
@@ -44,9 +46,9 @@ test('armor + shield + attuned cloak: AC19, save bonus, switching and overrides 
 });
 test('own equipment needs only a name; details and complex effects are optional, errors preserve the draft',async({page})=>{
  await setup(page);await page.getByRole('button',{name:'Legg til annet utstyr',exact:true}).click();await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
- expect(await dialog(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(2); // name and use
+ expect(await dialog(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(2); // name and optional note
  await page.getByRole('textbox',{name:'Navn på utstyr',exact:true}).fill('Reisekappe');await save(page);
- await expect(page.getByRole('button',{name:'Reisekappe · i bruk',exact:true})).toBeVisible();await expectCharacterStatus(page,'AC13');
+ await useEquipment(page,'Reisekappe');await expect(page.getByRole('button',{name:'Reisekappe · i bruk',exact:true})).toBeVisible();await expectCharacterStatus(page,'AC13');
  await page.getByRole('button',{name:'Reisekappe · i bruk',exact:true}).click();await itemDetails(page);await page.getByRole('textbox',{name:'Utstyrsnotat',exact:true}).fill('Avtalt med DM: beskytter mot regn.');
  await page.getByRole('spinbutton',{name:'Antall',exact:true}).fill('3');await save(page);
  await page.getByRole('button',{name:'Reisekappe · i bruk · ×3',exact:true}).click();await itemDetails(page);await expect(page.getByRole('textbox',{name:'Utstyrsnotat',exact:true})).toHaveValue('Avtalt med DM: beskytter mot regn.');await save(page);
@@ -66,7 +68,7 @@ test('off-hand uses two owned light melee weapon instances, no positive ability 
  await page.getByRole('button',{name:/^Dagger · Off-hand/}).click();await expect(dialog(page)).toContainText('Skade: 1d4 piercing');await expect(dialog(page)).toContainText('positiv ability modifier er ikke med');await expect(dialog(page).getByRole('button')).toHaveCount(1);await page.keyboard.press('Escape');
  await expect(page.getByRole('main').getByRole('button',{name:'Bruk',exact:true})).toHaveCount(0);
 });
-test('three independent scroll positions and readable uniform equipment pills on small screens and large text',async({page})=>{
+test('independent scroll positions and readable uniform equipment pills on small screens and large text',async({page})=>{
  await setup(page);for(const name of ['Longsword','Dagger','Greatsword','Rapier','Shortbow'])await add(page,name);
  for(const width of [320,390]){
   await page.setViewportSize({width,height:568});
@@ -91,7 +93,7 @@ test('legacy weapon profile fallback leaves stored data unchanged and failed edi
  await page.getByRole('button',{name:'Arvesverd · i bruk',exact:true}).click();await itemDetails(page);await page.getByRole('spinbutton',{name:'Angrepsbonus',exact:true}).fill('2');
  await page.getByRole('textbox',{name:'Utstyrsnotat',exact:true}).fill('Avtalt med DM');
  await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as unknown as {failSave:boolean}).failSave=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='characters'&&(window as unknown as {failSave:boolean}).failSave)throw new DOMException('Lagringsplassen er full.','QuotaExceededError');return original.apply(this,args);};});
- await page.getByRole('button',{name:'Lagre',exact:true}).click();await expect(dialog(page).getByRole('alert')).toContainText('full');
+ await finish(page);await expect(dialog(page).getByRole('alert')).toContainText('full');
  await expect(page.getByRole('spinbutton',{name:'Angrepsbonus',exact:true})).toHaveValue('2');await expect(page.getByRole('textbox',{name:'Utstyrsnotat',exact:true})).toHaveValue('Avtalt med DM');
  expect(await count(page)).toBe(before);await page.evaluate(()=>(window as unknown as {failSave:boolean}).failSave=false);await save(page);expect(await count(page)).toBe(before+1);await expect(page.locator('[data-item]')).toContainText('d20+7');
 });
