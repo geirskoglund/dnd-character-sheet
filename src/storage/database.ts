@@ -83,6 +83,7 @@ export class CharacterRepository {
     const chars = tx.objectStore('characters');
     try {
       const before: Character | undefined = await request(chars.get(parsed.id));
+      if (!before && parsed.revision !== 0) throw new Error('Karakteren er fjernet. Last siden på nytt; den gamle karakteren er ikke gjenopprettet.');
       if (before && before.revision !== parsed.revision) throw new Error('Karakteren er endret i en annen fane. Last siden på nytt før du lagrer.');
       if(draftToken){await checkDraft(tx.objectStore('settings'),draftToken);tx.objectStore('settings').delete(draftPrefix+draftToken.id);}
       if (before && JSON.stringify(before) === JSON.stringify(parsed)) { await done; return before; }

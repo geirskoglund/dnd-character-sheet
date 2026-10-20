@@ -29,6 +29,13 @@ describe('wizard draft isolation and atomic completion',()=>{
   try{await expect(repo.save({...c,goldCp:1},'money','Endring',undefined,draft)).rejects.toThrow('Full lagring');}finally{IDBObjectStore.prototype.put=original;}
   expect(await store.list()).toEqual([draft]);expect((await repo.list())[0].goldCp).toBe(0);expect(await repo.history(c.id)).toHaveLength(1);await repo.save({...c,goldCp:1},'money','Endring',undefined,draft);expect(await store.list()).toEqual([]);db.close();
  });
+ it('does not create orphan drafts or resurrect a character deleted in another tab',async()=>{
+  const db=await openDatabase('draft-'+crypto.randomUUID()),repo=new CharacterRepository(db),store=new WizardDraftRepository(db),c=await repo.save(createCharacter('Nim'));
+  const unsaved=newWizardDraft({kind:'equipment',characterId:c.id,label:'Sverd',payload:{}});
+  const old=await store.save(unsaved);await repo.remove(c);
+  await expect(store.save(old)).rejects.toThrow('fjernet');await expect(store.save(unsaved)).rejects.toThrow('fjernet');
+  await expect(repo.save({...c,goldCp:1})).rejects.toThrow('fjernet');expect(await repo.list()).toEqual([]);expect(await store.list()).toEqual([]);db.close();
+ });
  it('includes drafts in version2 backup/import and clears only owned drafts when a character is deleted',async()=>{
   const db=await openDatabase('draft-'+crypto.randomUUID()),repo=new CharacterRepository(db),store=new WizardDraftRepository(db),c=await repo.save(createCharacter('Nim')),owned=await store.save(newWizardDraft({kind:'equipment',characterId:c.id,label:'Sverd',payload:{}})),newChar=await store.save(newWizardDraft({kind:'character',label:'Ny karakter',payload:{}}));
   const backup=await exportBackup(db,[c]),target=await openDatabase('draft-'+crypto.randomUUID());await importBackup(target,backup);expect((await new WizardDraftRepository(target).list()).map(d=>d.id).sort()).toEqual([owned.id,newChar.id].sort());

@@ -5,9 +5,10 @@ export function moneyControl(cp:number){const p=moneyParts(cp);return `<button t
 export function bindMoneyControl(d:HTMLDialogElement){
  const form=d.querySelector('form')!,whole=form.querySelector<HTMLInputElement>('[name="goldWhole"]')!,fraction=form.querySelector<HTMLInputElement>('[name="goldFraction"]')!,exact=form.querySelector<HTMLInputElement>('[name="gold"]')!,display=d.querySelector<HTMLButtonElement>('#money-exact')!,entry=d.querySelector<HTMLElement>('#money-entry')!,submit=d.querySelector<HTMLButtonElement>('#submit')!;
  whole.setAttribute('aria-label','Hele GP');fraction.setAttribute('aria-label','Desimaler');enhanceNumbers(d);
- const keyboard=()=>{entry.hidden=false;exact.focus();exact.select();};display.onclick=keyboard;form.addEventListener('wheel-edit',keyboard);
+ const freeze=()=>{whole.dispatchEvent(new Event('wheel-freeze'));fraction.dispatchEvent(new Event('wheel-freeze'));};
+ const keyboard=()=>{freeze();entry.hidden=false;exact.focus();exact.select();};display.onclick=keyboard;form.addEventListener('wheel-edit',keyboard);
  const error=d.querySelector<HTMLElement>('#money-error')!;
  const update=(fromText=false)=>{try{const cp=fromText?moneyFromText(exact.value):moneyFromParts(whole.valueAsNumber,fraction.valueAsNumber),p=moneyParts(cp);if(fromText){whole.value=String(p.whole);fraction.value=String(p.fraction);whole.dispatchEvent(new Event('change'));fraction.dispatchEvent(new Event('change'));}else exact.value=moneyText(cp);display.innerHTML=`${moneyText(cp).replace('.',',')} <small>GP</small>`;submit.disabled=false;error.textContent='';}catch{submit.disabled=true;error.textContent='Angi et beløp fra 0 GP med høyst to desimaler, innenfor støttet tallområde.';}};
- whole.addEventListener('input',()=>update());fraction.addEventListener('input',()=>update());exact.addEventListener('input',()=>update(true));
+ whole.addEventListener('input',()=>update());fraction.addEventListener('input',()=>update());exact.addEventListener('input',()=>{freeze();update(true);});
  for(const input of [whole,fraction])input.closest('label')!.querySelector<HTMLButtonElement>('.wheel-toggle')!.click();
 }

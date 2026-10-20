@@ -10,8 +10,9 @@ export class WizardDraftRepository{
  async save(input:WizardDraft){
   const parsed=wizardDraftSchema.parse(input);
   if(JSON.stringify(parsed).length>2_000_000)throw new Error('Utkastet er for stort til å lagres. Forkort innholdet og prøv igjen.');
-  const tx=this.db.transaction('settings','readwrite'),done=completed(tx),store=tx.objectStore('settings');
+  const tx=this.db.transaction(['settings','characters'],'readwrite'),done=completed(tx),store=tx.objectStore('settings');
   try{
+   if(parsed.characterId&&!await request(tx.objectStore('characters').get(parsed.characterId)))throw new Error('Karakteren til utkastet er fjernet. Last siden på nytt.');
    if(parsed.revision)await checkDraft(store,parsed);else if(await request(store.get(draftPrefix+parsed.id)))throw new Error('Utkastet er allerede endret i en annen fane. Åpne det på nytt.');
    const next={...parsed,revision:parsed.revision+1,updatedAt:new Date().toISOString()};store.put({id:draftPrefix+next.id,value:next});await done;return next;
   }catch(error){try{tx.abort();}catch{}await done.catch(()=>{});throw error;}
