@@ -2,6 +2,8 @@
 **Status:** Gjeldende produktgrunnlag, oppdatert 2026-10-20. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
 **Spill:** D&D 5e (2014). Mobilførst, offline-først, fysisk terningkast og DM som autoritet.
 
+Gjeldende funksjonsstatus og foreslått arbeidsrekkefølge: [produktgjennomgang og backlog](BACKLOG.md). Historiske leveranseavsnitt nedenfor er ikke en samlet mangelliste; nyere beslutninger og kildebelagt status i gjennomgangen gjelder. Prioriteringsforslag bestiller ikke appkode.
+
 ## 1. Produkt og akseptansekriterier
 **Overordnet mål: erstatte papirkarakterarket ved det fysiske spillebordet.** Appen skal gjøre det enkelt å lese, slå opp, notere og endre karakterinformasjon under spill, med spillerens manuelle kontroll og DM som autoritet. Nye funksjoner og brukerflyter vurderes først etter hvordan de støtter dette målet.
 
@@ -295,3 +297,23 @@ Utstyrsbidrag er kildeknyttet og gjelder ved aktiv bruk og nødvendig attunement
 - Ved installasjon på telefonen skal appnavnet være **My D&D** (manifestets name og short_name).
 - Endelig appikon er **ikke bestemt**. Eksisterende ikon er foreløpig.
 - Bunnmenylinjen oppleves for høy, særlig som installert app. Reduser unødvendig vertikal luft; bevar tilgjengelige trykkflater og nødvendig safe area. Dette er registrert som et åpent designpunkt, ikke ferdig verifisert eller levert gjennom dette innspillet.
+
+## 18. Individuelt utstyr, Forbruk og tallhjul – oppfølging etter PR #23
+
+Disse innspillene er avklart/rapportert i samtalen og dokumenteres nå; ingen av dem er implementert gjennom dokumentasjonsgjennomgangen.
+
+- Vanlig individuelt utstyr, også armor, ringer og amuletter, skal ikke ha et generelt Antall-spørsmål. Kopier brukes for separate gjenstander. Dette presiserer og erstatter §15s tidligere bevaring av antall for alt annet enn våpen. Eksisterende antall/data må bevares trygt ved senere endring.
+- Lag en egen kategori **Forbruk under Utstyr**. Ammunisjon, potions og mat/rasjoner kan føres som beholdninger. Standardvarer bør kunne velges ferdig fra et avgrenset 2014/SRD-utvalg; ikke krev manuell nyopprettelse av vanlige ting.
+- Forbruk og påfyll skal være enkelt under spill, også når beholdningen er null. Én-trykks reduksjon med Angre og påfyll av et samlet antall er foreslått betjening; den konkrete utformingen er ikke endelig godkjent. Ikke trekk piler automatisk når et bueoppslag åpnes. Vanlig pilskade følger våpenet; spesialammunisjon kan ha egen tekst. Potions kan beskrives og HP korrigeres manuelt; ingen generell forbrukseffektmotor forutsettes.
+- Brukeren ønsker å lukke et vanlig tallhjul ved trykk på den valgte midtraden og beholde tallet. Direkte innskriving skal fortsatt være tilgjengelig. To alltid synlige pengehjul må vurderes særskilt, ikke blindt lukkes som generiske hjul.
+- **Rapportert feil:** installert iPhone-app krever konsekvent to trykk på åpne/lukke-knappen for tallhjul, mens Chrome-fanen ikke har samme symptom. Brukeren beskriver det som et fokuslag. Eksakt årsak og rettelse er ikke bekreftet; en lignende ekstern rapport er ikke bevis for årsaken i denne appen. Fysisk standalone-kontroll kreves før feilen kvitteres ut.
+
+## 19. Samlet gjennomgang og backlog som arbeidsgrunnlag
+
+Brukeren bestilte en gjennomgang av **hele** loggen, opprinnelig prototype/overlevering og dagens app, og ba om at også allerede leverte punkter tas med. [BACKLOG.md](BACKLOG.md) skiller Levert, Delvis, Mangler, Feil, Avklares og Erstattet med kilder og kontrollgrunnlag. Historiske utsatte krav beholdes. En databasekolonne eller grønn CRUD-test er ikke bevis for en ferdig spillerflyt.
+
+Backlog items er vanlige tekstlige beskrivelser av ønsket funksjonalitet, ikke obligatoriske formelle user stories. Prioriteringen i første utgave er Codex' forslag til brukerreview. Kravene og beslutningene består som produktkontrakt; backloggen angir konkret arbeid og status. Ett punkt kan ikke strykes uten levert kontrollgrunnlag eller en eksplisitt nyere produktbeslutning.
+
+**Arbeidsgrense:** Brukeren har presisert at korte bekreftelser som «ja», «ok» og «japp» betyr enighet i diskusjonen, ikke tillatelse til å kode. Appimplementasjon krever en uttrykkelig bestilling. Bestillingen av denne gjennomgangen gjelder dokumentasjon, ikke noen av de identifiserte appendringene.
+
+**GitHub-registrering:** Brukeren har deretter bestilt opprettelse av de27 oppgavene i foreslått rekkefølge og fullføring av PR #24. [GitHub-backloggen](BACKLOG.md#github-backlog) lenker Issues og beskriver tilgangen: Project-opprettelse ble avvist av integrasjonen, så tabell/dra-og-slipp er ennå ikke levert. Prioritet/type føres foreløpig som merker. Dette bestiller organisering og dokumentasjon, ikke implementasjon av appoppgavene.

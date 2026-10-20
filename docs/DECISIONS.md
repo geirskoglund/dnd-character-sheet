@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
 **Oppdatert:** 2026-10-20
-**Status:** Hovedappen er implementert; en ny isolert utstyrsprototype er bestilt 2026-10-20 for å prøve neste arbeidsflyt før appendring. Konsolidert grunnlag finnes i [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken.
+**Status:** Utstyrsflyten er levert i PR #23. Samlet produktgjennomgang er dokumentert, og brukeren har bestilt fullføring av dokumentasjons-PR #24 og opprettelse av GitHub-backloggen. Ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
@@ -147,7 +147,7 @@ Brukeren aksepterte at Combat-oppslag ennå ikke var implementert innen den oppr
 Disse avklaringene må bevares mellom arbeidsøkter og eventuell komprimering av samtalen:
 
 - **Dokumentene er varig prosjektminne.** Kravspesifikasjonen og beslutningsloggen skal oppdateres fortløpende med vedtatte avklaringer. Implementasjonsstatus føres separat; et uimplementert krav skal ikke fjernes eller omskrives til en ny avgrensning uten brukerens beslutning.
-- **Alt må ses i sammenheng:** kravspesifikasjon, datamodell, gjeldende beslutninger, forklaringsfil og faktisk v0.11-prototype. Brukeren skal ikke måtte spesifisere på nytt funksjoner som allerede finnes der. Nyeste eksplisitte brukeravklaring går foran eldre prototypeutforming.
+- **Alt må ses i sammenheng:** kravspesifikasjon, datamodell, designbrief, overlevering, gjeldende beslutninger og faktisk v0.11-prototype. Brukeren skal ikke måtte spesifisere på nytt funksjoner som allerede finnes der. Nyeste eksplisitte brukeravklaring går foran eldre prototypeutforming.
 - **Tette pillesamlinger:** To faste kolonner for artsegenskaper og utstyr er for glissent. Bruk plass til omtrent fire piller på normal mobilbredde, tre på de smaleste skjermene, med lesbare navn og tilstrekkelige trykkflater. Behold lik størrelse, utforming og ramme innen samlingen. + er neste pille i samme grid.
 - **Utstyr følger prototypens inndeling:** Weapons, Armor og skjold, Annet utstyr. Vis utstyrt først innen hver gruppe. Gruppens + åpner relevante søkbare valg direkte. Egenregistrering skal alltid være tilgjengelig.
 - **Features/feats, languages og proficiencies er påkrevde brukerflyter.** Det er utilstrekkelig at de bare finnes i datamodellen. Det samme gjelder spesifikasjonens separate skadeegenskaper og tilstandsimmuniteter. Skill-/save-proficiency, expertise og manuelle modifiers må påvirke de viste verdiene.
@@ -336,3 +336,27 @@ Vedtatt installert navn: **My D&D**. Endelig appikon må bestemmes. Brukeren rap
 ## Utstyrsverksted overført til hovedappen
 
 Ny føring bruker virkningsoversikt og ett spørsmål per verdi. Oppslag har raske bruk-/håndvalg øverst og tydelig separat Rediger/Kopier/Fjern. Item-virkninger er kildebundne tillegg til ekte karaktergrunnlag; minimum for ability scores er «hev til minst», og tekstvilkår tolkes ikke. Én valgfri handlingstype styrer friteksteffektens Combat-oppslag; uavklart er tillatt. Bruksteller er en vanlig delt resource med sourceRef=item, ikke en parallell teller. Grunnverdier, manuelle totaler, eldre profiler og utkast bevares. Se [føring/beregningskontrakt](EQUIPMENT.md), [datamodell](DATA_MODEL.md#utstyrsvirkninger-fra-den-godkjente-veiviseren) og [produktkontroll](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen). Fysisk iOS/Safari er ikke prøvd; ikon-/menyinnspill følges separat.
+
+## Oppfølging: individuelt vanlig utstyr og Forbruk
+
+Brukeren påpekte at Antall bare var fjernet for våpen. Nyere retning er individuelle poster også for vanlig rustning, ringer og amuletter, med Kopier. Antallsføring beholdes for faktiske forbruksvarer. Dette erstatter eldre §15-avgrensning til bare våpen; ingen migrering eller UI-endring er utført gjennom denne loggføringen.
+
+Brukeren bestemte uttrykkelig at forbruksvarene skal ligge i en **egen kategori Forbruk under Utstyr**. Standard ammunisjon, vanlige potions og rasjoner bør være klare valg fra avgrenset SRD2014-innhold. Vanlige piler arver skadegrunnlag fra våpenet; egne/særlige varer kan beskrives med tekst. Enkel manuell telling og påfyll er målet, ikke automatisk piltrekk ved våpenoppslag eller en potionmotor. Forslag om −1/Angre, samlet påfyll og rad ved null er bevart som foreslått detaljbetjening, ikke endelig valgt UI.
+
+## Oppfølging: tallhjul i installert iPhone-app
+
+Brukeren ønsker å lukke et vanlig tallhjul med trykk på valgt midtbånd og beholde verdien. Direkte tallinnskriving og pengenes to hjul må fortsatt fungere. Dette er ikke implementert.
+
+Rapportert, konsekvent feil: to trykk kreves på hjulknappen i installert modus, men ikke i Chrome-fanen. Brukerens fokuslag-forklaring er en observasjon, ikke en bekreftet rotårsak. Koden flytter fokus til hjulpanelet ved åpning og til input ved valgt rad. Ingen fysisk iPhone-verifikasjon eller rettelse er gjort. En lignende [ekstern feilrapport](https://github.com/shoelace-style/webawesome/issues/2409) gjelder et annet produkt og beviser ikke årsaken her.
+
+## Gjennomgang av hele produktgrunnlaget bestilt
+
+Brukeren presiserte at backloggen må dekke hele loggen og det som fortsatt mangler fra opprinnelig prototype og handoff, ikke bare siste samtaleliste. Brukeren bestilte deretter selve gjennomgangen, også med punktene Codex kan kvittere ut. [BACKLOG.md](BACKLOG.md) sammenholder opprinnelige dokumentrevisjoner, faktisk v0.11, senere avklaringer og dagens app. Leveranser, delvis støtte, feil, spørsmål og erstattede retninger skilles. Prioriteringen er et forslag, ikke en ny produktbeslutning. Overleveringsgrunnlaget omfatter v0.11 og de fem spesifikasjons-/overleveringsdokumentene; alle er tilgjengelige og gjennomgått. Første auditutgave antok feilaktig at en ytterligere forklaringsfil manglet. Brukeren viste den tidligere overleveringsbekreftelsen; kildeforbeholdet og AVK-01 er derfor fjernet, uten å renummerere øvrige punkter.
+
+**Presisert arbeidsgrense:** Et «ja», «ok», «japp» eller annen enighet i en samtale er ikke en appkodebestilling. Brukeren skal kunne fullføre tankeprosessen og deretter uttrykkelig bestille implementasjon. Dette gjelder også når eldre dokumenter viser til tidligere delegert koding/merge. Denne bestillingen endrer bare dokumentasjonen.
+
+## GitHub-backlog og fullføring av dokumentasjons-PR bestilt
+
+Brukeren ba om å fullføre PR #24 og opprette backloggen i foreslått rekkefølge, etter avklaring av dra-og-slipp i GitHub Projects. Bekreftelsen «Ok. Do it» gjelder denne konkrete bestillingen, ikke appimplementasjon. De27 oppgavene er opprettet som Issues #25–51 med stabile BL-ID-er, ønsket resultat, kilder og prioritets-/typemerker. BACKLOG.md lenker hver oppgave; fire øvrige avklaringer beholdes i dokumentet, og skadeflytens avklaring følger BL-20.
+
+GitHub-integrasjonen avviste `createProjectV2` med «Resource not accessible by integration». Ingen Project/tabell/dra-og-slipp er opprettet. Repoets native Issue Types er heller ikke tilgjengelige, så type er merker. Issues og prioritetsmerking er levert som midlertidig arbeidsliste; Project krever tilgjengelig skrivetilgang eller at eieren oppretter/fyller det i GitHub. Ingen ny appkode inngår.

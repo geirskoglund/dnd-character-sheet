@@ -58,6 +58,8 @@ Meny → Om appen viser versjons-ID. «Se etter oppdatering» ligger direkte i m
 
 ## Gjeldende produktgrunnlag
 
+Se [samlet produktgjennomgang og GitHub-backlog](docs/BACKLOG.md) for levert funksjonalitet, mangler fra opprinnelig prototype/overlevering, nyere innspill og åpne produktvalg. De27 oppgavene er opprettet i avtalt rekkefølge med prioritet/type; Project-opprettelse er blokkert av integrasjonens tilgang. Appimplementasjon bestilles særskilt.
+
 Les disse før funksjonsendringer; prototypekode er ikke fasit:
 
 1. [Overlevering](docs/CODEX_HANDOFF.md)
