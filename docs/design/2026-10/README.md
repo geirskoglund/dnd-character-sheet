@@ -1,6 +1,8 @@
 # Tre visuelle retninger – designstudie, oktober 2026
 
-**Status: forslag til vurdering, ingen valgt retning eller endring av appen.** Bestilt av brukeren 2026-10-19 etter avklaring om tre sammenlignbare mobilskisser, komponenteksempler og dialog/meny. Ingen preferanse for lyst/mørkt: riktig fantasyfølelse og brukbarhet avgjør.
+**Status 2026-10-20: Eventyrjournal valgt, med ability-mynter fra Stjernekart. Ingen endring av appen.** Bestilt av brukeren 2026-10-19 etter avklaring om tre sammenlignbare mobilskisser, komponenteksempler og dialog/meny. De eksisterende bildene er de opprinnelige forslagene og viser ikke en ferdig revidert kombinasjon.
+
+Brukeren ønsker en samlet komponentstudie med rader for alle elementfamiliene, også spells/cantrips og utstyr. Små overskriftsikoner, portrett og en pen placeholder uten bilde, meny nederst og bunnfaneikoner videreføres. Klikkbarhet skal ha et subtilt visuelt skille. Myntforkortelsene skal følge buen uniformt. Modifiers uten ramme og omfanget av individuelle ikoner skal diskuteres; ikke generer et stort ikonsett eller endre appen på bakgrunn av kommentarene. HP-forløpsindikatoren er lite viktig. Se [full avklaring](../../REQUIREMENTS.md#valgt-retning-og-videre-designavklaringer-2026-10-20).
 
 ## Forventning før utforming
 
