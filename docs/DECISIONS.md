@@ -223,3 +223,11 @@ Diskusjonen om plassering er forenklet: ingen figur eller påkrevd oppdeling i k
 ## Tre designforslag bestilt, tema ikke valgt (2026-10-19)
 
 Brukeren ønsker et tydeligere fantasy-/D&D-uttrykk og en samlet styling av appens UI-komponenter. Godkjent oppgave er tre sammenlignbare mobilskisser, komponenteksempler og dialog/meny, med samme karakter/innhold og eksisterende funksjonskrav som grunnlag. Lyst/mørkt er åpent; riktig følelse avgjør. Senere avklart tema velges av brukeren før implementasjon i appen. Ingen produksjonstema, ny menyplassering eller fullskjermstandard er vedtatt ennå. Den isolerte [designstudien](design/2026-10/README.md) dokumenterer forslag og vurderingsgrunnlag, uten å endre appen.
+
+## Eventyrjournal valgt; komponentdetaljer diskuteres (2026-10-20)
+
+Brukeren valgte Eventyrjournal og paletten som videre retning, med Stjernekartets runde ability-mynter. Forkortelsene skal følge myntbuen uniformt. Små overskriftsikoner, portrettpresentasjonen, meny nederst og bunnfaneikonene videreføres; manglende portrett trenger en pen placeholder. Klikkbare elementer trenger et subtilt, konsekvent skille fra ren informasjon. HP-forløpsindikatoren er ikke viktig å prioritere.
+
+Modifiers uten ramme er positivt vurdert for luften de gir, men skal diskuteres. Individuelle ikoner på artsegenskaper, features/feats, våpen og spells/cantrips er heller ikke vedtatt: balansen mot informasjonsplass og krav til komplett dekning må avklares. Ingen delvis ikonfamilie skal behandles som en ferdig løsning for artsegenskaper. Brukeren ønsker å se alle elementfamiliene som rader i en samlet komponentstudie, også manglende spells/cantrips og utstyr. Samme form kan brukes på flere familier; unikhet er ikke et mål.
+
+Se [krav §12](REQUIREMENTS.md#12-bestilt-designstudie-2026-10-19). Disse tilbakemeldingene oppdaterer designgrunnlaget; de bestiller ikke implementasjon i appen eller generering av et stort ikonsett. Tidligere bilder beholdes som historiske forslag, ikke som en oppdatert komponentstudie.

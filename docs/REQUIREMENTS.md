@@ -129,3 +129,15 @@ Codex utfører produktkontrollen; brukerens UX-vurdering kommer i tillegg. Se [a
 ## 12. Bestilt designstudie (2026-10-19)
 
 Tre klart forskjellige fantasy-/D&D-inspirerte utseendeforslag skal vises før endelig designvalg. Brukeren har ingen preferanse for lyst eller mørkt tema. Samme karakter og innhold skal brukes, med Character/Combat-skisser, Utstyr-utsnitt og komponenteksempler for identitet, fem statusfelt, fire modifiers, seks abilities, overskrifter, piller/inline +, dialogtyper, bunnavigasjon, tilgjengelig menyknapp og meny, Combat-tabs/swipe, slidere og tekstfelt. Ta også med ikoner, fonter, farger, fokus, valgt/aktiv/oppbrukt og feiltilstander. Menyplassering og dialogutforming undersøkes som forslag; de er ikke vedtatt gjennom en skisse. Se [designstudien](design/2026-10/README.md). Eksisterende funksjonskrav beholdes; tema skal velges før appens utseende implementeres.
+
+### Valgt retning og videre designavklaringer (2026-10-20)
+
+- **Eventyrjournal er valgt** som videre retning og fargepalett. Ability scores skal bruke runde mynter fra Stjernekart fremfor Eventyrjournalens bueformer. Forkortelsene øverst skal følge buen uniformt, med konsistent radius, plassering og bokstavavstand.
+- Elementer som åpner oppslag/dialog eller utfører en handling skal ha et subtilt, konsekvent visuelt skille fra ren informasjon. Skillet må fungere uten hover og uten bare å bygge på farge.
+- Små ikoner ved overskrifter, karakterportrettets presentasjon, meny nederst og ikoner på bunnfanene er positivt vurdert og skal videreføres. Uten portrett skal en gjennomarbeidet placeholder vises; bilde er fortsatt valgfritt.
+- HP-forløpsindikatoren vurderes av brukeren som lite viktig; den trenger ikke prioriteres. Endelig utforming er ikke fastsatt.
+- **Til diskusjon:** modifiers uten egen ramme gir ønsket luft, men gruppering og klikkbarhet må vurderes. Pillene er akseptable som utgangspunkt, ikke et låst detaljdesign.
+- **Til diskusjon:** ikoner på individuelle artsegenskaper, features/feats, våpen og spells/cantrips. Et eventuelt valg av individuelle artsegenskapsikoner forutsetter et komplett sett for det støttede innholdet, med en gjennomtenkt løsning for egne/ukjente poster. Ikonomfang og balansen mot lesbar informasjon skal avklares før generering eller implementasjon.
+- Videre komponentstudie skal vise representative rader av alle relevante elementfamilier samlet: piller/inline +, HP/AC/øvrig status, modifiers, ability-mynter, artsegenskaper, features/feats, spells/cantrips og utstyr. Ta med lange navn og relevante tilstander. Ulike familier trenger ikke unike former; gjenbruk skal gi sammenheng og kompakthet.
+
+Dette er tilbakemelding på designstudien og valg av retning, ikke en bestilling av produksjonskode. Dialogdetaljer, ikonsett og modifierutforming er fortsatt uavklart.
