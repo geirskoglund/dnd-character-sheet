@@ -22,7 +22,7 @@ Codex skal lage **2–3 klart forskjellige designkonsepter** med samme eksempelk
 Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge retning etter visuell vurdering.
 
 ## Låste UX-mønstre som ikke kan redesignes bort
-- Tre hovedfaner Character, Combat og Utstyr, separate scrollposisjoner.
+- Fire hovedfaner Character, Combat, Magi og Utstyr, samt Meny, separate scrollposisjoner (nyere avklaring §13).
 - Character: fem like store statuspiller på én rad (HP, AC, Initiative, GP, Speed). HP er kun status; Temporary HP og HP-endringer ligger i Combat. Fire tilpassbare modifier-kort med **fulltekst**.
 - Karakteradministrasjon og grunnlagsredigering ligger i menyen; ingen permanente administrasjonspaneler.
 - Alle piller innen hver seksjon har lik størrelse, form og ramme, inkludert inline +.

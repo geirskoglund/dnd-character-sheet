@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
 **Oppdatert:** 2026-10-20
-**Status:** Utstyrsflyten er levert i PR #23. Samlet produktgjennomgang er dokumentert, og brukeren har bestilt fullføring av dokumentasjons-PR #24 og opprettelse av GitHub-backloggen. Ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
+**Status:** Utstyrsflyten er levert i PR #23. PR #24 og GitHub-backloggen er levert. Brukeren har nå bestilt klargjøring av oppgavene for egne tråder; status og åpne spørsmål står i BACKLOG_READY.md. Ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
@@ -16,7 +16,7 @@
 
 ## 2. Navigasjon og visuell UX – besluttet
 
-- Tre hovedvisninger: **Character**, **Combat** og **Utstyr** med separat scrollposisjon (senere avklart 2026-10-19; erstatter to faner).
+- Fire hovedvisninger: **Character**, **Combat**, **Magi** og **Utstyr**, samt Meny, med separat scrollposisjon (nyeste avklaring2026-10-20; erstatter tidligere to/tre faner).
 - Kort/piller fremfor lange tekstblokker; detaljer åpnes ved trykk. Unngå overflødige overskrifter og tellere.
 - Statusfelt høyt på Character: fem like store piller på én rad: HP, AC, Initiative, GP og Speed. **Temporary HP og HP-endring ligger i Combat** (senere avklart). GP med to desimaler, internt heltall kobbermynter.
 - **Modifiers:** Fire kompakte, tilpassbare favorittkort med fullt navn. Trykk for alfabetisk liste over ferdigheter, ability modifiers, saves, initiative m.m., og bytt kortets innhold. Ikke separat permanent søkefelt/duplikatknapp her.
@@ -40,7 +40,7 @@
 ## 4. «Ta skade» – gjeldende beslutning
 
 - **Navn:** «Ta skade». Kalkulatoren behandler **innkommende skade, ikke om angrepet treffer**. DM avgjør treff, saving throws og kan allerede ha regnet inn aktive reaksjoner som Uncanny Dodge. **Ingen AC-/treffkontroll** i kalkulatoren.
-- Rask standardflyt: angi skademengde (slider med ±1 for presisjon) → velg skadetype → gjennomgå automatisk foreslåtte skadeeffekter → se tydelig resultat → bekreft «Oppdater HP». Oppdater aldri HP bare ved åpning.
+- Rask standardflyt: angi skademengde (gjeldende tallhjul/direkte verdi med ±1 for presisjon) → velg skadetype → gjennomgå automatisk foreslåtte skadeeffekter → se tydelig resultat → bekreft «Oppdater HP». Oppdater aldri HP bare ved åpning.
 - Finn relevante passive skademodifikatorer fra karakterdata, inkludert resistance, vulnerability, immunity, flat reduksjon som **Heavy Armor Master** med betingelser. **Alle som kan anses relevante er avkrysset som standard**, men **hver modifikator kan deaktiveres separat for denne beregningen** (f.eks. hvis DM allerede har regnet den med). Dette endrer ikke karakterdata.
 - Resistance og vulnerability **kan eksistere samtidig**; ikke bruk eksklusive radiovalg. «Normal» = ingen; damage immunity gir null. Foreslåtte effekter må oppdateres ved endring av skadetype.
 - Strukturert effect-modell bør kunne representere betingelser som skade-/våpentype, heavy armor og ikke-magiske angrep, uten særkode for hver feat. **Ukjente betingelser vises tydelig og krever spillerens bekreftelse før modifikatoren regnes med**; kjente relevante effekter velges automatisk.
@@ -56,8 +56,8 @@
 
 - Modellér **verdier**, **ressurser** (antall/maks, short/long rest, eventuelle særregler), **handlinger/egenskaper**, **aktive tilstander/effekter** og **notater** med tydelige koblinger der det er relevant. Egendefinerte poster skal fungere uten forhåndsprogrammerte regler.
 - Ressurser skal omfatte HP, Temporary HP, Hit Dice, Death Saves, Inspiration, spell slots/Pact Magic, klasse- og item-ressurser; conditions og exhaustion må kunne registreres.
-- HP-popup: slider sentrert på null for skade/healing, ±1, forhåndsvisning, bekreft og angre. Temp HP separeres synlig; skade tar temp HP først; healing bare vanlig HP. Temp HP stables normalt ikke.
-- **Short Rest / Hit Dice:** DM avgjør når hvile skjer; registrer én fysisk kastet Hit Die og dens HP-healing av gangen, med mulighet for flere etterpå og manuell justering. Samlet angre for hver registrering.
+- HP-popup: tallhjul for signert HP-endring, ±1, forhåndsvisning, bekreft og angre (nyeste avklaring §13–14). Temp HP separeres synlig; skade tar temp HP først; healing bare vanlig HP. Temp HP stables normalt ikke.
+- **Short Rest / Hit Dice:** DM avgjør hvilen. Nyeste avklaring bruker tilgjengelig/maks per klasse/terningtype og separat eller samlet manuell HP-endring; råkast og automatisk CON-føring er forkastet. Samlet ny kort-hvileflyt er fortsatt åpen.
 - **Spell-slot-piller:** Trykk på nivåets pille åpner *kun dette nivået* med ±1 og tilgjengelig/maks. **Hvile** åpnes via kompakt pille/verktøy, ikke permanent stort panel.
 - **Felles spellvisning med klassetilpassede felt og ressurser**, ikke separate UI-er per klasse. Spell-data må skille cantrip, spell level, known/spellbook/prepared, slots, Pact Magic, concentration, ritual, casting time, range, duration, components, saving throw/attack, damage, upcasting; registrering manuell når nødvendig.
 - Utstyr skiller **eid** fra **utstyrt**, weapons fra armor, equipped først. Utstyr kan endre AC, våpenkast, Combat-alternativer og betingede effekter; advar ved konflikt, **blokker aldri** DM-godkjente valg. Støtt dual wielding og tohåndsvåpen.
@@ -360,3 +360,11 @@ Brukeren presiserte at backloggen må dekke hele loggen og det som fortsatt mang
 Brukeren ba om å fullføre PR #24 og opprette backloggen i foreslått rekkefølge, etter avklaring av dra-og-slipp i GitHub Projects. Bekreftelsen «Ok. Do it» gjelder denne konkrete bestillingen, ikke appimplementasjon. De27 oppgavene er opprettet som Issues #25–51 med stabile BL-ID-er, ønsket resultat, kilder og prioritets-/typemerker. BACKLOG.md lenker hver oppgave; fire øvrige avklaringer beholdes i dokumentet, og skadeflytens avklaring følger BL-20.
 
 GitHub-integrasjonen avviste `createProjectV2` med «Resource not accessible by integration». Ingen Project/tabell/dra-og-slipp er opprettet. Repoets native Issue Types er heller ikke tilgjengelige, så type er merker. Issues og prioritetsmerking er levert som midlertidig arbeidsliste; Project krever tilgjengelig skrivetilgang eller at eieren oppretter/fyller det i GitHub. Ingen ny appkode inngår.
+
+## Klargjøring av oppgaver før egne tråder bestilt
+
+Brukeren ba om en vurdering av om spesifikasjonen er trygg nok for separate implementasjonstråder, og bestilte deretter den foreslåtte klargjøringen. [BACKLOG_READY.md](BACKLOG_READY.md) og Issues #25–51 får konkrete flyter, testforventninger, avhengigheter og bevaringskrav. Statusene er9 klare,16 trenger produktavklaring og2 avventer avhengighet/testtilgang. De nye detaljforslagene for uavklarte flyter er ikke godkjente produktvalg. Ingen appoppgave er implementert eller lukket; hver må bestilles uttrykkelig.
+
+Brukeren har opprettet [Project1](https://github.com/users/geirskoglund/projects/1/views/1). Integrasjonen avviser også lesing, og appens viste installasjonsrettigheter omfatter ikke Projects. Det finnes ingen ny rettighetsforespørsel å godkjenne i den viste innstillingen. Tidligere råd om å slå på en Projects-rettighet var for upresist; nye tråder skal ikke gjenta denne omveien. Issues kan fortsatt oppdateres.
+
+Som konsistensopprydding er gjeldende korte formuleringer om fire faner, tallhjul og Hit Dice-telling rettet der eldre ordlyd sto som nåværende krav. Historiske beslutnings-/leveranseavsnitt beholdes. Ingen produktregel er endret av denne oppryddingen.

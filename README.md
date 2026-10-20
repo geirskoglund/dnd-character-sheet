@@ -58,7 +58,9 @@ Meny → Om appen viser versjons-ID. «Se etter oppdatering» ligger direkte i m
 
 ## Gjeldende produktgrunnlag
 
-Se [samlet produktgjennomgang og GitHub-backlog](docs/BACKLOG.md) for levert funksjonalitet, mangler fra opprinnelig prototype/overlevering, nyere innspill og åpne produktvalg. De27 oppgavene er opprettet i avtalt rekkefølge med prioritet/type; Project-opprettelse er blokkert av integrasjonens tilgang. Appimplementasjon bestilles særskilt.
+Se [samlet produktgjennomgang og GitHub-backlog](docs/BACKLOG.md) for levert funksjonalitet, mangler fra opprinnelig prototype/overlevering, nyere innspill og åpne produktvalg. De27 oppgavene er opprettet i avtalt rekkefølge med prioritet/type; Integrasjonen mangler tilgang til brukerens Project. Appimplementasjon bestilles særskilt.
+
+Se også [klargjøring for egne implementasjonstråder](docs/BACKLOG_READY.md): konkrete flyter, scenarioer, avhengigheter og åpne spørsmål for hver oppgave. Klar-status er ikke en implementasjonsbestilling.
 
 Les disse før funksjonsendringer; prototypekode er ikke fasit:
 
