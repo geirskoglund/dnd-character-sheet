@@ -275,3 +275,24 @@ Brukeren godkjente arbeidsflytene for direkte katalogvåpen, «Tilpass» fra et 
 [Samlede avklaringer og rapporterte feil i krav §13](REQUIREMENTS.md#13-konseptuell-opprydding-og-arbeidsflyter-2026-10-20) bevarer også brukerens krav om automatisk oppsett av spell slots fra klasse/nivå med manuell overstyring, mindre markør-/lagringsstøy og AC-forklaring bare under Utstyr. Nye flyter for spells/cantrips, Hit Dice, ressurser, proficiencies og immuniteter avklares fortsatt én om gangen. Forslag fra forklaringsrunden blir ikke automatisk vedtatte detaljer. HP ved 0 og utilsiktet zoom er rapporterte feil; de er ikke rettet eller verifisert av dokumentasjonen.
 
 Dette vedtar produktprinsipp og beskrevne flyter. Appkode er ikke bestilt i denne gjennomgangen. Krav, designbrief, arbeidsinstruks, handoff og matrise oppdateres som varig prosjektminne; status er avklart, men ikke implementert. Dokumentkontroll: tekst-/beslutningskonsistens, lokale lenker/ankere og diff. Ingen ny brukerflyt eller nye spilltester inngår i dokumentasjonsendringen.
+
+Nyere avklaringer fra den pågående én-og-én-gjennomgangen samles i [arbeidsnotatet](WORKFLOW_REVIEW.md), på én arbeidsbranch frem til samlet dokumentasjonsleveranse. Det skiller avklart produktretning fra uavklarte forslag og faktisk implementasjon.
+
+## Prøveversjon av avklarte flyter bestilt (2026-10-20)
+
+Brukeren svarte «Ja, gör det» på bestilling om å implementere de avklarte flytene, med proficiencies og immuniteter i en senere runde. WORKFLOW_REVIEW og ny før-koding-matrise er samlet grunnlag sammen med krav §13. Alle endringer samles på én branch og leveres gjennom én samlet PR; ingen PR eller merge per kommentar. Eldre «ingen appkode bestilt» beskriver nå historiske avklaringsrunder. Forenklet Hit Dice-føring erstatter per-terning-veiviseren. Tallhjul brukes som felles tallvelger med direkte innskriving; det valgte HP-deltaet beholdes frem til bekreftelse. Ingen nye regler tolkes fra fritekst.
+
+
+## Avklarte arbeidsflyter implementert som én prøveversjon (2026-10-20)
+
+Fire ikonfaner og Meny er valgt; Magi eier spelladministrasjonen, Combat viser relevante oppslag fra samme data. Kontekst følger klasse, faktisk klassenivå/subclass og eksplisitt tilgang fra art/registrert egenskap, med generelle gyldige valg og manuell overstyring. Wizard-skolen begrenser ikke hele klasselisten. Forberedelse følger Wizard-bok versus klasseliste; gratis alltid-forberedte spells teller ikke, overskridelse gir et DM-varsel. Ingen tvungen forberedelse for cantrips/known-klasser.
+
+Slots og Hit Dice opprettes fra kjente 2014-tabeller; Pact Magic holdes separat. Gamle manuelle beholdninger er autoritative. Genererte beholdninger har en stabil identitet og lagret standardmaks, slik at nivåendring bevarer brukt antall og manuell maks. Å åpne appen er en leseprojeksjon, ingen skjult karakterlagring eller audit-hendelse; neste reelle endring lagrer oppsettet sammen med føringen. Undo leser bekreftet lagringssnapshot, også når visningen har nye standarder. Navn som spilleren har tilpasset beholdes.
+
+Hit Dice-forslaget med obligatorisk terningkast og automatisk CON-healing er **forkastet**. Vis antall og la spilleren føre HP separat/samlet delta. Lang hvile har konkret preview, relevant automatikk og ett samlet Angre. Betinget gjenoppretting krever eksplisitt valg; manuelle og særregel-beholdninger/tidsgrenser behandles ikke automatisk. Samlet kort-hvileomlegging er utsatt.
+
+Tallhjul erstatter slideren i prøveversjonen: vertikal, begrenset tallrekke, midtstilt valg og direkte tastaturinnskriving. HP-delta står til bekreftelse. Veivisere bruker bevarte skjemanoder, relevante grener, Tilbake og atomisk bekreftelse. Direkte katalogvalg har fortsatt ingen mellomdialog. Tilpass ved katalogvåpen gir egen variant, med separate ekstraskader og tekstbetingelse per komponent. Nytt utstyr føres som eid; I bruk velges eksplisitt. Flere detaljer og gamle manuelle overstyringer bevares uten å tvinge dem inn i normal registrering.
+
+Tekniske valg: små UI-moduler, gjenbruk av dialog/IndexedDB/validering, additiv schema2/DB3, ingen ny runtime-avhengighet. Lokale metadata fra samme pinnede SRD5.1-revisjon kan gjenskapes med import-context.mjs; ingen runtime-nettverk eller generell tolkning av regeltekst. Automatikk er avgrenset til sikre data; tredjedels-castere, andre boksubclasses og ukjente effekter føres manuelt/med eksplisitt tilgang. Detaljer og observerte grenser står i GUIDED_WORKFLOWS og matrisen.
+
+Brukerens senere rapport om manglende oppdateringsmelding tas med: åpen, synlig app sjekker også hvert minutt, i tillegg til retur/fokus/online og menyens manuelle sjekk. Ny versjon installeres fortsatt bare etter eksplisitt klikk. Ulagrede skjemaer og andre åpne faner beskyttes; ingen lagringsdata slettes. Server/Pages-status og todelt service-worker-test kontrolleres før levering.

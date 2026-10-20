@@ -186,7 +186,7 @@ Tidligere avklarte fasegrenser for avansert skadeberegning, komplett Combat-/SRD
 
 ## 13. Konseptuell opprydding og arbeidsflyter (2026-10-20)
 
-Etter egen mobilgjennomgang ba brukeren om enklere føring med papirarket som mål. Vi avklarer arbeidsflyter én om gangen. Dette er nye krav og avklaringer, ikke en ny bestilling på appkode eller en erklæring om at de er implementert. Det overordnede veiviserprinsippet i §1 gjelder alle flerverdiregistreringer.
+Etter egen mobilgjennomgang ba brukeren om enklere føring med papirarket som mål. Arbeidsflytene ble avklart én om gangen og deretter uttrykkelig bestilt implementert («Ja, gör det»). Dette avsnittet og arbeidsnotatet er gjeldende føring; eldre avklarings-/leveranseavsnitt beskriver historikk. Det overordnede veiviserprinsippet i §1 gjelder alle flerverdiregistreringer.
 
 ### Avklart: våpen fra katalog og egne varianter
 
@@ -203,13 +203,40 @@ Etter egen mobilgjennomgang ba brukeren om enklere føring med papirarket som m�
 - Standard er «Mine klasser» og karakterens relevante klassenivåer/øvrige forutsetninger. Generelle feats og andre gyldige tilgangskilder beholdes etter kontekstprinsippet. Kjente nivåkrav vises på oppføringene.
 - Klassefilterets rekkefølge: Mine klasser, Alle klasser, egne enkeltklasser alfabetisk, øvrige klasser alfabetisk. Filtre kan overstyres for manuelle valg/DM-unntak.
 - Trykk registrerer valget og lukker velgeren uten ekstra registreringsdialog. Allerede registrerte valg markeres.
-- Samme overordnede relevansprinsipp gjelder cantrips/spells og andre områder. Den konkrete neste spell-/cantripflyten er ennå ikke gjennomgått og godkjent.
+- Samme overordnede relevansprinsipp gjelder cantrips/spells og andre områder. Den senere godkjente flyten er beskrevet nedenfor.
 
 ### Bevarte tilbakemeldinger og videre avklaring
 
 - Spell slots skal opprettes/oppdateres fra klassene og nivåene etter 2014-reglene, med manuell overstyring. Dette erstatter tidligere krav om bare manuell opprettelse av slot-beholdning; bruk av slots føres fortsatt manuelt. Konkret flyt, multiclass/Pact Magic og trygg håndtering av eksisterende bruk/overstyringer må avklares og testes før implementasjon.
-- Hit Dice, ressurser, proficiencies, skadeegenskaper og tilstandsimmunitet oppleves tunge og uforståelige. Forklaringene er gitt i samtalen; nye konkrete arbeidsflyter gjenstår. Automatisk oppsett av Hit Dice/andre klasseressurser og detaljert UI er fortsatt forslag, ikke godkjente flyter.
+- Proficiencies, skadeegenskaper og tilstandsimmunitet skal forenkles i en senere avklaringsrunde. Eksisterende føring bevares. Hit Dice og øvrige beholdninger har senere fått godkjente flyter nedenfor.
 - AC-beregningsforklaring skal ligge under Utstyr, ikke i Character. Brukeren så Leather-tekst for en gnome monk; det konkrete beregningsgrunnlaget må undersøkes uten å anta at rustningen er feilregistrert.
 - Rutinemessige meldinger som «Utstyr lagret» fjernes; feil skal gi tydelig, merkbar beskjed.
 - Hjørnetrekanten fjernes fra bunnavigasjon/Meny, Combat-faner, lukkekryss og selvforklarende listevalg. Dette presiserer omfanget av den tidligere generelle markøren.
 - Brukeren rapporterer utilsiktet zoom/innhold utenfor skjermen og at HP-slideren ikke kan øke igjen etter at HP-resultatet har nådd 0. Begge står som rapporterte feil som må reproduseres og rettes; tidligere grønne tester beviser ikke at disse situasjonene fungerer.
+
+Nyere avklaringer fra den pågående én-og-én-gjennomgangen samles i [arbeidsnotatet](WORKFLOW_REVIEW.md), på én arbeidsbranch frem til samlet dokumentasjonsleveranse. Det skiller avklart produktretning fra uavklarte forslag og faktisk implementasjon.
+
+
+### Senere godkjent: Magi, spells og forberedelse
+
+- Fire hovedfaner **Character, Combat, Magi, Utstyr**, samt Meny. Bare ikoner nederst, med tilgjengelige navn og tydelig aktiv fane; ingen hjørnetrekanter. Hver fane bevarer egen scroll. Dette erstatter eldre to-/trefanekrav.
+- Magi samler cantrips, spells, spellbook/known/prepared, casting-verdier og slots. Combat bruker de samme spellinstansene for relevante Action/Bonus/Reaction-oppslag.
+- + åpner riktig type direkte. Standard er Mine klasser, relevante **klassenivåer** og andre registrerte tilgangskilder. Vis alle/DM-overstyring finnes. Wizard får sin klasseliste på tvers av skoler, ikke alle klassers spells. Multiclass-slots gir ikke i seg selv tilgang til spells på høyere nivå i en enkeltklasse.
+- Direkte valg instansierer katalogdata og lukker. Spør om kilde bare når flere tilganger passer. Tilpass bruker katalogdata som utgangspunkt; egen spell/cantrip har navn/nivå og valgfri beskrivelse i kort veiviser. Flere detaljer er frivillig.
+- Forbered spells er en avkrysningsliste: Wizard fra egen bok; Cleric/Druid og Paladin etter sine lister/forberedelsesregler. Teller viser valgt/maks. Alltid-forberedte spells holdes utenfor vanlig telling. Lagre samlet; over grensen gir tydelig DM-varsel, ingen hard blokkering. Cantrips og known-klasser tvinges ikke gjennom forberedelse.
+
+### Senere godkjent: slots og enkle beholdninger
+
+- Spell slots settes opp fra 2014-tabellene, felles Spellcasting ved multiclass og separat Pact Magic. Wizard3 har 4/2. Én pille per nivå, Bruk én/Gi tilbake én lagrer og lukker, med Angre. Tilpass åpner direkte tall/manuell maks; manuelle maksverdier og eldre pools bevares uten duplisering. Nivåendring bevarer antallet brukt, også når Pact Magic skifter slotnivå.
+- Hit Dice er **antall tilgjengelig/maks per klasse/terningtype**. Ikke krev terningresultat, automatisk CON-regning eller én HP-bekreftelse per fysisk kast. HP føres separat, eventuelt som ett samlet HP-delta. Automatisk oppsett følger kjent klasse/nivå og kan korrigeres manuelt.
+- Kjente registrerte egenskaper kan få sikker, kildeknyttet beholdning automatisk. Egen beholdning: navn → maks/tilgjengelig (som utgangspunkt lik maks) → kort/lang/manuell gjenoppretting. Spell slots og Hit Dice skal ikke ligge som generiske typer i denne vanlige registreringsflyten.
+- Hvile → Lang hvile viser faktiske før/etter-endringer og lagres i én operasjon med samlet Angre. Vanlig HP til maks, ordinære temp HP bort, relevante slots/beholdninger tilbake; Hit Dice inntil halvparten av totalt maksimalt antall Hit Dice, rundet ned, minst én. Monk4 med 1/4 d8 ender på 3/4. Ved tvetydig multiclass-fordeling velger spilleren terningene. Betingede gjenopprettinger krever eksplisitt bekreftelse; manuelle/særregel-beholdninger og tilstander beholdes. DM avgjør hvilen; ingen simulator, timer eller kalender.
+- Samlet ny kort-hvileflyt er fortsatt utsatt; enkel manuell føring og de vedtatte tellerne brukes.
+
+### Senere godkjent: felles tallhjul
+
+Hele tall rulles vertikalt, med valgt tall i midten, endelige grenser og direkte innskriving ved trykk på tallet. Eventyrjournal-uttrykk. I opprettelse velges selve verdien; for HP velges en signert **endring**, med før/etter-visning. Valget står til bekreftelse, fremfor tidligere slider med nøytral retur. Tallfeltene beholder tastaturstøtte og eksplisitt lagring. HP skal kunne økes igjen fra 0.
+
+### Leveranse og avgrensning
+
+Brukeren har delegert gjennomgang og merge, og ønsker én samlet branch/PR til slutt. Implementer og kontroller flytene samlet; ikke merge hver kommentar. [Arbeidsnotatet](WORKFLOW_REVIEW.md) bevarer samtalens rekkefølge, [aktuell leveransebeskrivelse](GUIDED_WORKFLOWS.md) beskriver implementasjonen, og [kravmatrisen](CHARACTER_WORKSPACE.md) fører faktisk kontroll og gjenværende krav. Fysisk iOS-kontroll er ikke tilgjengelig; nettlesermål og minst16px skjemafont begrenser utilsiktet fokuszoom uten å slå av tilgjengelighetszoom.

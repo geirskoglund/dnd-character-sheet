@@ -1,7 +1,8 @@
+import {classCatalog} from '../domain/catalog';
 import {iconField,readIcon} from './icons';
 import type {IconKey} from '../domain/iconography';
 import { abilities, characterSchema, type Character } from '../domain/model';
-import { materializeLanguages, normalizeSkill, removeRecord, damageTypes, conditionNames, restCharacter, useHitDie, type RecordCollection } from '../domain/records';
+import { materializeLanguages, normalizeSkill, removeRecord, damageTypes, conditionNames, type RecordCollection } from '../domain/records';
 import { skillAbilities } from '../domain/modifiers';
 import { editDialog, confirmDialog } from './dialog';
 import { field, select, esc, textArea, check, numberField, options, economies, rechargeOptions, defenseOptions, conditionFields, readCondition, str, num, optionalNumber, optionalString, readRefs } from './record-fields';
@@ -108,27 +109,29 @@ export function createRecordEditors(ctx: EditorContext) {
       field('Tilstand', 'conditionId', source.conditionId, 'required list="condition-names"') + `<datalist id="condition-names">${conditionNames.map(name => `<option>${name}</option>`).join('')}</datalist>`,
       data => ({...source,conditionId:str(data,'conditionId')}));
   }
-  function feature(id?: string, category: Character['features'][number]['category'] = 'feat') {
+  function feature(id?: string, category: Character['features'][number]['category'] = 'feat',prefill?:Character['features'][number]) {
     const c = ctx.current();
-    const source = c.features.find(row => row.id === id) ?? {id:uid(),name:'',category,description:'',actionRefs:[],resourceRefs:[],effectRefs:[]};
+    const source:Character['features'][number] = {id:uid(),name:'',category,description:'',actionRefs:[],resourceRefs:[],effectRefs:[],...(prefill ?? c.features.find(row => row.id === id))};
     const owned = <K extends 'actions'|'resources'|'effects'>(collection: K) => c[collection].find(row => row.sourceRef?.kind === 'feature' && row.sourceRef.id === source.id && (collection==='actions'?source.actionRefs:collection==='resources'?source.resourceRefs:source.effectRefs).includes(row.id)) as Character[K][number] | undefined;
     const action = owned('actions'), pool = owned('resources'), effect = owned('effects');
     const linkedPools = c.resources.filter(row => row.id !== pool?.id);
     const d = editor('features',source,!!id,id ? 'Rediger egenskap' : 'Ny egenskap / feat',
       requiredName(source.name) + select('Kategori','category',source.category,[{value:'feat',label:'Feat'}, {value:'class',label:'Klasseegenskap'}, {value:'species',label:'Artsegenskap'}, {value:'custom',label:'Egen egenskap'}, {value:'item',label:'Utstyrsegenskap'}]) + textArea('Beskrivelse','description',source.description) +
+      `<details ${source.spellAccess?'open':''}><summary>Ekstra tilgang til magi</summary>${check('Gir tilgang til spells eller cantrips','hasSpellAccess',!!source.spellAccess).replace('name="hasSpellAccess"','name="hasSpellAccess" data-toggle="spellAccess"')}<fieldset data-fields="spellAccess"><legend>Avtalt tilgang</legend>${refs('Klasselister','accessClasses',classCatalog.map(cl=>({id:cl.name,name:cl.name})),source.spellAccess?.classes??[])}${numberField('Høyeste spellnivå (0 = bare cantrips)','accessMax',source.spellAccess?.maxLevel??0,'min="0" max="9" required')}${select('Spellcasting ability','accessAbility',source.spellAccess?.ability??'',[{value:'',label:'Ingen bestemt'},...abilities.map(value=>({value,label:value}))])}</fieldset></details>` +
       `<details ${action ? 'open' : ''}><summary>Handling</summary>${check('Har egen handling','hasAction',!!action).replace('name="hasAction"','name="hasAction" data-toggle="action"')}<fieldset data-fields="action"><legend>Handlingsoppslag</legend>${select('Action economy','economy',action?.actionEconomy ?? 'bonus',economies)}${field('Angrepskast (valgfritt)','attack',action?.attackRoll ?? '')}${field('Skade / terninguttrykk (valgfritt)','damage',action?.damageRolls.join('; ') ?? '')}${numberField('Save DC (valgfritt)','saveDC',action?.saveDC ?? '', 'min="0"')}${field('Rekkevidde (valgfritt)','actionRange',action?.range ?? '')}${textArea('Krav (valgfritt)','requirements',action?.requirements ?? '',2)}</fieldset></details>` +
       `<details ${pool || source.resourceRefs.length ? 'open' : ''}><summary>Begrenset ressurs</summary>${check('Har egen ressurs','hasPool',!!pool).replace('name="hasPool"','name="hasPool" data-toggle="pool"')}<fieldset data-fields="pool"><legend>Egen ressurs</legend><div class="form-grid">${numberField('Tilgjengelig','poolCurrent',pool?.current ?? 1,'min="0" required')}${numberField('Maks','poolMax',pool?.max ?? 1,'min="0" required')}</div>${select('Gjenopprettes ved','poolRecharge',pool?.recharge.kind ?? 'shortRest',rechargeOptions)}${textArea('Særregel (valgfritt)','poolRule',pool?.recharge.ruleText ?? '',2)}</fieldset>${refs('Knytt til eksisterende ressurser','resourceRefs',linkedPools,source.resourceRefs)}</details>` +
       `<details ${effect ? 'open' : ''}><summary>Passiv skadeeffekt</summary>${check('Har egen skadeeffekt','hasEffect',!!effect).replace('name="hasEffect"','name="hasEffect" data-toggle="effect"')}<fieldset data-fields="effect"><legend>Strukturert effekt</legend>${select('Effekt','operation',effect?.operation ?? 'flatReduction',[{value:'flatReduction',label:'Flat skadereduksjon'},...defenseOptions,{value:'manual',label:'Manuell effekt'}])}${numberField('Beløp (ved flat reduksjon)','amount',effect?.amount ?? 0,'min="0"')}${field('Skadetyper (kommadelt)','damageTypes',effect?.damageTypes.join(', ') ?? '')}${select('Omfang','scope',effect?.scope ?? 'component',[{value:'component',label:'Per skadepost'}, {value:'event',label:'Hele skadehendelsen'}])}${conditionFields(effect?.condition)}</fieldset></details>`,
       (data,draft) => {
         const row = {...source,name:str(data,'name'),category:str(data,'category') as typeof source.category,description:str(data,'description')};
         const sourceRef = {kind:'feature' as const,id:source.id};
+        row.spellAccess=data.has('hasSpellAccess')?{classes:readRefs(data,'accessClasses'),spellIds:source.spellAccess?.spellIds??[],maxLevel:num(data,'accessMax'),ability:optionalString(data,'accessAbility') as typeof abilities[number]|undefined}:undefined;
         // Only our owned row is replaced; arbitrary imported/shared child records are retained.
         const replace = <K extends 'actions'|'resources'|'effects'>(collection: K, old: Character[K][number]|undefined, value?: Character[K][number]) => {
           const shared=old && [...draft.features.filter(owner=>owner.id!==source.id),...draft.items,...draft.actions.filter(action=>action.sourceRef?.kind!=='feature' || action.sourceRef.id!==source.id)].some(owner=>owner.resourceRefs.includes(old.id) || ('effectRefs' in owner && owner.effectRefs.includes(old.id)) || ('actionRefs' in owner && owner.actionRefs.includes(old.id)));
           draft[collection] = (old ? draft[collection].flatMap(child=>child.id!==old.id ? [child] : value ? [value] : shared ? [child] : []) : [...draft[collection],...(value ? [value] : [])]) as never;
         };
-        const newPool = data.has('hasPool') ? {...pool,id:pool?.id ?? uid(),ownerCharacterId:c.id,name:row.name,current:num(data,'poolCurrent'),max:num(data,'poolMax'),kind:'custom' as const,sourceRef,recharge:{kind:str(data,'poolRecharge') as 'shortRest',ruleText:optionalString(data,'poolRule')}} : undefined;
-        replace('resources',pool,newPool);
+        const newPool = data.has('hasPool') ? {...pool,id:pool?.id ?? uid(),ownerCharacterId:c.id,name:row.name,current:num(data,'poolCurrent'),max:num(data,'poolMax'),manualMaximum:pool?.automatic?(pool.manualMaximum||num(data,'poolMax')!==pool.automatic.max):pool?.manualMaximum,kind:pool?.kind??'custom' as const,sourceRef,recharge:{kind:str(data,'poolRecharge') as 'shortRest',ruleText:optionalString(data,'poolRule')}} : undefined;
+        if(pool?.automatic&&!newPool){const muted={...pool,max:0,current:0,manualMaximum:true};replace('resources',pool,muted);}else replace('resources',pool,newPool);
         row.resourceRefs = [...readRefs(data,'resourceRefs'),...(newPool ? [newPool.id] : [])];
         const newAction = data.has('hasAction') ? {...action,id:action?.id ?? uid(),name:row.name,sourceRef,actionEconomy:str(data,'economy') as 'action',summary:row.description,detail:row.description,attackRoll:optionalString(data,'attack'),damageRolls:str(data,'damage').split(';').map(s=>s.trim()).filter(Boolean),saveDC:optionalNumber(data,'saveDC'),range:optionalString(data,'actionRange'),requirements:optionalString(data,'requirements'),resourceRefs:[...row.resourceRefs]} : undefined;
         replace('actions',action,newAction);
@@ -144,8 +147,8 @@ export function createRecordEditors(ctx: EditorContext) {
       });
     bindOptional(d);
   }
-  function spell(id?: string, cantrip = false) {
-    const c = ctx.current(), source = c.spells.find(row => row.id === id) ?? {id:uid(),name:'',spellLevel:cantrip ? 0 : 1,castingTime:'1 action',actionEconomy:'action' as const,range:'',duration:'',concentration:false,ritual:false,components:[],description:'',known:true,inSpellbook:false,prepared:false};
+  function spell(id?: string, cantrip = false,prefill?:Character['spells'][number]) {
+    const c = ctx.current(), source:Character['spells'][number] = {id:uid(),name:'',spellLevel:cantrip ? 0 : 1,castingTime:'1 action',actionEconomy:'action',range:'',duration:'',concentration:false,ritual:false,components:[],description:'',known:true,inSpellbook:false,prepared:false,...(prefill ?? c.spells.find(row => row.id === id))};
     editor('spells',source,!!id,id ? 'Rediger spell' : cantrip ? 'Ny cantrip' : 'Ny spell',
       requiredName(source.name) + numberField('Spell level (0 = cantrip)','spellLevel',source.spellLevel,'min="0" max="9" required') + select('Knyttet til klasse','casterClass',source.casterClassRef ?? '',classOptions(c)) +
       `<div class="form-grid">${field('Casting time','castingTime',source.castingTime)}${select('Action economy','economy',source.actionEconomy,economies)}${field('Range','range',source.range)}${field('Duration','duration',source.duration)}</div>` +
@@ -157,65 +160,6 @@ export function createRecordEditors(ctx: EditorContext) {
   function action(id?: string) {
     const c=ctx.current(), source=c.actions.find(row=>row.id===id) ?? {id:uid(),name:'',actionEconomy:'action' as const,summary:'',detail:'',damageRolls:[],resourceRefs:[]};
     editor('actions',source,!!id,id?'Rediger handling':'Ny handling',requiredName(source.name) + select('Action economy','economy',source.actionEconomy,economies) + textArea('Kort beskrivelse','summary',source.summary,2) + textArea('Regeltekst','detail',source.detail) + field('Angrepskast (valgfritt)','attack',source.attackRoll ?? '') + field('Skade / terninguttrykk (semikolondelt)','damage',source.damageRolls.join('; ')) + numberField('Save DC (valgfritt)','saveDC',source.saveDC ?? '','min="0"') + field('Rekkevidde (valgfritt)','range',source.range ?? '') + textArea('Krav (valgfritt)','requirements',source.requirements ?? '',2) + refs('Begrensede ressurser','resourceRefs',c.resources,source.resourceRefs),data=>({...source,name:str(data,'name'),actionEconomy:str(data,'economy') as 'action',summary:str(data,'summary'),detail:str(data,'detail'),attackRoll:optionalString(data,'attack'),damageRolls:str(data,'damage').split(';').map(s=>s.trim()).filter(Boolean),saveDC:optionalNumber(data,'saveDC'),range:optionalString(data,'range'),requirements:optionalString(data,'requirements'),resourceRefs:readRefs(data,'resourceRefs')}));
-  }
-  function resource(id?: string, kind: Character['resources'][number]['kind'] = 'custom') {
-    const c = ctx.current(), source = c.resources.find(row => row.id === id) ?? {id:uid(),ownerCharacterId:c.id,name:'',kind,current:0,max:0,recharge:{kind:(kind==='custom'?'manual':'longRest') as 'manual'|'longRest'}};
-    const read = (data: FormData): Character['resources'][number] => {
-      const current = num(data,'current'), max = num(data,'max'), kind = str(data,'kind') as typeof source.kind;
-      if (current > max) throw new Error('Tilgjengelig kan ikke være større enn maks.');
-      return {...source,name:str(data,'name'),kind,current,max,recharge:{kind:str(data,'recharge') as 'manual',ruleText:optionalString(data,'rule')},classRef:optionalString(data,'classRef'),spellLevel:kind === 'spellSlot' ? num(data,'spellLevel') : undefined,systemRef:kind === 'spellSlot' ? str(data,'system') : undefined,die:kind === 'hitDie' ? str(data,'die') as 'd8' : undefined};
-    };
-    let usedDie=false;
-    const d = editor('resources',source,!!id,id ? source.name : 'Ny ressurs',
-      `<div class="form-grid">${numberField('Tilgjengelig','current',source.current,'min="0" required')}${numberField('Maks','max',source.max,'min="0" required')}</div><div class="actions"><button type="button" data-step="-1" aria-label="Bruk én">−1</button><button type="button" data-step="1" aria-label="Gjenopprett én">+1</button></div>` +
-      (source.kind === 'hitDie' && id ? `<fieldset data-hit-die-use><legend>Bruk én fysisk Hit Die</legend><p>Kast én ${esc(source.die)} fysisk. Constitution modifier legges til; HP begrenses til maks. DM avgjør om Short Rest kan gjennomføres.</p>${numberField('Terningresultat','rolled','',`min="1" max="${Number(source.die?.slice(1))}"`)}<p id="hit-die-preview" role="status"></p></fieldset>` : '') +
-      `<details ${id?'':'open'}><summary>Ressursoppsett</summary>` + requiredName(source.name) + select('Type','kind',source.kind,[{value:'custom',label:'Egen ressurs'}, {value:'spellSlot',label:'Spell slots / Pact Magic'}, {value:'hitDie',label:'Hit Dice'}]) +
-      `<div data-resource-fields="spellSlot">${numberField('Slot level','spellLevel',source.spellLevel ?? 1,'min="1" max="9" required')}${field('Slot-system','system',source.systemRef ?? 'Spellcasting','required')}</div>` +
-      `<div data-resource-fields="hitDie">${select('Terning','die',source.die ?? 'd8',options(['d6','d8','d10','d12']))}</div>` +
-      select('Knyttet til klasse','classRef',source.classRef ?? '',classOptions(c)) + select('Gjenopprettes ved','recharge',source.recharge.kind,rechargeOptions) + textArea('Særregel (valgfritt)','rule',source.recharge.ruleText ?? '',2) + '</details>',(data,draft)=>{
-        const pool=read(data);
-        usedDie=!!id && pool.kind==='hitDie' && str(data,'rolled')!=='';
-        if(!usedDie) return pool;
-        draft.resources=draft.resources.map(row=>row.id===id?pool:row);
-        const after=useHitDie(draft,id!,num(data,'rolled'));Object.assign(draft,after);
-        return after.resources.find(row=>row.id===id)!;
-      },c,()=>({type:usedDie?'hit-die':'resources',description:usedDie?'Én Hit Die brukt med healing':'Ressurs oppdatert'}));
-    const form=d.querySelector('form')!, type = d.querySelector<HTMLSelectElement>('[name="kind"]')!;
-    const roll=d.querySelector<HTMLInputElement>('[name="rolled"]'), spend=d.querySelector<HTMLButtonElement>('#submit');
-    const preview=()=>{
-      if (!roll || !spend) return;
-      spend.textContent=roll.value && !roll.disabled ? 'Registrer kast' : 'Lagre';
-      if(!roll.value || roll.disabled) {spend.disabled=false;d.querySelector('#hit-die-preview')!.textContent='';return;}
-      spend.disabled=!roll.checkValidity() || num(new FormData(form),'current')<1;
-      if (spend.disabled) {d.querySelector('#hit-die-preview')!.textContent='';return;}
-      try {
-        const draft=structuredClone(c), pool=read(new FormData(form));draft.resources=draft.resources.map(row=>row.id===id?pool:row);
-        const after=useHitDie(draft,id!,Number(roll.value));
-        d.querySelector('#hit-die-preview')!.textContent=`HP ${c.hp.current} → ${after.hp.current} / ${c.hp.max} · Hit Dice ${pool.current} → ${pool.current-1}`;
-      } catch {spend.disabled=true;}
-    };
-    const show = () => {
-      d.querySelectorAll<HTMLElement>('[data-resource-fields]').forEach(group=> { group.hidden = group.dataset.resourceFields !== type.value; group.querySelectorAll<HTMLInputElement|HTMLSelectElement>('input,select').forEach(input=>input.disabled=group.hidden); });
-      const use=d.querySelector<HTMLElement>('[data-hit-die-use]');if(use) use.hidden=type.value!=='hitDie';
-      if(roll){roll.disabled=type.value!=='hitDie';roll.max=d.querySelector<HTMLSelectElement>('[name="die"]')!.value.slice(1);}
-      preview();
-    };
-    type.onchange = show; form.addEventListener('input',preview);d.querySelector<HTMLSelectElement>('[name="die"]')!.onchange=show;show();
-    d.querySelectorAll<HTMLButtonElement>('[data-step]').forEach(button => button.onclick = () => {
-      const current = d.querySelector<HTMLInputElement>('[name="current"]')!, max = d.querySelector<HTMLInputElement>('[name="max"]')!;
-      current.value = String(Math.max(0, Math.min(Number(max.value),Number(current.value) + Number(button.dataset.step))));preview();
-    });
-  }
-
-  function rest() {
-    const c = ctx.current(), dice = c.resources.filter(row=>row.kind==='hitDie');
-    const d = editDialog('Hvile', select('Hviletype','rest','shortRest',[{value:'shortRest',label:'Short Rest'}, {value:'longRest',label:'Long Rest'}]) +
-      `<p>Gjenoppretter ressurser etter registrerte hvilevilkår. Manuelle ressurser og særregler endres ikke.</p><div data-long-rest hidden><p>Long Rest fyller HP og fjerner temporary HP. Velg Hit Dice å gjenopprette: høyst ${Math.max(1,Math.floor(c.level/2))} totalt.</p>${dice.map(pool=>numberField(`${pool.name} (${pool.current} / ${pool.max})`,pool.id,0,`min="0" max="${Math.max(0,pool.max-pool.current)}" required`)).join('')}</div><p>DM avgjør hvile. Hit Dice brukes fra egen pille. Tilstander og særregler vurderes manuelt.</p>`, async form => {
-        const data = new FormData(form), kind = str(data,'rest') as 'shortRest'|'longRest';
-        const recovery = kind === 'longRest' ? Object.fromEntries(dice.map(pool=>[pool.id,num(data,pool.id)])) : {};
-        await save(restCharacter(c,kind,recovery),'rest',kind==='longRest' ? 'Long Rest registrert' : 'Short Rest registrert');
-      }, 'Bekreft hvile');
-    d.querySelector<HTMLSelectElement>('[name="rest"]')!.onchange = event => { d.querySelector<HTMLElement>('[data-long-rest]')!.hidden = (event.target as HTMLSelectElement).value !== 'longRest'; };
   }
   function conditions() {
     const c = ctx.current();
@@ -229,6 +173,6 @@ export function createRecordEditors(ctx: EditorContext) {
     const c = ctx.current();
     editDialog('Death saves', `<div class="form-grid">${numberField('Vellykkede','successes',c.deathSaves.successes,'min="0" max="3" required')}${numberField('Mislykkede','failures',c.deathSaves.failures,'min="0" max="3" required')}</div>`, async form => { const data=new FormData(form); await save({...c,deathSaves:{successes:num(data,'successes'),failures:num(data,'failures')}},'death-saves','Death saves oppdatert'); });
   }
-  return {language,proficiency,defense,immunity,feature,spell,action,resource,rest,conditions,deathSaves,
+  return {language,proficiency,defense,immunity,feature,spell,action,conditions,deathSaves,
     inspiration: () => save({...ctx.current(),inspiration:!ctx.current().inspiration},'inspiration','Inspiration endret')};
 }

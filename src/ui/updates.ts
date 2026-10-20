@@ -4,14 +4,15 @@ export function installUpdates() {
   banner.id = 'app-update'; banner.hidden = true; banner.setAttribute('aria-label', 'Appoppdatering');
   const text = document.createElement('p'); text.setAttribute('role', 'status');
   const apply = document.createElement('button'); apply.textContent = 'Oppdater appen'; apply.hidden = true;
-  const close = document.createElement('button'); close.textContent = 'Lukk'; close.onclick = () => { banner.hidden = true; };
+  const close = document.createElement('button'); close.textContent = 'Lukk'; close.onclick = () => { banner.hidden = true; dismissedWorker = registration?.waiting ?? undefined; };
   banner.append(text, apply, close); document.body.append(banner);
   let registration: ServiceWorkerRegistration | undefined;
+  let dismissedWorker: ServiceWorker | undefined;
   let checking = false, activating = false, reloadRequested = false, manualCheck = false;
   let hasController = 'serviceWorker' in navigator && Boolean(navigator.serviceWorker.controller);
   const show = (message: string) => { text.textContent = message; banner.hidden = false; };
-  const ready = () => {
-    if (!registration?.waiting || !registration.active) return;
+  const ready = (force=false) => {
+    if (!registration?.waiting || !registration.active || (!force && registration.waiting===dismissedWorker)) return;
     apply.hidden = false; apply.disabled = false;
     show('En ny versjon er klar. Lagre eller avbryt eventuell redigering, og trykk Oppdater appen. Karakterene dine beholdes.');
   };
@@ -43,7 +44,7 @@ export function installUpdates() {
     checking = true; manualCheck = manual;
     try {
       await registered;
-      if (registration?.waiting) { ready(); return; }
+      if (registration?.waiting) { ready(manualCheck); return; }
       if (!navigator.onLine) { if (manualCheck) show('Du er uten nett. Lagrede karakterer kan fortsatt brukes; prøv igjen når du er på nett.'); return; }
       if (manualCheck) show('Ser etter en ny versjon …');
       // Retry registration if its first attempt failed; no storage is removed.
@@ -53,7 +54,7 @@ export function installUpdates() {
         watch(registration.installing);
       }
       await registration.update();
-      if (registration.waiting) ready();
+      if (registration.waiting) ready(manualCheck);
       else if (manualCheck) show(registration.installing ? 'Laster ned en ny versjon …' : `Ingen nyere versjon funnet. Du bruker versjon ${__APP_VERSION__}.`);
     } catch {
       if (manualCheck) show('Kunne ikke sjekke oppdateringer. Karakterdata er beholdt. Kontroller forbindelsen og prøv igjen.');
@@ -98,6 +99,9 @@ export function installUpdates() {
         show('En ny versjon er aktiv. Lagre eller avbryt redigering og last siden på nytt når du er klar.');
       }
     });
+    // An app left open at the table must also discover a newly published release.
+    window.setInterval(() => { if (!document.hidden && navigator.onLine) void check(false); }, 60_000);
+    window.addEventListener('pageshow', () => { void check(false); });
     window.addEventListener('focus', () => { void check(false); });
     window.addEventListener('online', () => { void check(false); });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) void check(false); });

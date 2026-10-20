@@ -1,3 +1,5 @@
+> Gjeldende arbeidsflyter (2026-10-20): [GUIDED_WORKFLOWS.md](GUIDED_WORKFLOWS.md). Eventyrjournal videreføres med fire ikonfaner og Meny, separat Magi, vertikalt tallhjul med eksakt innskriving og korte forgrenede veivisere. Hjørnetrekanten brukes på arbeidsflatens oppslag/kort, aldri på navigasjon, Combat-kategorier, lukkekryss eller selvforklarende listevalg. Rutinemeldinger om lagring fjernes, feil er tydelige. Toppfelt scroller fortsatt bort. Eldre slider-/trefaneskisser nedenfor er historikk.
+
 # Designbrief – D&D Character Companion
 
 **Mål:** Et kompakt, intuitivt, vakkert digitalt karakterark som **føles personlig og inspirerende** ved et fysisk D&D-bord, uten å stjele oppmerksomheten fra spillet.

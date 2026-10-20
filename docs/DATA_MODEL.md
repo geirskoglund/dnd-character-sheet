@@ -1,6 +1,6 @@
 # Datamodell – konseptuell kontrakt for Codex
 
-**Status:** Foreslått domenemodell / invariants. Codex kan velge konkret TypeScript-/JS-struktur og IndexedDB-skjema, men må oppfylle funksjonene i [REQUIREMENTS.md](REQUIREMENTS.md). Manuelle overstyringer og SRD-/egendefinerte data er grunnleggende.
+**Status:** Konseptuell kontrakt med implementerte utvidelser dokumentert nedenfor. Gjeldende format er Character/backup2 og IndexedDB3. Codex kan velge konkret TypeScript-/JS-struktur og IndexedDB-skjema, men må oppfylle funksjonene i [REQUIREMENTS.md](REQUIREMENTS.md). Manuelle overstyringer og SRD-/egendefinerte data er grunnleggende.
 
 ## Prinsipper
 - **Per-character data** er separate fra immutable/importerte **SRD CatalogEntries**. Ingen avhengighet til en komplett proprietær katalog.
@@ -94,3 +94,15 @@ De nye feltene følger automatisk eksisterende validering, atomisk save/undo, ko
 ## Valgfri ikonmetadata (Eventyrjournal, 2026-10-20)
 
 Features, spells, items, actions og artsegenskapsposter kan ha `iconKey` fra en lukket liste av visuelle kategorier. Feltet er valgfritt; fravær betyr automatisk kategori-/familie-/reserveikon ved visning. Det gir ingen regelverdi eller tilgang. UI tilbyr valget under detaljer på egenskaper, spells, handlinger og utstyr. Andre faste datatyper har familieikoner. Ingen UUID-er erstattes, og nye standardfelter skrives ikke ved lesing. SchemaVersion2 og DB3 beholdes; kopiering, hendelseslogg, undo og backup bevarer eksplisitte valg. Eldre data uten feltet er fortsatt gyldige. Ukjente ikon-ID-er avvises ved validering, og vilkårlig SVG/URL lagres ikke. Se [implementasjonsbeskrivelse](EVENTYRJOURNAL.md).
+
+
+## Veiviser-/magifelt (2026-10-20)
+
+Additiv Character/backup v2, DB3. Gamle poster uten feltene er gyldige. Nedgradering til eldre skrivende app støttes ikke.
+
+- `Item.extraDamage?: [{id,expression,damageType,condition?}]`: egen UUID per komponent; `condition` er spillerens tekst, tilhører denne skaden og evalueres ikke av appen. `userNote?` holdes separat fra katalogens regelnotater. Grunnprofil/angrepsmodifier forblir uendret av ekstraskaden.
+- `Feature.spellAccess?: {classes[],spellIds[],maxLevel,ability?}` beskriver en eksplisitt, manuelt registrert tilgang. Klasselister og konkrete katalog-ID-er er union; dette gir ingen automatiske slots. Klasselister/nivå/ability kan redigeres under Flere detaljer; konkrete kataloghenvisninger bevares i data uten et teknisk ID-felt i brukerflyten.
+- `Spell.accessSource?`, `sourceLabel?`, `castingAbility?`, `alwaysPrepared?` supplerer `casterClassRef` og `resourceSystemRef`. Samme instans brukes av Magi, forberedelse og Combat. Always-prepared holdes utenfor vanlig telling; data bevares ved overstyring.
+- `Resource.automatic?: {key,max,name?,recharge?}` lagrer regelidentitet og siste kjente standardmaks/navn/hvilevilkår; `classRef` er separat remappbar UUID. `manualMaximum?` beskytter eksplisitte maksverdier ved nivåendring. Nøkkel inneholder ikke instans-UUID. Pact-pool beholder ID når slotnivå endres; brukt antall trekkes fra ny standardmaks. Manuelle eldre pools bevares fremfor å dupliseres. Utgåtte automatiske nivåer fjernes når de ikke har en eksplisitt maks-overstyring.
+
+Standardoppsett er en ren visningsprojeksjon. Ingen karakter skrives eller logger fylles ved bare å åpne en fane. En reell bekreftet operasjon lagrer hele oppsettet atomisk gjennom repository. Kopi remapper komponent-UUID-er, klasser og kildehenvisninger; backup/undo bevarer hele aggregatet. Varsler og wizard-/filter-/hjulutkast er midlertidig UI-tilstand og er ikke karakterdata.

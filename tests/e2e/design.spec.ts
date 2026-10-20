@@ -1,3 +1,4 @@
+import {finish,advancedRecord} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import type {Character} from '../../src/domain/model';
 import {createCharacter,menuAction,equipmentTab,itemDetails} from './helpers';
@@ -59,26 +60,22 @@ test('corner marks clickability without a different status surface and item stat
  expect(chosen.fill).toBe('rgba(0, 0, 0, 0)');expect(chosen.corner).toBe(chosen.line);
 });
 
-test('relative pointer drags accumulate, return to center, do not repeat while held, and commit once with undo',async({page})=>{
+test('the finite number wheel scrolls to a chosen change, keeps it until commit and supports undo',async({page})=>{
  await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
- const slider=page.getByRole('slider',{name:'Endring i HP',exact:true});const amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
- const drag=async()=>{
-  const r=(await slider.boundingBox())!;const center=r.x+r.width/2;const offset=(r.width-26)*8/(2*Number(await slider.getAttribute('max')));
-  await page.mouse.move(center,r.y+r.height/2);await page.mouse.down();await page.mouse.move(center-offset,r.y+r.height/2,{steps:6});
- };
- await drag();await expect(amount).toHaveValue('-8');
- await page.waitForTimeout(120);await expect(amount).toHaveValue('-8');await page.mouse.up();await expect(slider).toHaveValue('0');await expect(amount).toHaveValue('-8');
- await drag();await page.mouse.up();await expect(slider).toHaveValue('0');await expect(amount).toHaveValue('-16');
+ const wheel=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
+ await wheel.hover();await page.mouse.wheel(0,-320);await expect(amount).toHaveValue('-8');
+ await page.waitForTimeout(250);await expect(amount).toHaveValue('-8');
+ await page.mouse.wheel(0,-320);await expect(amount).toHaveValue('-16');
  expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
  await expect(page.locator('#hp-preview')).toContainText('HP 28 → 17');
- await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();expect((await readState(page)).hp).toEqual({current:17,max:38,temp:0});
+ await finish(page);expect((await readState(page)).hp).toEqual({current:17,max:38,temp:0});
  await menuAction(page,'Angre siste endring');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
 });
 
 test('HP keyboard, exact entry, bounds and cancellation preserve the pending transaction',async({page})=>{
  await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
- const slider=page.getByRole('slider',{name:'Endring i HP',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
- await slider.focus();await page.keyboard.press('ArrowLeft');await expect(amount).toHaveValue('-1');await expect(slider).toHaveValue('0');
+ const slider=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
+ await slider.focus();await page.keyboard.press('ArrowLeft');await expect(amount).toHaveValue('-1');await expect(slider).toHaveAttribute('aria-valuenow','-1');
  await page.keyboard.press('Home');await expect(amount).toHaveValue('-33');await expect(page.locator('#hp-preview')).toContainText('HP 28 → 0');await expect(page.getByRole('button',{name:'Reduser endring med 1',exact:true})).toBeDisabled();
  await page.keyboard.press('End');await expect(amount).toHaveValue('10');await expect(page.locator('#hp-preview')).toContainText('Temporary HP 5 → 5');
  await amount.fill('-1000');await expect(amount).toHaveValue('-33');await amount.fill('1000');await expect(amount).toHaveValue('10');
@@ -106,16 +103,16 @@ test('large editors keep close and save pinned while scrolling, short lookups ha
 
 test('own icon choices persist, automatic family fallback works, and fonts/icons survive offline reload',async({page,context})=>{
  await fixture(page);const custom=page.getByRole('region',{name:'Class Features & Feats',exact:true}).getByRole('button',{name:'Avtale med DM',exact:true});
- await expect(custom.locator('[data-icon="emblem"]')).toHaveCount(1);await custom.click();
+ await expect(custom.locator('[data-icon="emblem"]')).toHaveCount(1);await custom.click();await advancedRecord(page);
  await page.getByText('Ikon (valgfritt)',{exact:true}).click();await page.getByRole('combobox',{name:'Ikonvalg',exact:true}).selectOption('healing');
- await page.getByRole('button',{name:'Lagre',exact:true}).click();await expect(custom.locator('[data-icon="healing"]')).toHaveCount(1);
+ await finish(page);await expect(custom.locator('[data-icon="healing"]')).toHaveCount(1);
  await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();await page.waitForFunction(()=>navigator.serviceWorker.controller!==null);
  await context.setOffline(true);await page.reload();await expect(page.getByRole('heading',{name:'Alva Nattvind',exact:true})).toBeVisible();await page.evaluate(()=>Promise.all([document.fonts.load('16px Journal'),document.fonts.load('16px Source')]));
  expect(await page.evaluate(()=>document.fonts.check('16px Journal')&&document.fonts.check('16px Source'))).toBe(true);
  await expect(custom.locator('[data-icon="healing"]')).toHaveCount(1);
  await equipmentTab(page);await page.getByRole('button',{name:'Shortsword · i bruk',exact:true}).click();await itemDetails(page);
  await page.getByText('Ikon (valgfritt)',{exact:true}).click();await page.getByRole('combobox',{name:'Ikonvalg',exact:true}).selectOption('moon');
- await page.getByRole('button',{name:'Lagre',exact:true}).click();await expect(page.locator('[data-item]').first().locator('[data-icon="moon"]')).toHaveCount(1);
+ await finish(page);await expect(page.locator('[data-item]').first().locator('[data-icon="moon"]')).toHaveCount(1);
  await context.setOffline(false);
 });
 
@@ -139,7 +136,7 @@ test('journal components remain readable without overflow at 320/390 pixels and 
  await fixture(page);
  for(const width of [320,390])for(const size of ['100%','200%']){
   await page.setViewportSize({width,height:568});await page.evaluate(value=>document.documentElement.style.fontSize=value,size);
-  for(const tab of ['Character','Combat','Utstyr']){
+  for(const tab of ['Character','Combat','Magi','Utstyr']){
    await page.getByRole('navigation').getByRole('button',{name:tab,exact:true}).click();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    const groups=await page.locator('.pills').evaluateAll(groups=>groups.map(g=>[...g.children].map(e=>{const r=e.getBoundingClientRect();return {w:r.width,h:r.height,clipped:e.scrollWidth>e.clientWidth+1||e.scrollHeight>e.clientHeight+1};})));
@@ -147,25 +144,23 @@ test('journal components remain readable without overflow at 320/390 pixels and 
   }
   await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
   expect(await page.getByRole('dialog').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
-  const frame=await page.locator('.hp-slide-frame').boundingBox(),track=await page.getByRole('slider',{name:'Endring i HP',exact:true}).boundingBox();
-  expect(track!.x).toBeGreaterThan(frame!.x);expect(track!.x+track!.width).toBeLessThan(frame!.x+frame!.width);
+  const wheel=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true});
+  expect(await wheel.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   await page.keyboard.press('Escape');
  }
 });
 
-test('HP save failure preserves the chosen amount and retry commits once; pointer cancellation centers the grip',async({page})=>{
+test('HP save failure preserves the chosen amount and retry commits once; wheel selection stays visible',async({page})=>{
  await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
- const slider=page.getByRole('slider',{name:'Endring i HP',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
- await amount.fill('-6');await slider.dispatchEvent('pointerdown',{pointerId:1,isPrimary:true,pointerType:'touch'});
- await slider.evaluate(el=>{(el as HTMLInputElement).value='-2';el.dispatchEvent(new Event('input',{bubbles:true}));});
- await slider.dispatchEvent('pointercancel',{pointerId:1,isPrimary:true,pointerType:'touch'});await expect(slider).toHaveValue('0');await expect(amount).toHaveValue('-8');
+ const slider=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
+ await amount.fill('-8');await expect(slider).toHaveAttribute('aria-valuenow','-8');
  await page.evaluate(()=>{
   const original=IDBObjectStore.prototype.put;
   (window as unknown as {failHp:boolean}).failHp=true;
   IDBObjectStore.prototype.put=function(...args){if(this.name==='characters'&&(window as unknown as {failHp:boolean}).failHp)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};
  });
  await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();await expect(page.getByRole('dialog').getByRole('alert')).toContainText('Full lagring');
- await expect(amount).toHaveValue('-8');await expect(slider).toHaveValue('0');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
+ await expect(amount).toHaveValue('-8');await expect(slider).toHaveAttribute('aria-valuenow','-8');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
  await page.evaluate(()=>(window as unknown as {failHp:boolean}).failHp=false);
  await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();expect((await readState(page)).hp).toEqual({current:25,max:38,temp:0});
  await menuAction(page,'Angre siste endring');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});

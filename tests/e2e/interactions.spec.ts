@@ -1,10 +1,11 @@
+import {finish,useEquipment} from './helpers';
 import {test, expect, type Page} from '@playwright/test';
 import {createCharacter, menuAction, equipmentTab, expectCharacterStatus, itemDetails} from './helpers';
 const modal = (page: Page) => page.getByRole('dialog');
 async function add(page: Page, name: string) {
   await equipmentTab(page); await page.getByRole('button', {name:'Legg til armor og skjold',exact:true}).click();
   await page.getByRole('button', {name:`Legg til ${name}`,exact:true}).click();
-  await expect(modal(page)).not.toBeVisible();
+  await expect(modal(page)).not.toBeVisible();await useEquipment(page,name);
 }
 async function historyCount(page: Page) {
   return page.evaluate(async () => {
@@ -52,13 +53,13 @@ test('equipment plus opens searchable choices immediately and selection commits 
   await page.getByRole('searchbox',{name:'Søk i utstyr',exact:true}).fill('greatsword');
   await page.getByRole('button',{name:'Legg til Greatsword',exact:true}).dblclick();
   await expect(modal(page)).not.toBeVisible();
-  await expect(page.getByRole('button',{name:'Greatsword · i bruk',exact:true})).toHaveCount(1);
+  await expect(page.getByRole('button',{name:'Greatsword · eid',exact:true})).toHaveCount(1);
   expect(await historyCount(page)).toBe(count+1);
   await expect(page.getByRole('button',{name:'Legg til armor og skjold',exact:true})).toBeFocused();
   await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();
   await page.waitForFunction(()=>navigator.serviceWorker.controller !== null);
   await context.setOffline(true);await page.reload();
-  await add(page,'Shield');
+  await useEquipment(page,'Greatsword');await add(page,'Shield');
   await expectCharacterStatus(page,'AC12');
   await expect(page.getByRole('main')).toContainText('Tohåndsvåpen og skjold');
 });
@@ -74,7 +75,7 @@ test('single-item editing and deletion preserve other gear and restore the unsav
   await expect(page.getByRole('spinbutton',{name:'Antall',exact:true})).toHaveValue('2');
   await expect(page.getByRole('textbox',{name:'Utstyrsnotat',exact:true})).toHaveValue('Fra DM');
   await page.getByRole('checkbox',{name:'I bruk',exact:true}).uncheck();
-  await page.getByRole('button',{name:'Lagre',exact:true}).click();
+  await finish(page);
   await expect(page.getByRole('button',{name:/^Shield · eid/})).toBeFocused();
   await expect(page.getByRole('button',{name:'Leather · i bruk',exact:true})).toBeVisible();
   await page.getByRole('button',{name:/^Shield · eid/}).click();
@@ -92,16 +93,16 @@ test('declining note deletion keeps the edited text; unchanged saving leaves und
   await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
   await page.getByRole('textbox',{name:'Tittel',exact:true}).fill('Min historie');
   await page.getByRole('textbox',{name:'Tekst',exact:true}).fill('Original');
-  await page.getByRole('button',{name:'Lagre',exact:true}).click();
+  await finish(page);
   await page.getByRole('button',{name:'Min historie',exact:true}).click();
   await page.getByRole('textbox',{name:'Tekst',exact:true}).fill('Ny historie');
   await page.getByRole('button',{name:'Slett notat',exact:true}).click();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('textbox',{name:'Tekst',exact:true})).toHaveValue('Ny historie');
-  await page.getByRole('button',{name:'Lagre',exact:true}).click();
+  await finish(page);
   const count=await historyCount(page);
   await page.getByRole('button',{name:'Min historie',exact:true}).click();
-  await page.getByRole('button',{name:'Lagre',exact:true}).click();
+  await finish(page);
   expect(await historyCount(page)).toBe(count);
   await menuAction(page,'Angre siste endring');
   await page.getByRole('button',{name:'Min historie',exact:true}).click();
@@ -113,7 +114,7 @@ test('HP accepts exact numeric input and has no active commit for zero changes',
   await expect(page.getByRole('button',{name:'Oppdater HP',exact:true})).toBeDisabled();
   await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-7');
   await expect(page.locator('#hp-preview')).toContainText('HP 12 → 5');
-  await expect(page.getByRole('slider',{name:'Endring i HP',exact:true})).toHaveValue('0');
+  await expect(page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true})).toHaveAttribute('aria-valuenow','-7');
   await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();
   await expect(page.locator('[data-action="hp"]')).toBeFocused();
   await expect(page.locator('[data-action="hp"]')).toContainText('5 / 12');
@@ -165,7 +166,7 @@ test('a pending save cannot be dismissed as though it were cancelled', async ({p
   await expect(modal(page)).toBeVisible();
   await expect(page.getByRole('button',{name:'Lukk',exact:true})).toBeDisabled();
   await expect(modal(page)).not.toBeVisible();
-  await expect(page.getByRole('button',{name:'Shield · i bruk',exact:true})).toHaveCount(1);
+  await expect(page.getByRole('button',{name:'Shield · eid',exact:true})).toHaveCount(1);
 });
 test('long mobile workflows return to the edited pill and preserve scroll without overflow', async ({page}) => {
   await createCharacter(page);
@@ -173,13 +174,13 @@ test('long mobile workflows return to the edited pill and preserve scroll withou
   for(const title of titles){
     await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
     await page.getByRole('textbox',{name:'Tittel',exact:true}).fill(title);
-    await page.getByRole('button',{name:'Lagre',exact:true}).click();await expect(modal(page)).not.toBeVisible();
+    await finish(page);await expect(modal(page)).not.toBeVisible();
   }
   await page.setViewportSize({width:320,height:568});
   await page.getByRole('button',{name:titles[3],exact:true}).click();
   const scroll=await page.evaluate(()=>scrollY);
   await page.getByRole('textbox',{name:'Tekst',exact:true}).fill('Endret tekst');
-  await page.getByRole('button',{name:'Lagre',exact:true}).click();
+  await finish(page);
   await expect(modal(page)).not.toBeVisible();
   await expect(page.getByRole('button',{name:titles[3],exact:true})).toBeFocused();
   expect(await page.evaluate(()=>scrollY)).toBe(scroll);
@@ -188,7 +189,6 @@ test('long mobile workflows return to the edited pill and preserve scroll withou
     await equipmentTab(page); await page.getByRole('button',{name:'Legg til armor og skjold',exact:true}).click();
     expect(await modal(page).evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
     await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
-    await page.getByRole('combobox',{name:'Kategori',exact:true}).selectOption('armor');
     expect(await modal(page).evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
     await page.getByRole('button',{name:'Avbryt',exact:true}).click();
   }

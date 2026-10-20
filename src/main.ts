@@ -1,3 +1,10 @@
+import {inspectRecord} from './ui/record-dialogs';
+import {withStandardResources} from './domain/resource-setup';
+import {equipmentWizard} from './ui/equipment-wizard';
+import {guidedRecord} from './ui/guided-records';
+import {resourceDialog,resourceWizard,restDialog} from './ui/resource-dialogs';
+import {preparationDialog} from './ui/preparation';
+import {bindWizard} from './ui/wizard';
 import {bindCombatSwipe} from './ui/combat-swipe';
 import {icon,portraitPlaceholder} from './ui/icons';
 import {hpControl,bindHpControl} from './ui/hp-control';
@@ -8,7 +15,7 @@ import { CharacterRepository, openDatabase } from './storage/database';
 import { exportBackup, importBackup } from './storage/backup';
 import { libraryPicker } from './ui/library-picker';
 import { createRecordEditors } from './ui/record-editors';
-import { characterView, combatView, equipmentView } from './ui/views';
+import { characterView, combatView, equipmentView, magicView } from './ui/views';
 import { characterForm, bindCharacterForm, readCharacterForm, subclassFields, bindSubclass, readSubclass } from './ui/character-form';
 import { equipmentForm, bindEquipment, readEquipment, newEquipment, weaponSummary } from './ui/equipment-form';
 import { editDialog as dialog, viewDialog, confirmDialog, commitDialog } from './ui/dialog';
@@ -27,48 +34,53 @@ let repo: CharacterRepository;
 let characters: Character[] = [];
 let selected: string | undefined;
 let portrait: PortraitAsset | undefined;
-let page: 'character' | 'combat' | 'equipment' = 'character';
+let page: 'character' | 'combat' | 'magic' | 'equipment' = 'character';
 let category = 'Action';
-const scroll = { character: 0, combat: 0, equipment: 0 };
+const scroll = { character: 0, combat: 0, magic:0, equipment: 0 };
 let busy = false;
 let message = '';
 const current = () => characters.find(c => c.id === selected);
 const editorContext = {current: () => current()!, save: async (draft: Character,type: string,description: string) => {
-  await repo.save(draft,type,description); message = 'Endring lagret.'; await refresh();
+  await saveCharacter(draft,type,description); message = ''; await refresh();
 }};
 const editors = createRecordEditors(editorContext);
+async function saveCharacter(input:Character,type='edit',description='Karakter redigert',asset?:PortraitAsset){
+  const draft=withStandardResources(input),existing=current();
+  if(!asset&&existing?.id===draft.id&&JSON.stringify(existing)===JSON.stringify(draft))return existing;
+  return repo.save(draft,type,description,asset);
+}
 function openRecord(kind: string, id?: string) {
   switch (kind) {
     case 'action': editors.action(id); break;
-    case 'feature': editors.feature(id); break;
+    case 'feature': if(id)inspectRecord(editorContext,'feature',id,draft=>editors.feature(id,undefined,draft as Character['features'][number]));else guidedRecord(editorContext,'feature',undefined,'feat',false,draft=>editors.feature(undefined,undefined,draft as Character['features'][number])); break;
     case 'species': editors.feature(id,'species'); break;
     case 'language': editors.language(id); break;
     case 'proficiency': editors.proficiency(id); break;
     case 'defense': editors.defense(id); break;
     case 'immunity': editors.immunity(id); break;
-    case 'spell': editors.spell(id); break;
-    case 'cantrip': editors.spell(id,true); break;
-    case 'resource': editors.resource(id); break;
-    case 'resource-custom': editors.resource(undefined,'custom'); break;
-    case 'resource-spellSlot': editors.resource(undefined,'spellSlot'); break;
-    case 'resource-hitDie': editors.resource(undefined,'hitDie'); break;
+    case 'spell': if(id)inspectRecord(editorContext,'spell',id,draft=>editors.spell(id,false,draft as Character['spells'][number]));else guidedRecord(editorContext,'spell',undefined,'feat',false,draft=>editors.spell(undefined,false,draft as Character['spells'][number])); break;
+    case 'cantrip': if(id)inspectRecord(editorContext,'spell',id,draft=>editors.spell(id,true,draft as Character['spells'][number]));else guidedRecord(editorContext,'cantrip',undefined,'feat',false,draft=>editors.spell(undefined,true,draft as Character['spells'][number])); break;
+    case 'resource': if(id)resourceDialog(editorContext,id,()=>editHitPoints(current()!));else resourceWizard(editorContext); break;
+    case 'resource-custom': resourceWizard(editorContext); break;
+    case 'resource-spellSlot': resourceWizard(editorContext,undefined,'spellSlot'); break;
+    case 'resource-hitDie': resourceWizard(editorContext,undefined,'hitDie'); break;
     case 'conditions': editors.conditions(); break;
     case 'deathSaves': editors.deathSaves(); break;
-    case 'rest': editors.rest(); break;
+    case 'rest': restDialog(editorContext,()=>editHitPoints(current()!)); break;
     case 'inspiration': void run(async()=>{
       const position=window.scrollY;await editors.inspiration();
       root.querySelector<HTMLElement>('[data-record="inspiration"]')?.focus({preventScroll:true});window.scrollTo(0,position);
     }); break;
   }
 }
-function tell(text: string) {
+function tell(text: string, error=false) {
   message = text;
-  const status = document.querySelector('#status');
-  if (status) status.textContent = text;
+  const status = document.querySelector<HTMLElement>('#status');
+  if(status){status.textContent=text;status.setAttribute('role',error?'alert':'status');if(error){status.tabIndex=-1;status.focus();status.scrollIntoView({block:'center'});}}
 }
 function menuMarkup(c:Character|undefined){
   const button=(action:string,label:string,glyph:Parameters<typeof icon>[0])=>`<button data-action="${action}">${icon(glyph)}<span>${label}</span></button>`;
-  return `<details class="app-menu"><summary>${icon('menu')}<span>Meny</span></summary><div class="menu-panel" aria-label="Karaktermeny">
+  return `<details class="app-menu"><summary aria-label="Meny">${icon('menu')}<span class="sr-only">Meny</span></summary><div class="menu-panel" aria-label="Karaktermeny">
     ${c?`<h2>Denne karakteren</h2><div class="menu-actions">${button('edit','Rediger karakter','note')}${button('portrait','Portrett','species')}${button('level-up','Level Up','magic')}${button('overrides','Beregninger og overstyringer','tools')}${button('history','Endringslogg','history')}${button('undo','Angre siste endring','history')}</div>`:''}
     <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch=>`<option value="${ch.id}" ${selected===ch.id?'selected':''}>${esc(ch.name)}</option>`).join('')}</select></label>
     <div class="menu-actions">${button('create','Ny karakter','plus')}${c?button('copy','Kopier karakter','feature')+button('delete','Slett karakter','close'):''}<button data-action="export" ${characters.length?'':'disabled'}>${icon('equipment')}<span>Eksporter backup</span></button>${button('import','Importer backup','equipment')}</div>
@@ -89,9 +101,9 @@ function render() {
   };
   root.innerHTML = `<a href="#content" class="skip-link">Til innhold</a><div class="shell">
     <header class="character-header">${c?`<button class="portrait" data-action="portrait" aria-label="${portrait?'Vis portrett':'Velg portrett'}">${portrait?`<img src="${portrait.dataUrl}" alt="Portrett av ${esc(c.name)}">`:portraitPlaceholder()}</button>`:''}<div class="identity"><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c?`<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl=>`${esc(cl.name)} ${cl.level}${cl.subclass?' · '+esc(cl.subclass):''}`).join(' / ')}</p>`:''}</div></header>
-    <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : page === 'equipment' ? equipmentView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
+    <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : page === 'equipment' ? equipmentView(c) : page === 'magic' ? magicView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
     <p id="status" role="status" aria-live="polite">${esc(message)}</p></div>
-    <nav class="main-nav" aria-label="Hovednavigasjon"><div class="nav-inner">${(['character','combat','equipment'] as const).map(tab=>`<button data-page="${tab}" ${page===tab?'aria-current="page"':''}>${icon(tab==='character'?'feature':tab==='combat'?'sword':'equipment')}<span>${tab==='character'?'Character':tab==='combat'?'Combat':'Utstyr'}</span></button>`).join('')}${menuMarkup(c)}</div></nav>
+    <nav class="main-nav" aria-label="Hovednavigasjon"><div class="nav-inner">${(['character','combat','magic','equipment'] as const).map(tab=>`<button data-page="${tab}" ${page===tab?'aria-current="page"':''}>${icon(tab==='character'?'feature':tab==='combat'?'crossedSwords':tab==='magic'?'wand':'backpack')}<span class="sr-only">${tab==='character'?'Character':tab==='combat'?'Combat':tab==='magic'?'Magi':'Utstyr'}</span></button>`).join('')}${menuMarkup(c)}</div></nav>
     `;
   root.querySelectorAll<HTMLButtonElement>('[data-page]').forEach(button => button.onclick = () => {
     scroll[page] = window.scrollY;
@@ -126,8 +138,8 @@ function render() {
       if (c.favoriteModifierRefs[index] === options[Number(choice.dataset.choice)].ref) return;
       const draft = structuredClone(c);
       draft.favoriteModifierRefs[index] = options[Number(choice.dataset.choice)].ref;
-      await repo.save(draft, 'favorite', 'Modifierfavoritt endret');
-      message = 'Modifierfavoritt lagret.'; await refresh();
+      await saveCharacter(draft, 'favorite', 'Modifierfavoritt endret');
+      message = ''; await refresh();
     }));
   });
   root.querySelectorAll<HTMLButtonElement>('[data-trait]').forEach(button => button.onclick = () => {
@@ -140,20 +152,20 @@ function render() {
     const c=current()!;
     if (kind==='weapon' || kind==='offhand') {
       const item=c.items.find(row=>row.id===id)!;
-      viewDialog(item.name + (kind==='offhand' ? ' · Off-hand' : ''), weaponSummary(c,item,kind==='offhand') + (item.notes ? `<p class="rule-text">${esc(item.notes)}</p>` : ''));
+      viewDialog(item.name + (kind==='offhand' ? ' · Off-hand' : ''), weaponSummary(c,item,kind==='offhand') + [item.userNote,item.notes].filter(Boolean).map(note=>`<p class="rule-text">${esc(note)}</p>`).join(''));
     } else if (kind==='spell') {
       const row=c.spells.find(row=>row.id===id)!;
       viewDialog(row.name,`<p>${row.spellLevel ? `Level ${row.spellLevel}` : 'Cantrip ∞'} · ${esc(row.castingTime)} · ${esc(row.range)}</p><p>${esc(row.duration)}${row.concentration?' · Concentration':''}${row.ritual?' · Ritual':''}</p><p>${esc(row.components.join(', '))}</p><p>${esc([row.attack,row.save,row.damage].filter(Boolean).join(' · '))}</p><p class="rule-text">${esc(row.description)}</p>`);
     } else {
       const row=c.actions.find(row=>row.id===id)!;
       viewDialog(row.name,`<p>${esc([row.attackRoll,...row.damageRolls,row.saveDC ? `Save DC ${row.saveDC}` : '',row.range].filter(Boolean).join(' · '))}</p><p class="rule-text">${esc(row.detail || row.summary)}</p>${row.requirements?`<p>Krav: ${esc(row.requirements)}</p>`:''}<div class="pills">${row.resourceRefs.map(id=>c.resources.find(pool=>pool.id===id)).filter(pool=>!!pool).map(pool=>`<button type="button" class="pill" data-lookup-resource="${pool.id}">${esc(pool.name)} · ${pool.current}/${pool.max}</button>`).join('')}</div>`);
-      document.querySelectorAll<HTMLButtonElement>('[data-lookup-resource]').forEach(button=>button.onclick=()=>editors.resource(button.dataset.lookupResource));
+      document.querySelectorAll<HTMLButtonElement>('[data-lookup-resource]').forEach(button=>button.onclick=()=>resourceDialog(editorContext,button.dataset.lookupResource!,()=>editHitPoints(current()!)));
     }
   });
   root.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(button => button.onclick = () => {
     const kind=button.dataset.add!;
-    if (kind==='feature' || kind==='spell' || kind==='cantrip') libraryPicker(editorContext,kind,()=>openRecord(kind));
-    else openRecord(kind);
+    if (kind==='feature' || kind==='spell' || kind==='cantrip') libraryPicker(editorContext,kind,(base,category)=>guidedRecord(editorContext,kind,base,category,false,draft=>kind==='feature'?editors.feature(undefined,category,draft as Character['features'][number]):editors.spell(undefined,kind==='cantrip',draft as Character['spells'][number])));
+    else if(kind==='species')guidedRecord(editorContext,'species',undefined,'feat',false,draft=>editors.feature(undefined,'species',draft as Character['features'][number]));else openRecord(kind);
   });
   root.querySelectorAll<HTMLButtonElement>('[data-record]').forEach(button => button.onclick = () => {
     const key = button.dataset.record!, separator = key.indexOf(':');
@@ -163,7 +175,7 @@ function render() {
   root.querySelectorAll<HTMLButtonElement>('[data-item]').forEach(button => button.onclick = () => inspectEquipment(button.dataset.item!));
 }
 async function refresh() {
-  characters = await repo.list();
+  characters = (await repo.list()).map(withStandardResources);
   if (!current()) selected = characters[0]?.id;
   await repo.setSetting('selectedCharacter', selected);
   portrait = current()?.portraitAssetId ? await repo.portrait(current()!.portraitAssetId!) : undefined;
@@ -171,36 +183,37 @@ async function refresh() {
 }
 async function run(fn: () => Promise<void>) {
   if (busy) return;
-  busy = true;
-  try { await fn(); } catch (error) { tell(error instanceof Error ? error.message : 'Operasjonen mislyktes. Prøv igjen og ta backup.'); }
-  finally { busy = false; }
+  busy = true;root.setAttribute('aria-busy','true');
+  try { await fn(); } catch (error) { tell(error instanceof Error ? error.message : 'Operasjonen mislyktes. Prøv igjen og ta backup.',true); }
+  finally { busy = false;root.setAttribute('aria-busy','false'); }
 }
 function editCharacter(source?: Character) {
   const draft = source ? structuredClone(source) : { ...createCharacter(), name: '' };
   const creating = !source;
   const d = dialog(source ? 'Rediger karakter' : 'Ny karakter', characterForm(draft, creating), async form => {
-    const updated = readCharacterForm(form, draft, creating);
+    const updated = withStandardResources(readCharacterForm(form, draft, creating));
     if (!updated.species.name || updated.species.walkingSpeed === null) throw new Error('Velg art eller angi navn og grunnfart for egen art.');
     if (!updated.classes.length || updated.classes.some(cl => !cl.name)) throw new Error('Velg minst én klasse.');
     if (new Set(updated.classes.map(cl => cl.name.toLowerCase())).size !== updated.classes.length) throw new Error('Registrer hver klasse én gang, med samlet klassenivå.');
     if (updated.hp.max < 1) throw new Error('Registrer maksimal HP fra karakterarket.');
     const valid = characterSchema.safeParse(updated);
     if (!valid.success) throw new Error('Kontroller navn, klassenivå (totalt 1–20), ability scores og maks HP.');
-    const saved = await repo.save(valid.data, source ? 'edit' : 'create', source ? 'Karaktergrunnlag redigert' : 'Karakter opprettet');
+    const saved = await saveCharacter(valid.data, source ? 'edit' : 'create', source ? 'Karaktergrunnlag redigert' : 'Karakter opprettet');
     selected = saved.id;
-    message = 'Karakter lagret på denne enheten.';
+    message = '';
     await refresh();
   });
   bindCharacterForm(d.querySelector('form')!, draft, creating);
+  bindWizard(d,[...d.querySelectorAll<HTMLElement>('#dialog-body > fieldset')].map(element=>({element})));
 }
 function inspectEquipment(id: string) { editEquipment(current()!, id); }
 function addEquipment(c: Character, group = '') {
   const d = viewDialog('Legg til utstyr', equipmentPicker(group), '[name="equipmentSearch"]','large');
   bindEquipmentPicker(d, async catalogId => {
-    const item = instantiateEquipment(catalogId);
-    await repo.save({...c, items:[...c.items, item]}, 'equipment', `${item.name} lagt til`);
-    message = `${item.name} lagt til.`; await refresh();
-  }, () => editEquipment(c,undefined,group));
+    const item = instantiateEquipment(catalogId,false);
+    await saveCharacter({...c, items:[...c.items, item]}, 'equipment', `${item.name} lagt til`);
+    message = ''; await refresh();
+  }, catalogId => equipmentWizard(editorContext,catalogId?instantiateEquipment(catalogId,false):{...newEquipment(),equipped:false,category:(group==='weapon'?'weapon':group==='armor'?'armor':'equipment')}));
 }
 function editEquipment(c: Character, id?: string, group = '') {
   const source = id ? c.items.find(i => i.id === id)! : {...newEquipment(),category:(group === 'weapon' ? 'weapon' : group === 'armor' ? 'armor' : 'equipment') as Character['items'][number]['category']};
@@ -209,14 +222,15 @@ function editEquipment(c: Character, id?: string, group = '') {
     const items = id ? c.items.map(i => i.id === id ? item : i) : [...c.items, item];
     const result = characterSchema.safeParse({...c, items});
     if (!result.success) throw new Error('Kontroller navn, antall og utstyrsverdier. Bruk hele tall der det kreves.');
-    await repo.save(result.data, 'equipment', `${item.name} ${id ? 'redigert' : 'lagt til'}`);
-    message = 'Utstyr lagret.'; await refresh();
+    await saveCharacter(result.data, 'equipment', `${item.name} ${id ? 'redigert' : 'lagt til'}`);
+    message = ''; await refresh();
   });
   bindEquipment(d.querySelector('form')!, source, c);
+  const guided=d.querySelector<HTMLButtonElement>('#guided-damage');if(guided){guided.hidden=source.category!=='weapon';guided.onclick=()=>equipmentWizard(editorContext,readEquipment(d.querySelector('form')!,source),true);}
   const remove = d.querySelector<HTMLButtonElement>('#delete-item');
   if (remove) remove.onclick = () => confirmDialog('Fjern utstyr?', `<p>Vil du fjerne «${esc(source.name)}» fra karakteren?</p>`, async () => {
-    await repo.save({...c, items:c.items.filter(i => i.id !== id)}, 'equipment', `${source.name} fjernet`);
-    message = 'Utstyr fjernet.'; await refresh();
+    await saveCharacter({...c, items:c.items.filter(i => i.id !== id)}, 'equipment', `${source.name} fjernet`);
+    message = ''; await refresh();
   }, 'Fjern utstyr');
 }
 function levelUp(c: Character) {
@@ -230,8 +244,8 @@ function levelUp(c: Character) {
     <p>Nåværende HP og temporary HP beholdes. Kontroller andre endringer med DM. Ny klasse kan registreres via Rediger karakter.</p>`, async form => {
       const data = new FormData(form);
       const draft = levelUpCharacter(c, String(data.get('levelClass')), Number(data.get('maxHp')), readSubclass(form));
-      await repo.save(draft, 'level-up', `Level Up: ${c.level} → ${draft.level}, maks HP ${c.hp.max} → ${draft.hp.max}`);
-      message = 'Nivå og maks HP oppdatert.'; await refresh();
+      await saveCharacter(draft, 'level-up', `Level Up: ${c.level} → ${draft.level}, maks HP ${c.hp.max} → ${draft.hp.max}`);
+      message = ''; await refresh();
     }, 'Bekreft Level Up');
   const form = d.querySelector('form')!;
   const update = () => {
@@ -249,8 +263,8 @@ function editHitPoints(c: Character) {
     const delta=Number(new FormData(form).get('deltaAmount'));
     if(!Number.isInteger(delta)||delta<bounds.min||delta>bounds.max)throw new Error('Ugyldig HP-endring.');
     if(!delta)return;
-    await repo.save({...c,hp:hpAfterChange(c.hp,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
-    message='HP oppdatert.';await refresh();
+    await saveCharacter({...c,hp:hpAfterChange(c.hp,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
+    message = '';await refresh();
   },'Oppdater HP');
   bindHpControl(d,c.hp);
 }
@@ -269,7 +283,7 @@ function editOverrides(c: Character) {
     const data = new FormData(form), ac = String(data.get('ac')), speed = String(data.get('speed'));
     const draft = characterSchema.parse({ ...c, acOverride: ac === '' ? null : Number(ac), speedOverride: speed === '' ? null : Number(speed), unarmoredDefense: data.get('unarmoredDefense'),proficiencyBonusOverride:String(data.get('proficiencyBonus'))===''?undefined:Number(data.get('proficiencyBonus')) });
     for (const name of ['initiative','passivePerception']) { const value=String(data.get(name)); if (value==='') delete draft.derivedOverrides[name]; else draft.derivedOverrides[name]=Number(value); }
-    await repo.save(draft, 'override', 'Beregningsvalg endret'); message = 'Beregninger oppdatert.'; await refresh();
+    await saveCharacter(draft, 'override', 'Beregningsvalg endret'); message = ''; await refresh();
   });
 }
 function editNote(id?: string) {
@@ -279,15 +293,15 @@ function editNote(id?: string) {
     const data = new FormData(form);
     note.title = String(data.get('title')).trim(); note.body = String(data.get('body'));
     if (!id) draft.notes.push(note);
-    await repo.save(draft, 'note', id ? 'Notat redigert' : 'Notat lagt til');
-    message = 'Notat lagret.'; await refresh();
+    await saveCharacter(draft, 'note', id ? 'Notat redigert' : 'Notat lagt til');
+    message = ''; await refresh();
   });
   const remove = d.querySelector<HTMLButtonElement>('#delete-note');
   if (remove) remove.onclick = () => {
     confirmDialog('Slett notat?', `<p>Vil du slette «${esc(note.title)}»?</p>`, async () => {
       draft.notes = draft.notes.filter(n => n.id !== id);
       if (draft.backgroundNoteId === id) delete draft.backgroundNoteId;
-      await repo.save(draft, 'note', 'Notat slettet'); await refresh();
+      await saveCharacter(draft, 'note', 'Notat slettet'); await refresh();
     }, 'Slett notat');
   };
 }
@@ -298,18 +312,19 @@ async function action(name: string) {
       const upload = async () => {
         const asset = await choosePortrait();
         if (!asset) return;
-        await repo.save({...c!,portraitAssetId:asset.id},'portrait','Portrett endret',asset);
-        message = 'Portrett lagret.'; await refresh();
+        await saveCharacter({...c!,portraitAssetId:asset.id},'portrait','Portrett endret',asset);
+        message = ''; await refresh();
       };
       if (!portrait) { await upload(); break; }
       const d = viewDialog('Portrett', `<img class="portrait-large" src="${portrait.dataUrl}" alt="Portrett av ${esc(c!.name)}"><div class="actions"><button type="button" id="change-portrait">Bytt portrett</button><button type="button" id="remove-portrait">Fjern portrett</button></div>`);
       d.querySelector<HTMLButtonElement>('#change-portrait')!.onclick = () => void commitDialog(upload);
       d.querySelector<HTMLButtonElement>('#remove-portrait')!.onclick = () => confirmDialog('Fjern portrett?', '<p>Bildet fjernes fra denne karakteren.</p>', async () => {
         const draft=structuredClone(c!); delete draft.portraitAssetId;
-        await repo.save(draft,'portrait','Portrett fjernet'); await refresh();
+        await saveCharacter(draft,'portrait','Portrett fjernet'); await refresh();
       }, 'Fjern');
       break;
     }
+    case 'prepare': preparationDialog(editorContext);break;
     case 'about': viewDialog('Om appen',`<p><strong>D&amp;D Character Companion</strong></p><p>D&amp;D 5e · 2014</p><p>Versjon ${__APP_VERSION__}</p><p>Et digitalt karakterark ved det fysiske spillebordet. Lagres på denne enheten og kan brukes uten nett.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p><a href="./FONT-LICENSES.txt">Fonter og ikoner</a></p>`);break;
     case 'check-update': await updates.check(); break;
     case 'create': editCharacter(); break;
@@ -320,22 +335,22 @@ async function action(name: string) {
     case 'overrides': editOverrides(c!); break;
     case 'temp-hp': dialog('Temporary HP', `<p>Sett den nye totalen. Temporary HP stables ikke; velg hvilken total du beholder.</p>${field('Temporary HP', 'temp', c!.hp.temp, 'type="number" min="0" required')}`, async form => {
       const draft = characterSchema.parse({ ...c!, hp: { ...c!.hp, temp: Number(new FormData(form).get('temp')) } });
-      await repo.save(draft, 'temp-hp', 'Temporary HP endret'); message = 'Temporary HP oppdatert.'; await refresh();
+      await saveCharacter(draft, 'temp-hp', 'Temporary HP endret'); message = ''; await refresh();
     }); break;
     case 'money': dialog('Penger', field('GP', 'gold', (c!.goldCp / 100).toFixed(2), 'type="number" min="0" step="0.01" required'), async form => {
       const draft = characterSchema.parse({ ...c!, goldCp: Math.round(Number(new FormData(form).get('gold')) * 100) });
-      await repo.save(draft, 'money', 'Penger endret'); message = 'Penger oppdatert.'; await refresh();
+      await saveCharacter(draft, 'money', 'Penger endret'); message = ''; await refresh();
     }); break;
     case 'note': editNote(); break;
     case 'copy': {
       const copy = copyCharacter(c!);
-      await repo.save(copy, 'copy', 'Karakter kopiert'); selected = copy.id;
-      message = 'Uavhengig kopi opprettet.'; await refresh(); break;
+      await saveCharacter(copy, 'copy', 'Karakter kopiert'); selected = copy.id;
+      message = ''; await refresh(); break;
     }
     case 'delete': confirmDialog('Slett karakter?', `<p>Vil du slette «${esc(c!.name)}» fra denne enheten? Eksporter backup først hvis du vil beholde karakteren.</p>`, async () => {
-      await repo.remove(c!); message = 'Karakter slettet.'; await refresh();
+      await repo.remove(c!); message = ''; await refresh();
     }, 'Slett karakter'); break;
-    case 'undo': await repo.undo(c!); message = 'Siste endring angret.'; await refresh(); break;
+    case 'undo': {const stored=(await repo.list()).find(row=>row.id===c!.id);if(!stored||stored.revision!==c!.revision)throw new Error('Karakteren er endret i en annen fane. Last siden på nytt.');await repo.undo(stored); message = ''; await refresh(); break;}
     case 'history': {
       const events = await repo.history(c!.id);
       viewDialog('Endringslogg', historyView(events),undefined,'large'); break;
@@ -351,7 +366,7 @@ async function action(name: string) {
       const file = (form.elements.namedItem('backup') as HTMLInputElement).files![0];
       if (file.size > 20_000_000) throw new Error('Backup er for stor (maks 20 MB).');
       const imported = await importBackup(repo.db, await file.text());
-      selected = imported[0].id; message = 'Backup importert.'; await refresh();
+      selected = imported[0].id; message = ''; await refresh();
     }, 'Importer'); break;
   }
 }

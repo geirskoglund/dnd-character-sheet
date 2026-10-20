@@ -1,7 +1,8 @@
+import {finish,advancedRecord} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import {createCharacter,menuAction,openMenu,equipmentTab} from './helpers';
 const dialog=(page:Page)=>page.getByRole('dialog');
-async function save(page:Page) { await dialog(page).getByRole('button',{name:'Lagre',exact:true}).click(); await expect(dialog(page)).not.toBeVisible(); }
+async function save(page:Page) { await finish(page); await expect(dialog(page)).not.toBeVisible(); }
 async function state(page:Page) {
   return page.evaluate(async()=>{
     const db=await new Promise<IDBDatabase>((resolve,reject)=>{const r=indexedDB.open('dnd-character-companion');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
@@ -11,17 +12,25 @@ async function state(page:Page) {
 async function ownFeature(page:Page,name:string) {
   await page.getByRole('button',{name:'Legg til egenskap eller feat',exact:true}).click();
   await page.getByRole('button',{name:'Opprett egen egenskap / feat',exact:true}).click();
-  await page.getByRole('textbox',{name:'Navn',exact:true}).fill(name);
+  await page.getByRole('textbox',{name:'Navn',exact:true}).fill(name);await page.getByRole('button',{name:'Flere detaljer',exact:true}).click();
 }
 async function newPool(page:Page,name:string,kind:'custom'|'hitDie'|'spellSlot',current:number,max:number,recharge:string) {
-  const label=({custom:'ressurser',hitDie:'hit dice',spellSlot:'spell slots'})[kind];
-  await page.getByRole('button',{name:`Legg til ${label}`,exact:true}).click();
+  if(kind==='custom')await page.getByRole('button',{name:'Legg til beholdninger',exact:true}).click();
+  else if(kind==='spellSlot'){
+   await page.getByRole('button',{name:'Magi',exact:true}).click();await page.getByText('Manuelt slotoppsett',{exact:true}).click();await page.getByRole('button',{name:'Legg til egen slotbeholdning',exact:true}).click();
+  }else{await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByText('Manuelt Hit Dice-oppsett',{exact:true}).click();await page.getByRole('button',{name:'Legg til beholdning',exact:true}).click();}
   await page.getByRole('textbox',{name:'Navn',exact:true}).fill(name);
-  await page.getByRole('spinbutton',{name:'Tilgjengelig',exact:true}).fill(String(current));
+  if(kind==='spellSlot'){
+   await page.getByRole('combobox',{name:'Slotnivå',exact:true}).selectOption(name.includes('pact')?'2':'1');
+   await page.getByRole('combobox',{name:'Slotsystem',exact:true}).selectOption(name.includes('pact')?'Pact Magic':'Spellcasting');
+  }
+  await page.getByRole('button',{name:'Neste',exact:true}).click();
   await page.getByRole('spinbutton',{name:'Maks',exact:true}).fill(String(max));
-  await page.getByRole('combobox',{name:'Gjenopprettes ved',exact:true}).selectOption(recharge);
+  await page.getByRole('spinbutton',{name:'Tilgjengelig',exact:true}).fill(String(current));
+  if(kind==='custom'){await page.getByRole('button',{name:'Neste',exact:true}).click();await page.getByRole('combobox',{name:'Gjenopprettes ved',exact:true}).selectOption(recharge==='special'?'manual':recharge);}
+
 }
-async function pill(page:Page,collection:string,name:string) { await page.getByRole('region',{name:collection,exact:true}).getByRole('button',{name:new RegExp('^'+name)}).click(); }
+async function pill(page:Page,collection:string,name:string) { await page.getByRole('region',{name:collection==='Ressurser'?'Beholdninger':collection,exact:true}).getByRole('button',{name:new RegExp('^'+name)}).click();if(collection==='Class Features & Feats'||collection==='Spells')await advancedRecord(page); }
 
 test('dense pill collections, inline plus and the three prototype equipment groups',async({page})=>{
   await createCharacter(page);
@@ -69,8 +78,8 @@ test('feats own an action, limited pool and conditional effect; deletion and und
   await page.getByRole('spinbutton',{name:'Beløp (ved flat reduksjon)',exact:true}).fill('3');
   await page.getByRole('textbox',{name:'Skadetyper (kommadelt)',exact:true}).fill('Bludgeoning, Piercing, Slashing');
   await page.getByRole('textbox',{name:'Vilkår (valgfritt)',exact:true}).fill('Heavy armor; ikke-magisk angrep');await save(page);
-  let c=await state(page);expect(c.features).toHaveLength(1);expect(c.actions).toHaveLength(1);expect(c.resources).toHaveLength(1);expect(c.effects[0].condition?.state).toBe('unknown');
-  expect(c.features[0].actionRefs).toEqual([c.actions[0].id]);expect(c.actions[0].resourceRefs).toEqual([c.resources[0].id]);
+  let c=await state(page);expect(c.features).toHaveLength(1);expect(c.actions).toHaveLength(1);expect(c.resources.filter(r=>r.kind==='custom')).toHaveLength(1);expect(c.effects[0].condition?.state).toBe('unknown');
+  expect(c.features[0].actionRefs).toEqual([c.actions[0].id]);expect(c.actions[0].resourceRefs).toEqual([c.resources.find(r=>r.kind==='custom')!.id]);
   await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Reaction',exact:true}).click();
   await page.getByRole('region',{name:'Kampoppslag',exact:true}).getByRole('button',{name:/^Egen beskyttelse/}).click();
   await expect(dialog(page)).toContainText('Avtalt med DM.');await expect(dialog(page).getByRole('button',{name:'Lukk',exact:true})).toHaveCount(1);
@@ -79,10 +88,10 @@ test('feats own an action, limited pool and conditional effect; deletion and und
   await page.getByRole('textbox',{name:'Navn',exact:true}).fill('Endret beskyttelse');
   await page.getByRole('button',{name:'Fjern egenskap',exact:true}).click();await page.getByRole('button',{name:'Avbryt',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toHaveValue('Endret beskyttelse');await save(page);
-  c=await state(page);expect(c.features[0].name).toBe('Endret beskyttelse');expect(c.actions[0].name).toBe('Endret beskyttelse');expect(c.resources).toHaveLength(1);
+  c=await state(page);expect(c.features[0].name).toBe('Endret beskyttelse');expect(c.actions[0].name).toBe('Endret beskyttelse');expect(c.resources.filter(r=>r.kind==='custom')).toHaveLength(1);
   await pill(page,'Class Features & Feats','Endret beskyttelse');await page.getByRole('button',{name:'Fjern egenskap',exact:true}).click();await dialog(page).getByRole('button',{name:'Fjern',exact:true}).click();
   await expect(dialog(page)).not.toBeVisible();expect((await state(page)).actions).toEqual([]);expect((await state(page)).effects).toEqual([]);
-  await menuAction(page,'Angre siste endring');c=await state(page);expect(c.features).toHaveLength(1);expect(c.actions).toHaveLength(1);expect(c.resources).toHaveLength(1);
+  await menuAction(page,'Angre siste endring');c=await state(page);expect(c.features).toHaveLength(1);expect(c.actions).toHaveLength(1);expect(c.resources.filter(r=>r.kind==='custom')).toHaveLength(1);
 });
 
 test('skills, expertise, saves, equipment proficiencies and manual modifiers are real editable data',async({page})=>{
@@ -125,37 +134,38 @@ test('languages, simultaneous damage defenses and condition immunity persist sep
 
 test('offline spell and feat libraries, custom spells and separate Pact Magic and Spellcasting pools',async({page,context})=>{
   await createCharacter(page);await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();await page.waitForFunction(()=>navigator.serviceWorker.controller!==null);
-  await context.setOffline(true);await page.reload();
-  await page.getByRole('button',{name:'Legg til cantrip',exact:true}).click();await page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true}).fill('fire bolt');
+  await context.setOffline(true);await page.reload();await page.getByRole('button',{name:'Magi',exact:true}).click();
+  await page.getByRole('button',{name:'Legg til cantrip',exact:true}).click();await page.getByRole('combobox',{name:'Klassefilter',exact:true}).selectOption('all');await page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true}).fill('fire bolt');
   await page.getByRole('button',{name:'Legg til Fire Bolt',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
   await expect(page.getByRole('region',{name:'Cantrips',exact:true})).toContainText('∞');
-  await page.getByRole('button',{name:'Legg til spell',exact:true}).click();await page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true}).fill('shield');
+  await page.getByRole('button',{name:'Legg til spell',exact:true}).click();await page.getByRole('combobox',{name:'Klassefilter',exact:true}).selectOption('all');await page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true}).fill('shield');
   await page.getByRole('button',{name:'Legg til Shield',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
   await pill(page,'Spells','Shield');await page.getByRole('checkbox',{name:'I spellbook',exact:true}).check();await page.getByRole('checkbox',{name:'Prepared',exact:true}).check();await save(page);
   await page.getByRole('button',{name:'Legg til spell',exact:true}).click();await page.getByRole('button',{name:'Opprett egen spell',exact:true}).click();
-  await page.getByRole('textbox',{name:'Navn',exact:true}).fill('DMs spell');await page.getByRole('textbox',{name:'Beskrivelse og upcasting',exact:true}).fill('Egen regeltekst');await save(page);
-  await page.getByRole('button',{name:'Legg til egenskap eller feat',exact:true}).click();await page.getByRole('combobox',{name:'Type',exact:true}).selectOption('feat');await page.getByRole('button',{name:'Legg til Grappler',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
+  await page.getByRole('textbox',{name:'Navn',exact:true}).fill('DMs spell');await page.getByRole('button',{name:'Neste',exact:true}).click();await page.getByRole('textbox',{name:'Beskrivelse (valgfritt)',exact:true}).fill('Egen regeltekst');await save(page);
+  await page.getByRole('button',{name:'Character',exact:true}).click();await page.getByRole('button',{name:'Legg til egenskap eller feat',exact:true}).click();await page.getByRole('button',{name:'Feats',exact:true}).click();await page.getByRole('checkbox',{name:'Vis også høyere nivåer og andre forutsetninger',exact:true}).check();await page.getByRole('button',{name:'Legg til Grappler',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
   await newPool(page,'Wizard level 1','spellSlot',2,4,'longRest');await save(page);
-  await newPool(page,'Warlock pact','spellSlot',1,2,'shortRest');await page.getByRole('spinbutton',{name:'Slot level',exact:true}).fill('2');await page.getByRole('textbox',{name:'Slot-system',exact:true}).fill('Pact Magic');await save(page);
-  await pill(page,'Spell slots','Wizard level 1');await expect(page.getByRole('spinbutton',{name:'Tilgjengelig',exact:true})).toHaveCount(1);await page.getByRole('button',{name:'Bruk én',exact:true}).click();await save(page);
-  expect((await state(page)).resources.map(row=>row.current)).toEqual([1,1]);
-  await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:'Bekreft hvile',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
-  expect((await state(page)).resources.map(row=>row.current)).toEqual([1,2]);
+  await newPool(page,'Warlock pact','spellSlot',1,2,'shortRest');await save(page);
+  await pill(page,'Spell slots','Wizard level 1');await expect(dialog(page)).toContainText('2 / 4');await page.getByRole('button',{name:'Bruk én',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
+  expect((await state(page)).resources.filter(r=>r.kind==='spellSlot').map(row=>row.current)).toEqual([1,1]);
+  await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:'Kort hvile',exact:true}).click();await page.getByRole('button',{name:'Fullfør hvilen',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
+  expect((await state(page)).resources.filter(r=>r.kind==='spellSlot').map(row=>row.current)).toEqual([1,2]);
   await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Reaction',exact:true}).click();await page.getByRole('button',{name:'Shield Lvl 1',exact:true}).click();
   await expect(dialog(page)).toContainText('reaction');await expect(dialog(page).getByRole('button',{name:'Lukk',exact:true})).toHaveCount(1);
   await page.keyboard.press('Escape');await page.getByRole('button',{name:'Action',exact:true}).click();await expect(page.getByRole('button',{name:'Fire Bolt ∞',exact:true})).toBeVisible();
 });
 
-test('one physical Hit Die changes HP and count together, undo restores both; rests respect special resources',async({page})=>{
-  await createCharacter(page);await newPool(page,'Fighter dice','hitDie',1,1,'longRest');await page.getByRole('combobox',{name:'Terning',exact:true}).selectOption('d10');await save(page);
-  await newPool(page,'Spilledagsevne','custom',0,1,'special');await save(page);
-  await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-8');await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();
-  await page.getByRole('button',{name:'Character',exact:true}).click();await pill(page,'Hit Dice','Fighter dice');await expect(page.getByRole('button',{name:'Lagre',exact:true})).toBeVisible();
-  await page.getByRole('spinbutton',{name:'Terningresultat',exact:true}).fill('6');await page.getByRole('button',{name:'Registrer kast',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
-  let c=await state(page);expect(c.hp.current).toBe(10);expect(c.resources[0].current).toBe(0);
-  await menuAction(page,'Angre siste endring');c=await state(page);expect(c.hp.current).toBe(4);expect(c.resources[0].current).toBe(1);
-  await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('combobox',{name:'Hviletype',exact:true}).selectOption('longRest');await page.getByRole('button',{name:'Bekreft hvile',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
-  c=await state(page);expect(c.hp.current).toBe(12);expect(c.resources[1].current).toBe(0);
+test('Hit Dice count and one total HP change are separate manual entries; long rest restores within its budget',async({page})=>{
+  await createCharacter(page);await newPool(page,'Spilledagsevne','custom',0,1,'manual');await save(page);
+  await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-8');await finish(page);
+  await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:/Fighter.*1 \/ 1/}).click();
+  await expect(page.getByRole('spinbutton',{name:'Terningresultat',exact:true})).toHaveCount(0);
+  await page.getByRole('button',{name:'Bruk én',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
+  let c=await state(page);expect(c.hp.current).toBe(4);expect(c.resources.find(p=>p.kind==='hitDie')!.current).toBe(0);
+  await page.locator('[data-action="hp"]').click();await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('6');await finish(page);
+  expect((await state(page)).hp.current).toBe(10);await menuAction(page,'Angre siste endring');expect((await state(page)).hp.current).toBe(4);
+  await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:'Lang hvile',exact:true}).click();await page.getByRole('button',{name:'Fullfør hvilen',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
+  c=await state(page);expect(c.hp.current).toBe(12);expect(c.resources.find(p=>p.kind==='hitDie')!.current).toBe(1);expect(c.resources.find(p=>p.name==='Spilledagsevne')!.current).toBe(0);
 });
 
 test('inspiration, death saves, conditions and exhaustion are persisted and independently editable',async({page})=>{
@@ -177,8 +187,8 @@ test('portrait upload, complete UI backup, import, copy independence and removin
   const other=await browser.newContext();const target=await other.newPage();await target.goto('./');await menuAction(target,'Importer backup');await target.getByLabel('JSON-fil').setInputFiles(path!);await target.getByRole('button',{name:'Importer',exact:true}).click();await expect(dialog(target)).not.toBeVisible();
   expect(await state(target)).toEqual(original);await expect(target.getByRole('button',{name:'Vis portrett',exact:true})).toBeVisible();
   await menuAction(target,'Kopier karakter');await expect(target.getByRole('heading',{name:'Alva (kopi)',exact:true})).toBeVisible();
-  await pill(target,'Ressurser','Fysisk ressurs');await target.getByRole('button',{name:'Bruk én',exact:true}).click();await save(target);
-  await openMenu(target);await target.getByRole('combobox',{name:'Bytt karakter',exact:true}).selectOption({label:'Alva'});await pill(target,'Ressurser','Fysisk ressurs');await expect(target.getByRole('spinbutton',{name:'Tilgjengelig',exact:true})).toHaveValue('1');await target.keyboard.press('Escape');
+  await pill(target,'Ressurser','Fysisk ressurs');await target.getByRole('button',{name:'Bruk én',exact:true}).click();await expect(dialog(target)).not.toBeVisible();
+  await openMenu(target);await target.getByRole('combobox',{name:'Bytt karakter',exact:true}).selectOption({label:'Alva'});await pill(target,'Ressurser','Fysisk ressurs');await expect(dialog(target)).toContainText('1 / 3');await target.keyboard.press('Escape');
   await target.getByRole('button',{name:'Vis portrett',exact:true}).click();await target.getByRole('button',{name:'Fjern portrett',exact:true}).click();await dialog(target).getByRole('button',{name:'Fjern',exact:true}).click();await expect(dialog(target)).not.toBeVisible();
   await expect(target.getByRole('button',{name:'Vis portrett',exact:true})).toHaveCount(0);await menuAction(target,'Angre siste endring');await expect(target.getByRole('button',{name:'Vis portrett',exact:true})).toBeVisible();await other.close();
 });
@@ -192,7 +202,7 @@ test('own actions link to pools without turn tracking; unchanged edits leave his
   await pill(page,'Languages','Common');await save(page);expect((await state(page)).revision).toBe(before);
   await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Reaction',exact:true}).click();await page.getByRole('region',{name:'Kampoppslag',exact:true}).getByRole('button',{name:/^Egen reaksjon/}).click();
   await expect(dialog(page)).toContainText('Rull fysisk.');await expect(dialog(page).getByRole('button',{name:/^Egen bruk/})).toBeVisible();await dialog(page).getByRole('button',{name:/^Egen bruk/}).click();
-  await page.getByRole('button',{name:'Bruk én',exact:true}).click();await save(page);expect((await state(page)).resources[0].current).toBe(1);
+  await page.getByRole('button',{name:'Bruk én',exact:true}).click();await expect(dialog(page)).not.toBeVisible();expect((await state(page)).resources.find(p=>p.name==='Egen bruk')!.current).toBe(1);
   await expect(page.locator('[data-lookup]')).toBeFocused();
   await expect(page.getByRole('button',{name:'Ferdig med tur',exact:true})).toHaveCount(0);
 });
@@ -203,7 +213,7 @@ test('new structured editors retain entered values on storage error and support 
     const original=IDBObjectStore.prototype.put;(window as unknown as {blockWrites:boolean}).blockWrites=true;
     IDBObjectStore.prototype.put=function(...args){if(this.name==='characters' && (window as unknown as {blockWrites:boolean}).blockWrites)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};
   });
-  await dialog(page).getByRole('button',{name:'Lagre',exact:true}).click();await expect(dialog(page).getByRole('alert')).toContainText('Full lagring');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toHaveValue('Dwarvish');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toBeEditable();
+  await finish(page);await expect(dialog(page).getByRole('alert')).toContainText('Full lagring');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toHaveValue('Dwarvish');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toBeEditable();
   await page.evaluate(()=>(window as unknown as {blockWrites:boolean}).blockWrites=false);await save(page);expect((await state(page)).languages.filter(row=>row.name==='Dwarvish')).toHaveLength(1);
 });
 
@@ -212,9 +222,9 @@ test('removing a feature pool link preserves the pool used by another action',as
   await createCharacter(page);await ownFeature(page,'Delt ressurs');
   await dialog(page).getByText('Begrenset ressurs',{exact:true}).click();await page.getByRole('checkbox',{name:'Har egen ressurs',exact:true}).check();await save(page);
   await page.getByRole('button',{name:'Legg til egen handling',exact:true}).click();await page.getByRole('textbox',{name:'Navn',exact:true}).fill('Annen handling');await page.getByRole('checkbox',{name:'Delt ressurs',exact:true}).check();await save(page);
-  const original=await state(page),pool=original.resources[0];
+  const original=await state(page),pool=original.resources.find(r=>r.kind==='custom')!;
   await pill(page,'Class Features & Feats','Delt ressurs');await page.getByRole('checkbox',{name:'Har egen ressurs',exact:true}).uncheck();await save(page);
-  let after=await state(page);expect(after.features[0].resourceRefs).toEqual([]);expect(after.resources).toEqual([pool]);expect(after.actions[0].resourceRefs).toEqual([pool.id]);
+  let after=await state(page);expect(after.features[0].resourceRefs).toEqual([]);expect(after.resources.filter(r=>r.kind==='custom')).toEqual([pool]);expect(after.actions[0].resourceRefs).toEqual([pool.id]);
   await pill(page,'Class Features & Feats','Delt ressurs');await page.getByRole('button',{name:'Fjern egenskap',exact:true}).click();await dialog(page).getByRole('button',{name:'Fjern',exact:true}).click();await expect(dialog(page)).not.toBeVisible();
-  after=await state(page);expect(after.resources).toEqual([pool]);expect(after.actions[0].resourceRefs).toEqual([pool.id]);
+  after=await state(page);expect(after.resources.filter(r=>r.kind==='custom')).toEqual([pool]);expect(after.actions[0].resourceRefs).toEqual([pool.id]);
 });

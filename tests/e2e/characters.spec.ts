@@ -1,3 +1,4 @@
+import {characterStep,finish} from './helpers';
 import { menuAction, openMenu } from './helpers';
 import { test, expect } from '@playwright/test';
 
@@ -6,10 +7,13 @@ async function create(page: import('@playwright/test').Page, name = 'Alva') {
   await expect(page.getByRole('textbox', { name: 'Navn', exact: true })).toHaveValue('');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill(name);
   await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({label:'Human'});
+  await characterStep(page,1);
   await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({label:'Fighter'});
+  await characterStep(page,1);
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).fill('5');
+  await characterStep(page,2);
   await page.getByRole('spinbutton', { name: 'Maks HP fra karakterarket', exact: true }).fill('42');
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  await finish(page);
   await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
 }
 test('mobile character lifecycle, isolated copy, cancellation, notes, undo and persisted selection', async ({ page }) => {
@@ -17,18 +21,18 @@ test('mobile character lifecycle, isolated copy, cancellation, notes, undo and p
   await page.goto('./'); await create(page);
   await page.locator('[data-action="money"]').click();
   await page.getByRole('spinbutton', { name: 'GP', exact: true }).fill('12.34');
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  await finish(page);
   await expect(page.getByLabel('Karakterstatus')).toContainText('12.34');
   await page.getByRole('button', { name: 'Legg til notat' }).click();
   await page.getByRole('textbox', { name: 'Tittel' }).fill('Bakgrunn');
   await page.getByRole('textbox', { name: 'Tekst' }).fill('Reisende fra nord.');
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  await finish(page);
   await openMenu(page);
   await page.getByRole('button', { name: 'Kopier karakter' }).click();
   await expect(page.getByRole('heading', { name: 'Alva (kopi)', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Bakgrunn', exact: true }).click();
   await page.getByRole('textbox', { name: 'Tekst' }).fill('Kopiens historie');
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  await finish(page);
   await openMenu(page);
   await page.getByRole('combobox', { name: 'Bytt karakter', exact: true }).selectOption({ label: 'Alva' });
   await page.getByRole('button', { name: 'Bakgrunn', exact: true }).click();
@@ -68,9 +72,11 @@ test('production PWA works offline on a GitHub Pages subpath and has no horizont
   await menuAction(page, 'Rediger karakter');
   await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Offline Alva');
   await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({label:'Dwarf'});
+  await characterStep(page,1);
   await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({label:'Monk'});
+  await characterStep(page,1);
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).fill('6');
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  await finish(page);
   // The heading updates only after the IndexedDB transaction commits and the list refreshes.
   await expect(page.getByRole('heading', { name: 'Offline Alva', exact: true })).toBeVisible();
   await page.reload();
@@ -111,13 +117,15 @@ test('UI backup round-trip, ID collision and malformed-file feedback', async ({ 
 test('multiclass totals and separate navigation scroll positions', async ({ page }) => {
   await page.goto('./'); await create(page);
   await menuAction(page, 'Rediger karakter');
+  await characterStep(page,1);
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).fill('3');
   await expect(page.locator('#total-level')).toHaveText('Totalt level: 3');
   await page.getByRole('button', { name: '+ Klasse', exact: true }).click();
+  await characterStep(page,1);
   await page.getByRole('combobox', { name: 'Klasse', exact: true }).nth(1).selectOption({label:'Wizard'});
   await page.getByRole('spinbutton', { name: 'Klassenivå', exact: true }).nth(1).fill('2');
   await expect(page.locator('#total-level')).toHaveText('Totalt level: 5');
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  await finish(page);
   await expect(page.locator('header')).toContainText('Fighter 3 / Wizard 2');
   await page.setViewportSize({ width: 390, height: 500 });
   await page.evaluate(() => window.scrollTo(0, 200));
@@ -143,8 +151,9 @@ test('storage failure does not claim success or discard the edited form', async 
       return original.apply(this, args);
     };
   });
-  await page.getByRole('button', { name: 'Lagre', exact: true }).click();
+  await finish(page);
   await expect(page.getByRole('alert')).toContainText('full');
+  await characterStep(page,0);
   await expect(page.getByRole('textbox', { name: 'Navn', exact: true })).toHaveValue('Unsaved');
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Alva', exact: true })).toBeVisible();

@@ -1,5 +1,6 @@
 import { escapeHtml as esc } from './html';
 import {icon} from './icons';
+import {enhanceNumbers} from './number-wheel';
 
 type CancelHandler = (() => void) | undefined;
 const host = document.createElement('dialog');
@@ -75,6 +76,7 @@ export function editDialog(title: string, html: string, onSubmit: (form: HTMLFor
   d.querySelector<HTMLButtonElement>('#cancel')!.onclick = () => { if (cancelHandler) cancelHandler(); else d.close(); };
   form.onsubmit = event => { event.preventDefault(); void commitDialog(() => onSubmit(form)); };
 
+  enhanceNumbers(d);
   return d;
 }
 /** Keep a commit visible and non-dismissible until storage confirms or reports failure. */
