@@ -322,3 +322,17 @@ Lagre uten bakovernavigering skal bekrefte og lukke til listen. Navngi handlinge
 Fjern påstander om ingen magisk effekt fra grunnmodeller. Skill gjenstandsmerknad fra spillmessig fritekst: Andre effekter → + Effekt åpner én eksisterende beskrivelse fremfor å legge til en ny. Valgfri bruksteller følger denne virkningen, starter på maks og kan vises med samme data i Combat. Friteksten kan plasseres i flere handlingskategorier uten spellkobling.
 
 Brukeren avklarte to kopierte dolker i hver hånd og ba om at appen håndterer de ulike angreps-/skadeoppslagene. To-weapon-fighting etter 2014 beregnes ut fra oppsett og relevante modifiers/fighting style, uten permanent kobling mellom hånd og handlingskategori eller tursporing. Den isolerte prøven får eksplisitte prøveverdier og avgrenset Combat-visning; dette er ikke en implementasjonsbestilling i hovedappen.
+
+## Utstyrsprototypen godkjent for implementasjon i appen
+
+Brukeren godkjente en siste forenkling: handlingstypen er valgfri regelinformasjon/DM-avklaring, med Ikke avklart. Ikke spør hvor brukeren vil plassere teksten i UI; bruk faktisk aktiveringsmåte, normalt ett valg per beskrevet aktivering. Uavklart/passiv vises under Andre egenskaper. Deretter ble selve appimplementasjonen uttrykkelig bestilt. Tidligere «isolert prototype / ingen appendring» er historikk, ikke en blokkering av denne bestillingen.
+
+Overfør den samlede registrerings-/oppslagsflyten med faktisk karaktergrunnlag og vedvarende data. Bevar historikk, angre, kopi, eksport/import, gamle profiler/overstyringer og utkast. Ingen demo-karakter eller prototype-localStorage importeres til ekte karakterer. Arbeidet fullføres samlet på egen branch/PR, med brukerens tidligere delegerte testede merge/publisering.
+
+## Installasjonsnavn og bunnmeny (løpende brukerinnspill)
+
+Vedtatt installert navn: **My D&D**. Endelig appikon må bestemmes. Brukeren rapporterer for høy bunnmeny, spesielt i installert visning; behovet for lavere meny registreres, med bevarte trykkflater og safe area. Dette innspillet er loggført under pågående utstyrsimplementasjon; menyendring og ikonvalg er ikke erklært utført.
+
+## Utstyrsverksted overført til hovedappen
+
+Ny føring bruker virkningsoversikt og ett spørsmål per verdi. Oppslag har raske bruk-/håndvalg øverst og tydelig separat Rediger/Kopier/Fjern. Item-virkninger er kildebundne tillegg til ekte karaktergrunnlag; minimum for ability scores er «hev til minst», og tekstvilkår tolkes ikke. Én valgfri handlingstype styrer friteksteffektens Combat-oppslag; uavklart er tillatt. Bruksteller er en vanlig delt resource med sourceRef=item, ikke en parallell teller. Grunnverdier, manuelle totaler, eldre profiler og utkast bevares. Se [føring/beregningskontrakt](EQUIPMENT.md), [datamodell](DATA_MODEL.md#utstyrsvirkninger-fra-den-godkjente-veiviseren) og [produktkontroll](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen). Fysisk iOS/Safari er ikke prøvd; ikon-/menyinnspill følges separat.

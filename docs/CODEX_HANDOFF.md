@@ -1,6 +1,14 @@
 # Overlevering til Codex
 
-## Nyeste bestilling: isolert utstyrsprototype
+## Nyeste bestilling: implementer den godkjente utstyrsflyten i appen
+
+Brukeren har godkjent v2-prototypen og bedt om implementasjon i hovedappen. Krav §16 erstatter tidligere avgrensning til isolert fil. Arbeidet samles på `prototype/equipment-effects` / PR23; testet merge og Pages er delegert. [Før-koding-matrisen](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen) angir scenarioene; lokale 203 tester og faktisk produktgjennomgang er dokumentert der. CI/merge/Pages verifiseres for leveransecommit. [Utstyrsguiden](EQUIPMENT.md) beskriver gjeldende føring og bevarte beregninger.
+
+Siste presisering: spør valgfritt «Hva kreves for å aktivere effekten?» med ett svar, inkludert Ikke avklart. Dette er regel-/DM-informasjon. Ikke avklart og passiv vises under Andre egenskaper. Ikke gjeninnfør obligatorisk flerkategoriplassering. Ekte karakterberegninger, én effekttekst, delte ressurser, håndvalg/kopiering og én sluttlagring skal erstatte prototypeverdiene og gammelt generisk utstyrsskjema. Eldre profiler/overstyringer/utkast skal bevares.
+
+Løpende innspill i krav §17: installert navn **My D&D**, endelig appikon ubestemt, lavere bunnmeny ønsket spesielt i installert visning. Dette er loggført; ikon og meny er ikke ferdig levert.
+
+## Historikk: isolert utstyrsprototype
 
 **Nyeste oppfølging:** Brukeren har bestilt prototype v2 etter positiv veiviserreview. Samlede avklaringer står i krav §15 «Oppfølging», siste beslutningslogg og [v2-kontrollen](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsprototype-v2). Skadebonus/samlet skade, feltspesifikk hjelp, minsteverdi for abilities, Lagre uten bakovernavigering med lukking/siste bruksspørsmål, ingen Antall for våpen, Kopier og håndvalg samt én friteksteffekt med Combat-plassering er gjeldende. Hovedappen er fortsatt utenfor denne bestillingen.
 

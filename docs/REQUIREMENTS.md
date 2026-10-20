@@ -281,3 +281,17 @@ Brukeren er fornøyd med veiviseruttrykket og bestiller neste isolerte utgave. H
 - Avgrenset two-weapon-fighting-oppslag følger 2014: to passende lette melee-våpen i hver sin hånd gir mulige bonusangrep med det andre våpenet etter Attack action. Positiv ability modifier utelates fra bonusangrepets skade uten relevant fighting style; negativ beholdes, vanlige angrepsmodifiers/proficiency og magiske bonuser beholdes. Venstre er ikke permanent bonus, høyre ikke permanent Action. Ingen tursporing/automatiske angrep.
 
 Prototypen kan vise dette med eksplisitte prøveverdier for karakteren og en separat Combat-prøveflate. Produksjonsintegrasjon og full regeldekning er fortsatt utenfor bestillingen. Bevar gamle prøveoppføringer og utkast så langt samme nettleser/filplassering tillater.
+
+## 16. Godkjent overføring av utstyrsprototypen til appen
+
+Brukeren har godkjent prototypeflyten som tilstrekkelig og bestilt «Implementer i appen». Den siste handlingstypeavklaringen erstatter obligatorisk flerkategoriplassering: spør **Hva kreves for å aktivere effekten?**, valgfritt Action / Bonus Action / Reaction / Ingen handling/passiv / Ikke avklart. Informasjonen beskriver regler eller DM-avklaring, ikke brukerens frie valg av navigasjonsplassering. Uavklart vises tydelig under Andre egenskaper og blokkerer ikke registrering.
+
+Overfør v2-flyten sammen med alle avklaringer i §15 til ekte IndexedDB/karakterdata, backup, kopi, historikk/angre, ressurser/hvile og Combat. Bevar prototypens veiviseruttrykk; bruk appens eksisterende tallhjul, faktisk karakter/proficiency og sikre beregninger. Skadebonus går direkte til beløp; abilities støtter bonus/minsteverdi. Samlet skadeoppslag, individuelle kopier/hender, én effekttekst og enkel sluttlagring er krav. Tidligere prototypetillegg om at hovedappen ikke skal endres beskriver nå historikk.
+
+Utstyrsbidrag er kildeknyttet og gjelder ved aktiv bruk og nødvendig attunement. Vilkår beskrives og fremheves uten automatisk fortolkning. Grunnverdier/manuelle overstyringer beholdes. Eldre utstyr, egne profiler, ressurser og veiviserutkast skal ikke slettes eller automatisk omskrives bare ved åpning. Én samlet branch/PR, testet merge og Pages-publisering er delegert etter tidligere føring.
+
+## 17. Installasjonsnavn og bunnmeny – nye innspill
+
+- Ved installasjon på telefonen skal appnavnet være **My D&D** (manifestets name og short_name).
+- Endelig appikon er **ikke bestemt**. Eksisterende ikon er foreløpig.
+- Bunnmenylinjen oppleves for høy, særlig som installert app. Reduser unødvendig vertikal luft; bevar tilgjengelige trykkflater og nødvendig safe area. Dette er registrert som et åpent designpunkt, ikke ferdig verifisert eller levert gjennom dette innspillet.

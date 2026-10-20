@@ -44,7 +44,7 @@ test('dense pill collections, inline plus and the three prototype equipment grou
   for (const [group,item] of [['Weapons','Dagger'],['Armor og skjold','Shield'],['Annet utstyr','Torch']]) {
     const region=page.getByRole('group',{name:group,exact:true});await region.getByRole('button',{name:`Legg til ${group.toLowerCase()}`,exact:true}).click();
     const expectedFilter=group==='Weapons'?'weapon':group==='Armor og skjold'?'armor':'other';
-    await expect(page.getByRole('combobox',{name:'Kategori',exact:true})).toHaveValue(expectedFilter);
+    await expect(page.getByRole('combobox',{name:'Kategori',exact:true})).toHaveCount(0);await expect(dialog(page).locator('[name="equipmentFilter"]')).toHaveValue(expectedFilter);
     await page.getByRole('button',{name:`Legg til ${item}`,exact:true}).click();await expect(dialog(page)).not.toBeVisible();
     await expect(region).toContainText(item);
   }

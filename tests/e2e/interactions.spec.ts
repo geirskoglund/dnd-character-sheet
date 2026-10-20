@@ -45,7 +45,7 @@ test('equipment plus opens searchable choices immediately and selection commits 
   await expect(modal(page).getByRole('button',{name:'+ Utstyr',exact:true})).toHaveCount(0);
   await expect(modal(page).getByRole('button',{name:'Lagre',exact:true})).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Legg til Shield',exact:true})).toBeVisible();
-  await choose(page,'Kategori','weapon');
+  await page.keyboard.press('Escape');await page.getByRole('button',{name:'Legg til weapons',exact:true}).click();
   await expect(page.getByRole('button',{name:'Legg til Shield',exact:true})).toHaveCount(0);
   await page.getByRole('searchbox',{name:'Søk i utstyr',exact:true}).fill('greatsword');
   await expect(page.locator('[data-add-equipment]')).toHaveCount(1);
@@ -57,7 +57,7 @@ test('equipment plus opens searchable choices immediately and selection commits 
   await expect(modal(page)).not.toBeVisible();
   await expect(page.getByRole('button',{name:'Greatsword · eid',exact:true})).toHaveCount(1);
   expect(await historyCount(page)).toBe(count+1);
-  await expect(page.getByRole('button',{name:'Legg til armor og skjold',exact:true})).toBeFocused();
+  await expect(page.getByRole('button',{name:'Legg til weapons',exact:true})).toBeFocused();
   await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();
   await page.waitForFunction(()=>navigator.serviceWorker.controller !== null);
   await context.setOffline(true);await page.reload();
@@ -65,30 +65,17 @@ test('equipment plus opens searchable choices immediately and selection commits 
   await expectCharacterStatus(page,'AC12');
   await expect(page.getByRole('main')).toContainText('Tohåndsvåpen og skjold');
 });
-test('single-item editing and deletion preserve other gear and restore the unsaved editor on cancel', async ({page}) => {
+test('guided note drafts, quick use and confirmed deletion preserve other gear and undo', async ({page}) => {
   await createCharacter(page);await add(page,'Leather');await add(page,'Shield');
-  await page.getByRole('button',{name:'Shield · i bruk',exact:true}).click();
-  await itemDetails(page);
-  await expect(page.getByRole('spinbutton',{name:'Antall',exact:true})).toHaveCount(1);
-  await fillField(page,'Antall','2');
-  await fillField(page,'Utstyrsnotat','Fra DM');
-  await page.getByRole('button',{name:'Fjern fra karakteren',exact:true}).click();
-  await closeEditor(page);
-  await expect(page.getByRole('spinbutton',{name:'Antall',exact:true})).toHaveValue('2');
-  await expect(page.getByRole('textbox',{name:'Utstyrsnotat',exact:true})).toHaveValue('Fra DM');
-  await page.getByRole('checkbox',{name:'I bruk',exact:true}).uncheck();
-  await finish(page);
-  await expect(page.getByRole('button',{name:/^Shield · eid/})).toBeFocused();
-  await expect(page.getByRole('button',{name:'Leather · i bruk',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:/^Shield · eid/}).click();
-  await page.getByRole('button',{name:'Fjern fra karakteren',exact:true}).click();
-  await page.getByRole('button',{name:'Fjern utstyr',exact:true}).click();
-  await expect(modal(page)).not.toBeVisible();
-  await expect(page.getByRole('button',{name:/^Shield · eid/})).toHaveCount(0);
-  await expect(page.getByRole('button',{name:'Legg til armor og skjold',exact:true})).toBeFocused();
-  await expect(page.getByRole('button',{name:'Leather · i bruk',exact:true})).toBeVisible();
-  await menuAction(page,'Angre siste endring');
-  await expect(page.getByRole('button',{name:/^Shield · eid/})).toBeVisible();
+  await page.getByRole('button',{name:'Shield · i bruk',exact:true}).click();await itemDetails(page);
+  await fillField(page,'Utstyrsnotat','Fra DM');await closeEditor(page);
+  await page.getByRole('region',{name:'Utstyrsutkast'}).getByRole('button').click();await expect(page.getByRole('textbox',{name:'Merknad',exact:true})).toHaveValue('Fra DM');await finish(page);await expect(modal(page)).not.toBeVisible();
+  await page.getByRole('button',{name:'Shield · i bruk',exact:true}).click();await page.getByRole('button',{name:'Fjern fra utstyrslisten',exact:true}).click();await closeEditor(page);await expect(modal(page)).toContainText('Fra DM');
+  await page.getByRole('checkbox',{name:'I bruk',exact:true}).uncheck();await finish(page);
+  await expect(page.getByRole('button',{name:'Shield · eid',exact:true})).toBeFocused();
+  await page.getByRole('button',{name:'Shield · eid',exact:true}).click();await page.getByRole('button',{name:'Fjern fra utstyrslisten',exact:true}).click();await page.getByRole('button',{name:'Fjern',exact:true}).click();await expect(modal(page)).not.toBeVisible();
+  await expect(page.getByRole('button',{name:'Shield · eid',exact:true})).toHaveCount(0);await expect(page.getByRole('button',{name:'Legg til armor og skjold',exact:true})).toBeFocused();await expect(page.getByRole('button',{name:'Leather · i bruk',exact:true})).toBeVisible();
+  await menuAction(page,'Angre siste endring');await expect(page.getByRole('button',{name:'Shield · eid',exact:true})).toBeVisible();
 });
 test('declining note deletion keeps the edited text; unchanged saving leaves undo meaningful', async ({page}) => {
   await createCharacter(page);

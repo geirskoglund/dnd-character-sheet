@@ -29,12 +29,12 @@ export async function expectCharacterStatus(page: Page, text: string) {
   if (equipment) await equipmentTab(page);
 }
 export async function itemDetails(page: Page) {
-  await page.getByRole('dialog').getByText('Tilpass gjenstanden',{exact:true}).click();
+  await page.getByRole('dialog').getByRole('button',{name:'Rediger gjenstanden',exact:true}).click();
 }
 
 /** Navigate through the actual questions; hidden source controls are only read to identify choices. */
 export async function revealField(page:Page,name:string,index=0){
- const d=page.getByRole('dialog');if(name==='GP'&&await d.locator('#money-exact').isVisible())await d.locator('#money-exact').click();if(!await d.isVisible())return page.getByRole('combobox',{name,exact:true}).nth(index);
+ const d=page.getByRole('dialog');if(await d.isVisible()&&await d.getAttribute('data-equipment-editor'))return equipmentField(page,name);if(name==='GP'&&await d.locator('#money-exact').isVisible())await d.locator('#money-exact').click();if(!await d.isVisible())return page.getByRole('combobox',{name,exact:true}).nth(index);
  if(await d.getAttribute('data-wizard')===null){const roleField=d.getByRole('combobox',{name,exact:true}).or(d.getByRole('textbox',{name,exact:true})).or(d.getByRole('spinbutton',{name,exact:true}));if(await roleField.count())return roleField.nth(index);return d.getByLabel(name,{exact:true}).nth(index);}
  const fields=d.getByLabel(name,{exact:true});
  const visible=fields.filter({visible:true});
@@ -67,6 +67,8 @@ export async function characterStep(page:Page,index:number){await revealField(pa
 export async function finish(page:Page){
  const d=page.getByRole('dialog');
  await expect(d.locator('form')).not.toHaveAttribute('aria-busy','true');
+ if(await d.getAttribute('data-equipment-editor')){if(await page.locator('dialog #wizard-question').textContent()!=='Vil du ta gjenstanden i bruk?')await d.getByRole('button',{name:/^Lagre(?: merknad| antall)?$/,exact:true}).click();if(await d.isVisible()&&await page.locator('dialog #wizard-question').textContent()==='Vil du ta gjenstanden i bruk?')await d.getByRole('button',{name:'Ikke i bruk',exact:true}).or(d.getByRole('button',{name:'Nei',exact:true})).click();return;}
+ if(await d.getAttribute('data-kind')==='view'){await d.getByRole('button',{name:'Lukk',exact:true}).click();return;}
  for(let n=0;await d.getAttribute('data-wizard')!==null;n++){
   const submit=d.locator('#submit');if(await submit.isVisible()&&await submit.textContent()!=='Neste')break;
   if(n>65)throw new Error('Veiviseren kunne ikke fullføres.');await nextQuestion(page);
@@ -76,7 +78,7 @@ export async function finish(page:Page){
 export async function useEquipment(page:Page,name:string){
  await equipmentTab(page);
  await page.getByRole('button',{name:`${name} · eid`,exact:true}).click();
- await page.getByRole('checkbox',{name:'I bruk',exact:true}).check();await finish(page);
+ const d=page.getByRole('dialog');if(await d.getByRole('group',{name:'Håndbruk',exact:true}).count()){const used=await page.locator('[data-item] .state-mark').allTextContents();const hand=await d.getByRole('button',{name:'Begge hender',exact:true}).count()&&!await d.getByRole('button',{name:'Høyre hånd',exact:true}).count()?'Begge hender':used.includes('Høyre hånd')?'Venstre hånd':'Høyre hånd';await d.getByRole('button',{name:hand,exact:true}).click();if(await d.getByRole('button',{name:'Behold oppsett',exact:true}).isVisible())await d.getByRole('button',{name:'Behold oppsett',exact:true}).click();else{await expect(d.locator('form')).not.toHaveAttribute('aria-busy','true');await expect(d.getByRole('button',{name:hand,exact:true})).toHaveAttribute('aria-pressed','true');await finish(page);}}else{await d.getByRole('checkbox',{name:'I bruk',exact:true}).check();await expect(d.locator('form')).not.toHaveAttribute('aria-busy','true');await expect(d.getByRole('checkbox',{name:'I bruk',exact:true})).toBeChecked();await finish(page);}
  await page.getByRole('dialog').waitFor({state:'hidden'});
 }
 export async function advancedRecord(page:Page){
@@ -84,4 +86,15 @@ export async function advancedRecord(page:Page){
  await page.getByRole('button',{name:'Flere detaljer',exact:true}).click();
 }
 
-export async function closeEditor(page:Page){const d=page.getByRole('dialog'),confirmation=await d.getAttribute('data-kind')==='confirm';const close=d.getByRole('button',{name:'Lukk veiviseren',exact:true});if(await close.isVisible())await close.click();else await d.getByRole('button',{name:'Avbryt',exact:true}).click();if(!confirmation)await d.waitFor({state:'hidden'});}
+export async function closeEditor(page:Page){const d=page.getByRole('dialog'),confirmation=await d.getAttribute('data-kind')==='confirm';const close=d.getByRole('button',{name:'Lukk veiviseren',exact:true});if(await close.isVisible())await close.click();else await d.getByRole('button',{name:'Avbryt',exact:true}).or(d.getByRole('button',{name:'Lukk',exact:true})).click();if(!confirmation)await d.waitFor({state:'hidden'});}
+
+/** Equipment helpers follow the public guided questions; no hidden controls or direct writes. */
+export async function equipmentOverview(page:Page){const d=page.getByRole('dialog');for(let n=0;n<20;n++){const title=await page.locator('dialog #wizard-question').textContent();if(title==='Hva gjør gjenstanden?')return;if(title?.startsWith('Hva heter')){await d.getByRole('button',{name:'Neste',exact:true}).click();continue;}await d.getByRole('button',{name:'Tilbake',exact:true}).click();}throw Error('Fant ikke virkningsoversikten');}
+export async function addItemBonus(page:Page,label:string,value:string){const d=page.getByRole('dialog');await equipmentOverview(page);await d.getByRole('button',{name:'+ Legg til virkning',exact:true}).click();await d.getByRole('button',{name:label,exact:true}).click();await d.getByRole('spinbutton',{name:label==='Skadebonus'?'Skadebonus':'Verdi',exact:true}).fill(value);await d.getByRole('button',{name:'Neste',exact:true}).click();await d.getByRole('button',{name:'Nei',exact:true}).click();}
+async function equipmentField(page:Page,name:string){const d=page.getByRole('dialog'),field=()=>d.getByLabel(name,{exact:true});if(await field().isVisible())return field();await equipmentOverview(page);
+ if(['Angrepsbonus','AC-bonus','Skadebonus'].includes(name)){await d.getByRole('button',{name:'+ Legg til virkning',exact:true}).click();await d.getByRole('button',{name:name==='AC-bonus'?'AC':name,exact:true}).click();return d.getByRole('spinbutton',{name:name==='Skadebonus'?name:'Verdi',exact:true});}
+ if(name==='Antall'){await d.getByRole('button',{name:'Antall',exact:true}).click();return field();}
+ await d.getByRole('button',{name:'Merknad og attunement',exact:true}).click();if(name==='Utstyrsnotat'){await d.getByRole('button',{name:'Merknad',exact:true}).click();return d.getByRole('textbox',{name:'Merknad',exact:true});}
+ if(['Attack (manuell total)','Damage (manuell total)'].includes(name)){await d.getByRole('button',{name:'Manuelle totaler (DM)',exact:true}).click();await d.getByRole('button',{name,exact:true}).click();return field();}
+ throw Error('Ukjent utstyrsspørsmål: '+name);
+}

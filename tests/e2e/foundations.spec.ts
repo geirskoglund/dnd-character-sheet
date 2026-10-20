@@ -102,14 +102,11 @@ test('custom species and custom armor remain editable separately', async ({page}
   await fillField(page,'Grunnfart for arten (ft)','35'); await save(page);
   await equipment(page); await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
   await fillField(page,'Navn på utstyr','Min rustning');
-  await finish(page);await expect(page.getByRole('dialog')).not.toBeVisible();
-  await useEquipment(page,'Min rustning');await page.getByRole('button',{name:'Min rustning · i bruk',exact:true}).click();await itemDetails(page);await page.getByText('Rustningens regelverdier',{exact:true}).click();
-  await fillField(page,'Base AC for rustningen','15');
-  await fillField(page,'Maks Dexterity-bonus (tomt = ingen grense)','2');
-  await expect(page.locator('#derived-preview')).toContainText('Samlet AC 17'); await save(page); await page.reload();
+  await page.getByRole('button',{name:'Lagre',exact:true}).click();await fillField(page,'AC-grunnverdi','15');await page.getByRole('button',{name:'Neste',exact:true}).click();await page.getByRole('button',{name:'Ja, høyst +2',exact:true}).click();await finish(page);await expect(page.getByRole('dialog')).not.toBeVisible();
+  await useEquipment(page,'Min rustning');await expectCharacterStatus(page,'AC17');await page.reload();
   await menuAction(page,'Rediger karakter');
   await revealField(page,'Navn på art / underart');await expect(page.getByRole('textbox',{name:'Navn på art / underart',exact:true})).toHaveValue('Min art'); await save(page);
-  await equipmentTab(page); await page.getByRole('button',{name:'Min rustning · i bruk',exact:true}).click(); await expect(page.getByRole('textbox',{name:'Navn på utstyr',exact:true})).toHaveValue('Min rustning'); await save(page);
+  await equipmentTab(page); await page.getByRole('button',{name:'Min rustning · i bruk',exact:true}).click(); await expect(page.getByRole('dialog').getByRole('heading',{name:'Min rustning',exact:true})).toBeVisible(); await save(page);
 });
 test('damage and temp HP only in Combat, preview/cancel and atomic undo', async ({page}) => {
   await openCharacter(page); await save(page);

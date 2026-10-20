@@ -1,3 +1,4 @@
+import {effectiveAbilities,itemAdjustment,effectiveMaxHp,contributions} from './item-effects';
 import type { Character } from './model';
 import { armorClass, equipmentWarnings, hasStyle, itemBonuses, magicActive } from './equipment';
 export const abilityModifier = (score: number) => Math.floor((score - 10) / 2);
@@ -5,7 +6,8 @@ export interface DerivedStats { ac: number; speed: number | null; acExplanation:
 /** Selected 2014 sheet calculations, not an action resolver or character builder. */
 export function deriveStats(c: Character): DerivedStats {
   const warnings: string[] = equipmentWarnings(c);
-  const dex = abilityModifier(c.abilityScores.DEX);
+  const scores=effectiveAbilities(c);
+  const dex = abilityModifier(scores.DEX);
   const items = c.items.filter(i => i.equipped && i.quantity > 0);
   const armors = items.filter(i => i.category === 'armor');
   const shields = items.filter(i => i.category === 'shield');
@@ -25,7 +27,7 @@ export function deriveStats(c: Character): DerivedStats {
     else defense = barbarian ? 'barbarian' : monk ? 'monk' : 'none';
   }
   if (!armor) {
-    const extra = defense === 'barbarian' && barbarian ? abilityModifier(c.abilityScores.CON) : defense === 'monk' && monk && !shields.length ? abilityModifier(c.abilityScores.WIS) : null;
+    const extra = defense === 'barbarian' && barbarian ? abilityModifier(scores.CON) : defense === 'monk' && monk && !shields.length ? abilityModifier(scores.WIS) : null;
     if (extra !== null && 10 + dex + extra >= ac) {
       ac = 10 + dex + extra;
       acExplanation = `${defense === 'barbarian' ? 'Barbarian' : 'Monk'} Unarmored Defense: 10 + DEX ${dex} + ${defense === 'barbarian' ? 'CON' : 'WIS'} ${extra}`;
@@ -41,6 +43,7 @@ export function deriveStats(c: Character): DerivedStats {
   if (armor && hasStyle(c, 'defense')) { ac += 1; acExplanation += ' + Fighting Style: Defense 1'; }
   const otherBonuses = itemBonuses({...c,items:c.items.filter(i => !['armor','shield'].includes(i.category))}, 'ac');
   for (const bonus of otherBonuses) { ac += bonus.amount; acExplanation += ` + ${bonus.name} ${bonus.amount}`; }
+  for(const bonus of contributions(c,'ac').filter(m=>m.operation==='add')){ac+=bonus.amount;acExplanation+=` + ${bonus.name} ${bonus.amount}`;}
   acExplanation += ` = ${ac}`;
   let speed = c.species.walkingSpeed;
   const speedParts = speed === null ? ['Velg art eller angi grunnfart for egen art.'] : [`${c.species.name || 'Egen art'}: ${speed} ft`];
@@ -51,9 +54,10 @@ export function deriveStats(c: Character): DerivedStats {
       const bonus = monk >= 18 ? 30 : monk >= 14 ? 25 : monk >= 10 ? 20 : monk >= 6 ? 15 : 10;
       speed += bonus; speedParts.push(`Unarmored Movement +${bonus}`);
     }
-    if (armors.some(i => i.armorProfile?.kind === 'heavy' && c.abilityScores.STR < i.armorProfile.strength) && !c.species.ignoresHeavyArmorSpeedPenalty) {
+    if (armors.some(i => i.armorProfile?.kind === 'heavy' && scores.STR < i.armorProfile.strength) && !c.species.ignoresHeavyArmorSpeedPenalty) {
       speed -= 10; speedParts.push('Heavy armor: STR-krav ikke oppfylt −10');
     }
+    const bonusSpeed=itemAdjustment(c,'speed');speed+=bonusSpeed;if(bonusSpeed)speedParts.push(`Utstyr ${bonusSpeed>=0?'+':''}${bonusSpeed}`);
     speed = Math.max(0, speed);
   }
   if (c.acOverride !== null || c.speedOverride !== null) warnings.push('Manuelle verdier er aktive. Fjern dem under Beregninger og overstyringer for å bruke karaktergrunnlaget.');
@@ -74,3 +78,5 @@ export function clampHpDelta(hp:Character['hp'],amount:number) {
   const {min,max}=hpDeltaBounds(hp);
   return Math.max(min,Math.min(max,Math.round(amount)));
 }
+
+export function hpAfterItemChange(c:Character,delta:number){return {...hpAfterChange({...c.hp,max:effectiveMaxHp(c)},delta),max:c.hp.max};}

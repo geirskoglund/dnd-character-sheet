@@ -1,0 +1,30 @@
+{
+  "conclusion": "CON14→19, CON20 preserved; attunement, protection sources, unknown activation and shared short-rest counter verified",
+  "errors": [],
+  "layouts": [
+    {
+      "width": 320,
+      "scale": "100%",
+      "overflow": false,
+      "dialogOverflow": false
+    },
+    {
+      "width": 320,
+      "scale": "200%",
+      "overflow": false,
+      "dialogOverflow": false
+    },
+    {
+      "width": 390,
+      "scale": "100%",
+      "overflow": false,
+      "dialogOverflow": false
+    },
+    {
+      "width": 390,
+      "scale": "200%",
+      "overflow": false,
+      "dialogOverflow": false
+    }
+  ]
+}
