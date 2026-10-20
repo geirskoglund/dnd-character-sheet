@@ -6,7 +6,7 @@ Brukeren har bestilt gjennomgang av hele loggen, opprinnelig v0.11/overlevering 
 
 **Ingen appimplementasjon er bestilt i denne runden.** Korte bekreftelser er diskusjonsenighet, ikke kodeordre. Nye innspill etter PR #23 er bevart i krav §18: individuelt vanlig utstyr, Forbruk under Utstyr, avgrenset standardutvalg/enkel telling og midtbåndslukking/rapportert iOS-dobbelttrykk. Navn My D&D, endelig ikon og lavere bunnmeny er også fortsatt åpne. Ikke fortsett en gammel kodebestilling fordi den står nedenfor.
 
-Kildebegrensning: separat forklaringsfil til v0.11 er ikke sikkert identifisert i tilgjengelig tre/historikk. Audit av selve v0.11 og opprinnelige spesifikasjonsfiler er gjort; ikke påstå at en annen forklaringsfil er undersøkt.
+Overleveringen omfatter v0.11 og CODEX_HANDOFF, REQUIREMENTS, DATA_MODEL, DESIGN og DECISIONS; alle er tilgjengelige og gjennomgått. En antatt ekstra forklaringsfil ble feilaktig ført som kildebegrensning i første auditutgave. Dette er korrigert etter brukerens fremvisning av den tidligere overleveringsbekreftelsen; ikke be brukeren finne en ytterligere fil på dette grunnlaget.
 
 ## Siste appleveranse: den godkjente utstyrsflyten
 

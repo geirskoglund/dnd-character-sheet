@@ -4,7 +4,7 @@ Gjennomgått 2026-10-20 mot `master` **9518d8c** (PR #23). Dette er en dokumentl
 
 Målet er fortsatt å erstatte papirkarakterarket. Oversikten tar med både levert funksjonalitet, opprinnelige udekkede krav, senere innspill og løsninger som er erstattet. Utsatt arbeid er ikke slettet fra produktomfanget.
 
-Første gjennomgang omfatter **115 kontrollpunkter**:
+Første gjennomgang omfatter **114 kontrollpunkter**:
 
 | Status | Antall |
 | --- | --- |
@@ -12,10 +12,10 @@ Første gjennomgang omfatter **115 kontrollpunkter**:
 | Delvis levert | 26 |
 | Mangler | 11 |
 | Rapportert feil | 1 |
-| Avklares | 6 |
+| Avklares | 5 |
 | Erstattet av nyere beslutning | 10 |
 
-De 38 delvise/manglende/feil-punktene er samlet i **27 foreslåtte backlog items**, BL-01–27. Seks avklaringspunkter beholdes synlig; skadeflytens avklaring inngår også i BL-20. Dette er en opptelling av denne gjennomgangens oppdeling, ikke et endelig tak på arbeidet eller et tidsestimat. Kildebegrensningen nedenfor består.
+De 38 delvise/manglende/feil-punktene er samlet i **27 foreslåtte backlog items**, BL-01–27. Fem avklaringspunkter beholdes synlig; skadeflytens avklaring inngår også i BL-20. Dette er en opptelling av denne gjennomgangens oppdeling, ikke et endelig tak på arbeidet eller et tidsestimat.
 
 ## Hvordan oversikten brukes
 
@@ -40,7 +40,7 @@ Kravspesifikasjonen beskriver produktet, beslutningsloggen bevarer avklaringer, 
 | K4 | [Krav- og kontrollhistorikk](CHARACTER_WORKSPACE.md), [UX-review](UX_REVIEW.md), [Eventyrjournal](EVENTYRJOURNAL.md), [oppdateringsflyt](UPDATES.md), [siste produktreview](reviews/equipment-app/README.md). Historiske «mangler» er kontrollert mot nyere kode, ikke summert direkte. |
 | K5 | Samtaleinnspill etter PR #23: individuelt vanlig utstyr, Forbruk, standardvarer, enkel telling/påfyll, tallhjulets midtbånd og rapportert dobbelttrykk i installert iPhone-app. Disse er nå bevart i krav §18 og beslutningsloggen. |
 
-**Kildeusikkerhet:** Den separate forklaringsfilen som omtales ved opplasting av v0.11, kan ikke identifiseres som en egen fil i dagens tre eller listen over innførte filer i tilgjengelig Git-historikk. Handoff og de opprinnelige spesifikasjonsfilene er undersøkt. Det er ikke dokumentert at disse er identiske med forklaringsfilen. Se AVK-01; full dekning av en eventuell ytterligere fil kan ikke kvitteres ut.
+**Overleveringsgrunnlaget er tilgjengelig og gjennomgått:** v0.11 og CODEX_HANDOFF, REQUIREMENTS, DATA_MODEL, DESIGN og DECISIONS er materialet som den tidligere bekreftede overleveringen viser til. Brukeren viste denne bekreftelsen i oppfølgingen. Første utgave av gjennomgangen førte feilaktig en antatt ekstra forklaringsfil som AVK-01. Punktet er fjernet; det foreligger ikke grunnlag for å be brukeren finne en ytterligere fil. Øvrige ID-er beholdes.
 
 Kontrollgrunnlaget er nåværende kode og eksisterende testscenarioer, supplert med dokumenterte tidligere produktkontroller og brukerens ferske feilrapport. Ingen ny fysisk iOS-test, full tilgjengelighetsrevisjon eller komplett kontroll av hver SRD-tekst er utført. Detaljene nedenfor angir disse grensene.
 
@@ -200,7 +200,6 @@ Kontrollgrunnlaget er nåværende kode og eksisterende testscenarioer, supplert 
 | HIST-08 | Bare manuelle slots; alle klasser/levels som standard; flere typer blandet i samme velger. K1/eldre UI | Erstattet | Sikre standardpools og relevante valg, typeknapper og manuelle DM-overstyringer. |
 | HIST-09 | Eksklusive Normal/Resistance/Vulnerability/Immunity-valg eller skjult samlemodifikator. K2/regresjon | Erstattet | Individuelle, samtidige effekter og forklaring. Gjeldende kalkulator er fortsatt ikke implementert, SKA. |
 | HIST-10 | Påkrevd flerkategoriplassering for itemeffekt og antall for alle gjenstander. K3/eldre prototype | Erstattet | Valgfri faktisk aktivering/Ikke avklart. Individuelt utstyr med Kopier; bare Forbruk telles etter nyeste avklaring, UTS-10–13. |
-| AVK-01 | Hvilken fil er den separate v0.11-forklaringen? | Avklares | Ikke sikkert identifisert i tre/historikk. Hvis den er en annen fil enn opprinnelige handoff/krav, må den kobles til og gjennomgås; dagens audit må da suppleres. |
 | AVK-02 | Prioritet og enkel betjening for den opprinnelige sammensatte skadekalkulatoren. | Avklares | Kravet er vedtatt og beholdes, SKA-01–06. Brukeren må godkjenne konkret flyt/rekkefølge før koding; ingen omkamp om at kravet finnes. |
 | AVK-03 | Tverrgående søk/oppslag og valgfritt taleoppslag fra prototypen. | Avklares | v0.11 har searchopen/voice-grener; ingen tilsvarende global appflyt funnet. Tale er eksplisitt fremtidig/ikke MVP i DECISIONS §6. Et globalt tekstsøk er ikke et like tydelig vedtatt krav som katalogsøk. |
 | AVK-04 | Skal slettet karakter kunne gjenopprettes med Angre? | Avklares | Sletting logger førtilstand, men karakteren forsvinner fra valget og UI-undo. Nåværende dokumentert grense er restore fra backup; ikke bestilt ny gjenopprettingsfunksjon. |
@@ -260,7 +259,6 @@ Krav §4 omtaler «Ta skade» som høyprioritert. Plasseringen her er bare et fo
 | Spørsmål | Punkter | Forslag til håndtering |
 | --- | --- | --- |
 | Velge endelig appikon. | PWA-03 | En liten designavgjørelse; ta installasjonsformatene med når uttrykket er valgt. |
-| Identifisere separat prototypeforklaring. | AVK-01 | Bekreft fil/lenke eller at opprinnelige dokumenter er forklaringen; suppler audit ved nytt materiale. |
 | Globalt tekstsøk og valgfritt talesøk. | AVK-03 | Behold som synlig prototypeidé; prioriter ikke som vedtatt kjernekrav uten avklaring. |
 | Restore av slettet karakter. | AVK-04 | Avklar om backupgrensen er tilstrekkelig eller om enkel gjenoppretting ønskes. |
 | Historikk i backup. | AVK-05 | Avklar behovet før formatet utvides; full karakterbackup og historikkeksport er forskjellige behov. |

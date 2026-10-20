@@ -2,7 +2,7 @@
 
 # Character-arbeidsflate: krav, kilde og leveransestatus
 
-Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISIONS, CODEX_HANDOFF, brukerens forklaringsdokument og `prototypes/dnd-character-companion-v0.11.html`. Nyeste brukeravklaringer har forrang. Dette er leveransestatus, ikke en erstatning for kravene. **Nyeste utstyrsleveranse er beskrevet nederst; historiske PR #8-resultater er beholdt som historikk.**
+Arbeidsgrunnlag: REQUIREMENTS §§1–10, DATA_MODEL, DESIGN, gjeldende DECISIONS, CODEX_HANDOFF, de opprinnelige overleveringsdokumentene og `prototypes/dnd-character-companion-v0.11.html`. Nyeste brukeravklaringer har forrang. Dette er leveransestatus, ikke en erstatning for kravene. **Nyeste utstyrsleveranse er beskrevet nederst; historiske PR #8-resultater er beholdt som historikk.**
 
 ## Overordnet mål: erstatte papirkarakterarket
 
