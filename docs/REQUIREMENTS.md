@@ -141,3 +141,5 @@ Tre klart forskjellige fantasy-/D&D-inspirerte utseendeforslag skal vises før e
 - Videre komponentstudie skal vise representative rader av alle relevante elementfamilier samlet: piller/inline +, HP/AC/øvrig status, modifiers, ability-mynter, artsegenskaper, features/feats, spells/cantrips og utstyr. Ta med lange navn og relevante tilstander. Ulike familier trenger ikke unike former; gjenbruk skal gi sammenheng og kompakthet.
 
 Dette er tilbakemelding på designstudien og valg av retning, ikke en bestilling av produksjonskode. Dialogdetaljer, ikonsett og modifierutforming er fortsatt uavklart.
+
+**Bestilling 2026-10-20:** Brukeren ba uttrykkelig om komponentplansjene som beskrevet. [Komponentstudien](design/2026-10/components/README.md) viser elementfamilier, modifier-/ikonalternativer og samhandling/tilstander. Bestillingen gjelder disse designforslagene, ikke produksjonsimplementasjon eller et komplett ikonbibliotek. De åpne designvalgene over avgjøres etter vurdering av plansjene.
