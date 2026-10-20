@@ -1,8 +1,10 @@
 # Overlevering til Codex
 
-## Nyeste bestilling: klargjør backlog for egne implementasjonstråder
+## Nyeste bestilling: rette og kvalitetssikre alle backlogsaker
 
-Brukeren har nå bestilt klargjøring av alle27 oppgaver med konkret flyt, akseptansescenarioer, avhengigheter og bevaringskrav. [BACKLOG_READY.md](BACKLOG_READY.md) og hver Issue har status:9 Klar,16 Trenger produktavklaring og2 Avventer. Dette er dokumentasjon/oppgavemerking; ingen appimplementasjon er bestilt. Åpne spørsmål tas én flyt om gangen; brukeren skal ikke spesifisere vedtatte prinsipper på nytt.
+Brukeren fant at pengeunntaket i første sak var en Codex-antakelse, og bestilte rettelse og selvkritisk gjennomgang av alle27 saker. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) viser kontrollen og rettelsene. [BACKLOG_READY.md](BACKLOG_READY.md) og Issues har nå **7 Klar, 19 Trenger produktavklaring og 1 Avventer fysisk testtilgang**. #25 og #38 er ikke lenger klare; #35 har produktspørsmål i stedet for en kunstig hard avhengighet. Pengeunntaket er trukket tilbake uten å finne på en ny pengeflyt.
+
+Dette er dokumentasjon/oppgavemerking; ingen appimplementasjon er bestilt. Eksisterende kode og tidligere Codex-tekst er ikke bevis på brukerens godkjenning. Åpne spørsmål tas én flyt om gangen; brukeren skal ikke spesifisere vedtatte prinsipper på nytt. Tekniske valg eies fortsatt av implementatøren. Unødvendige avhengigheter er fjernet; fysisk kontroll kan begynne før feilretting, med etterkontroll av senere endrede flyter.
 
 Brukeren har tidligere bestilt gjennomgang av hele loggen, opprinnelig v0.11/overlevering og dagens app, også det som kan kvitteres ut. [BACKLOG.md](BACKLOG.md) er samlet status og foreslått arbeidsrekkefølge. Den erstatter ikke krav/beslutninger og skjuler ikke utsatte opprinnelige krav. Eldre statuser i denne filen og leveransematrisene er historikk; bruk kildebelagt ny status før arbeid planlegges.
 
