@@ -1,5 +1,7 @@
 > Nyeste presisering: illustrert veiviser med ett spørsmål per skjerm, direkte svarflater, grafiske fremdriftspunkter og separate gjenopptakbare utkast. Penger bruker to hjul (hele GP / 00–99) med felles midtmarkering. HP/temp HP har hjørnemarkør i Combat. Se [implementasjonen](GUIDED_WORKFLOWS.md#illustrert-spørsmålsveiviser-og-utkast).
 
+> Nyere backlogrettelse: ønsket om å lukke tallhjul ved trykk på valgt midtbånd har ikke et godkjent pengeunntak. Dagens alltid åpne pengevisning og dens tastaturhandling er eksisterende implementasjon, ikke bindende design. Lukke-/gjenåpningsflyten og separat direkteinnskriving er uavklart; to GP-hjul består som krav. Se [BL-01](BACKLOG_READY.md#bl-01) og [gjennomgangen](BACKLOG_REVIEW.md).
+
 > Gjeldende arbeidsflyter (2026-10-20): [GUIDED_WORKFLOWS.md](GUIDED_WORKFLOWS.md). Eventyrjournal videreføres med fire ikonfaner og Meny, separat Magi, vertikalt tallhjul med eksakt innskriving og korte forgrenede veivisere. Hjørnetrekanten brukes på arbeidsflatens oppslag/kort, aldri på navigasjon, Combat-kategorier, lukkekryss eller selvforklarende listevalg. Rutinemeldinger om lagring fjernes, feil er tydelige. Toppfelt scroller fortsatt bort. Eldre slider-/trefaneskisser nedenfor er historikk.
 
 # Designbrief – D&D Character Companion

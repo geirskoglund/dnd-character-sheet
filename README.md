@@ -60,6 +60,8 @@ Meny → Om appen viser versjons-ID. «Se etter oppdatering» ligger direkte i m
 
 Se [samlet produktgjennomgang og GitHub-backlog](docs/BACKLOG.md) for levert funksjonalitet, mangler fra opprinnelig prototype/overlevering, nyere innspill og åpne produktvalg. De27 oppgavene er opprettet i avtalt rekkefølge med prioritet/type; Integrasjonen mangler tilgang til brukerens Project. Appimplementasjon bestilles særskilt.
 
+Første klargjøring er rettet etter brukerreview. [Kvalitetsgjennomgangen av alle27 saker](docs/BACKLOG_REVIEW.md) forklarer feil, nye statuser og skillet mellom krav, forslag og eksisterende kode. Bruk [gjeldende saksbeskrivelser](docs/BACKLOG_READY.md), ikke det tidligere Klar-merket på #25.
+
 Se også [klargjøring for egne implementasjonstråder](docs/BACKLOG_READY.md): konkrete flyter, scenarioer, avhengigheter og åpne spørsmål for hver oppgave. Klar-status er ikke en implementasjonsbestilling.
 
 Les disse før funksjonsendringer; prototypekode er ikke fasit:

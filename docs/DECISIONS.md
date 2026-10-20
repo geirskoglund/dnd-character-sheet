@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
 **Oppdatert:** 2026-10-20
-**Status:** Utstyrsflyten er levert i PR #23. PR #24 og GitHub-backloggen er levert. Brukeren har nå bestilt klargjøring av oppgavene for egne tråder; status og åpne spørsmål står i BACKLOG_READY.md. Ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
+**Status:** Utstyrsflyten er levert i PR #23. PR #24 og GitHub-backloggen er levert. Klargjøringen i PR #52 er korrigert etter brukerens påpekning av et uavklart pengeunntak. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) viser kontrollen av alle27 saker; BACKLOG_READY.md har gjeldende status og åpne spørsmål. Ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
@@ -345,7 +345,7 @@ Brukeren bestemte uttrykkelig at forbruksvarene skal ligge i en **egen kategori 
 
 ## Oppfølging: tallhjul i installert iPhone-app
 
-Brukeren ønsker å lukke et vanlig tallhjul med trykk på valgt midtbånd og beholde verdien. Direkte tallinnskriving og pengenes to hjul må fortsatt fungere. Dette er ikke implementert.
+Brukeren ønsker å lukke tallhjulet med trykk på valgt midtbånd og beholde verdien. Direkte tallinnskriving og pengenes to hjul må fortsatt fungere. Codex sitt senere pengeunntak var ikke avtalt og er trukket tilbake; den konkrete pengelukkingen må avklares. Dette er ikke implementert.
 
 Rapportert, konsekvent feil: to trykk kreves på hjulknappen i installert modus, men ikke i Chrome-fanen. Brukerens fokuslag-forklaring er en observasjon, ikke en bekreftet rotårsak. Koden flytter fokus til hjulpanelet ved åpning og til input ved valgt rad. Ingen fysisk iPhone-verifikasjon eller rettelse er gjort. En lignende [ekstern feilrapport](https://github.com/shoelace-style/webawesome/issues/2409) gjelder et annet produkt og beviser ikke årsaken her.
 
@@ -363,8 +363,20 @@ GitHub-integrasjonen avviste `createProjectV2` med «Resource not accessible by 
 
 ## Klargjøring av oppgaver før egne tråder bestilt
 
-Brukeren ba om en vurdering av om spesifikasjonen er trygg nok for separate implementasjonstråder, og bestilte deretter den foreslåtte klargjøringen. [BACKLOG_READY.md](BACKLOG_READY.md) og Issues #25–51 får konkrete flyter, testforventninger, avhengigheter og bevaringskrav. Statusene er9 klare,16 trenger produktavklaring og2 avventer avhengighet/testtilgang. De nye detaljforslagene for uavklarte flyter er ikke godkjente produktvalg. Ingen appoppgave er implementert eller lukket; hver må bestilles uttrykkelig.
+Brukeren ba om en vurdering av om spesifikasjonen er trygg nok for separate implementasjonstråder, og bestilte deretter den foreslåtte klargjøringen. Første utgave i PR #52 oppga9 klare,16 trenger produktavklaring og2 avventer avhengighet/testtilgang. Denne vurderingen hadde feil og er erstattet av kvalitetsgjennomgangen nedenfor. [BACKLOG_READY.md](BACKLOG_READY.md) og Issues #25–51 har gjeldende flyter, testforventninger, avhengigheter og bevaringskrav. Ingen appoppgave er implementert eller lukket; hver må bestilles uttrykkelig.
 
 Brukeren har opprettet [Project1](https://github.com/users/geirskoglund/projects/1/views/1). Integrasjonen avviser også lesing, og appens viste installasjonsrettigheter omfatter ikke Projects. Det finnes ingen ny rettighetsforespørsel å godkjenne i den viste innstillingen. Tidligere råd om å slå på en Projects-rettighet var for upresist; nye tråder skal ikke gjenta denne omveien. Issues kan fortsatt oppdateres.
 
 Som konsistensopprydding er gjeldende korte formuleringer om fire faner, tallhjul og Hit Dice-telling rettet der eldre ordlyd sto som nåværende krav. Historiske beslutnings-/leveranseavsnitt beholdes. Ingen produktregel er endret av denne oppryddingen.
+
+## Rettelse og kvalitetsgjennomgang av alle backlogsaker
+
+Brukeren siterte pengeunntaket fra #25 og påpekte «Dette har vi ikke snakket om», og bestilte deretter: «Rett det opp. Vær selvkritisk og gå gjennom alle sakene for å kvalitetssikre.» Bestillingen gjelder dokumenter og GitHub-saker, ikke appkode.
+
+**Tilbakekalt Codex-antakelse:** Pengehjulene var ikke godkjent unntatt fra ønsket om midtbåndslukking. Verken dagens alltid åpne visning eller dens direkteinnskrivingshandling kan brukes som et slikt vedtak. To GP-hjul og direkteinnskriving består som krav; konkret lukking/gjenåpning avklares uten at en ny løsning erklæres vedtatt.
+
+Gjennomgangen av alle27 saker står i [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md). #25 og #38 er satt fra Klar til Trenger produktavklaring. #35 har åpne spørsmål om ny visning/dekningsgrense, ikke en hard avhengighet til #34. Gjeldende fordeling er **7 klare, 19 trenger produktavklaring og 1 avventer fysisk testtilgang**. Prioritet, type, BL-ID-er og opprinnelig rekkefølge beholdes. Ingen funksjon er levert ved å endre saksbeskrivelsen.
+
+Regel-/tekstfeil og overflødige avklaringsspørsmål er rettet. Blant annet er vanlig saving-throw-Expertise fjernet fra proficiencyforslaget, Second Wind er fortsatt oppslag/manuell telling og ikke automatisk healing, og Magic Missile-eksempelet innfører ingen ny kastemetode. Bevaring av gamle DM-data er ikke godkjenning av dem som vanlige standardregler. Dagens syvdagers backupfrist og konkrete gjennomføringsmetoder merkes som tekniske utgangspunkter, ikke brukerbestemte produktkrav. Hard avhengighet krever nødvendig funksjonsgrunnlag eller tilgang; review trenger ikke vente på at feil allerede er rettet.
+
+Denne rettelsen oppdaterer varig prosjektminne. Den autoriserer ingen av de27 appendringene og gjenåpner ikke allerede vedtatte produktprinsipper.

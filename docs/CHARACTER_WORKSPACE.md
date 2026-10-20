@@ -416,4 +416,14 @@ Avgrensninger videre: sammensatte særregler/tekstvilkår avgjøres med DM; full
 
 ## Klargjøring av backlog – dokumentasjon, ingen ny appflyt
 
-De27 oppgavene har egne forventninger og bevaringskrav i [BACKLOG_READY.md](BACKLOG_READY.md) og sine GitHub Issues. Dette er før-implementasjonsgrunnlag, ikke nye kjørte akseptansetester:9 klare,16 med produktspørsmål og2 avventer. Konkrete implementasjonstråder skal angi faktisk startcommit, bekrefte relevante scenarioer før koding og føre testresultater/produktkontroll og restkrav her før levering. Ingen eksisterende feil eller manglende funksjon kvitteres ut av dokumentendringen. Kontroll nå: tekst/kildesporing, lokale lenker/ankere, unik oppgavedekning, status-/avhengighetskonsistens, GitHub-tilbakekontroll og ren dokumentdiff.
+De27 oppgavene har reviderte forventninger og bevaringskrav i [BACKLOG_READY.md](BACKLOG_READY.md) og sine GitHub Issues. Første klargjøring hadde feil; etter [kvalitetsgjennomgangen](BACKLOG_REVIEW.md) er gjeldende status **7 klare, 19 med produktspørsmål og 1 avventer fysisk testtilgang**. Dette er før-implementasjonsgrunnlag, ikke nye kjørte akseptansetester. Konkrete implementasjonstråder skal angi faktisk startcommit, bekrefte relevante scenarioer før koding og føre testresultater/produktkontroll og restkrav her før levering. Ingen eksisterende feil eller manglende funksjon kvitteres ut av dokumentendringen. Dokumentgjennomgangens kontrollgrunnlag og faktiske resultater står i BACKLOG_REVIEW.
+
+## Kvalitetssikring etter feil i første backlogsak
+
+| Bestilling / kontroll | Faktisk resultat / leveransegrense |
+| --- | --- |
+| Rette pengeunntaket og gjennomgå alle27 saker | Pengeunntaket trukket tilbake i krav, backlog og saksgrunnlag. Ny lukke-/gjenåpningsflyt er ikke funnet på som erstatning. |
+| Kontrollere kilder, antakelser, regler og Klar-status | Én kontrollrad og konkrete kildehenvisninger per sak i [gjennomgangen](BACKLOG_REVIEW.md) og gjeldende saksseksjon. #25/#38 er nedgradert; #35 har produktspørsmål, ikke kunstig hard avhengighet. |
+| Bevare produktomfang og eksisterende data | Ingen app-/test-/byggendring, ingen Issue lukkes, ingen opprinnelige funksjonskrav strykes. Eksisterende kode behandles som status, ikke produktgodkjenning. |
+| Etterprøve dokumenter/GitHub | Struktur-/lenke-/diffkontroll og gjenhenting av alle27 Issue-beskrivelser/merker passerer. Faktiske resultater står i BACKLOG_REVIEW. Ingen nye spilltester eller fysisk iPhone-test påstås. |
+| Eksisterende app-CI kjøres automatisk på dokument-PR | Første CI fikk75/76 nettleserscenarioer grønne; scrolltest150/903 feilet. Lokal eksisterende enkeltprøve ga4/5 grønne, samme avvik én gang. TypeScript/produksjonsbygg passerer. Funnet er registrert under #51; ingen app-/testrettelse er bestilt eller lagt inn. Senere grønn CI kvitterer ikke ut den intermitterende feilen. |

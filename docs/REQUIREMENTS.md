@@ -305,7 +305,7 @@ Disse innspillene er avklart/rapportert i samtalen og dokumenteres nå; ingen av
 - Vanlig individuelt utstyr, også armor, ringer og amuletter, skal ikke ha et generelt Antall-spørsmål. Kopier brukes for separate gjenstander. Dette presiserer og erstatter §15s tidligere bevaring av antall for alt annet enn våpen. Eksisterende antall/data må bevares trygt ved senere endring.
 - Lag en egen kategori **Forbruk under Utstyr**. Ammunisjon, potions og mat/rasjoner kan føres som beholdninger. Standardvarer bør kunne velges ferdig fra et avgrenset 2014/SRD-utvalg; ikke krev manuell nyopprettelse av vanlige ting.
 - Forbruk og påfyll skal være enkelt under spill, også når beholdningen er null. Én-trykks reduksjon med Angre og påfyll av et samlet antall er foreslått betjening; den konkrete utformingen er ikke endelig godkjent. Ikke trekk piler automatisk når et bueoppslag åpnes. Vanlig pilskade følger våpenet; spesialammunisjon kan ha egen tekst. Potions kan beskrives og HP korrigeres manuelt; ingen generell forbrukseffektmotor forutsettes.
-- Brukeren ønsker å lukke et vanlig tallhjul ved trykk på den valgte midtraden og beholde tallet. Direkte innskriving skal fortsatt være tilgjengelig. To alltid synlige pengehjul må vurderes særskilt, ikke blindt lukkes som generiske hjul.
+- Brukeren ønsker å lukke tallhjulet ved trykk på den valgte midtraden og beholde tallet. Direkte innskriving skal fortsatt være tilgjengelig. To pengehjul for hele GP og 00–99 er fortsatt krav. Codex hadde ført inn et pengeunntak uten godkjenning; det er trukket tilbake etter brukerens rettelse. Ingen særregel om at pengehjulene ikke kan lukkes er vedtatt. Den konkrete lukke-/gjenåpningsflyten og inngangen for direkteinnskriving må beskrives og avklares, uten å gjette et nytt unntak.
 - **Rapportert feil:** installert iPhone-app krever konsekvent to trykk på åpne/lukke-knappen for tallhjul, mens Chrome-fanen ikke har samme symptom. Brukeren beskriver det som et fokuslag. Eksakt årsak og rettelse er ikke bekreftet; en lignende ekstern rapport er ikke bevis for årsaken i denne appen. Fysisk standalone-kontroll kreves før feilen kvitteres ut.
 
 ## 19. Samlet gjennomgang og backlog som arbeidsgrunnlag
@@ -327,4 +327,14 @@ Brukeren bestilte klargjøring av backloggen etter avklaring om at separate trå
 - **Avventer avhengighet** beholder forventningene, men krever at navngitte leveranser eller testtilgang faktisk foreligger. Ikke sett Klar automatisk bare fordi en annen Issue er lukket.
 - Hver implementasjon skal bevare angitt eksisterende funksjon/data og dokumentere faktisk test-/produktkontroll etter gjeldende leveringskrav. Fysisk iOS-port er et eget kontrollkrav, ikke noe en Chromium-test kan kvittere ut.
 
-Første klargjøring gir9 klare,16 med produktspørsmål og2 som avventer. Detaljerte forslag i denne gjennomgangen er ikke nye produktbeslutninger. Oppgaveprioritet og BL-ID-er beholdes; implementasjon starter ved egen uttrykkelig bestilling.
+Første klargjøring oppga9 klare,16 med produktspørsmål og2 som avventer. Den inneholdt feil og er erstattet av [kvalitetsgjennomgangen](BACKLOG_REVIEW.md): **7 klare, 19 med produktspørsmål og 1 som avventer fysisk testtilgang**. Oppgaveprioritet og BL-ID-er beholdes; implementasjon starter ved egen uttrykkelig bestilling.
+
+## 21. Kvalitetssikring av saksgrunnlaget etter brukerrettelse
+
+Brukeren påpekte at pengeunntaket i første sak ikke var avtalt og bestilte deretter rettelse og selvkritisk gjennomgang av alle saker. Dette gjelder dokumentasjon og GitHub-backlog, ikke appkode. [Gjennomgangen av alle27 saker](BACKLOG_REVIEW.md) viser rettelser, kilder og status; [BACKLOG_READY.md](BACKLOG_READY.md) har gjeldende beskrivelser.
+
+- Et utsagn blir ikke en brukerbeslutning ved å stå i eksisterende kode, et Codex-dokument eller et testscenario. Skill avklarte krav, regelavledede forventninger, tekniske utgangspunkter og nye produktforslag.
+- Pengeunntaket er fjernet. Ny flyt for tilstandsimmunitet er fortsatt uavklart, slik den tidligere utsettelsen sier. Eksisterende registrering beholdes inntil ny bestilt implementasjon er levert.
+- D&D-eksempler skal følge den faktiske typen og 2014-reglene. Saving-throw-Expertise er ikke et vanlig standardvalg, selv om tidligere data/UI kan representere det. Bevar manuelle DM-verdier og importer; ikke gjør gamle generiske felt til regelkilde.
+- Tekniske utgangspunkter som dagens syvdagers backupfrist er ikke nye låste produktkrav. Ingen ny utvalgsgrense eller regel om effekters ikke-stabling kan utledes bare av katalog-ID.
+- Avklar bare reelle åpne produktvalg. Harde avhengigheter må ha nødvendig funksjonsgrunnlag; kodeoverlapp er samordning. Ingen manglende opprinnelige funksjonskrav fjernes gjennom denne oppryddingen.
