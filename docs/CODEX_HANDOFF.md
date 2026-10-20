@@ -6,6 +6,8 @@ Les også [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md) før videre funksjons
 
 Gjeldende grensesnitt er [Eventyrjournal](EVENTYRJOURNAL.md), implementert etter godkjente design-/ikon-/header-/slideravklaringer 2026-10-20. Historiske plansjer er ikke lenger hele implementasjonsstatusen. Kategoriikoner med reserve dekker også egne poster, uten regel-/tilgangsfiltrering. Kjente funksjonskrav utenfor denne leveransen er fortsatt synlige i matrisen.
 
+Etter brukerens faktiske mobilreview er vi i en konseptuell gjennomgang, én arbeidsflyt om gangen. [Veiviser ved flerverdiregistrering](REQUIREMENTS.md#overordnet-prinsipp-veiviser-ved-flerverdiregistrering) er nå et overordnet krav. [Krav §13](REQUIREMENTS.md#13-konseptuell-opprydding-og-arbeidsflyter-2026-10-20) bevarer rapporterte feil, avklarte våpen-/featflyter og temaer som fortsatt må diskuteres. Betingelser knyttes til hver ekstraskade og vises på våpenkortet. Ingen av disse nye endringene er implementert eller bestilt kodet ennå; avtalte flyter og åpne forslag må holdes adskilt.
+
 ## Før du endrer appen
 1. Les [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md), [DECISIONS.md](DECISIONS.md).
 2. Bruk [v0.11-prototypen](../prototypes/dnd-character-companion-v0.11.html) **kun som UX-referanse**. Den har kjente regresjoner og er ikke autoritativ kilde.
