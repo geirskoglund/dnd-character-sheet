@@ -239,3 +239,11 @@ Brukeren bestilte deretter «lag de plansjene som beskrevet». [Tre isolerte pla
 ## Felles hjørnemarkør prøves for klikkbarhet (2026-10-20)
 
 Brukeren påpekte at «svak innramming» var like tydelig som andre rammer, at luftige modifiers ikke forklarte byttefunksjonen, og at bakgrunnskontrast fikk doble betydninger (klikkbarhet og utstyrt). Etter diskusjon ba brukeren om å prøve en liten fylt trekant nederst til høyre, avgrenset av eksisterende kant og en 45° diagonal, som felles signal uten å endre rammer. Den [fjerde komponentplansjen](design/2026-10/8-hjornemarkor.png) prøver dette på alle viste trykkflater, også modifiers, +, navigasjon og handlingsknapper. Rene statusfelt/mynter har ingen markør. Modifiertrykk betyr å velge hvilken verdi favorittfeltet viser. Prøven viser dessuten status med hake/tekst uten egen fyllfarge som et fortsatt uavklart forslag. Ingen produksjonskode endres, og forsøket er ikke en endelig godkjenning av alle detaljene.
+
+## Hjørnefarge og slider med retur til midten avklart (2026-10-20)
+
+Brukeren godkjente trekantuttrykket og bekreftet samme farge på trekantfyll og ramme; på luftige modifierfelt brukes bunnlinjens farge. Plansjens lysere fyll er ikke endelig valgt farge. Omfang på selvforklarende navigasjon/knapper og øvrige åpne detaljvalg er ikke fastsatt særskilt.
+
+Brukeren valgte en relativ HP-skyvekontroll med retur: dragets lengde styrer justeringen av beløpet; ved slipp beholdes beløpet og grepet går til midten; neste drag justerer videre fra det valgte beløpet. Alternativet med kontinuerlig endring mens man holder et utslag er ikke valgt. Hele kontrollen får tydelig innramming, med grepet innenfor. Tallet og forhåndsvisningen viser valgt endring, mens grepet viser pågående justering. Bekreftelse før oppdatering av karakterens HP beholdes.
+
+Brukeren presiserte grenser: HP-resultatet stopper ved 0 ved skade og maks HP ved healing. Temporary HP håndteres først ved skade som tidligere vedtatt. Se [samlede krav](REQUIREMENTS.md#avklart-hjørnefarge-og-relativ-hp-slider-2026-10-20). Ingen appkode eller nye skisser er bestilt i denne diskusjonsrunden; dette lagrer avklaringene som prosjektminne.

@@ -193,3 +193,9 @@ Dette er en isolert designleveranse. Øvrige funksjonsmangler og implementasjons
 ### Felles klikkbarhetsmarkør: bestilt designprøve (2026-10-20)
 
 Brukeren ba om fylt hjørnetrekant med 45° diagonal som ensartet markør, uten rammeendringer for klikkbarhet. [Plansje og dokumentasjon](design/2026-10/components/README.md#senere-prøve-ett-hjørne-samme-betydning) viser dette på modifiers (bytt favoritt), GP, piller/+, ressurser, navigasjon og handlingsknapper. Rene statuser har ingen markør. Egen visuell gjennomgang og `render-corners.mjs` passerer: samme 10 × 10 px-form på alle knapper; GP har samme flate/ramme som øvrige statuser; 20 isolerte 320/390 px-utsnitt uten overflyt/klippet korttekst; uniform pille/+ størrelse, ingen JS-/ressursfeil. Ingen produksjonskode eller brukerdata endres. Endelig markør-/statusdesign og eventuell avgrensning i navigasjon avventer brukerens vurdering; tidligere tekniske tester beviser ikke disse uimplementerte appendringene.
+
+### Avklart hjørnefarge og HP-slider; ikke implementert (2026-10-20)
+
+Brukeren godkjente trekantfyll i ramme-/bunnlinjefargen og en innrammet relativ HP-slider med retur til midten ved slipp, beholdt beløp, videre justering fra dette og HP-resultat innenfor 0/maks. Se [presise krav](REQUIREMENTS.md#avklart-hjørnefarge-og-relativ-hp-slider-2026-10-20). Dette er varig prosjektminne; ingen appkode eller nye bilder endres nå.
+
+Ved eventuell bestilling skal akseptansescenarioer omfatte: 0 → −8 → slipp med grep i midten og beløp fortsatt −8; et nytt drag justerer fra −8; skade ved lav HP ender på 0; healing ved nesten full HP stopper på maks; temporary HP tas først ved skade; avbryt/forhåndsvisning/bekreftelse bevarer korrekt dataflyt. Ingen av disse nye betjeningsscenarioene er implementert eller testet. Eksisterende bilde- og spilltester beviser ikke den nye kontrollen. Denne dokumentasjonsrunden kontrolleres med tekst-/beslutningskonsistens, relative lenker/ankere og diff-kontroll.
