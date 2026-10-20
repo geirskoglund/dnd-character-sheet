@@ -48,9 +48,9 @@ De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsipp
 8. Bestå automatiserte tester, inkl. regresjon for feilene fra prototype v0.8–v0.11.
 
 ## 2. Character
-- Tre hovedfaner **Character**, **Combat** og **Utstyr** med separat bevart scrollposisjon.
+- Fire hovedfaner **Character**, **Combat**, **Magi** og **Utstyr**, samt Meny, med separat bevart scrollposisjon (nyeste avklaring i §13).
 - Kompakt identitet med valgfritt portrett; klassenivå, species/race, subclass, background som notat etter ønske.
-- Øverst: fem like store statuspiller på én rad: HP, AC, Initiative, GP og Speed. GP vises med to desimaler; lagres som heltall copper pieces. HP er lesbar status på Character. Skade, healing og Temporary HP håndteres i Combat med sentrert endringsslider, ±1, forhåndsvisning og bekreftelse. Healing påvirker ikke temporary HP; temp HP absorberer skade først.
+- Øverst: fem like store statuspiller på én rad: HP, AC, Initiative, GP og Speed. GP vises med to desimaler; lagres som heltall copper pieces. HP er lesbar status på Character. Skade, healing og Temporary HP håndteres i Combat med vertikalt tallhjul for signert endring, ±1, forhåndsvisning og bekreftelse (§13–14). Healing påvirker ikke temporary HP; temp HP absorberer skade først.
 - Fire konfigurerbare modifier-kort med **fullstendige navn** (f.eks. Perception). Trykk viser alfabetisk, kort oversikt over skills, saving throws, abilities, passive perception og initiative som kan velges til kortet. Ikke ekstra fast søkefelt eller dupliserte Skills/Saves-knapper i denne seksjonen.
 - Class Features & Feats ligger på Character. Weapons/Armor/Equipment ligger i egen Utstyr-fane; i bruk først. Skill eid fra equipped. Ved trykk på en konkret utstyrspost skal relevante verdier for karakteren og et forståelig beregningsgrunnlag være tilgjengelige: blant annet angrepskast/skade for våpen og AC-regler for rustning. Egne navn, varianter og manuelle korrigeringer skal bevares.
 - **Utstyrsoppsettet er et sentralt krav:** Konkrete gjenstander skal kunne kombineres som de faktisk bæres og brukes. Skill type, relevant plassering/håndbruk, eid/utstyrt-status og eventuell attunement. Vis samlet virkning og bidraget fra hver kilde, med forståelige advarsler ved regelkonflikter og rom for DM-overstyring. Vanlige plagg kan bæres sammen med rustning uten å gi en automatisk bonus; særvirkninger følger den konkrete gjenstanden og dens vilkår. Føringen skal være enkel selv om grunnlaget omfatter flere kombinasjoner.
@@ -59,7 +59,7 @@ De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsipp
 - Egenskaps-/featvelgerens standardliste skal bruke karakterens relevante kontekst. Klasseegenskaper vurderes etter klasse, subclass og nivå i den aktuelle klassen; art tas med der den har betydning. Feats vurderes etter sine faktiske forutsetninger. Manuelle valg og DM-unntak beholdes.
 - Generelle feats uten klassekrav skal beholdes ved klassefiltrering. Begrensninger må bygge på faktiske forutsetninger; eventuelle andre krav vurderes fortsatt. Uavklarte forutsetninger merkes og valget beholdes tilgjengelig.
 - Spells, cantrips og spell slots tilgjengelige også utenfor Combat. Slot-pille åpner **kun sitt nivå** og enkel ±1-redigering; skille known, spellbook, prepared og klassespesifikt Pact Magic.
-- Hit Dice brukt én om gangen ved Short Rest med spillerens fysisk kastede healingresultat; tillat manuell korrigering. Rests endrer bare relevante ressurser, med korrekt håndtering av særregler og DM-baserte unntak.
+- Hit Dice føres som tilgjengelig/maks per klasse/terningtype. Fysiske kast regnes ved bordet; ingen obligatorisk råkast-/CON-føring. HP føres manuelt, eventuelt som ett samlet delta. Rests endrer bare relevante ressurser; samlet ny kort-hvileflyt er fortsatt uavklart (§13).
 - Death Saves (3 suksesser/3 feilslag), Inspiration, Conditions, Exhaustion og tilpassbare ressurser skal være redigerbare.
 - Vilkårlig mange navngitte notater med fritekst. Bakgrunn er **ikke** en separat duplisert datadel. Ingen «Rediger øvrige felt»-popup med redundante felt.
 - **Separate strukturerte felt:** languages, armor/weapon/tool proficiencies, skill/save proficiencies/expertise, damage resistance/vulnerability/immunity per damage type, og condition immunity per condition. Strukturerte data må ha fungerende create/edit/delete-UI og persistering.
@@ -78,7 +78,7 @@ De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsipp
 ## 4. «Ta skade» – høyprioritert akseptansetest
 **Ikke treff-/AC-kalkulator.** DM avgjør treff og saving throws og kan allerede ha justert skade for aktive reaksjoner (som Uncanny Dodge). Den samme reaksjonen skal fortsatt kunne slås opp under Reaction.
 
-1. Én skadepost som standard: mengde med slider og ±1, damage type. Inline +-pille legger til flere skadeposter med uavhengige damage types.
+1. Én skadepost som standard: mengde med gjeldende tallhjul/direkte innskriving og ±1, damage type. Inline +-pille legger til flere skadeposter med uavhengige damage types.
 2. For hver post, hent matchende passive modifikatorer fra **lagret, strukturert karakterdata** og relevante feats/effects. Reberegn umiddelbart når damage type endres.
 3. Vis **hver enkelt modifikator eksplisitt**: navn, effekt, eventuell betingelse og egen avkryssing. Ikke skjul alt bak «Etter modifikatorer». Vis både resistance og vulnerability samtidig når begge gjelder. Immunity nuller den relevante skaden.
 4. Kjente gyldige modifikatorer er valgt som standard. Når vilkår (f.eks. om angrepet er magisk) ikke er kjent, vis vilkåret og krev **brukerbekreftelse før medregning**. Spiller kan deaktivere enkeltekter som DM allerede har regnet inn, uten å endre karakterens permanente egenskaper.
@@ -316,4 +316,15 @@ Backlog items er vanlige tekstlige beskrivelser av ønsket funksjonalitet, ikke 
 
 **Arbeidsgrense:** Brukeren har presisert at korte bekreftelser som «ja», «ok» og «japp» betyr enighet i diskusjonen, ikke tillatelse til å kode. Appimplementasjon krever en uttrykkelig bestilling. Bestillingen av denne gjennomgangen gjelder dokumentasjon, ikke noen av de identifiserte appendringene.
 
-**GitHub-registrering:** Brukeren har deretter bestilt opprettelse av de27 oppgavene i foreslått rekkefølge og fullføring av PR #24. [GitHub-backloggen](BACKLOG.md#github-backlog) lenker Issues og beskriver tilgangen: Project-opprettelse ble avvist av integrasjonen, så tabell/dra-og-slipp er ennå ikke levert. Prioritet/type føres foreløpig som merker. Dette bestiller organisering og dokumentasjon, ikke implementasjon av appoppgavene.
+**GitHub-registrering:** Brukeren har deretter bestilt opprettelse av de27 oppgavene i foreslått rekkefølge og fullføring av PR #24. [GitHub-backloggen](BACKLOG.md#github-backlog) lenker Issues og beskriver tilgangen: Brukeren har opprettet Project1, men integrasjonen avviser både opprettelse og lesing; innholdet kan ikke verifiseres eller ordnes her. Prioritet/type føres foreløpig som merker. Dette bestiller organisering og dokumentasjon, ikke implementasjon av appoppgavene.
+
+## 20. Klargjøring før implementasjon i separate tråder
+
+Brukeren bestilte klargjøring av backloggen etter avklaring om at separate tråder ikke automatisk deler hele samtalen. [BACKLOG_READY.md](BACKLOG_READY.md) og hver av de27 eksisterende Issues beskriver ønsket flyt, konkrete testforventninger, avhengigheter, bevaringskrav og åpne produktvalg. Dette autoriserer ikke appkode.
+
+- **Klar for implementasjon** betyr at produktforutsetningene innen oppgavens omfang er klare, ikke at funksjonen er levert, testet eller bestilt kodet. Kontroller mot gjeldende master før oppstart.
+- **Trenger produktavklaring** betyr at tekstlig flyt og scenarioer er forslag. Spør bare om de reelle åpne valgene og ta én brukerflyt om gangen. Tekniske valg og kjente følger av vedtatte krav eies av implementatøren.
+- **Avventer avhengighet** beholder forventningene, men krever at navngitte leveranser eller testtilgang faktisk foreligger. Ikke sett Klar automatisk bare fordi en annen Issue er lukket.
+- Hver implementasjon skal bevare angitt eksisterende funksjon/data og dokumentere faktisk test-/produktkontroll etter gjeldende leveringskrav. Fysisk iOS-port er et eget kontrollkrav, ikke noe en Chromium-test kan kvittere ut.
+
+Første klargjøring gir9 klare,16 med produktspørsmål og2 som avventer. Detaljerte forslag i denne gjennomgangen er ikke nye produktbeslutninger. Oppgaveprioritet og BL-ID-er beholdes; implementasjon starter ved egen uttrykkelig bestilling.

@@ -1,10 +1,12 @@
 # Overlevering til Codex
 
-## Nyeste bestilling: fullfør dokumentasjons-PR og opprett GitHub-backlog
+## Nyeste bestilling: klargjør backlog for egne implementasjonstråder
 
-Brukeren har bestilt gjennomgang av hele loggen, opprinnelig v0.11/overlevering og dagens app, også det som kan kvitteres ut. [BACKLOG.md](BACKLOG.md) er samlet status og foreslått arbeidsrekkefølge. Den erstatter ikke krav/beslutninger og skjuler ikke utsatte opprinnelige krav. Eldre statuser i denne filen og leveransematrisene er historikk; bruk kildebelagt ny status før arbeid planlegges.
+Brukeren har nå bestilt klargjøring av alle27 oppgaver med konkret flyt, akseptansescenarioer, avhengigheter og bevaringskrav. [BACKLOG_READY.md](BACKLOG_READY.md) og hver Issue har status:9 Klar,16 Trenger produktavklaring og2 Avventer. Dette er dokumentasjon/oppgavemerking; ingen appimplementasjon er bestilt. Åpne spørsmål tas én flyt om gangen; brukeren skal ikke spesifisere vedtatte prinsipper på nytt.
 
-Brukeren har nå bestilt fullføring av PR #24 og opprettelse av de27 oppgavene i foreslått rekkefølge. Issues #25–51 er opprettet med prioritet/type og lenket fra BACKLOG. GitHub-integrasjonen avviste Project-opprettelse (`createProjectV2`: Resource not accessible by integration); Project/tabell/dra-og-slipp er derfor ikke levert. Se [GitHub-status og lenker](BACKLOG.md#github-backlog).
+Brukeren har tidligere bestilt gjennomgang av hele loggen, opprinnelig v0.11/overlevering og dagens app, også det som kan kvitteres ut. [BACKLOG.md](BACKLOG.md) er samlet status og foreslått arbeidsrekkefølge. Den erstatter ikke krav/beslutninger og skjuler ikke utsatte opprinnelige krav. Eldre statuser i denne filen og leveransematrisene er historikk; bruk kildebelagt ny status før arbeid planlegges.
+
+Brukeren bestilte tidligere fullføring av PR #24 og opprettelse av de27 oppgavene i foreslått rekkefølge. Issues #25–51 er opprettet med prioritet/type og lenket fra BACKLOG. GitHub-integrasjonen avviste Project-opprettelse (`createProjectV2`: Resource not accessible by integration). Brukeren har senere opprettet Project1, men integrasjonen avviser også lesing av det. Innhold/rekkefølge kan ikke verifiseres; ikke foreslå en Projects-rettighetsbryter som appen ikke tilbyr. Se [GitHub-status og lenker](BACKLOG.md#github-backlog).
 
 **Ingen appimplementasjon er bestilt i denne runden.** Korte bekreftelser er diskusjonsenighet, ikke kodeordre. Nye innspill etter PR #23 er bevart i krav §18: individuelt vanlig utstyr, Forbruk under Utstyr, avgrenset standardutvalg/enkel telling og midtbåndslukking/rapportert iOS-dobbelttrykk. Navn My D&D, endelig ikon og lavere bunnmeny er også fortsatt åpne. Ikke fortsett en gammel kodebestilling fordi den står nedenfor.
 
