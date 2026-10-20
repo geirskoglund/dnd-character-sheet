@@ -1,5 +1,9 @@
 # Overlevering til Codex
 
+## Nyeste bestilling: isolert utstyrsprototype
+
+Etter review av utstyr ønsket brukeren å prøve en ny arbeidsflyt isolert før appendring. Bestillingen er én lokal HTML-fil for Mac, ikke en produksjonsombygging eller Pages-publisering. [Krav §15](REQUIREMENTS.md#15-ny-utstyrsregistrering-isolert-prøve-før-appendring-2026-10-20), siste DECISIONS og [nyeste matrise](CHARACTER_WORKSPACE.md#isolert-utstyrsprototype-2026-10-20) bevarer avklaringene. [Prototypen](../prototypes/equipment-study/README.md) prøver en samlet gjenstand med flere virkninger, arvet våpenprofil/ikon, statbidrag/sett-til, beskyttelser og fritekstevner med valgfri bruksteller. Ingen spellkobling kreves; tilgjengelig starter på maks. Statbasert utstyrsopprettelse ble diskutert og trukket tilbake. Detaljflyten er til UX-vurdering; ikke kopier den inn i appen uten ny bestilling. Rapporterte feil i hovedappens utstyrsflate er fortsatt åpne.
+
 ## Varig prosjektminne og aktuell status
 
 Les også [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md) før videre funksjonsarbeid. Brukeren har uttrykkelig bedt om at REQUIREMENTS og DECISIONS holdes oppdatert, slik at avklaringer ikke forsvinner når samtalen komprimeres. Før nye vedtatte avklaringer i begge dokumenter og faktisk leveransestatus i matrisen. Ikke gjeninnfør forkastede mønstre eller anta at hele SRD/Combat er ferdig bare fordi Character-flytene er utvidet. Brukeren må få fullføre løpende tilbakemeldinger før ny koding bestilles.
