@@ -22,6 +22,7 @@ Feats og samlingen med lange navn er tydelig merket **alternative katalogeksempl
 - [05 · Alle elementfamilier](../5-elementfamilier.png)
 - [06 · Modifier- og ikonalternativer](../6-alternativer.png)
 - [07 · Samhandling og tilstander](../7-tilstander.png)
+- [08 · Felles hjørnemarkør for klikkbarhet](../8-hjornemarkor.png) – senere bestilt prøve, se under
 
 Den lyse flaten/fine kanten markerer generelle oppslagspiller. GP åpner pengeføring, mens HP og de øvrige statusverdiene vises som informasjon. En liten pil brukes på GP-handlingen; den er ikke gjentatt på hver pille. Åpne modifiers har en diskret bunnlinje som alternativ, ikke ferdig vedtatt løsning. Egne egenskapsikoner er en liten, egen SVG-prøvesamling for **bare de viste eksemplene**, ikke et ferdig eller komplett ikonbibliotek. Det er ikke generert et stort sett.
 
@@ -47,3 +48,11 @@ Alle tre endelige plansjer er rendret med lokale fonter og gjennomgått visuelt.
 Rendererens kontroller passerer: fem statusfelt, fire modifiers, seks mynter; identisk bue/tekstlengde/sentrering; lik pille-/plussgeometri per samling; ingen klippet korttekst. **32 isolerte mobilvisninger** (15 familier + hele ikonvarianten, hver ved 320 og 390 px) er prøvd uten horisontal overflyt eller klippet pille-/modifier-/statustekst. Nettleseren rapporterte ingen JavaScript- eller ressursfeil. JS-syntaks og dokumentlenker er kontrollert.
 
 Primærtekst, sekundærtekst, vinrød aksent og grønne tekstmarkeringer er kontrollert mot papir, panel og valgt flate (minst 4,5:1); kontrollkanter minst 3:1 mot disse flatene. Grønnfargen ble mørknet litt fordi liten «I bruk»-tekst ellers hadde for svak kontrast på valgt flate. Dette er en begrenset farge-/geometrikontroll, **ingen full tilgjengelighetsrevisjon**. 200 % tekst, full tastatur-/skjermleserflyt, faktiske dialoginteraksjoner og reelle spillføringer er ikke verifisert av de statiske plansjene. Ingen nye app-, lagrings- eller spilltester er lagt til eller påstått kjørt lokalt.
+
+## Senere prøve: ett hjørne, samme betydning
+
+Brukeren bestilte deretter en liten fylt trekant nederst til høyre, avgrenset av kant og 45° strek, som felles klikkbarhetsmarkør uten å endre rammene. `?board=corners` viser prøveplansjen, med markøren i **10 × 10 CSS px** og et separat, tydelig merket forstørret utsnitt. Den bruker samme form/fyll på alle viste trykkflater: GP, luftige modifierfelt, piller, inline +, spell-/ressursoppslag, bunnfaner/Meny og vanlige handlingsknapper. Modifiers åpner valglisten for hva favoritten skal vise. HP/AC/Initiative/Speed og ability-mynter er status uten markør.
+
+GP har samme overflate og rammefarge/-tykkelse som andre statuser. Ingen ekstra pil eller lysere handlingsflate brukes. Opprinnelig komponentgeometri beholdes, med litt innvendig plass til hjørnet ved pille-/modifiertekst. «I bruk»/«Forberedt» vises med hake og tekst uten egen fyllfarge i denne prøven; dette er et forslag, ikke et vedtatt statusdesign. Navigasjon og handlingsknapper er tatt med for å vurdere om fellesmarkøren blir overflødig der. Tekniske semantikker, tilstrekkelige trykkflater og fokus kan ikke erstattes av dekorasjonen ved senere implementasjon.
+
+Rendre bare denne plansjen med `node docs/design/2026-10/components/render-corners.mjs`, med samme server/`STUDY_URL`/`CHROMIUM_PATH` som over. Originale plansjer overskrives ikke. Egen visuell gjennomgang og rendererens kontroller passerer: identisk 10 px-markør på alle viste knapper; ingen på statusmynter; bare GP markert blant de fem statusverdiene; samme bakgrunn/ramme for alle fem; uniforme piller/+ og **20 isolerte mobilutsnitt** ved 320/390 px uten horisontal overflyt eller klippet korttekst; ingen JS-/ressursfeil. En CSS-arv som strakk markøren i modifierfeltene ble rettet før endelig render. Dette er fortsatt en isolert designprøve, ikke produksjonsimplementasjon eller full tilgjengelighets-/spilltest.
