@@ -1,6 +1,13 @@
+import {z} from 'zod';
+import {WizardDraftRepository} from './storage/wizard-drafts';
+import {newWizardDraft,type WizardDraft,type DraftToken} from './domain/wizard-draft';
+import type {EditorContext} from './ui/record-editors';
+import {moneyControl,bindMoneyControl} from './ui/money-control';
+import {moneyFromText} from './domain/money';
+import {flushWizard} from './ui/wizard';
 import {inspectRecord} from './ui/record-dialogs';
 import {withStandardResources} from './domain/resource-setup';
-import {equipmentWizard} from './ui/equipment-wizard';
+import {equipmentWizard,equipmentDraftPayload} from './ui/equipment-wizard';
 import {guidedRecord} from './ui/guided-records';
 import {resourceDialog,resourceWizard,restDialog} from './ui/resource-dialogs';
 import {preparationDialog} from './ui/preparation';
@@ -31,6 +38,8 @@ import './style.css';
 const root = document.querySelector<HTMLDivElement>('#app')!;
 const updates = installUpdates();
 let repo: CharacterRepository;
+let draftRepo:WizardDraftRepository;
+let drafts:WizardDraft[]=[];
 let characters: Character[] = [];
 let selected: string | undefined;
 let portrait: PortraitAsset | undefined;
@@ -40,26 +49,26 @@ const scroll = { character: 0, combat: 0, magic:0, equipment: 0 };
 let busy = false;
 let message = '';
 const current = () => characters.find(c => c.id === selected);
-const editorContext = {current: () => current()!, save: async (draft: Character,type: string,description: string) => {
-  await saveCharacter(draft,type,description); message = ''; await refresh();
+const editorContext:EditorContext = {get drafts(){return draftRepo;},draftChanged:refresh,current: () => current()!, save: async (draft: Character,type: string,description: string,completion?:DraftToken) => {
+  await saveCharacter(draft,type,description,undefined,completion); message = ''; await refresh();
 }};
 const editors = createRecordEditors(editorContext);
-async function saveCharacter(input:Character,type='edit',description='Karakter redigert',asset?:PortraitAsset){
+async function saveCharacter(input:Character,type='edit',description='Karakter redigert',asset?:PortraitAsset,completion?:DraftToken){
   const draft=withStandardResources(input),existing=current();
-  if(!asset&&existing?.id===draft.id&&JSON.stringify(existing)===JSON.stringify(draft))return existing;
-  return repo.save(draft,type,description,asset);
+  if(!asset&&!completion&&existing?.id===draft.id&&JSON.stringify(existing)===JSON.stringify(draft))return existing;
+  return repo.save(draft,type,description,asset,completion);
 }
 function openRecord(kind: string, id?: string) {
   switch (kind) {
     case 'action': editors.action(id); break;
-    case 'feature': if(id)inspectRecord(editorContext,'feature',id,draft=>editors.feature(id,undefined,draft as Character['features'][number]));else guidedRecord(editorContext,'feature',undefined,'feat',false,draft=>editors.feature(undefined,undefined,draft as Character['features'][number])); break;
+    case 'feature': if(id)inspectRecord(editorContext,'feature',id,(draft,completion)=>editors.feature(id,undefined,draft as Character['features'][number],completion));else guidedRecord(editorContext,'feature',undefined,'feat',false,(draft,completion)=>editors.feature(undefined,undefined,draft as Character['features'][number],completion)); break;
     case 'species': editors.feature(id,'species'); break;
     case 'language': editors.language(id); break;
     case 'proficiency': editors.proficiency(id); break;
     case 'defense': editors.defense(id); break;
     case 'immunity': editors.immunity(id); break;
-    case 'spell': if(id)inspectRecord(editorContext,'spell',id,draft=>editors.spell(id,false,draft as Character['spells'][number]));else guidedRecord(editorContext,'spell',undefined,'feat',false,draft=>editors.spell(undefined,false,draft as Character['spells'][number])); break;
-    case 'cantrip': if(id)inspectRecord(editorContext,'spell',id,draft=>editors.spell(id,true,draft as Character['spells'][number]));else guidedRecord(editorContext,'cantrip',undefined,'feat',false,draft=>editors.spell(undefined,true,draft as Character['spells'][number])); break;
+    case 'spell': if(id)inspectRecord(editorContext,'spell',id,(draft,completion)=>editors.spell(id,false,draft as Character['spells'][number],completion));else guidedRecord(editorContext,'spell',undefined,'feat',false,(draft,completion)=>editors.spell(undefined,false,draft as Character['spells'][number],completion)); break;
+    case 'cantrip': if(id)inspectRecord(editorContext,'spell',id,(draft,completion)=>editors.spell(id,true,draft as Character['spells'][number],completion));else guidedRecord(editorContext,'cantrip',undefined,'feat',false,(draft,completion)=>editors.spell(undefined,true,draft as Character['spells'][number],completion)); break;
     case 'resource': if(id)resourceDialog(editorContext,id,()=>editHitPoints(current()!));else resourceWizard(editorContext); break;
     case 'resource-custom': resourceWizard(editorContext); break;
     case 'resource-spellSlot': resourceWizard(editorContext,undefined,'spellSlot'); break;
@@ -78,11 +87,27 @@ function tell(text: string, error=false) {
   const status = document.querySelector<HTMLElement>('#status');
   if(status){status.textContent=text;status.setAttribute('role',error?'alert':'status');if(error){status.tabIndex=-1;status.focus();status.scrollIntoView({block:'center'});}}
 }
+function draftButtons(rows:WizardDraft[]){return rows.map(d=>`<button type="button" data-draft="${d.id}"><span>${esc(d.label)}</span><small>Utkast · Fortsett</small></button>`).join('');}
+async function resumeWizard(id:string){
+ const entry=(await draftRepo.list()).find(d=>d.id===id);if(!entry)throw new Error('Utkastet finnes ikke lenger.');
+ if(entry.characterId){if(!characters.some(c=>c.id===entry.characterId))throw new Error('Karakteren til dette utkastet finnes ikke.');selected=entry.characterId;await refresh();}
+ root.querySelector('details.app-menu')?.removeAttribute('open');
+ const context={...editorContext,resumedDraft:entry};
+ if(entry.kind==='equipment'){const payload=equipmentDraftPayload.parse(entry.payload);page='equipment';render();equipmentWizard(context,payload.source,payload.existing);}
+ else if(entry.kind==='character'){
+  const payload=z.object({source:characterSchema.safeExtend({name:z.string().max(100)}),creating:z.boolean(),classes:characterSchema.shape.classes}).parse(entry.payload);editCharacter(payload.creating?undefined:payload.source,{...entry,payload});
+ }else if(entry.kind==='resource'){const payload=z.object({pool:characterSchema.shape.resources.element,existing:z.boolean(),kind:z.enum(['custom','spellSlot','hitDie'])}).parse(entry.payload);resourceWizard(context,payload.existing?payload.pool.id:undefined,payload.kind);}
+ else{
+  const payload=z.object({base:(entry.kind==='spell'||entry.kind==='cantrip'?characterSchema.shape.spells.element:characterSchema.shape.features.element).optional(),category:z.enum(['class','feat']).optional(),existing:z.boolean(),expected:(entry.kind==='spell'||entry.kind==='cantrip'?characterSchema.shape.spells.element:characterSchema.shape.features.element).optional()}).parse(entry.payload);
+  if(entry.kind==='spell'||entry.kind==='cantrip'){page='magic';render();}
+  guidedRecord(context,entry.kind,payload.base,payload.category,payload.existing,(draft,completion)=>entry.kind==='spell'||entry.kind==='cantrip'?editors.spell(payload.existing?payload.base?.id:undefined,entry.kind==='cantrip',draft as Character['spells'][number],completion):editors.feature(payload.existing?payload.base?.id:undefined,entry.kind==='species'?'species':payload.category,draft as Character['features'][number],completion));
+ }
+}
 function menuMarkup(c:Character|undefined){
   const button=(action:string,label:string,glyph:Parameters<typeof icon>[0])=>`<button data-action="${action}">${icon(glyph)}<span>${label}</span></button>`;
   return `<details class="app-menu"><summary aria-label="Meny">${icon('menu')}<span class="sr-only">Meny</span></summary><div class="menu-panel" aria-label="Karaktermeny">
     ${c?`<h2>Denne karakteren</h2><div class="menu-actions">${button('edit','Rediger karakter','note')}${button('portrait','Portrett','species')}${button('level-up','Level Up','magic')}${button('overrides','Beregninger og overstyringer','tools')}${button('history','Endringslogg','history')}${button('undo','Angre siste endring','history')}</div>`:''}
-    <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch=>`<option value="${ch.id}" ${selected===ch.id?'selected':''}>${esc(ch.name)}</option>`).join('')}</select></label>
+    ${drafts.length?`<h2>Utkast</h2><div class="draft-list">${draftButtons(drafts)}</div>`:''}<h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch=>`<option value="${ch.id}" ${selected===ch.id?'selected':''}>${esc(ch.name)}</option>`).join('')}</select></label>
     <div class="menu-actions">${button('create','Ny karakter','plus')}${c?button('copy','Kopier karakter','feature')+button('delete','Slett karakter','close'):''}<button data-action="export" ${characters.length?'':'disabled'}>${icon('equipment')}<span>Eksporter backup</span></button>${button('import','Importer backup','equipment')}</div>
     <p class="muted">Lokalt lagret på denne enheten. Ta JSON-backup før du rydder nettleserdata.</p>
     <div class="menu-actions">${button('about','Om appen','feature')}${button('check-update','Se etter oppdatering','history')}</div>
@@ -101,10 +126,11 @@ function render() {
   };
   root.innerHTML = `<a href="#content" class="skip-link">Til innhold</a><div class="shell">
     <header class="character-header">${c?`<button class="portrait" data-action="portrait" aria-label="${portrait?'Vis portrett':'Velg portrett'}">${portrait?`<img src="${portrait.dataUrl}" alt="Portrett av ${esc(c.name)}">`:portraitPlaceholder()}</button>`:''}<div class="identity"><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c?`<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl=>`${esc(cl.name)} ${cl.level}${cl.subclass?' · '+esc(cl.subclass):''}`).join(' / ')}</p>`:''}</div></header>
-    <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : page === 'equipment' ? equipmentView(c) : page === 'magic' ? magicView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
+    <main id="content" tabindex="-1">${c&&page==='equipment'&&drafts.some(d=>d.kind==='equipment'&&d.characterId===c.id)?`<section aria-label="Utstyrsutkast"><h2>Utkast</h2><div class="draft-list">${draftButtons(drafts.filter(d=>d.kind==='equipment'&&d.characterId===c.id))}</div></section>`:''}${c ? page === 'character' ? characterView(c) : page === 'equipment' ? equipmentView(c) : page === 'magic' ? magicView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
     <p id="status" role="status" aria-live="polite">${esc(message)}</p></div>
     <nav class="main-nav" aria-label="Hovednavigasjon"><div class="nav-inner">${(['character','combat','magic','equipment'] as const).map(tab=>`<button data-page="${tab}" ${page===tab?'aria-current="page"':''}>${icon(tab==='character'?'feature':tab==='combat'?'crossedSwords':tab==='magic'?'wand':'backpack')}<span class="sr-only">${tab==='character'?'Character':tab==='combat'?'Combat':tab==='magic'?'Magi':'Utstyr'}</span></button>`).join('')}${menuMarkup(c)}</div></nav>
     `;
+  root.querySelectorAll<HTMLButtonElement>('[data-draft]').forEach(b=>b.onclick=()=>void run(()=>resumeWizard(b.dataset.draft!)));
   root.querySelectorAll<HTMLButtonElement>('[data-page]').forEach(button => button.onclick = () => {
     scroll[page] = window.scrollY;
     page = button.dataset.page as typeof page;
@@ -164,8 +190,8 @@ function render() {
   });
   root.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(button => button.onclick = () => {
     const kind=button.dataset.add!;
-    if (kind==='feature' || kind==='spell' || kind==='cantrip') libraryPicker(editorContext,kind,(base,category)=>guidedRecord(editorContext,kind,base,category,false,draft=>kind==='feature'?editors.feature(undefined,category,draft as Character['features'][number]):editors.spell(undefined,kind==='cantrip',draft as Character['spells'][number])));
-    else if(kind==='species')guidedRecord(editorContext,'species',undefined,'feat',false,draft=>editors.feature(undefined,'species',draft as Character['features'][number]));else openRecord(kind);
+    if (kind==='feature' || kind==='spell' || kind==='cantrip') libraryPicker(editorContext,kind,(base,category)=>guidedRecord(editorContext,kind,base,category,false,(draft,completion)=>kind==='feature'?editors.feature(undefined,category,draft as Character['features'][number],completion):editors.spell(undefined,kind==='cantrip',draft as Character['spells'][number],completion)));
+    else if(kind==='species')guidedRecord(editorContext,'species',undefined,'feat',false,(draft,completion)=>editors.feature(undefined,'species',draft as Character['features'][number],completion));else openRecord(kind);
   });
   root.querySelectorAll<HTMLButtonElement>('[data-record]').forEach(button => button.onclick = () => {
     const key = button.dataset.record!, separator = key.indexOf(':');
@@ -176,6 +202,7 @@ function render() {
 }
 async function refresh() {
   characters = (await repo.list()).map(withStandardResources);
+  drafts=await draftRepo.list();
   if (!current()) selected = characters[0]?.id;
   await repo.setSetting('selectedCharacter', selected);
   portrait = current()?.portraitAssetId ? await repo.portrait(current()!.portraitAssetId!) : undefined;
@@ -187,10 +214,12 @@ async function run(fn: () => Promise<void>) {
   try { await fn(); } catch (error) { tell(error instanceof Error ? error.message : 'Operasjonen mislyktes. Prøv igjen og ta backup.',true); }
   finally { busy = false;root.setAttribute('aria-busy','false'); }
 }
-function editCharacter(source?: Character) {
-  const draft = source ? structuredClone(source) : { ...createCharacter(), name: '' };
+function editCharacter(source?: Character,resume?:WizardDraft) {
+  const recovered=resume?.payload as {source:Character;creating:boolean;classes:Character['classes']}|undefined;
+  if(recovered&&!recovered.creating)source=recovered.source;
+  const draft = recovered?.source??(source ? structuredClone(source) : { ...createCharacter(), name: '' });
   const creating = !source;
-  const d = dialog(source ? 'Rediger karakter' : 'Ny karakter', characterForm(draft, creating), async form => {
+  const d = dialog(source ? 'Rediger karakter' : 'Ny karakter', characterForm({...draft,classes:recovered?.classes??draft.classes}, creating), async form => {
     const updated = withStandardResources(readCharacterForm(form, draft, creating));
     if (!updated.species.name || updated.species.walkingSpeed === null) throw new Error('Velg art eller angi navn og grunnfart for egen art.');
     if (!updated.classes.length || updated.classes.some(cl => !cl.name)) throw new Error('Velg minst én klasse.');
@@ -198,13 +227,13 @@ function editCharacter(source?: Character) {
     if (updated.hp.max < 1) throw new Error('Registrer maksimal HP fra karakterarket.');
     const valid = characterSchema.safeParse(updated);
     if (!valid.success) throw new Error('Kontroller navn, klassenivå (totalt 1–20), ability scores og maks HP.');
-    const saved = await saveCharacter(valid.data, source ? 'edit' : 'create', source ? 'Karaktergrunnlag redigert' : 'Karakter opprettet');
+    const saved = await saveCharacter(valid.data, source ? 'edit' : 'create', source ? 'Karaktergrunnlag redigert' : 'Karakter opprettet',undefined,await flushWizard(d));
     selected = saved.id;
     message = '';
     await refresh();
   });
   bindCharacterForm(d.querySelector('form')!, draft, creating);
-  bindWizard(d,[...d.querySelectorAll<HTMLElement>('#dialog-body > fieldset')].map(element=>({element})));
+  bindWizard(d,[...d.querySelectorAll<HTMLElement>('#dialog-body > fieldset')].map(element=>({element})),'Lagre',{store:draftRepo,entry:resume??newWizardDraft({kind:'character',label:draft.name||'Ny karakter',characterId:creating?undefined:draft.id,editingId:creating?undefined:draft.id,payload:{source:draft,creating,classes:draft.classes}}),changed:refresh,payload:form=>({source:draft,creating,classes:readCharacterForm(form,draft,creating).classes.map(cl=>({...cl,level:Number.isFinite(cl.level)&&cl.level>=1&&cl.level<=20?cl.level:1}))})});
 }
 function inspectEquipment(id: string) { editEquipment(current()!, id); }
 function addEquipment(c: Character, group = '') {
@@ -226,7 +255,7 @@ function editEquipment(c: Character, id?: string, group = '') {
     message = ''; await refresh();
   });
   bindEquipment(d.querySelector('form')!, source, c);
-  const guided=d.querySelector<HTMLButtonElement>('#guided-damage');if(guided){guided.hidden=source.category!=='weapon';guided.onclick=()=>equipmentWizard(editorContext,readEquipment(d.querySelector('form')!,source),true);}
+  const guided=d.querySelector<HTMLButtonElement>('#guided-damage');if(guided){guided.hidden=source.category!=='weapon';guided.textContent='Rediger med veiviser';guided.onclick=()=>equipmentWizard(editorContext,readEquipment(d.querySelector('form')!,source),true);}
   const remove = d.querySelector<HTMLButtonElement>('#delete-item');
   if (remove) remove.onclick = () => confirmDialog('Fjern utstyr?', `<p>Vil du fjerne «${esc(source.name)}» fra karakteren?</p>`, async () => {
     await saveCharacter({...c, items:c.items.filter(i => i.id !== id)}, 'equipment', `${source.name} fjernet`);
@@ -337,10 +366,10 @@ async function action(name: string) {
       const draft = characterSchema.parse({ ...c!, hp: { ...c!.hp, temp: Number(new FormData(form).get('temp')) } });
       await saveCharacter(draft, 'temp-hp', 'Temporary HP endret'); message = ''; await refresh();
     }); break;
-    case 'money': dialog('Penger', field('GP', 'gold', (c!.goldCp / 100).toFixed(2), 'type="number" min="0" step="0.01" required'), async form => {
-      const draft = characterSchema.parse({ ...c!, goldCp: Math.round(Number(new FormData(form).get('gold')) * 100) });
+    case 'money': {const d=dialog('Penger',moneyControl(c!.goldCp), async form => {
+      const draft = characterSchema.parse({ ...c!, goldCp: moneyFromText(String(new FormData(form).get('gold'))) });
       await saveCharacter(draft, 'money', 'Penger endret'); message = ''; await refresh();
-    }); break;
+    });bindMoneyControl(d);break;}
     case 'note': editNote(); break;
     case 'copy': {
       const copy = copyCharacter(c!);
@@ -374,6 +403,7 @@ async function start() {
   root.innerHTML = '<p role="status">Åpner lokalt karakterark …</p>';
   try {
     repo = new CharacterRepository(await openDatabase());
+    draftRepo=new WizardDraftRepository(repo.db);
     selected = await repo.setting<string>('selectedCharacter');
     await refresh();
     const last = await repo.setting<number>('lastExport');

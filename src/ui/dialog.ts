@@ -51,6 +51,7 @@ host.addEventListener('keydown',event=>{
 },true);
 function open(title: string, html: string, footer: string, onCancel?: CancelHandler, initialFocus?: string, kind: 'view'|'edit'|'confirm'='edit', size: 'compact'|'large'='large') {
   if (!host.open) captureOpener();
+  delete host.dataset.wizard;
   cancelHandler = onCancel;
   pending = false;
   host.dataset.kind=kind;host.dataset.size=size;
@@ -110,13 +111,15 @@ export function confirmDialog(title: string, html: string, onConfirm: () => Prom
   const previousCancel = cancelHandler;
   const previousFocus = document.activeElement as HTMLElement | null;
   const previousScroll = host.querySelector('#dialog-body')?.scrollTop ?? 0;
-  const kind=host.dataset.kind,size=host.dataset.size;
+  const kind=host.dataset.kind,size=host.dataset.size,wizard=host.dataset.wizard;
   const restore = previous ? () => {
     host.replaceChildren(...previous);
     cancelHandler = previousCancel;
-    host.dataset.kind=kind;host.dataset.size=size;
+    host.dataset.kind=kind;host.dataset.size=size;if(wizard)host.dataset.wizard=wizard;else delete host.dataset.wizard;
     host.querySelector('#dialog-body')!.scrollTop=previousScroll;
     if (visible(previousFocus)) previousFocus.focus({preventScroll:true});
   } : undefined;
   return editDialog(title, html, onConfirm, submit, restore, true);
 }
+
+export function setDialogDismiss(d:HTMLDialogElement,handler:()=>void){if(d===host)cancelHandler=()=>{handler();};}

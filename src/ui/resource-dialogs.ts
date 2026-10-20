@@ -2,28 +2,36 @@ import type {Character} from '../domain/model';
 import {characterSchema} from '../domain/model';
 import {adjustPool,defaultHitRecovery,restResult,hitRecoveryBudget} from '../domain/resource-setup';
 import {viewDialog,editDialog,commitDialog,confirmDialog} from './dialog';
-import {wizardDialog} from './wizard';
+import {wizardDialog,draftOptions} from './wizard';
 import {field,select,escapeHtml as esc} from './html';
 import type {EditorContext} from './record-editors';
 const value=(form:HTMLFormElement,name:string)=>Number(new FormData(form).get(name));
 const rechargeOptions=[{value:'manual',label:'Manuelt'},{value:'shortRest',label:'Kort hvile'},{value:'longRest',label:'Lang hvile'}];
 export function resourceWizard(ctx:EditorContext,id?:string,kind:Character['resources'][number]['kind']='custom'){
- const c=ctx.current(),source=c.resources.find(p=>p.id===id),pool=source??{id:crypto.randomUUID(),ownerCharacterId:c.id,kind,name:kind==='hitDie'?'Hit Dice':kind==='spellSlot'?'Spell slots':'',current:1,max:1,recharge:{kind:'manual' as const}};
- const save=async(form:HTMLFormElement)=>{
+ const resumed=ctx.resumedDraft?.payload as {pool:Character['resources'][number];existing:boolean;kind:typeof kind}|undefined;if(resumed){kind=resumed.kind;id=resumed.existing?resumed.pool.id:undefined;}
+ const c=ctx.current(),source=c.resources.find(p=>p.id===id||resumed?.existing&&resumed.pool.automatic&&p.automatic?.key===resumed.pool.automatic.key&&p.classRef===resumed.pool.classRef);
+ let pool=resumed?.pool??source??{id:crypto.randomUUID(),ownerCharacterId:c.id,kind,name:kind==='hitDie'?'Hit Dice':kind==='spellSlot'?'Spell slots':'',current:1,max:1,recharge:{kind:'manual' as const}};
+ if(resumed?.existing&&source&&pool.id!==source.id){id=source.id;pool={...pool,id:source.id};}
+ const persistence=draftOptions(ctx,'resource',pool.name||'Ny beholdning',{pool,existing:!!id,kind},id);
+ if(persistence)persistence.payload=()=>({pool,existing:!!id,kind});
+ const fingerprint=(value:Character['resources'][number]|undefined)=>value?JSON.stringify(characterSchema.shape.resources.element.parse(value)):undefined;
+ const save=async(form:HTMLFormElement,completion?:import('../domain/wizard-draft').DraftToken)=>{
+  const latest=ctx.current();if(latest.id!==c.id||id&&fingerprint(latest.resources.find(p=>p.id===id))!==fingerprint(pool))throw new Error('Beholdningen er endret eller fjernet siden utkastet ble startet. Forkast utkastet og åpne beholdningen på nytt.');
   const data=new FormData(form),max=Number(data.get('max')),current=Number(data.get('current'));
   if(!Number.isInteger(max)||!Number.isInteger(current)||max<0||current<0||current>max)throw new Error('Tilgjengelig må være mellom 0 og maks.');
   const next={...pool,name:String(data.get('poolName')).trim(),max,current,recharge:{...pool.recharge,kind:(source?.recharge.kind==='special'?'special':String(data.get('recharge'))) as typeof pool.recharge.kind}};
   if(source?.automatic)next.manualMaximum=source.manualMaximum||max!==source.automatic.max;
   if(kind==='spellSlot'){next.spellLevel=Number(data.get('spellLevel'));next.systemRef=String(data.get('system'));if(!source)next.recharge.kind=next.systemRef==='Pact Magic'?'shortRest':'longRest';}
   if(kind==='hitDie')next.die=String(data.get('die')) as 'd8';
-  await ctx.save(characterSchema.parse({...c,resources:source?c.resources.map(p=>p.id===id?next:p):[...c.resources,next]}),'resources',source?'Beholdning tilpasset':'Beholdning lagt til');
+  await ctx.save(characterSchema.parse({...latest,resources:id?latest.resources.map(p=>p.id===id?next:p):[...latest.resources,next]}),'resources',source?'Beholdning tilpasset':'Beholdning lagt til',completion);
  };
  const d=wizardDialog(source?'Tilpass beholdning':'Ny beholdning',[
-  {title:'Hva heter beholdningen?',html:field('Navn','poolName',pool.name,'required maxlength="100"')+(kind==='spellSlot'?select('Slotnivå','spellLevel',String(pool.spellLevel??1),Array.from({length:9},(_,i)=>({value:String(i+1),label:`Nivå ${i+1}`})))+select('Slotsystem','system',pool.systemRef??'Spellcasting',[{value:'Spellcasting',label:'Spellcasting'},{value:'Pact Magic',label:'Pact Magic'},...(pool.systemRef&&!['Spellcasting','Pact Magic'].includes(pool.systemRef)?[{value:pool.systemRef,label:pool.systemRef}]:[])]):kind==='hitDie'?select('Terning','die',pool.die??'d8',['d6','d8','d10','d12'].map(value=>({value,label:value}))):'')},
-  {title:'Hvor mange er tilgjengelige?',html:field('Maks','max',pool.max,'type="number" min="0" required')+field('Tilgjengelig','current',pool.current,`type="number" min="0" max="${pool.max}" required`)},
-  {title:'Når fylles beholdningen opp?',html:select('Gjenopprettes ved','recharge',pool.recharge.kind,source?.recharge.kind==='special'?[...rechargeOptions,{value:'special',label:'Særregel (beholdes)'}]:rechargeOptions)+(pool.recharge.ruleText?`<p>${esc(pool.recharge.ruleText)}</p>`:''),when:()=>kind==='custom'},
- ],save,source?'Lagre':'Legg til');
+  {title:'Hva heter beholdningen?',art:'resource',html:field('Navn','poolName',pool.name,'required maxlength="100"')+(kind==='spellSlot'?select('Slotnivå','spellLevel',String(pool.spellLevel??1),Array.from({length:9},(_,i)=>({value:String(i+1),label:`Nivå ${i+1}`})))+select('Slotsystem','system',pool.systemRef??'Spellcasting',[{value:'Spellcasting',label:'Spellcasting'},{value:'Pact Magic',label:'Pact Magic'},...(pool.systemRef&&!['Spellcasting','Pact Magic'].includes(pool.systemRef)?[{value:pool.systemRef,label:pool.systemRef}]:[])]):kind==='hitDie'?select('Terning','die',pool.die??'d8',['d6','d8','d10','d12'].map(value=>({value,label:value}))):'')},
+  {title:'Hvor mange er tilgjengelige?',art:'resource',html:field('Maks','max',pool.max,'type="number" min="0" required')+field('Tilgjengelig','current',pool.current,`type="number" min="0" max="${pool.max}" required`)},
+  {title:'Når fylles beholdningen opp?',help:'Velg når du vanligvis får tilbake brukt kapasitet. Særregler vurderer du sammen med DM.',art:'resource',html:select('Gjenopprettes ved','recharge',pool.recharge.kind,source?.recharge.kind==='special'?[...rechargeOptions,{value:'special',label:'Særregel (beholdes)'}]:rechargeOptions)+(pool.recharge.ruleText?`<p>${esc(pool.recharge.ruleText)}</p>`:''),when:()=>kind==='custom'},
+ ],save,source?'Lagre':'Legg til',persistence);
  const form=d.querySelector('form')!,max=form.querySelector<HTMLInputElement>('[name="max"]')!,current=form.querySelector<HTMLInputElement>('[name="current"]')!;
+ current.max=max.value;
  let touched=!!source;
  current.addEventListener('input',()=>{touched=true;});
  max.addEventListener('input',()=>{current.max=max.value;if(!touched)current.value=max.value;});
@@ -32,7 +40,7 @@ export function resourceWizard(ctx:EditorContext,id?:string,kind:Character['reso
   d.querySelector('#dialog-body')!.append(remove);
   remove.onclick=()=>confirmDialog('Fjern beholdning?','<p>Automatiske klassebeholdninger kan settes til maks 0 under Tilpass. Det bevarer den manuelle overstyringen.</p>',async()=>{
    const draft=structuredClone(c);if(source.automatic){const p=draft.resources.find(p=>p.id===source.id)!;p.max=0;p.current=0;p.manualMaximum=true;}else draft.resources=draft.resources.filter(p=>p.id!==source.id);
-   await ctx.save(draft,'resources','Beholdning fjernet');
+   const {flushWizard}=await import('./wizard');await ctx.save(draft,'resources','Beholdning fjernet',await flushWizard(d));
   },'Fjern');
  }
 }

@@ -243,3 +243,47 @@ input,select,textarea { font-size:max(16px,1rem); min-width:0; max-width:100%; }
 .casting-values {display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;margin-block:.7rem}.casting-values span {display:block}
 
 .equipment-group[data-equipment-kind="weapon"] .pills {grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr))}
+
+/* The question journey is a distinct, illustrated page in the same journal. */
+dialog[data-wizard] {background:var(--paper)}
+dialog[data-wizard] .dialog-heading {border:0;padding-bottom:8px}
+dialog[data-wizard] #dialog-title {font:600 1rem Source;color:var(--muted)}
+dialog[data-wizard] #dialog-body {display:flex;flex-direction:column;padding-top:0}
+.wizard-intro {text-align:center;margin-bottom:1.5rem;flex-shrink:0}
+.wizard-progress {display:flex;justify-content:center;gap:5px;flex-wrap:wrap;max-width:380px;margin:0 auto .5rem}
+.wizard-progress span {width:7px;height:7px;flex:0 0 7px;border:1px solid var(--line);border-radius:50%;background:transparent}
+.wizard-progress .done {background:var(--line)}
+.wizard-progress .current {background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--accent)}
+.wizard-art {height:130px;position:relative;display:grid;place-items:center;color:var(--accent);margin:.7rem auto}
+.wizard-orbit {position:absolute;inset:0;width:100%;height:100%;stroke:var(--line);stroke-width:.7;opacity:.65}
+.wizard-art > .icon {width:64px;height:64px;stroke-width:1;transform:rotate(-8deg)}
+#wizard-question {font:600 clamp(1.65rem,6vw,2.1rem)/1.12 Journal;margin:1rem auto .8rem;max-width:28ch}
+#wizard-help {font-size:.98rem;color:var(--muted);line-height:1.55;margin:0 auto;max-width:42ch}
+#wizard-help:empty {display:none}
+dialog[data-wizard] fieldset {border:0;padding:0;margin:0}
+dialog[data-wizard] [data-wizard-step], dialog[data-wizard] fieldset {min-width:0}
+.wizard-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:.3rem 0 1rem}
+.wizard-options button {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:92px;padding:1rem .6rem;background:var(--panel);border:1px solid var(--soft-line);border-radius:14px;font:600 1.2rem Journal;box-shadow:0 3px 0 #8f795f15}
+.wizard-options button[aria-pressed=true] {border-color:var(--accent);color:var(--accent);background:#f0e1c6}
+.wizard-options button > .icon {width:28px;height:28px;color:var(--accent)}
+.wizard-options button small {font:.82rem Source;font-weight:400}
+.die-art {width:52px;height:52px;color:var(--accent)}
+.wizard-options:has(.die-art) {grid-template-columns:repeat(3,minmax(0,1fr))}
+.wizard-options:has(.die-art) button {min-height:108px}
+.wizard-discard {margin-top:auto;align-self:center;border:0;color:var(--muted);font-size:.85rem;min-height:44px;box-shadow:none}
+.wizard-result {padding:1.2rem;border:1px solid var(--line);border-radius:14px;background:var(--panel);text-align:center}
+.wizard-result > strong {font:600 1.6rem Journal}
+.draft-list {display:grid;gap:8px;margin-bottom:1rem}
+.draft-list button {display:flex;justify-content:space-between;align-items:center;gap:.6rem;text-align:left;border-style:dashed;background:var(--panel)}
+.draft-list small {font-size:.8rem;text-align:right;min-width:5rem}
+.money-total {display:block;border:0;margin:0 auto 1rem;font:600 2.7rem Journal;color:var(--accent)}
+.money-total small {font:1rem Source;color:var(--muted)}
+.money-wheels {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);margin-top:1rem}
+.money-wheels > label {text-align:center;gap:8px;padding-top:.8rem;font-size:.9rem}
+.money-wheels > label + label {border-left:1px solid var(--soft-line)}
+.money-wheels .number-control {display:none}
+.money-wheels .number-wheel {border:0;border-radius:0;width:100%;margin:0;outline-offset:-3px}
+.money-help {color:var(--muted);text-align:center;font-size:.85rem}
+.combat-health > button::after {content:'';position:absolute;bottom:0;right:0;width:9px;height:9px;background:var(--frame);clip-path:polygon(100% 0,100% 100%,0 100%);border-bottom-right-radius:inherit;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){dialog[data-wizard] [data-question-id]:not([hidden]),dialog[data-wizard] label:not([hidden]) {animation:question-in .14s ease-out}@keyframes question-in {from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
+@media(max-height:650px){.wizard-art {height:90px;margin:.3rem auto}.wizard-art > .icon {width:48px;height:48px}.wizard-intro {margin-bottom:.8rem}#wizard-question{margin:.6rem auto}.wizard-options button {min-height:72px}}

@@ -1,3 +1,5 @@
+import type {WizardDraft,DraftToken} from '../domain/wizard-draft';
+import type {WizardDraftRepository} from '../storage/wizard-drafts';
 import {classCatalog} from '../domain/catalog';
 import {iconField,readIcon} from './icons';
 import type {IconKey} from '../domain/iconography';
@@ -7,7 +9,7 @@ import { skillAbilities } from '../domain/modifiers';
 import { editDialog, confirmDialog } from './dialog';
 import { field, select, esc, textArea, check, numberField, options, economies, rechargeOptions, defenseOptions, conditionFields, readCondition, str, num, optionalNumber, optionalString, readRefs } from './record-fields';
 
-export interface EditorContext { current: () => Character; save: (draft: Character, type: string, description: string) => Promise<void> }
+export interface EditorContext { current: () => Character; save: (draft: Character, type: string, description: string,completion?:DraftToken) => Promise<void>; drafts?:WizardDraftRepository; draftChanged?:()=>Promise<void>; resumedDraft?:WizardDraft }
 const requiredName = (value: string) => field('Navn', 'name', value, 'required maxlength="100"');
 const uid = () => crypto.randomUUID();
 const typeLabel = {features:'egenskap', languages:'språk', proficiencies:'proficiency', damageDefenses:'skadeegenskap', conditionImmunities:'tilstandsimmunitet', spells:'spell', resources:'ressurs', actions:'handling', effects:'effekt'};
@@ -24,9 +26,9 @@ function bindOptional(d: HTMLDialogElement) {
   });
 }
 export function createRecordEditors(ctx: EditorContext) {
-  const save = (c: Character, type: string, description: string) => ctx.save(characterSchema.parse(c), type, description);
+  const save = (c: Character, type: string, description: string,completion?:DraftToken) => ctx.save(characterSchema.parse(c), type, description,completion);
   function editor<K extends RecordCollection>(collection: K, source: Character[K][number], existing: boolean, title: string, html: string,
-    read: (data: FormData, draft: Character) => Character[K][number], character = ctx.current(), operation?: () => {type:string;description:string}) {
+    read: (data: FormData, draft: Character) => Character[K][number], character = ctx.current(), operation?: () => {type:string;description:string},completion?:DraftToken) {
     const supportsIcon=['features','spells','actions'].includes(collection);
     const d = editDialog(title, html + (supportsIcon?iconField((source as {iconKey?:IconKey}).iconKey):'') + (existing ? `<button type="button" id="delete-record" class="danger">Fjern ${typeLabel[collection]}</button>` : ''), async form => {
       const draft = structuredClone(character), data=new FormData(form), row = read(data, draft);
@@ -34,10 +36,10 @@ export function createRecordEditors(ctx: EditorContext) {
       if (collection==='languages' && existing && 'name' in row && 'name' in source && row.name===source.name) return;
       draft[collection] = (existing ? draft[collection].map(item => item.id === source.id ? row : item) : [...draft[collection],row]) as never;
       const event=operation?.() ?? {type:collection,description:`${typeLabel[collection]} ${existing ? 'redigert' : 'lagt til'}`};
-      await save(draft,event.type,event.description);
+      await save(draft,event.type,event.description,completion);
     });
     const remove = d.querySelector<HTMLButtonElement>('#delete-record');
-    if (remove) remove.onclick = () => confirmDialog(`Fjern ${typeLabel[collection]}?`, '<p>Endringen kan angres fra menyen.</p>', () => save(removeRecord(character, collection, source.id), collection, `${typeLabel[collection]} fjernet`), 'Fjern');
+    if (remove) remove.onclick = () => confirmDialog(`Fjern ${typeLabel[collection]}?`, '<p>Endringen kan angres fra menyen.</p>', () => save(removeRecord(character, collection, source.id), collection, `${typeLabel[collection]} fjernet`,completion), 'Fjern');
     return d;
   }
   function language(id?: string) {
@@ -109,7 +111,7 @@ export function createRecordEditors(ctx: EditorContext) {
       field('Tilstand', 'conditionId', source.conditionId, 'required list="condition-names"') + `<datalist id="condition-names">${conditionNames.map(name => `<option>${name}</option>`).join('')}</datalist>`,
       data => ({...source,conditionId:str(data,'conditionId')}));
   }
-  function feature(id?: string, category: Character['features'][number]['category'] = 'feat',prefill?:Character['features'][number]) {
+  function feature(id?: string, category: Character['features'][number]['category'] = 'feat',prefill?:Character['features'][number],completion?:DraftToken) {
     const c = ctx.current();
     const source:Character['features'][number] = {id:uid(),name:'',category,description:'',actionRefs:[],resourceRefs:[],effectRefs:[],...(prefill ?? c.features.find(row => row.id === id))};
     const owned = <K extends 'actions'|'resources'|'effects'>(collection: K) => c[collection].find(row => row.sourceRef?.kind === 'feature' && row.sourceRef.id === source.id && (collection==='actions'?source.actionRefs:collection==='resources'?source.resourceRefs:source.effectRefs).includes(row.id)) as Character[K][number] | undefined;
@@ -144,10 +146,10 @@ export function createRecordEditors(ctx: EditorContext) {
           for (const owner of [...draft.features,...draft.items,...draft.actions]) owner.resourceRefs = owner.resourceRefs.filter(ref=>ref!==pool.id);
         }
         return row;
-      });
+      },c,undefined,completion);
     bindOptional(d);
   }
-  function spell(id?: string, cantrip = false,prefill?:Character['spells'][number]) {
+  function spell(id?: string, cantrip = false,prefill?:Character['spells'][number],completion?:DraftToken) {
     const c = ctx.current(), source:Character['spells'][number] = {id:uid(),name:'',spellLevel:cantrip ? 0 : 1,castingTime:'1 action',actionEconomy:'action',range:'',duration:'',concentration:false,ritual:false,components:[],description:'',known:true,inSpellbook:false,prepared:false,...(prefill ?? c.spells.find(row => row.id === id))};
     editor('spells',source,!!id,id ? 'Rediger spell' : cantrip ? 'Ny cantrip' : 'Ny spell',
       requiredName(source.name) + numberField('Spell level (0 = cantrip)','spellLevel',source.spellLevel,'min="0" max="9" required') + select('Knyttet til klasse','casterClass',source.casterClassRef ?? '',classOptions(c)) +
@@ -155,7 +157,7 @@ export function createRecordEditors(ctx: EditorContext) {
       check('Concentration','concentration',source.concentration) + check('Ritual','ritual',source.ritual) + field('Components (kommadelt)','components',source.components.join(', ')) +
       `<div class="form-grid">${check('Known','known',source.known)}${check('I spellbook','inSpellbook',source.inSpellbook)}${check('Prepared','prepared',source.prepared)}</div>` +
       field('Slot-system (f.eks. Spellcasting / Pact Magic)','system',source.resourceSystemRef ?? '') + field('Attack (valgfritt)','attack',source.attack ?? '') + field('Save (valgfritt)','save',source.save ?? '') + field('Damage (valgfritt)','damage',source.damage ?? '') + textArea('Beskrivelse og upcasting','description',source.description,6),
-      data => ({...source,name:str(data,'name'),spellLevel:num(data,'spellLevel'),castingTime:str(data,'castingTime'),actionEconomy:str(data,'economy') as 'action',range:str(data,'range'),duration:str(data,'duration'),concentration:data.has('concentration'),ritual:data.has('ritual'),components:str(data,'components').split(',').map(s=>s.trim()).filter(Boolean),description:str(data,'description'),known:data.has('known'),inSpellbook:data.has('inSpellbook'),prepared:data.has('prepared'),casterClassRef:optionalString(data,'casterClass'),resourceSystemRef:optionalString(data,'system'),attack:optionalString(data,'attack'),save:optionalString(data,'save'),damage:optionalString(data,'damage')}));
+      data => ({...source,name:str(data,'name'),spellLevel:num(data,'spellLevel'),castingTime:str(data,'castingTime'),actionEconomy:str(data,'economy') as 'action',range:str(data,'range'),duration:str(data,'duration'),concentration:data.has('concentration'),ritual:data.has('ritual'),components:str(data,'components').split(',').map(s=>s.trim()).filter(Boolean),description:str(data,'description'),known:data.has('known'),inSpellbook:data.has('inSpellbook'),prepared:data.has('prepared'),casterClassRef:optionalString(data,'casterClass'),resourceSystemRef:optionalString(data,'system'),attack:optionalString(data,'attack'),save:optionalString(data,'save'),damage:optionalString(data,'damage')}),c,undefined,completion);
   }
   function action(id?: string) {
     const c=ctx.current(), source=c.actions.find(row=>row.id===id) ?? {id:uid(),name:'',actionEconomy:'action' as const,summary:'',detail:'',damageRolls:[],resourceRefs:[]};

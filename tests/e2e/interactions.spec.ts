@@ -1,3 +1,5 @@
+import {closeEditor} from './helpers';
+import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {finish,useEquipment} from './helpers';
 import {test, expect, type Page} from '@playwright/test';
 import {createCharacter, menuAction, equipmentTab, expectCharacterStatus, itemDetails} from './helpers';
@@ -43,7 +45,7 @@ test('equipment plus opens searchable choices immediately and selection commits 
   await expect(modal(page).getByRole('button',{name:'+ Utstyr',exact:true})).toHaveCount(0);
   await expect(modal(page).getByRole('button',{name:'Lagre',exact:true})).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Legg til Shield',exact:true})).toBeVisible();
-  await page.getByRole('combobox',{name:'Kategori',exact:true}).selectOption('weapon');
+  await choose(page,'Kategori','weapon');
   await expect(page.getByRole('button',{name:'Legg til Shield',exact:true})).toHaveCount(0);
   await page.getByRole('searchbox',{name:'Søk i utstyr',exact:true}).fill('greatsword');
   await expect(page.locator('[data-add-equipment]')).toHaveCount(1);
@@ -68,10 +70,10 @@ test('single-item editing and deletion preserve other gear and restore the unsav
   await page.getByRole('button',{name:'Shield · i bruk',exact:true}).click();
   await itemDetails(page);
   await expect(page.getByRole('spinbutton',{name:'Antall',exact:true})).toHaveCount(1);
-  await page.getByRole('spinbutton',{name:'Antall',exact:true}).fill('2');
-  await page.getByRole('textbox',{name:'Utstyrsnotat',exact:true}).fill('Fra DM');
+  await fillField(page,'Antall','2');
+  await fillField(page,'Utstyrsnotat','Fra DM');
   await page.getByRole('button',{name:'Fjern fra karakteren',exact:true}).click();
-  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await closeEditor(page);
   await expect(page.getByRole('spinbutton',{name:'Antall',exact:true})).toHaveValue('2');
   await expect(page.getByRole('textbox',{name:'Utstyrsnotat',exact:true})).toHaveValue('Fra DM');
   await page.getByRole('checkbox',{name:'I bruk',exact:true}).uncheck();
@@ -91,11 +93,11 @@ test('single-item editing and deletion preserve other gear and restore the unsav
 test('declining note deletion keeps the edited text; unchanged saving leaves undo meaningful', async ({page}) => {
   await createCharacter(page);
   await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
-  await page.getByRole('textbox',{name:'Tittel',exact:true}).fill('Min historie');
-  await page.getByRole('textbox',{name:'Tekst',exact:true}).fill('Original');
+  await fillField(page,'Tittel','Min historie');
+  await fillField(page,'Tekst','Original');
   await finish(page);
   await page.getByRole('button',{name:'Min historie',exact:true}).click();
-  await page.getByRole('textbox',{name:'Tekst',exact:true}).fill('Ny historie');
+  await fillField(page,'Tekst','Ny historie');
   await page.getByRole('button',{name:'Slett notat',exact:true}).click();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('textbox',{name:'Tekst',exact:true})).toHaveValue('Ny historie');
@@ -112,7 +114,7 @@ test('HP accepts exact numeric input and has no active commit for zero changes',
   await createCharacter(page);await page.getByRole('button',{name:'Combat',exact:true}).click();
   await page.locator('[data-action="hp"]').click();
   await expect(page.getByRole('button',{name:'Oppdater HP',exact:true})).toBeDisabled();
-  await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-7');
+  await fillField(page,'HP-endring i tall','-7');
   await expect(page.locator('#hp-preview')).toContainText('HP 12 → 5');
   await expect(page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true})).toHaveAttribute('aria-valuenow','-7');
   await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();
@@ -173,13 +175,13 @@ test('long mobile workflows return to the edited pill and preserve scroll withou
   const titles=Array.from({length:6},(_,i)=>`Notat ${i+1} med en lang tittel som holder samme størrelse som resten av notatpillene`);
   for(const title of titles){
     await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
-    await page.getByRole('textbox',{name:'Tittel',exact:true}).fill(title);
+    await fillField(page,'Tittel',title);
     await finish(page);await expect(modal(page)).not.toBeVisible();
   }
   await page.setViewportSize({width:320,height:568});
   await page.getByRole('button',{name:titles[3],exact:true}).click();
   const scroll=await page.evaluate(()=>scrollY);
-  await page.getByRole('textbox',{name:'Tekst',exact:true}).fill('Endret tekst');
+  await fillField(page,'Tekst','Endret tekst');
   await finish(page);
   await expect(modal(page)).not.toBeVisible();
   await expect(page.getByRole('button',{name:titles[3],exact:true})).toBeFocused();
@@ -190,6 +192,6 @@ test('long mobile workflows return to the edited pill and preserve scroll withou
     expect(await modal(page).evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
     await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
     expect(await modal(page).evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
-    await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+    await closeEditor(page);
   }
 });

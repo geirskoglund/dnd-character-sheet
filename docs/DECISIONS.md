@@ -296,3 +296,9 @@ Tallhjul erstatter slideren i prøveversjonen: vertikal, begrenset tallrekke, mi
 Tekniske valg: små UI-moduler, gjenbruk av dialog/IndexedDB/validering, additiv schema2/DB3, ingen ny runtime-avhengighet. Lokale metadata fra samme pinnede SRD5.1-revisjon kan gjenskapes med import-context.mjs; ingen runtime-nettverk eller generell tolkning av regeltekst. Automatikk er avgrenset til sikre data; tredjedels-castere, andre boksubclasses og ukjente effekter føres manuelt/med eksplisitt tilgang. Detaljer og observerte grenser står i GUIDED_WORKFLOWS og matrisen.
 
 Brukerens senere rapport om manglende oppdateringsmelding tas med: åpen, synlig app sjekker også hvert minutt, i tillegg til retur/fokus/online og menyens manuelle sjekk. Ny versjon installeres fortsatt bare etter eksplisitt klikk. Ulagrede skjemaer og andre åpne faner beskyttes; ingen lagringsdata slettes. Server/Pages-status og todelt service-worker-test kontrolleres før levering.
+
+## Ett spørsmål, grafisk fremdrift og bevarte utkast (2026-10-20)
+
+Brukeren forkastet oppdeling av det gamle skjemaet med avkrysninger som en svak veiviser. Hvert bilde har nå ett valg/verdi, med forklaring og konkrete svar. Terningtype er illustrerte direktevalg; antall er eget spørsmål. Betingelse spørres Ja/Nei og forklares med eksempler, før eventuell tekst på eget steg. Valgene forgrener flyten; veiviseren er ikke en meny for å finne «Legg til ekstraskade». Eget illustrert journaluttrykk og grafiske markører er godkjent; synlig stegtelling er uttrykkelig forkastet.
+
+Lukking bevarer utkast, Fullfør bekrefter, Forkast er separat. Uferdig redigering endrer ikke eksisterende gjenstand eller Combat. Lokal persistens må tåle reload og sikre at feil/konflikter ikke gir stille tap. Brukeren bestilte samlet implementasjon etter avklaringene. Ta samtidig med todelt GP-hjul og regresjonen med manglende HP-/tempHP-hjørner. Én branch/PR/merge til slutt gjelder fortsatt.

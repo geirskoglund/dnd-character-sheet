@@ -1,17 +1,19 @@
+import {closeEditor} from './helpers';
+import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {characterStep,finish,useEquipment} from './helpers';
 import { test, expect, type Page } from '@playwright/test';
 import { menuAction, equipmentTab, expectCharacterStatus, itemDetails } from './helpers';
 async function openCharacter(page: Page, species = 'Human', className = 'Fighter', level = 5) {
   await page.goto('./'); await menuAction(page, 'Ny karakter');
   await expect(page.getByRole('textbox', {name:'Navn',exact:true})).toHaveValue('');
-  await page.getByRole('textbox', {name:'Navn',exact:true}).fill('Alva');
-  await page.getByRole('combobox', {name:'Art / species',exact:true}).selectOption({label:species});
+  await fillField(page,'Navn','Alva');
+  await choose(page,'Art / species',{label:species});
   await characterStep(page,1);
-  await page.getByRole('combobox', {name:'Klasse',exact:true}).selectOption({label:className});
-  await page.getByRole('spinbutton', {name:'Klassenivå',exact:true}).fill(String(level));
+  await choose(page,'Klasse',{label:className});
+  await fillField(page,'Klassenivå',String(level));
   await characterStep(page,2);
-  await page.getByRole('spinbutton', {name:'Maks HP fra karakterarket',exact:true}).fill('42');
-  for (const [name,value] of [['DEX','16'],['CON','14'],['WIS','16']]) await page.getByRole('spinbutton',{name,exact:true}).fill(value);
+  await fillField(page,'Maks HP fra karakterarket','42');
+  for (const [name,value] of [['DEX','16'],['CON','14'],['WIS','16']]) await fillField(page,name,value);
   await characterStep(page,0);
 }
 async function addEquipment(page: Page, name: string) {
@@ -45,7 +47,7 @@ test('minimal creation, five read-only status values, equipment edited inside ap
   await page.getByRole('button',{name:'Character',exact:true}).click();
   for (const title of ['Kort notat', 'En lang overskrift som skal kunne leses uten at pillene får forskjellig størrelse']) {
     await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
-    await page.getByRole('textbox',{name:'Tittel',exact:true}).fill(title); await save(page);
+    await fillField(page,'Tittel',title); await save(page);
   }
   for (const width of [320,360,390,768]) {
     await page.setViewportSize({width,height:844});
@@ -63,20 +65,19 @@ test('minimal creation, five read-only status values, equipment edited inside ap
 test('subclass lists follow class, custom subclasses persist, core editing preserves equipment', async ({page}) => {
   await openCharacter(page);
   await characterStep(page,1);
-  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption({label:'Champion'});
+  await choose(page,'Subclass (valgfritt)',{label:'Champion'});
   await characterStep(page,1);
-  await page.getByRole('combobox',{name:'Klasse',exact:true}).selectOption({label:'Wizard'});
-  await expect(page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true})).toHaveValue('');
+  await choose(page,'Klasse',{label:'Wizard'});
+  await expect(page.getByLabel('Subclass (valgfritt)',{exact:true})).toHaveValue('');
   await expect(page.locator('[name="subclassChoice"] option')).not.toContainText(['Champion']);
   await characterStep(page,1);
-  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption('custom');
-  await page.getByRole('textbox',{name:'Egen subclass',exact:true}).fill('Min skole');
+  await choose(page,'Subclass (valgfritt)','custom');
+  await fillField(page,'Egen subclass','Min skole');
   await save(page); await equipment(page); await addEquipment(page,'Shield · shield');
   await menuAction(page,'Rediger karakter');
-  await characterStep(page,1);
-  await expect(page.getByRole('textbox',{name:'Egen subclass',exact:true})).toHaveValue('Min skole');
+  await revealField(page,'Egen subclass');await expect(page.getByRole('textbox',{name:'Egen subclass',exact:true})).toHaveValue('Min skole');
   await characterStep(page,0);
-  await page.getByRole('combobox',{name:'Art / species',exact:true}).selectOption({label:'Dwarf'});
+  await choose(page,'Art / species',{label:'Dwarf'});
   await save(page); await page.reload(); await equipmentTab(page);
   await expect(page.locator('header')).toContainText('Min skole');
   await expect(page.getByRole('button',{name:'Shield · i bruk',exact:true})).toBeVisible();
@@ -96,33 +97,33 @@ test('Monk AC and speed follow class level and equipped shield', async ({page}) 
 });
 test('custom species and custom armor remain editable separately', async ({page}) => {
   await openCharacter(page);
-  await page.getByRole('combobox',{name:'Art / species',exact:true}).selectOption('custom');
-  await page.getByRole('textbox',{name:'Navn på art / underart',exact:true}).fill('Min art');
-  await page.getByRole('spinbutton',{name:'Grunnfart for arten (ft)',exact:true}).fill('35'); await save(page);
+  await choose(page,'Art / species','custom');
+  await fillField(page,'Navn på art / underart','Min art');
+  await fillField(page,'Grunnfart for arten (ft)','35'); await save(page);
   await equipment(page); await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
-  await page.getByRole('textbox',{name:'Navn på utstyr',exact:true}).fill('Min rustning');
+  await fillField(page,'Navn på utstyr','Min rustning');
   await finish(page);await expect(page.getByRole('dialog')).not.toBeVisible();
   await useEquipment(page,'Min rustning');await page.getByRole('button',{name:'Min rustning · i bruk',exact:true}).click();await itemDetails(page);await page.getByText('Rustningens regelverdier',{exact:true}).click();
-  await page.getByRole('spinbutton',{name:'Base AC for rustningen',exact:true}).fill('15');
-  await page.getByRole('spinbutton',{name:'Maks Dexterity-bonus (tomt = ingen grense)',exact:true}).fill('2');
+  await fillField(page,'Base AC for rustningen','15');
+  await fillField(page,'Maks Dexterity-bonus (tomt = ingen grense)','2');
   await expect(page.locator('#derived-preview')).toContainText('Samlet AC 17'); await save(page); await page.reload();
   await menuAction(page,'Rediger karakter');
-  await expect(page.getByRole('textbox',{name:'Navn på art / underart',exact:true})).toHaveValue('Min art'); await save(page);
+  await revealField(page,'Navn på art / underart');await expect(page.getByRole('textbox',{name:'Navn på art / underart',exact:true})).toHaveValue('Min art'); await save(page);
   await equipmentTab(page); await page.getByRole('button',{name:'Min rustning · i bruk',exact:true}).click(); await expect(page.getByRole('textbox',{name:'Navn på utstyr',exact:true})).toHaveValue('Min rustning'); await save(page);
 });
 test('damage and temp HP only in Combat, preview/cancel and atomic undo', async ({page}) => {
   await openCharacter(page); await save(page);
   await page.getByRole('button',{name:'Combat',exact:true}).click();
   await page.locator('[data-action="temp-hp"]').click();
-  await page.getByRole('spinbutton',{name:'Temporary HP',exact:true}).fill('5'); await save(page);
+  await fillField(page,'Temporary HP','5'); await save(page);
   await page.locator('[data-action="hp"]').click();
-  await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-8');
+  await fillField(page,'HP-endring i tall','-8');
   await expect(page.locator('#hp-preview')).toContainText('HP 42 → 39');
   await expect(page.locator('#hp-preview')).toContainText('Temporary HP 5 → 0');
-  await page.getByRole('button',{name:'Avbryt'}).click();
+  await closeEditor(page);
   await expect(page.locator('[data-action="hp"]')).toContainText('42 / 42');
   await page.locator('[data-action="hp"]').click();
-  await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-8');
+  await fillField(page,'HP-endring i tall','-8');
   await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();
   await expect(page.locator('[data-action="hp"]')).toContainText('39 / 42');
   await menuAction(page,'Angre siste endring');
@@ -130,7 +131,7 @@ test('damage and temp HP only in Combat, preview/cancel and atomic undo', async 
   await expect(page.locator('[data-action="temp-hp"]')).toContainText('5');
   await menuAction(page,'Rediger karakter');
   await characterStep(page,2);
-  await page.getByRole('spinbutton',{name:'Maks HP fra karakterarket',exact:true}).fill('50'); await save(page);
+  await fillField(page,'Maks HP fra karakterarket','50'); await save(page);
   await expect(page.locator('[data-action="hp"]')).toContainText('42 / 50');
   await expect(page.locator('[data-action="temp-hp"]')).toContainText('5');
   await page.getByRole('button',{name:'Character',exact:true}).click();
@@ -140,14 +141,14 @@ test('damage and temp HP only in Combat, preview/cancel and atomic undo', async 
 test('manual overrides can be removed through the menu', async ({page}) => {
   await openCharacter(page); await save(page);
   await menuAction(page,'Beregninger og overstyringer');
-  await page.getByRole('spinbutton',{name:'Manuell AC (valgfritt)',exact:true}).fill('21');
-  await page.getByRole('spinbutton',{name:'Manuell speed (ft, valgfritt)',exact:true}).fill('50'); await save(page);
+  await fillField(page,'Manuell AC (valgfritt)','21');
+  await fillField(page,'Manuell speed (ft, valgfritt)','50'); await save(page);
   await expectCharacterStatus(page,'AC21');
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC21');
   await expectCharacterStatus(page,'Speed50 ft');
   await menuAction(page,'Beregninger og overstyringer');
-  await page.getByRole('spinbutton',{name:'Manuell AC (valgfritt)',exact:true}).fill('');
-  await page.getByRole('spinbutton',{name:'Manuell speed (ft, valgfritt)',exact:true}).fill(''); await save(page);
+  await fillField(page,'Manuell AC (valgfritt)','');
+  await fillField(page,'Manuell speed (ft, valgfritt)',''); await save(page);
   await expectCharacterStatus(page,'AC13');
   await expectCharacterStatus(page,'Speed30 ft');
 });
@@ -155,13 +156,13 @@ test('Level Up requires manually entered HP, persists level/subclass, and undoes
   await openCharacter(page,'Human','Fighter',2); await save(page);
   await menuAction(page,'Level Up');
   await expect(page.getByRole('spinbutton',{name:'Ny samlet maks HP',exact:true})).toHaveValue('');
-  await page.getByRole('spinbutton',{name:'Ny samlet maks HP',exact:true}).fill('49');
-  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption({label:'Champion'});
-  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await fillField(page,'Ny samlet maks HP','49');
+  await choose(page,'Subclass (valgfritt)',{label:'Champion'});
+  await closeEditor(page);
   await expect(page.locator('header')).toContainText('Fighter 2');
   await menuAction(page,'Level Up');
-  await page.getByRole('spinbutton',{name:'Ny samlet maks HP',exact:true}).fill('49');
-  await page.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption({label:'Champion'});
+  await fillField(page,'Ny samlet maks HP','49');
+  await choose(page,'Subclass (valgfritt)',{label:'Champion'});
   await page.getByRole('button',{name:'Bekreft Level Up',exact:true}).click();
   await expect(page.locator('header')).toContainText('Fighter 3 · Champion');
   await expectCharacterStatus(page,'42 / 49');
@@ -179,22 +180,22 @@ test('cancelled forms leave no stale listeners or errors in the next dialog', as
   await openCharacter(page); await save(page);
   await menuAction(page,'Rediger karakter');
   await characterStep(page,1);
-  await page.getByRole('combobox',{name:'Klasse',exact:true}).selectOption('custom');
-  await page.getByRole('textbox',{name:'Egen klasse',exact:true}).fill('Min klasse');
-  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await choose(page,'Klasse','custom');
+  await fillField(page,'Egen klasse','Min klasse');
+  await closeEditor(page);
   await equipment(page); await addEquipment(page,'Leather · armor');
   await menuAction(page,'Rediger karakter');
-  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await closeEditor(page);
   await page.getByRole('button',{name:'Combat',exact:true}).click();
   await page.locator('[data-action="hp"]').click();
-  await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-3');
-  await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+  await fillField(page,'HP-endring i tall','-3');
+  await closeEditor(page);
   await menuAction(page,'Rediger karakter');
   await characterStep(page,1);
-  await page.getByRole('combobox',{name:'Klasse',exact:true}).selectOption('custom');
-  await page.getByRole('textbox',{name:'Egen klasse',exact:true}).fill('Fighter'); await save(page);
+  await choose(page,'Klasse','custom');
+  await fillField(page,'Egen klasse','Fighter'); await save(page);
   await menuAction(page,'Rediger karakter');
-  await characterStep(page,1);await expect(page.getByRole('combobox',{name:'Klasse',exact:true})).toHaveValue('custom');
+  await characterStep(page,1);await expect(page.getByLabel('Klasse',{exact:true})).toHaveValue('custom');
   expect(errors).toEqual([]);
 });
 test('four modifier favorites show full names, can be changed and persist offline', async ({page,context}) => {

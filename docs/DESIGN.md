@@ -1,3 +1,5 @@
+> Nyeste presisering: illustrert veiviser med ett spørsmål per skjerm, direkte svarflater, grafiske fremdriftspunkter og separate gjenopptakbare utkast. Penger bruker to hjul (hele GP / 00–99) med felles midtmarkering. HP/temp HP har hjørnemarkør i Combat. Se [implementasjonen](GUIDED_WORKFLOWS.md#illustrert-spørsmålsveiviser-og-utkast).
+
 > Gjeldende arbeidsflyter (2026-10-20): [GUIDED_WORKFLOWS.md](GUIDED_WORKFLOWS.md). Eventyrjournal videreføres med fire ikonfaner og Meny, separat Magi, vertikalt tallhjul med eksakt innskriving og korte forgrenede veivisere. Hjørnetrekanten brukes på arbeidsflatens oppslag/kort, aldri på navigasjon, Combat-kategorier, lukkekryss eller selvforklarende listevalg. Rutinemeldinger om lagring fjernes, feil er tydelige. Toppfelt scroller fortsatt bort. Eldre slider-/trefaneskisser nedenfor er historikk.
 
 # Designbrief – D&D Character Companion
@@ -27,7 +29,7 @@ Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge re
 - Piller/kort for lagret informasjon, åpne detaljer ved trykk.
 - **Inline + i samme pilleform** som dataelementene, rett etter siste element med naturlig wrap; ingen separat sirkel eller egen pluss-rad.
 - Søkbare velgerpaneler for store kataloger; søk og filtre øverst; egenregistrering lett tilgjengelig.
-- Ved flerverdiregistrering gjelder det [vedtatte veiviserprinsippet](REQUIREMENTS.md#overordnet-prinsipp-veiviser-ved-flerverdiregistrering): korte, forgrenede spørsmål, beslektede felt samlet og bare relevante oppfølgingssteg. Direkte listevalg får ingen ekstra veiviser. Detaljer avklares per flyt; dette mønsteret er ennå ikke implementert.
+- Ved flerverdiregistrering gjelder det [vedtatte veiviserprinsippet](REQUIREMENTS.md#overordnet-prinsipp-veiviser-ved-flerverdiregistrering): ett spørsmål eller én verdi per skjerm og bare relevante oppfølgingsspørsmål. Direkte listevalg får ingen ekstra veiviser. Det illustrerte spørsmålsmønsteret er implementert for karaktergrunnlag, egne egenskaper/spells, beholdninger og utstyrsvarianter. Avanserte ekspertfelt og tidligere utsatte flyter beholdes; se §14 og GUIDED_WORKFLOWS.
 - Combat har tre faner Action/Bonus/Reaction, ikke gjentatt tittel under. Andre egenskaper utenfor, «Ta skade» og «Hvile» under.
 - Combat som **oppslag**; fysiske terninguttrykk og verdier lesbare ved trykk, ikke ekstra «Bruk»-knapper eller turstatus.
 - Damage dialog: én komponent som standard, flere via +, egne modifikatorlinjer og kompakte on/off/condition-kontroller; synlig og etterprøvbar resultatoppsummering.
