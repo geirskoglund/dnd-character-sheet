@@ -1386,7 +1386,7 @@ Kontrollarbeidet kan begynne på dagens bygg så snart fysisk iPhone/testtilgang
 
 ### Må bevares og avgrenses
 
-Dette er kontrollarbeid, ikke en generell redesignbestilling. Ikke lukk alle mobilavvik samlet bare fordi en enkelt enhet eller én skjerm er prøvd.
+Dette er kontrollarbeid, ikke en generell redesignbestilling. Ikke lukk alle mobilavvik samlet bare fordi en enkelt enhet eller én skjerm er prøvd. Nytt kontrollfunn: CI 39517435615 feilet i equipment.spec.ts:83 med forventet scrollY 150, faktisk 903. Samme test på uendret appkode ga 1 feil av 5 lokale gjentakelser. Årsaken er ikke bekreftet; ikke erklær dette eller scrollkravet løst uten utredning. Dette er et automatisert testutslag, ikke fysisk iPhone-bevis.
 
 ### Berørte områder og regresjonsgrunnlag
 

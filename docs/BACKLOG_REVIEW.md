@@ -54,7 +54,7 @@ Gjeldende fordeling er **7 klare, 19 trenger produktavklaring og 1 avventer fysi
 | [BL-24 / #48](https://github.com/geirskoglund/dnd-character-sheet/issues/48) | Generell formulering om ikke-stabling av identiske katalogkilder fjernet som regelgrunnlag. Konkret Cloak + Ring-scenario satt inn; utvalg/etappegrense og oppslag er fortsatt forslag. | Trenger produktavklaring |
 | [BL-25 / #49](https://github.com/geirskoglund/dnd-character-sheet/issues/49) | Forslagsstatus beholdt for underartspresentasjon og senere artsvalg. Ingen dobbel artsbonus eller automatisk valg av ancestry. Manglende innhold beholdes som krav. | Trenger produktavklaring |
 | [BL-26 / #50](https://github.com/geirskoglund/dnd-character-sheet/issues/50) | Presentasjon er uavklart, full SRD gjenåpnes ikke. Ingen ekstra bunnfane eller kampadministrasjon lagt inn. | Trenger produktavklaring |
-| [BL-27 / #51](https://github.com/geirskoglund/dnd-character-sheet/issues/51) | Hard venting på feilrettinger fjernet: review kan finne dem før de fikses. Fysisk tilgang er eneste faktiske blokker; retest av senere endringer kreves separat. | Avventer avhengighet |
+| [BL-27 / #51](https://github.com/geirskoglund/dnd-character-sheet/issues/51) | Hard venting på feilrettinger fjernet: review kan finne dem før de fikses. Fysisk tilgang er eneste faktiske blokker; retest av senere endringer kreves separat. Nytt intermitterende scrolltestutslag er registrert som uavklart kontrollfunn, ikke rettet appfunksjon. | Avventer avhengighet |
 
 ## Regelkontroll og avgrensning
 
@@ -66,6 +66,14 @@ Det er fortsatt ikke utført en full revisjon av alle SRD-oppføringer, ny mobil
 
 ## Verifikasjon av dokumenter og GitHub
 
-Utført lokalt:27 unike saker,7/19/1-status,114 planlagte akseptansescenarioer,27 kilde-/kontrollseksjoner og alle114 opprinnelige produktpunkter bevart.480 lokale lenker/ankere og221 GitHub-kildelenker i produktdokumentene er kontrollert. Ingen sykliske avhengigheter; ingen Klar-sak har åpne produktspørsmål eller harde oppgaveavhengigheter. Reviderte Issue-utkast har identisk saksseksjon med BACKLOG_READY og bevarer opprinnelig audittekst som tydelig merket historikk. `git diff --check` passerer. Bare ti dokument-/instruksfiler endres; app, tester, katalogdata, bygg og publiseringsoppsett er urørt.
+Utført lokalt:27 unike saker,7/19/1-status,114 planlagte akseptansescenarioer,27 kilde-/kontrollseksjoner og alle114 opprinnelige produktpunkter bevart.482 lokale lenker/ankere og221 GitHub-kildelenker i produktdokumentene er kontrollert. Ingen sykliske avhengigheter; ingen Klar-sak har åpne produktspørsmål eller harde oppgaveavhengigheter. Reviderte Issue-utkast har identisk saksseksjon med BACKLOG_READY og bevarer opprinnelig audittekst som tydelig merket historikk. `git diff --check` passerer. Bare ti dokument-/instruksfiler endres; app, tester, katalogdata, bygg og publiseringsoppsett er urørt.
 
-Etter oppdatering hentes alle Issues på nytt for å kontrollere eksakt tekst, statusmerke, uendrede titler/prioriteter/typer og fortsatt åpen tilstand. GitHub-kontrollens faktiske resultat føres ved levering. Ingen nye D&D-, nettleser- eller fysiske mobiltester er kjørt for denne dokumentgjennomgangen.
+GitHub-tilbakekontrollen av alle27 oppdaterte Issues passerer: eksakt samsvar med saksutkastene, ett riktig klargjøringsmerke per sak, uendrede titler/prioriteter/typer/øvrige merker og fortsatt åpen tilstand. Ingen funksjonssak er lukket. Sluttkontrollen gjentas etter suppleringen av #51 nedenfor.
+
+## Nytt kontrollfunn i eksisterende scrolltest
+
+[CI39517435615](https://github.com/geirskoglund/dnd-character-sheet/actions/runs/39517435615) på første dokumentcommit29fc4fe feilet:75 nettleserscenarioer passerte, men `equipment.spec.ts:83` fikk scrollY903 der150 var forventet etter fanebytte. App- og testkoden er uendret fra startgrunnlaget. CI-loggnedlastingen var proxyblokkert; feilutdraget er hentet fra GitHubs check-run-annotasjoner, ikke gjettet fra rød status.
+
+`npm run build` passerer TypeScript/produksjonsbygg. Fem lokale gjentakelser av det navngitte eksisterende scenarioet med system-Chromium ga **4 bestått, 1 feil**, med samme150/903-avvik. Utslaget er dermed gjenskapt, men årsaken er ikke bekreftet. Det er registrert under [#51](https://github.com/geirskoglund/dnd-character-sheet/issues/51) og i [DAT-06](BACKLOG.md#pwa-data-og-bibliotek). Ingen ny venting/retry, testfjerning eller apprettelse er lagt inn for å få grønt resultat. En senere grønn kjøring betyr ikke at den intermitterende feilen er rettet.
+
+Dette arbeidet endrer fortsatt bare dokumenter og Issue-tekster/merker. Ingen nye spill-/nettlesertester er skrevet og ingen fysisk iPhone-test er gjennomført. Ny CI på sluttcommit og sluttkontroll av Issues dokumenteres i leveranse-PR.
