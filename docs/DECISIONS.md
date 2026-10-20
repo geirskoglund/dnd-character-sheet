@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
 **Oppdatert:** 2026-10-20
-**Status:** Utstyrsflyten er levert i PR #23. Nå gjennomgås samlet produktstatus og backlog; ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
+**Status:** Utstyrsflyten er levert i PR #23. Samlet produktgjennomgang er dokumentert, og brukeren har bestilt fullføring av dokumentasjons-PR #24 og opprettelse av GitHub-backloggen. Ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
@@ -354,3 +354,9 @@ Rapportert, konsekvent feil: to trykk kreves på hjulknappen i installert modus,
 Brukeren presiserte at backloggen må dekke hele loggen og det som fortsatt mangler fra opprinnelig prototype og handoff, ikke bare siste samtaleliste. Brukeren bestilte deretter selve gjennomgangen, også med punktene Codex kan kvittere ut. [BACKLOG.md](BACKLOG.md) sammenholder opprinnelige dokumentrevisjoner, faktisk v0.11, senere avklaringer og dagens app. Leveranser, delvis støtte, feil, spørsmål og erstattede retninger skilles. Prioriteringen er et forslag, ikke en ny produktbeslutning. Overleveringsgrunnlaget omfatter v0.11 og de fem spesifikasjons-/overleveringsdokumentene; alle er tilgjengelige og gjennomgått. Første auditutgave antok feilaktig at en ytterligere forklaringsfil manglet. Brukeren viste den tidligere overleveringsbekreftelsen; kildeforbeholdet og AVK-01 er derfor fjernet, uten å renummerere øvrige punkter.
 
 **Presisert arbeidsgrense:** Et «ja», «ok», «japp» eller annen enighet i en samtale er ikke en appkodebestilling. Brukeren skal kunne fullføre tankeprosessen og deretter uttrykkelig bestille implementasjon. Dette gjelder også når eldre dokumenter viser til tidligere delegert koding/merge. Denne bestillingen endrer bare dokumentasjonen.
+
+## GitHub-backlog og fullføring av dokumentasjons-PR bestilt
+
+Brukeren ba om å fullføre PR #24 og opprette backloggen i foreslått rekkefølge, etter avklaring av dra-og-slipp i GitHub Projects. Bekreftelsen «Ok. Do it» gjelder denne konkrete bestillingen, ikke appimplementasjon. De27 oppgavene er opprettet som Issues #25–51 med stabile BL-ID-er, ønsket resultat, kilder og prioritets-/typemerker. BACKLOG.md lenker hver oppgave; fire øvrige avklaringer beholdes i dokumentet, og skadeflytens avklaring følger BL-20.
+
+GitHub-integrasjonen avviste `createProjectV2` med «Resource not accessible by integration». Ingen Project/tabell/dra-og-slipp er opprettet. Repoets native Issue Types er heller ikke tilgjengelige, så type er merker. Issues og prioritetsmerking er levert som midlertidig arbeidsliste; Project krever tilgjengelig skrivetilgang eller at eieren oppretter/fyller det i GitHub. Ingen ny appkode inngår.
