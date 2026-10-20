@@ -100,10 +100,36 @@ const states=()=>`<article class="sheet" data-board="states">${heading('03','Tyd
 <div class="dialog-pair"><section class="mini-dialog"><div class="mini-dialog-head"><h3>Shortsword</h3><button type="button" class="close" aria-label="Lukk oppslag">${icon('close')}</button></div><div class="attack-values"><div><small>ANGREP</small><strong>d20 +7</strong></div><div><small>SKADE</small><strong>1d6+4</strong><span>piercing</span></div></div><p>DEX +4 · proficiency +3 · Finesse · Light</p><div class="dialog-caption">Kort oppslag: én X. Ingen ekstra Avbryt eller Lagre.</div></section><section class="mini-dialog"><h3>Fjern Shortsword?</h3><p>Gjenstanden fjernes fra Alvas utstyr.</p><div class="confirmation"><button type="button" class="secondary-button">Avbryt</button><button type="button" class="primary">Fjern</button></div><div class="dialog-caption">Bekreftelse: to ulike handlinger, ingen ekstra X.</div></section></div>
 <div class="callout"><strong>Meny og store dialoger følger samme familie.</strong> Administrasjon blir i menyen. Store redigeringsflater beholder tilgjengelig lukk/avbryt og én bekreftelse; innholdet scroller mellom dem. Dialogdetaljene er fortsatt designforslag.</div>
 ${footer('Viste tilstander er illustrasjoner. Ingen handling lagrer eller endrer karakteren.')}</article>`;
+
+const corners=()=>`<article class="sheet corner-trial" data-board="corners">${heading('04','Klikkbarhet med hjørnemarkør','Samme lille trekant på alle trykkflater. Bakgrunn og rammetykkelse brukes ikke til å skille klikkbart fra ren informasjon.')}
+<div class="corner-intro"><div class="corner-detail"><span class="enlarged-corner" aria-hidden="true"></span><div><b>10 px i faktisk størrelse</b><p>Fylt nedre høyre hjørne, avgrenset av en 45° diagonal og elementets kant. Forstørret utsnitt til venstre.</p></div></div><p class="corner-key">Markøren betyr <b>«kan trykkes»</b>.<br>Hake og tekst betyr <b>«i bruk / forberedt»</b>.</p></div>
+<div class="alternatives">
+<section class="alt-column"><header class="alt-head"><h2>På karakterarket</h2><p>Alva · Elf Rogue 5 / Thief. Status og handlinger har samme grunnfarge.</p></header><div class="sample">
+<section class="alt-block" data-corner-sample="status">${title('Status','book')}${stats()}<p class="alt-caption">Bare GP kan trykkes på denne raden.</p></section>
+<section class="alt-block" data-corner-sample="modifiers">${title('Modifiers','feather')}${modifiers()}<p class="alt-caption">Den luftige varianten beholdes. Hvert felt åpner listen der du velger hva favoritten skal vise.</p></section>
+<section class="alt-block" data-corner-sample="species">${title('Artsegenskaper','leaf')}${pills(species)}</section>
+<section class="alt-block" data-corner-sample="weapons">${title('Våpen','swords')}${pills(weapons)}<p class="alt-caption">Alle kan åpnes. Hake og «I bruk» skiller de utstyrte våpnene fra Shortbow.</p></section>
+<section class="alt-block" data-corner-sample="readonly">${title('Ability scores','spark')}${abilities()}<p class="alt-caption">Statusmynter uten hjørnemarkør.</p></section>
+</div></section>
+<section class="alt-column"><header class="alt-head"><h2>Samme tegn i flere sammenhenger</h2><p>Spells: separat eksempel med Mira, Wizard 3. Ingen nye egenskaper tildeles Alva.</p></header><div class="sample">
+<section class="alt-block" data-corner-sample="spells">${title('Spells','book')}${pills([['Shield',{flag:'Forberedt',state:'selected'}],['Misty Step',{flag:'Forberedt',state:'selected'}],['Detect Magic',{detail:'Ritual'}]])}<p class="alt-caption">Markøren gjelder oppslaget, uavhengig av om en spell er forberedt.</p></section>
+<section class="alt-block" data-corner-sample="resources">${title('Ressurser','spark')}${resources()}<p class="alt-caption">Samme markør på en bred kontroll.</p></section>
+<section class="alt-block" data-corner-sample="long">${title('Lange navn · katalogeksempler','book')}${pills([['Protection from Evil and Good'],['Comprehend Languages'],['Unarmored Movement']])}<p class="alt-caption">Teksten holdes unna hjørnet. Pluss har samme markør som øvrige trykkflater.</p></section>
+<section class="alt-block" data-corner-sample="navigation">${title('Bunnavigasjon','menu')}${nav()}<p class="alt-caption">Her prøves tegnet også på fanene og Meny, slik at vi kan vurdere helheten.</p></section>
+<section class="alt-block" data-corner-sample="actions">${title('Handlingsknapper','feather')}<div class="corner-actions"><button type="button" class="secondary-button">Avbryt</button><button type="button" class="primary">Lagre</button></div><p class="alt-caption">Primærhandlingens farge beholdes. Hjørnet har samme geometri og betyr fortsatt bare «kan trykkes».</p></section>
+</div></section>
+</div>
+<div class="callout"><strong>Dette prøver ett felles signal.</strong> Ingen ekstra nedoverpil på modifiers, ingen sterkere ramme på GP og ingen lysere bakgrunn for å vise klikkbarhet. I denne prøven vises også utstyrs-/forberedelsesstatus med tekst og hake uten egen bakgrunnsfarge; det siste er fortsatt et forslag.</div>
+${footer('Hjørnemarkøren er en bestilt designutprøving, ikke et ferdig godkjent produksjonsvalg.')}</article>`;
+
 const query=new URLSearchParams(location.search);
-const boards={families,alternatives,states};
+const boards={families,alternatives,states,corners};
 document.querySelector('#study').innerHTML=(boards[query.get('board')]||families)();
+if(query.get('board')==='corners'){
+ document.querySelectorAll('.corner-trial button').forEach(button=>button.insertAdjacentHTML('beforeend','<span class="corner-mark" aria-hidden="true"></span>'));
+}
 if(query.has('solo')){
- const target=query.get("solo")==="icons"?document.querySelector('.alt-column[data-icons="true"]>.sample'):document.querySelector(`[data-family="${query.get('solo')}"]`);
+ let target=query.get("solo")==="icons"?document.querySelector('.alt-column[data-icons="true"]>.sample'):document.querySelector(`[data-family="${query.get('solo')}"]`);
+ if(query.get('board')==='corners') target=document.querySelector(`[data-corner-sample="${query.get('solo')}"]`);
  if(target){document.body.classList.add('solo');document.querySelector('.sheet').replaceChildren(target);}
 }
