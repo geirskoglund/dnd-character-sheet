@@ -11,7 +11,7 @@
 
 ## Gjennomgående produktprinsipp
 
-Bruk [veiviserprinsippet](docs/REQUIREMENTS.md#overordnet-prinsipp-veiviser-ved-flerverdiregistrering) ved registrering av flere verdier i hele appen: korte, forgrenede spørsmål, beslektede felt samlet og sikre grunnverdier automatisk. Rene listevalg registreres direkte. Konkrete arbeidsflyter avklares én om gangen; vedtatt prinsipp er ikke i seg selv en bestilling på appkode.
+Bruk [veiviserprinsippet](docs/REQUIREMENTS.md#overordnet-prinsipp-veiviser-ved-flerverdiregistrering) ved registrering av flere verdier i hele appen: ett spørsmål eller én verdi per skjerm, direkte Ja/Nei-svar og relevante forgreninger; sikre grunnverdier følger med automatisk. Veiviseren har forklaringer, lokal illustrasjon og grafisk fremdrift uten synlig «steg X av Y». X/Escape bevarer et separat lokalt utkast; Fullfør bekrefter, Forkast er en egen handling. Rene listevalg registreres direkte. Konkrete arbeidsflyter avklares én om gangen; vedtatt prinsipp er ikke i seg selv en bestilling på appkode.
 
 Øverste føring er å [erstatte papirkarakterarket](docs/REQUIREMENTS.md#1-produkt-og-akseptansekriterier) ved det fysiske spillebordet. Vurder forslag og user stories etter hvordan de gjør oversikt, oppslag, notater og manuell føring enklere under spill. Bevar spillerens frihet til å registrere og overstyre etter avtale med DM. Konteksttilpasningen nedenfor skal støtte dette målet.
 

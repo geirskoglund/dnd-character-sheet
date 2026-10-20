@@ -1,17 +1,12 @@
+import {request,completed} from './idb';
+export {request,completed} from './idb';
+import {draftPrefix,type DraftToken} from '../domain/wizard-draft';
+import {checkDraft} from './wizard-drafts';
 import { migrateCharacter } from '../domain/migrations';
 import { characterSchema, portraitSchema, type PortraitAsset, type Character, type ChangeEvent } from '../domain/model';
 
 export const DB_NAME = 'dnd-character-companion';
 export const DB_VERSION = 3;
-export const request = <T>(req: IDBRequest<T>) => new Promise<T>((resolve, reject) => {
-  req.onsuccess = () => resolve(req.result);
-  req.onerror = () => reject(req.error);
-});
-export const completed = (tx: IDBTransaction) => new Promise<void>((resolve, reject) => {
-  tx.oncomplete = () => resolve();
-  tx.onabort = () => reject(tx.error ?? new Error('Lagringen ble avbrutt.'));
-  tx.onerror = () => reject(tx.error);
-});
 export function openDatabase(name = DB_NAME): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(name, DB_VERSION);
@@ -76,19 +71,20 @@ export class CharacterRepository {
     const rows: ChangeEvent[] = await request(this.db.transaction('events').objectStore('events').index('characterId').getAll(characterId));
     return rows.sort((a, b) => b.timestamp.localeCompare(a.timestamp) || (b.changes[0].after?.revision ?? 0) - (a.changes[0].after?.revision ?? 0));
   }
-  async save(input: Character, type = 'edit', description = 'Karakter redigert', asset?: PortraitAsset): Promise<Character> {
+  async save(input: Character, type = 'edit', description = 'Karakter redigert', asset?: PortraitAsset,draftToken?:DraftToken): Promise<Character> {
     const parsed = characterSchema.parse(input);
     if (asset) {
       portraitSchema.parse(asset);
       if (parsed.portraitAssetId !== asset.id) throw new Error('Portrettet må tilhøre karakterens nye portrettreferanse.');
     }
-    const tx = this.db.transaction(['characters', 'events', 'assets'], 'readwrite');
+    const tx = this.db.transaction(['characters', 'events', 'assets','settings'], 'readwrite');
     const done = completed(tx);
     // Always consume a transaction rejection, including on validation/conflict exits.
     const chars = tx.objectStore('characters');
     try {
       const before: Character | undefined = await request(chars.get(parsed.id));
       if (before && before.revision !== parsed.revision) throw new Error('Karakteren er endret i en annen fane. Last siden på nytt før du lagrer.');
+      if(draftToken){await checkDraft(tx.objectStore('settings'),draftToken);tx.objectStore('settings').delete(draftPrefix+draftToken.id);}
       if (before && JSON.stringify(before) === JSON.stringify(parsed)) { await done; return before; }
       const after = { ...parsed, revision: (before?.revision ?? 0) + 1, updatedAt: new Date().toISOString() };
       if (asset) {
@@ -107,12 +103,13 @@ export class CharacterRepository {
     }
   }
   async remove(character: Character) {
-    const tx = this.db.transaction(['characters', 'events'], 'readwrite');
+    const tx = this.db.transaction(['characters', 'events','settings'], 'readwrite');
     const done = completed(tx);
     try {
       const before: Character | undefined = await request(tx.objectStore('characters').get(character.id));
       if (!before || before.revision !== character.revision) throw new Error('Karakteren er endret. Last siden på nytt.');
       tx.objectStore('characters').delete(character.id);
+      const settings=tx.objectStore('settings');for(const row of await request(settings.getAll()))if(row.id.startsWith(draftPrefix)&&row.value.characterId===character.id)settings.delete(row.id);
       tx.objectStore('events').add(this.event(character.id, before, null, 'delete', 'Karakter slettet'));
       await done;
     } catch (error) {

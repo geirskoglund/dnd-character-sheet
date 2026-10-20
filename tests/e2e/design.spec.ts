@@ -1,3 +1,5 @@
+import {closeEditor} from './helpers';
+import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {finish,advancedRecord} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import type {Character} from '../../src/domain/model';
@@ -92,7 +94,7 @@ test('large editors keep close and save pinned while scrolling, short lookups ha
   const after=await page.locator('#cancel, #submit').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().y));expect(after).toEqual(before);
   expect(await page.getByRole('dialog').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
  }
- await page.getByRole('button',{name:'Avbryt',exact:true}).click();
+ await closeEditor(page);
  await page.getByRole('button',{name:'Darkvision',exact:true}).click();await expect(page.getByRole('dialog').getByRole('button')).toHaveCount(1);
  await expect(page.getByRole('button',{name:'Lukk',exact:true})).toBeVisible();
  await page.keyboard.press('Escape');await equipmentTab(page);
@@ -104,14 +106,14 @@ test('large editors keep close and save pinned while scrolling, short lookups ha
 test('own icon choices persist, automatic family fallback works, and fonts/icons survive offline reload',async({page,context})=>{
  await fixture(page);const custom=page.getByRole('region',{name:'Class Features & Feats',exact:true}).getByRole('button',{name:'Avtale med DM',exact:true});
  await expect(custom.locator('[data-icon="emblem"]')).toHaveCount(1);await custom.click();await advancedRecord(page);
- await page.getByText('Ikon (valgfritt)',{exact:true}).click();await page.getByRole('combobox',{name:'Ikonvalg',exact:true}).selectOption('healing');
+ await page.getByText('Ikon (valgfritt)',{exact:true}).click();await choose(page,'Ikonvalg','healing');
  await finish(page);await expect(custom.locator('[data-icon="healing"]')).toHaveCount(1);
  await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();await page.waitForFunction(()=>navigator.serviceWorker.controller!==null);
  await context.setOffline(true);await page.reload();await expect(page.getByRole('heading',{name:'Alva Nattvind',exact:true})).toBeVisible();await page.evaluate(()=>Promise.all([document.fonts.load('16px Journal'),document.fonts.load('16px Source')]));
  expect(await page.evaluate(()=>document.fonts.check('16px Journal')&&document.fonts.check('16px Source'))).toBe(true);
  await expect(custom.locator('[data-icon="healing"]')).toHaveCount(1);
  await equipmentTab(page);await page.getByRole('button',{name:'Shortsword · i bruk',exact:true}).click();await itemDetails(page);
- await page.getByText('Ikon (valgfritt)',{exact:true}).click();await page.getByRole('combobox',{name:'Ikonvalg',exact:true}).selectOption('moon');
+ await page.getByText('Ikon (valgfritt)',{exact:true}).click();await choose(page,'Ikonvalg','moon');
  await finish(page);await expect(page.locator('[data-item]').first().locator('[data-icon="moon"]')).toHaveCount(1);
  await context.setOffline(false);
 });

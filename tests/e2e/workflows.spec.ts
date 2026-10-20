@@ -1,11 +1,12 @@
+import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import {createCharacter,characterStep,finish,menuAction,equipmentTab,useEquipment} from './helpers';
 const d=(p:Page)=>p.getByRole('dialog');
 async function sheet(p:Page,name:string,level:number,subclass?:string){
  await createCharacter(p);await menuAction(p,'Rediger karakter');await characterStep(p,1);
- await p.getByRole('combobox',{name:'Klasse',exact:true}).selectOption({label:name});await p.getByRole('spinbutton',{name:'Klassenivå',exact:true}).fill(String(level));
- if(subclass)await p.getByRole('combobox',{name:'Subclass (valgfritt)',exact:true}).selectOption({label:subclass});
- await characterStep(p,2);await p.getByRole('spinbutton',{name:'INT',exact:true}).fill('16');await p.getByRole('spinbutton',{name:'WIS',exact:true}).fill('16');await p.getByRole('spinbutton',{name:'STR',exact:true}).fill('16');await finish(p);await expect(d(p)).not.toBeVisible();
+ await choose(p,'Klasse',{label:name});await fillField(p,'Klassenivå',String(level));
+ if(subclass)await choose(p,'Subclass (valgfritt)',{label:subclass});
+ await characterStep(p,2);await fillField(p,'INT','16');await fillField(p,'WIS','16');await fillField(p,'STR','16');await finish(p);await expect(d(p)).not.toBeVisible();
 }
 async function magic(p:Page){await p.getByRole('button',{name:'Magi',exact:true}).click();}
 async function pick(p:Page,kind:'spell'|'cantrip',name:string){
@@ -22,7 +23,7 @@ test('Wizard3: context, book preparation, direct slot use, undo and manual maxim
  await page.getByRole('button',{name:'Legg til spell',exact:true}).click();
  const search=page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true});await search.fill('Fireball');await expect(page.getByRole('button',{name:'Legg til Fireball',exact:true})).toHaveCount(0);
  await search.fill('Cure Wounds');await expect(page.getByRole('button',{name:'Legg til Cure Wounds',exact:true})).toHaveCount(0);
- await page.getByRole('combobox',{name:'Klassefilter',exact:true}).selectOption('all');await expect(page.getByRole('button',{name:'Legg til Cure Wounds',exact:true})).toBeVisible();await page.keyboard.press('Escape');
+ await choose(page,'Klassefilter','all');await expect(page.getByRole('button',{name:'Legg til Cure Wounds',exact:true})).toBeVisible();await page.keyboard.press('Escape');
  await pick(page,'spell','Invisibility');await pick(page,'cantrip','Fire Bolt');
  await page.getByRole('button',{name:'Forbered spells',exact:true}).click();await expect(d(page)).toContainText('0 av 6 valgt');await expect(page.getByRole('checkbox')).toHaveCount(1);
  await page.getByRole('checkbox',{name:/Invisibility/}).check();await finish(page);await expect(d(page)).not.toBeVisible();
@@ -30,8 +31,8 @@ test('Wizard3: context, book preparation, direct slot use, undo and manual maxim
  expect((await state(page)).resources.find(p=>p.spellLevel===1)?.current).toBe(3);
  await menuAction(page,'Angre siste endring');expect((await state(page)).resources.find(p=>p.spellLevel===1)?.current).toBe(4);
  await page.getByRole('region',{name:'Spell slots',exact:true}).getByRole('button',{name:/Spellcasting · nivå 1/}).click();await page.getByRole('button',{name:'Tilpass',exact:true}).click();await page.getByRole('button',{name:'Neste',exact:true}).click();
- await page.getByRole('spinbutton',{name:'Maks',exact:true}).fill('7');await page.getByRole('spinbutton',{name:'Tilgjengelig',exact:true}).fill('5');await finish(page);await expect(d(page)).not.toBeVisible();
- await menuAction(page,'Level Up');await page.getByRole('spinbutton',{name:'Ny samlet maks HP',exact:true}).fill('18');await finish(page);await expect(d(page)).not.toBeVisible();
+ await fillField(page,'Maks','7');await fillField(page,'Tilgjengelig','5');await finish(page);await expect(d(page)).not.toBeVisible();
+ await menuAction(page,'Level Up');await fillField(page,'Ny samlet maks HP','18');await finish(page);await expect(d(page)).not.toBeVisible();
  expect((await state(page)).resources.find(p=>p.spellLevel===1)).toMatchObject({max:7,current:5,manualMaximum:true});
  await page.getByRole('button',{name:'Combat',exact:true}).click();await expect(page.getByRole('button',{name:'Fire Bolt ∞',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Invisibility Lvl 2',exact:true})).toBeVisible();
 });
@@ -56,13 +57,12 @@ test('feature filters use own class level, preserve general feats, and order cla
 test('weapon variant branches only when needed, preserves back navigation, per-damage conditions and storage retry',async({page})=>{
  await sheet(page,'Fighter',3);await equipmentTab(page);await page.getByRole('button',{name:'Legg til weapons',exact:true}).click();await page.getByRole('searchbox',{name:'Søk i utstyr',exact:true}).fill('Longsword');
  await page.getByRole('button',{name:'Tilpass Longsword',exact:true}).click();
- expect(await d(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(2);
- await page.getByRole('textbox',{name:'Navn på utstyr',exact:true}).fill('Flammetunge');await page.getByRole('textbox',{name:'Merknad (valgfritt)',exact:true}).fill('Arvet fra far');await page.getByRole('button',{name:'Neste',exact:true}).click();
- await page.getByRole('combobox',{name:'Har våpenet ekstra skade?',exact:true}).selectOption('yes');await page.getByRole('button',{name:'Neste',exact:true}).click();
- await page.getByRole('textbox',{name:'Skadeuttrykk',exact:true}).fill('1d6');await page.getByRole('combobox',{name:'Skadetype',exact:true}).selectOption('Fire');await page.getByRole('combobox',{name:'Gjelder ekstraskaden bare under en betingelse?',exact:true}).selectOption('yes');await page.getByRole('textbox',{name:'Beskriv betingelsen',exact:true}).fill('Når sverdet brenner');
- await page.getByRole('button',{name:'Tilbake',exact:true}).click();await page.getByRole('button',{name:'Neste',exact:true}).click();await expect(page.getByRole('textbox',{name:'Beskriv betingelsen',exact:true})).toHaveValue('Når sverdet brenner');
+ expect(await d(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(1);
+ await fillField(page,'Navn på utstyr','Flammetunge');await fillField(page,'Merknad (valgfritt)','Arvet fra far');await page.getByRole('button',{name:'Neste',exact:true}).click();
+ await page.getByRole('button',{name:'Nei',exact:true}).click();await page.getByRole('button',{name:'Ja',exact:true}).click();await page.getByRole('button',{name:'d6',exact:true}).click();await fillField(page,'Antall terninger','1');await nextQuestion(page);await page.getByRole('button',{name:'Fire',exact:true}).click();await page.getByRole('button',{name:'Ja',exact:true}).click();await fillField(page,'Beskriv betingelsen','Når sverdet brenner');
+ await page.getByRole('button',{name:'Tilbake',exact:true}).click();await page.getByRole('button',{name:'Ja',exact:true}).click();await expect(page.getByRole('textbox',{name:'Beskriv betingelsen',exact:true})).toHaveValue('Når sverdet brenner');
  await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as any).failVariant=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='characters'&&(window as any).failVariant)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};});
- await finish(page);await expect(d(page).getByRole('alert')).toContainText('Full lagring');await expect(page.getByRole('textbox',{name:'Skadeuttrykk',exact:true})).toHaveValue('1d6');expect((await state(page)).items).toHaveLength(0);
+ await nextQuestion(page);await page.getByRole('button',{name:'Nei',exact:true}).click();await finish(page);await expect(d(page).getByRole('alert')).toContainText('Full lagring');await expect(d(page).locator('[data-equipment-summary]')).toContainText('1d6 fire');expect((await state(page)).items).toHaveLength(0);
  await page.evaluate(()=>(window as any).failVariant=false);await finish(page);await expect(d(page)).not.toBeVisible();await useEquipment(page,'Flammetunge');
  await expect(page.locator('[data-item]')).toContainText('1d8+3 slashing');await expect(page.locator('[data-item]')).toContainText('1d6 fire');await expect(page.locator('[data-item]')).toContainText('Når sverdet brenner');
  await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:/^Flammetunge/}).click();await expect(d(page)).toContainText('Når sverdet brenner');await page.keyboard.press('Escape');
@@ -83,7 +83,7 @@ test('HP reaches zero and can increase again with a real touch wheel; navigation
 });
 test('multiclass spell selection uses each class level and asks source only when ambiguous',async({page})=>{
  await sheet(page,'Wizard',1);await menuAction(page,'Rediger karakter');await characterStep(page,1);await page.getByRole('button',{name:'+ Klasse',exact:true}).click();
- await page.getByRole('combobox',{name:'Klasse',exact:true}).nth(1).selectOption({label:'Cleric'});await page.getByRole('spinbutton',{name:'Klassenivå',exact:true}).nth(1).fill('4');await finish(page);await expect(d(page)).not.toBeVisible();await magic(page);
+ await choose(page,'Klasse',{label:'Cleric'},1);await fillField(page,'Klassenivå','4',1);await finish(page);await expect(d(page)).not.toBeVisible();await magic(page);
  await expect(page.getByRole('region',{name:'Spell slots',exact:true})).toContainText('2 / 2');
  await page.getByRole('button',{name:'Legg til spell',exact:true}).click();const search=page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true});await search.fill('Invisibility');await expect(page.getByRole('button',{name:'Legg til Invisibility',exact:true})).toHaveCount(0);
  await search.fill('Detect Magic');await page.getByRole('button',{name:'Legg til Detect Magic',exact:true}).click();await expect(d(page)).toContainText('Hvor kommer spellen fra?');await page.getByRole('button',{name:'Cleric',exact:true}).click();await expect(d(page)).not.toBeVisible();
@@ -97,8 +97,8 @@ test('Monk4 gets count-only Hit Dice and conditional Ki; long rest previews, ret
  await sheet(page,'Monk',4,'Way of the Open Hand');await page.getByRole('button',{name:'Legg til egenskap eller feat',exact:true}).click();await page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true}).fill('Ki');await page.getByRole('button',{name:'Legg til Ki',exact:true}).click();await expect(d(page)).not.toBeVisible();
  for(let i=0;i<3;i++){await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:/Monk · d8/}).click();await page.getByRole('button',{name:'Bruk én',exact:true}).click();await expect(d(page)).not.toBeVisible();}
  await page.getByRole('region',{name:'Beholdninger',exact:true}).getByRole('button',{name:/^Ki/}).click();await page.getByRole('button',{name:'Bruk én',exact:true}).click();await expect(d(page)).not.toBeVisible();
- await page.getByRole('button',{name:'Legg til beholdninger',exact:true}).click();await page.getByRole('textbox',{name:'Navn',exact:true}).fill('Amulett');await page.getByRole('button',{name:'Neste',exact:true}).click();await page.getByRole('spinbutton',{name:'Maks',exact:true}).fill('3');await expect(page.getByRole('spinbutton',{name:'Tilgjengelig',exact:true})).toHaveValue('3');await page.getByRole('spinbutton',{name:'Tilgjengelig',exact:true}).fill('1');await finish(page);await expect(d(page)).not.toBeVisible();
- await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-5');await finish(page);await expect(d(page)).not.toBeVisible();const before=await state(page);
+ await page.getByRole('button',{name:'Legg til beholdninger',exact:true}).click();await fillField(page,'Navn','Amulett');await page.getByRole('button',{name:'Neste',exact:true}).click();await fillField(page,'Maks','3');await revealField(page,'Tilgjengelig');await expect(page.getByRole('spinbutton',{name:'Tilgjengelig',exact:true})).toHaveValue('3');await fillField(page,'Tilgjengelig','1');await finish(page);await expect(d(page)).not.toBeVisible();
+ await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();await fillField(page,'HP-endring i tall','-5');await finish(page);await expect(d(page)).not.toBeVisible();const before=await state(page);
  await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:'Lang hvile',exact:true}).click();await expect(d(page)).toContainText('Monk · d8: 1 → 3 / 4');await expect(d(page)).toContainText('HP: 7 → 12');
  const ki=page.getByRole('checkbox',{name:/Ki: Minst 30/});await expect(ki).not.toBeChecked();await ki.check();await expect(d(page)).toContainText('Ki: 3 → 4 / 4');
  await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as any).failRest=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='characters'&&(window as any).failRest)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};});
@@ -107,7 +107,7 @@ test('Monk4 gets count-only Hit Dice and conditional Ki; long rest previews, ret
  await menuAction(page,'Angre siste endring');c=await state(page);expect(c.hp).toEqual(before.hp);expect(c.resources).toEqual(before.resources);
 });
 test('a manually registered feature grants a class list without removing ordinary character choices',async({page})=>{
- await sheet(page,'Monk',4);await page.getByRole('button',{name:'Legg til egenskap eller feat',exact:true}).click();await page.getByRole('button',{name:'Opprett egen egenskap / feat',exact:true}).click();await page.getByRole('textbox',{name:'Navn',exact:true}).fill('DMs gave');await page.getByRole('button',{name:'Flere detaljer',exact:true}).click();
- await page.getByText('Ekstra tilgang til magi',{exact:true}).click();await page.getByRole('checkbox',{name:'Gir tilgang til spells eller cantrips',exact:true}).check();await page.getByRole('checkbox',{name:'Cleric',exact:true}).check();await page.getByRole('spinbutton',{name:'Høyeste spellnivå (0 = bare cantrips)',exact:true}).fill('1');await page.getByRole('combobox',{name:'Spellcasting ability',exact:true}).selectOption('WIS');await finish(page);await expect(d(page)).not.toBeVisible();await magic(page);await pick(page,'spell','Cure Wounds');
+ await sheet(page,'Monk',4);await page.getByRole('button',{name:'Legg til egenskap eller feat',exact:true}).click();await page.getByRole('button',{name:'Opprett egen egenskap / feat',exact:true}).click();await fillField(page,'Navn','DMs gave');await page.getByRole('button',{name:'Flere detaljer',exact:true}).click();
+ await page.getByText('Ekstra tilgang til magi',{exact:true}).click();await page.getByRole('checkbox',{name:'Gir tilgang til spells eller cantrips',exact:true}).check();await page.getByRole('checkbox',{name:'Cleric',exact:true}).check();await fillField(page,'Høyeste spellnivå (0 = bare cantrips)','1');await choose(page,'Spellcasting ability','WIS');await finish(page);await expect(d(page)).not.toBeVisible();await magic(page);await pick(page,'spell','Cure Wounds');
  expect((await state(page)).spells[0]).toMatchObject({sourceLabel:'DMs gave',castingAbility:'WIS'});expect((await state(page)).resources.some(r=>r.kind==='spellSlot')).toBe(false);
 });

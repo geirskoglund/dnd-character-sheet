@@ -1,3 +1,4 @@
+import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {characterStep,finish,useEquipment} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import {createCharacter,menuAction,equipmentTab,itemDetails,expectCharacterStatus} from './helpers';
@@ -6,7 +7,7 @@ async function save(p:Page) {await finish(p);await expect(dialog(p)).not.toBeVis
 async function setup(p:Page) {
  await createCharacter(p);await menuAction(p,'Rediger karakter');
  await characterStep(p,2);
- await p.getByRole('spinbutton',{name:'STR',exact:true}).fill('16');await p.getByRole('spinbutton',{name:'DEX',exact:true}).fill('16');await save(p);await equipmentTab(p);
+ await fillField(p,'STR','16');await fillField(p,'DEX','16');await save(p);await equipmentTab(p);
 }
 async function add(p:Page,name:string,group='weapons') {
  await p.getByRole('button',{name:`Legg til ${group}`,exact:true}).click();
@@ -24,7 +25,7 @@ test('four tabs: direct catalog selection, useful weapon values, grip and Combat
  const before=await count(page);await page.getByRole('button',{name:'Longsword · i bruk',exact:true}).click();
  await expect(dialog(page)).toContainText('Angrep: d20+5');await expect(dialog(page)).toContainText('Skade: 1d8+3 slashing');
  expect(await dialog(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(4); // name, use, grip and optional note
- await page.getByRole('combobox',{name:'Brukes med',exact:true}).selectOption('two');await expect(dialog(page)).toContainText('1d10+3 slashing');await save(page);
+ await choose(page,'Brukes med','two');await expect(dialog(page)).toContainText('1d10+3 slashing');await save(page);
  expect(await count(page)).toBe(before+1);
  await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:/^Longsword/}).click();
  await expect(dialog(page)).toContainText('1d10+3 slashing');await expect(dialog(page).getByRole('button')).toHaveCount(1);await page.keyboard.press('Escape');
@@ -40,26 +41,26 @@ test('armor + shield + attuned cloak: AC19, save bonus, switching and overrides 
  await page.getByRole('checkbox',{name:'Attuned',exact:true}).check();await expect(page.locator('#derived-preview')).toContainText('Samlet AC 19');await save(page);
  await expectCharacterStatus(page,'AC19');await page.getByText('AC-grunnlag',{exact:true}).click();await expect(page.getByRole('main')).toContainText('Chain Mail: 16');await expect(page.getByRole('main')).toContainText('Shield 2 + Cloak of Protection 1 = 19');
  await page.getByRole('button',{name:'Character',exact:true}).click();await page.locator('[data-modifier="0"]').click();await expect(page.getByRole('button',{name:'Dexterity save +4',exact:true})).toBeVisible();await page.keyboard.press('Escape');
- await equipmentTab(page);await page.getByRole('button',{name:'Shield · i bruk',exact:true}).click();await itemDetails(page);await page.getByRole('spinbutton',{name:'AC-bonus',exact:true}).fill('1');await save(page);await expectCharacterStatus(page,'AC20');
+ await equipmentTab(page);await page.getByRole('button',{name:'Shield · i bruk',exact:true}).click();await itemDetails(page);await fillField(page,'AC-bonus','1');await save(page);await expectCharacterStatus(page,'AC20');
  await menuAction(page,'Angre siste endring');await expectCharacterStatus(page,'AC19');
  await page.reload();await equipmentTab(page);await expect(page.getByRole('main')).toContainText('AC 19');
 });
 test('own equipment needs only a name; details and complex effects are optional, errors preserve the draft',async({page})=>{
  await setup(page);await page.getByRole('button',{name:'Legg til annet utstyr',exact:true}).click();await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
- expect(await dialog(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(2); // name and optional note
- await page.getByRole('textbox',{name:'Navn på utstyr',exact:true}).fill('Reisekappe');await save(page);
+ expect(await dialog(page).locator('input:visible,select:visible,textarea:visible').count()).toBe(1); // one question: name; optional note follows
+ await fillField(page,'Navn på utstyr','Reisekappe');await save(page);
  await useEquipment(page,'Reisekappe');await expect(page.getByRole('button',{name:'Reisekappe · i bruk',exact:true})).toBeVisible();await expectCharacterStatus(page,'AC13');
- await page.getByRole('button',{name:'Reisekappe · i bruk',exact:true}).click();await itemDetails(page);await page.getByRole('textbox',{name:'Utstyrsnotat',exact:true}).fill('Avtalt med DM: beskytter mot regn.');
- await page.getByRole('spinbutton',{name:'Antall',exact:true}).fill('3');await save(page);
+ await page.getByRole('button',{name:'Reisekappe · i bruk',exact:true}).click();await itemDetails(page);await fillField(page,'Utstyrsnotat','Avtalt med DM: beskytter mot regn.');
+ await fillField(page,'Antall','3');await save(page);
  await page.getByRole('button',{name:'Reisekappe · i bruk · ×3',exact:true}).click();await itemDetails(page);await expect(page.getByRole('textbox',{name:'Utstyrsnotat',exact:true})).toHaveValue('Avtalt med DM: beskytter mot regn.');await save(page);
 });
 test('magic weapon bonus and manual totals persist offline and unchanged save adds no history',async({page,context})=>{
  await setup(page);await add(page,'Longsword');await page.getByRole('button',{name:'Longsword · i bruk',exact:true}).click();await itemDetails(page);
- await page.getByRole('spinbutton',{name:'Angrepsbonus',exact:true}).fill('1');await page.getByRole('spinbutton',{name:'Skadebonus',exact:true}).fill('1');await save(page);
+ await fillField(page,'Angrepsbonus','1');await fillField(page,'Skadebonus','1');await save(page);
  await expect(page.locator('[data-item]')).toContainText('d20+6 · 1d8+4 slashing');
  const before=await count(page);await page.getByRole('button',{name:'Longsword · i bruk',exact:true}).click();await save(page);expect(await count(page)).toBe(before);
  await page.getByRole('button',{name:'Longsword · i bruk',exact:true}).click();await itemDetails(page);await page.getByText('Våpenets regelverdier og overstyringer',{exact:true}).click();
- await page.getByRole('textbox',{name:'Attack (manuell total)',exact:true}).fill('d20+9 (DM)');await page.getByRole('textbox',{name:'Damage (manuell total)',exact:true}).fill('2d8+7 fire');await save(page);
+ await fillField(page,'Attack (manuell total)','d20+9 (DM)');await fillField(page,'Damage (manuell total)','2d8+7 fire');await save(page);
  await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();await page.waitForFunction(()=>navigator.serviceWorker.controller!==null);await context.setOffline(true);await page.reload();
  await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:/^Longsword/}).click();await expect(dialog(page)).toContainText('d20+9 (DM)');await expect(dialog(page)).toContainText('2d8+7 fire');
 });
@@ -90,8 +91,8 @@ test('legacy weapon profile fallback leaves stored data unchanged and failed edi
  });
  await page.reload();await equipmentTab(page);await expect(page.locator('[data-item]')).toContainText('d20+5 · 1d8+3 slashing');
  const before=await count(page);await page.getByRole('button',{name:'Arvesverd · i bruk',exact:true}).click();await save(page);expect(await count(page)).toBe(before);
- await page.getByRole('button',{name:'Arvesverd · i bruk',exact:true}).click();await itemDetails(page);await page.getByRole('spinbutton',{name:'Angrepsbonus',exact:true}).fill('2');
- await page.getByRole('textbox',{name:'Utstyrsnotat',exact:true}).fill('Avtalt med DM');
+ await page.getByRole('button',{name:'Arvesverd · i bruk',exact:true}).click();await itemDetails(page);await fillField(page,'Angrepsbonus','2');
+ await fillField(page,'Utstyrsnotat','Avtalt med DM');
  await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as unknown as {failSave:boolean}).failSave=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='characters'&&(window as unknown as {failSave:boolean}).failSave)throw new DOMException('Lagringsplassen er full.','QuotaExceededError');return original.apply(this,args);};});
  await finish(page);await expect(dialog(page).getByRole('alert')).toContainText('full');
  await expect(page.getByRole('spinbutton',{name:'Angrepsbonus',exact:true})).toHaveValue('2');await expect(page.getByRole('textbox',{name:'Utstyrsnotat',exact:true})).toHaveValue('Avtalt med DM');

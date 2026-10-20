@@ -13,7 +13,7 @@ Den gamle «Deploy from a branch»-metoden kan publisere kildefiler parallelt me
 
 Meny → Om appen viser versjonens korte commit-ID. «Se etter oppdatering» ligger direkte i menyen. Appen sjekker også når den får fokus, blir synlig, gjenopptas eller kommer på nett, og hvert minutt mens den er synlig og på nett. En app som står åpen ved bordet skal dermed oppdage en publisert utgave uten manuelt menyvalg. Kontroll av service-worker-kilden omgår HTTP-cachen via `updateViaCache: none`.
 
-Når en ferdig nedlastet versjon venter, vises «Oppdater appen». Lagre eller avbryt redigering før oppdatering. Andre faner/PWA-vinduer på appens scope må lagres og lukkes først; den ventende workeren teller dem før aktivering. Først etter et eksplisitt klikk aktiveres workeren og denne siden lastes på nytt. Ved en ekstern aktivering viser en åpen side melding og lar redigeringen fortsette uten automatisk reload.
+Når en ferdig nedlastet versjon venter, vises «Oppdater appen». Fullfør eller lukk veiviseren før oppdatering; X/Escape bevarer et separat utkast som kan fortsettes etterpå. Andre redigeringsflater bruker fortsatt Lagre/Avbryt. Andre faner/PWA-vinduer på appens scope må lagres og lukkes først; den ventende workeren teller dem før aktivering. Først etter et eksplisitt klikk aktiveres workeren og denne siden lastes på nytt. Ved en ekstern aktivering viser en åpen side melding og lar redigeringen fortsette uten automatisk reload.
 
 Offline-/nettverksfeil vises uten å røre karakterdata. En ferdig installert, ventende worker kan aktiveres fra appen. Det er ikke nødvendig å logge inn eller flytte karakterer til et annet lagringssted.
 

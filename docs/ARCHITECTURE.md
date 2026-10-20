@@ -65,3 +65,11 @@ Mobilbilder av samme eksempelkarakter, med foreløpig teknisk utforming:
 ## Eventyrjournal-moduler (2026-10-20)
 
 `domain/iconography.ts` definerer ikonvokabular, visuelle kategorier og sikre fallback-valg; modellen refererer listen for validering av valgfri metadata. `ui/icons.ts` rendrer lokale SVG-er og valgfritt ikonfelt. `ui/hp-control.ts` binder den relative native range-kontrollen til et separat utkastbeløp, med domenegrenser i `derived.ts`. `ui/combat-swipe.ts` håndterer horisontale pekergester uten tursporing. Felles `ui/dialog.ts` eier store/kompakte flater, fast topp/bekreftelse, fokus og utkastretur. Ingen backend, nye runtime-avhengigheter eller ny DB-versjon er innført. Lokale fonter og lisensinformasjon følger Workbox-precache. Se [design- og kontrollbeskrivelsen](EVENTYRJOURNAL.md).
+
+## Illustrert spørsmålsramme og utkast
+
+`ui/wizard.ts` eier én aktiv spørsmålsflate, forgreningsregler, svarvalg, validering, grafisk fremdrift, Tilbake og fokus. Spesifikke flyter leverer spørsmål og rene lese-/lagringsfunksjoner. Eldre karakter-/postfelt projiseres enkeltvis med eksisterende DOM-lyttere bevart; et tallfelts blur tegner ikke om siden og stjeler neste trykk. `wizard-art.ts` leverer lokale SVG-illustrasjoner og terninger, uten bildenedlasting.
+
+`WizardDraftRepository` er adskilt fra CharacterRepository. Serialiserte autolagringer bruker utkastets revisjon, mens fullføring atomisk skriver karakter/hendelse og konsumerer samme utkastrevisjon. Manglende/fullført/nyere utkast avvises. Formularet beholdes ved feil; X/Escape venter på lagring. Pågående/feilet autolagring har nettleservarsel ved sideforlatelse der nettleseren støtter det. Mobilens tvangslukking kan ikke garanteres under en uferdig IndexedDB-transaksjon.
+
+`domain/money.ts` har eksakt heltallsomregning. `ui/money-control.ts` synkroniserer to numeriske hjul og direkte GP-innskriving; den generelle `number-wheel.ts` håndterer touch/tastatur/grenser. Ingen ny pakke, backend eller databaseskjema er innført.

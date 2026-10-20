@@ -16,9 +16,9 @@ Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, t
 Når spilleren skal legge inn flere verdier, brukes en kort, forgrenet veiviser fremfor et omfattende skjema. Dette gjelder på tvers av appen, ikke bare våpen. Rene valg fra en liste beholder direkte registrering uten ekstra spørsmål eller bekreftelser.
 
 - Still forståelige spørsmål fra spillerens oppgave. Ja/nei-svar bestemmer hvilke oppfølgingssteg som trengs; sikre katalog-/karakterverdier følger med automatisk.
-- Samle nært beslektede verdier i samme steg, eksempelvis skadeuttrykk og skadetype. Hvert felt trenger ikke en egen skjerm.
+- Nyeste presisering (§14): ett spørsmål eller én verdi per skjerm. Terningtype, antall, skadetype og betingelse får separate spørsmål. Ja/nei-svar er direkte knapper som går videre.
 - Spør bare om relevant informasjon. Tilby avslutning så snart nødvendig informasjon er registrert; merknader og øvrige detaljer er valgfrie.
-- Tilbake og Avbryt er tilgjengelige; svar bevares når spilleren går tilbake. Hele registreringen bekreftes samlet, med trygg feilbehandling og Angre etter gjeldende lagringskrav.
+- Tilbake bevarer svar. Nyeste presisering (§14): Lukk bevarer et lokalt utkast; Forkast utkast er separat. Hele registreringen bekreftes samlet, med trygg feilbehandling og Angre etter gjeldende lagringskrav.
 - Veiviseren hjelper med føring på karakterarket; den krever ikke rekonstruksjon av tidligere level-ups eller automatiske regelvalg.
 
 Prinsippet er vedtatt 2026-10-20. Konkrete arbeidsflyter avklares én om gangen før ny appkode bestilles; se [nyeste brukerreview og avklarte flyter](#13-konseptuell-opprydding-og-arbeidsflyter-2026-10-20). Det er ikke implementert gjennom denne dokumentasjonen.
@@ -240,3 +240,13 @@ Hele tall rulles vertikalt, med valgt tall i midten, endelige grenser og direkte
 ### Leveranse og avgrensning
 
 Brukeren har delegert gjennomgang og merge, og ønsker én samlet branch/PR til slutt. Implementer og kontroller flytene samlet; ikke merge hver kommentar. [Arbeidsnotatet](WORKFLOW_REVIEW.md) bevarer samtalens rekkefølge, [aktuell leveransebeskrivelse](GUIDED_WORKFLOWS.md) beskriver implementasjonen, og [kravmatrisen](CHARACTER_WORKSPACE.md) fører faktisk kontroll og gjenværende krav. Fysisk iOS-kontroll er ikke tilgjengelig; nettlesermål og minst16px skjemafont begrenser utilsiktet fokuszoom uten å slå av tilgjengelighetszoom.
+
+## 14. Illustrert spørsmålsveiviser og utkast (bestilt 2026-10-20)
+
+Nyere avklaring erstatter «beslektede felt samlet» i veivisere: **ett spørsmål eller én verdi per skjerm**. Ja/nei er tydelige svarflater og går videre ved trykk, ikke avkrysninger eller spørsmål om generelle «spillverdier». Våpen spør konkret «Vil du legge til ekstraskade?». Terningtype vises som trykkbare illustrerte d4/d6/d8/d10/d12 og Annet, ikke dropdown. Antall terninger, skadetype, eventuell betingelse og teksten i betingelsen har hvert sitt steg. Spør til slutt om enda en ekstraskade. Fritekst/nummer bruker Neste, Tilbake bevarer svar. Korte hjelpetekster forklarer det aktuelle valget, blant annet at betingelsen tilhører denne skaden og beskriver når den gjelder.
+
+Veiviseren er et eget grafisk element i Eventyrjournal: tematisk illustrasjon, tydelig spørsmål, god luft, store valg, fast tilgjengelig lukk/tilbake og diskret grafisk fremdrift. Fullførte markører fylles, gjeldende fremheves, kommende har omriss. Ingen synlig «Steg 3 av 6»-tekst; skjermleser får fremdrift. Grenene tilpasses svar og gjentatte ekstraskader.
+
+Lukk/X bevarer et lokalt utkast med svar og posisjon, også over reload/app-lukking. Fortsett åpner samme steg. Fullfør registrerer gjenstanden/verdiene; Forkast utkast er egen destruktiv handling. Ved redigering består sist bekreftede våpen og Combat-verdier til fullføring. Utkast skal ikke telles som utstyr, brukes i Combat eller skrive karakterhistorikk. Lagre-/konfliktfeil vises tydelig og skal ikke lukke eller forkaste uferdig arbeid. Karakteradministrasjon/karakterutkast hører i menyen, utstyrsutkast finnes i Utstyr.
+
+Penger har to rullefelt ved siden av hverandre: hele GP og desimaldel00–99, med felles midtrad; direkte innskriving beholdes. 55|25 betyr55,25GP og lagres som5525CP. HP og Temporary HP i Combat får hjørnetrekant fordi de åpner redigering; AC/Initiative og Character-HP forblir uten.

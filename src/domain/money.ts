@@ -1,0 +1,4 @@
+export function moneyParts(cp:number){if(!Number.isSafeInteger(cp)||cp<0)throw new Error('Ugyldig pengebeløp.');return {whole:Math.floor(cp/100),fraction:cp%100};}
+export function moneyFromParts(whole:number,fraction:number){const cp=whole*100+fraction;if(!Number.isSafeInteger(whole)||!Number.isInteger(fraction)||whole<0||fraction<0||fraction>99||!Number.isSafeInteger(cp))throw new Error('Kontroller pengebeløpet.');return cp;}
+export function moneyText(cp:number){const p=moneyParts(cp);return `${p.whole}.${String(p.fraction).padStart(2,'0')}`;}
+export function moneyFromText(text:string){const match=/^(\d+)(?:[.,](\d{0,2}))?$/.exec(text.trim());if(!match)throw new Error('Angi et positivt GP-beløp med høyst to desimaler.');return moneyFromParts(Number(match[1]),Number((match[2]??'').padEnd(2,'0')));}

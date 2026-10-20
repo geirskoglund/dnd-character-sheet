@@ -63,6 +63,8 @@ export function readCharacterForm(form: HTMLFormElement, source: Character, crea
   return draft;
 }
 export function bindCharacterForm(form: HTMLFormElement, source: Character, creating: boolean) {
+  const previousClass=new WeakMap<HTMLSelectElement,string>();
+  form.querySelectorAll<HTMLSelectElement>('[name="classChoice"]').forEach(select=>previousClass.set(select,select.value));
   const update = () => {
     const custom = form.querySelector<HTMLSelectElement>('[name="speciesChoice"]')!.value === 'custom';
     form.querySelector<HTMLElement>('[data-custom-species]')!.hidden = !custom;
@@ -80,7 +82,7 @@ export function bindCharacterForm(form: HTMLFormElement, source: Character, crea
   form.addEventListener('input', update);
   form.addEventListener('change', event => {
     const target = event.target as HTMLSelectElement;
-    if (target.name === 'classChoice') target.closest('[data-class-id]')!.querySelector('[data-subclass-fields]')!.innerHTML = subclassFields(target.value);
+    if (target.name === 'classChoice'&&previousClass.get(target)!==target.value) {target.closest('[data-class-id]')!.querySelector('[data-subclass-fields]')!.innerHTML = subclassFields(target.value);previousClass.set(target,target.value);}
     update();
   });
   form.querySelector<HTMLButtonElement>('#add-class')!.onclick = () => { form.querySelector('#class-rows')!.insertAdjacentHTML('beforeend', classRow()); enhanceNumbers(form);update(); form.querySelectorAll<HTMLElement>('[name="classChoice"]')[form.querySelectorAll('[data-class-id]').length - 1].focus(); };

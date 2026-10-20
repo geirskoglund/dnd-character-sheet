@@ -1,3 +1,4 @@
+import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {characterStep,finish} from './helpers';
 import { menuAction } from './helpers';
 import { test, expect } from '@playwright/test';
@@ -36,12 +37,12 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
   try {
     await page.goto(url); await expect(page).toHaveTitle('Release A');
     await menuAction(page, 'Ny karakter');
-    await page.getByRole('textbox', { name: 'Navn', exact: true }).fill('Alva');
-    await page.getByRole('combobox', { name: 'Art / species', exact: true }).selectOption({ label: 'Human' });
+    await fillField(page,'Navn','Alva');
+    await choose(page,'Art / species',{ label: 'Human' });
     await characterStep(page,1);
-    await page.getByRole('combobox', { name: 'Klasse', exact: true }).selectOption({ label: 'Fighter' });
+    await choose(page,'Klasse',{ label: 'Fighter' });
     await characterStep(page,2);
-    await page.getByRole('spinbutton', { name: 'Maks HP fra karakterarket', exact: true }).fill('12');
+    await fillField(page,'Maks HP fra karakterarket','12');
     await finish(page);
     await expect(page.getByRole('heading', { name: 'Alva', exact: true })).toBeVisible();
     await page.evaluate(() => navigator.serviceWorker.ready);
@@ -50,7 +51,7 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
 
     const other = await context.newPage(); await other.goto(url);
     await menuAction(other, 'Rediger karakter');
-    await other.getByRole('textbox', { name: 'Navn', exact: true }).fill('Bevart etter oppdatering');
+    await fillField(other,'Navn','Bevart etter oppdatering');
     await page.clock.install();release = 'B';
     await page.clock.fastForward(60_000);
     await expect(page.locator('#app-update')).toContainText('En ny versjon er klar');

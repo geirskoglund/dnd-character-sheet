@@ -59,3 +59,27 @@ Full lokal kontroll: `CI=1 CHROMIUM_PATH=/usr/bin/chromium npm run check`. Aktue
 Oppdateringsflyten er også rettet etter brukerens rapport: sjekk hvert minutt mens appen er synlig/på nett, i tillegg til fokus/retur og manuelt søk. Ett avvist varsel skal ikke mase frem samme versjon hvert minutt; Meny → Se etter oppdatering henter det frem igjen. Aktivering er fortsatt eksplisitt, og åpne utkast/andre appfaner beskyttes. To-utgavers service-worker-test kontrollerer automatisk oppdagelse, lukking/gjenåpning av varsel, eksplisitt oppdatering og fortsatt offline-data.
 
 Utsatt etter avtale: ny forenkling av proficiencies/skadeegenskaper/tilstandsimmuniteter og samlet ny kort-hvileflyt. Komplett ikke-SRD-/boksubclass-automatikk, tredjedels-castertabeller, alle arts-/featvalg og deres bruksgrenser, alle standardhandlinger og sammensatt skadekalkulator er fortsatt ikke ferdig. Slike data kan føres manuelt; ingen regeltekst eller fritekstbetingelse tolkes automatisk. Valg av spells/feats, fysisk kast, healing-resultat og DM-unntak eies fortsatt av spilleren. Flere detaljer beholder eksisterende avanserte felt; den vanlige registreringsflyten bruker veiviser.
+
+## Illustrert spørsmålsveiviser og utkast
+
+Nyeste krav §14 erstatter det eldre grupperte skjemaet: **én avgjørelse eller én verdi per skjerm**. Ja/Nei og liste-/terningvalg er store svarflater som går videre ved trykk. Tekst og tall bruker Neste. Tilbake bevarer svar, også når en forgrening skjules og åpnes igjen. Forklaringen gjelder spørsmålet på skjermen; ingen generell avkrysning for «endre spillverdier».
+
+Våpenvarianten spør navn → frivillig merknad → endre grunnskade? → ekstraskade? Ved Ja: illustrert d4/d6/d8/d10/d12 eller Annet → antall (eller eget uttrykk) → skadetype → betingelse? → eventuell tekst → enda en ekstraskade? → kort resultat og Fullfør. Hver betingelse følger sin skade på Utstyr/Combat. Spilleren kaster fysiske terninger og vurderer vilkårene med DM. En nei-gren beholder sikre grunnverdier uten flere skadefelt.
+
+Den felles rammen har lokale SVG-illustrasjoner, journalpalett, grafiske fremdriftspunkter, forklaringer og fast X/Tilbake/Neste eller Fullfør. Ingen synlig «steg X av Y»; skjermleser får posisjonen. Punktrekken følger den aktuelle forgreningen, ikke et løfte om et fast antall spørsmål. Karaktergrunnlag, egne egenskaper/spells og beholdninger bruker samme ramme og én verdi per skjerm. Eksisterende avansert detaljredigering er fortsatt en frivillig ekspertflate.
+
+**Lukk bevarer arbeidet:** X/Escape lagrer svar og posisjon som eget lokalt utkast. Utstyr viser utstyrsutkast, Meny viser alle utkast og uferdige karakterer. Fortsett åpner samme spørsmål etter reload, også uten nett. Fullfør bekrefter posten og fjerner utkastet i samme transaksjon. Forkast utkast krever bekreftelse og endrer ikke ferdige data. Et uferdig våpen finnes ikke i inventar/Combat; uferdig redigering lar den gamle versjonen være. Lagre- eller fanekonflikt lar skjermen/svarene bli stående med tydelig feil. Backup tar med utkast; kopi kopierer bare ferdige karakterdata.
+
+Penger bruker **to uavhengige hjul: hele GP og 00–99**, med samme midtmarkering og tydelig ramme. Trykk beløpet for direkte innskriving. CP er fortsatt lagret eksakt som heltall; negative verdier, for mange desimaler og tall utenfor støttet område forklares og kan ikke bekreftes. HP/temp HP i Combat har rammefarget hjørnemarkør; passive verdier og selvforklarende knapper har ingen.
+
+Faktisk produktgjennomgang: Eirik Human Fighter3/Champion STR16, katalog-Longsword → Flammetunge +2d6 Fire «Når sverdet brenner», utkast/fortsett og resultat. Ja/nei-, terning-, betingelses- og pengeflater er kontrollert ved 320/390/768 px og 100/200 % tekst (24 kombinasjoner), med faste lukk-/bekreftelsesområder, én verdi eller ingen tekstfelt per spørsmålsflate og ingen horisontal overflyt eller pageerrors. Skjermbildene under er fra produksjonsbygget. Egen gjennomgang fant at blur på tallfelt tegnet om siden og kunne sluke neste trykk; dette er rettet. Uendret klassevalg beholder nå subclass og svar ved Tilbake.
+
+| Direkte svar | Terningtype | Forklaring av betingelse |
+| --- | --- | --- |
+| ![Spørsmål](images/illustrated-question.png) | ![Terningvalg](images/illustrated-dice.png) | ![Betingelse](images/illustrated-condition.png) |
+
+[Utstyrsutkast](images/illustrated-draft.png) · [Resultat](images/illustrated-summary.png) · [To pengehjul](images/illustrated-money.png).
+
+`wizard-drafts.test.ts` dekker isolasjon, revisjon, rollback/retry, backup og eksakt penger. `e2e/illustrated.spec.ts` bruker faktiske svarflater, flere skadekomponenter, forklaring, samme posisjon etter offline reload, uferdig redigering/Combat, forkast/avbryt, lagringsfeil, to faner, endret original, backup/import, uferdig karakter og pengehjul/touch. Tidligere regresjoner er tilpasset faktisk spørsmålsnavigasjon uten å skrive skjulte felter. Fullkontrollens resultat føres i kravmatrisen.
+
+Begrensning: lokal lagring følger nettleserens vanlige varighet; systemets tvangslukking mens en IndexedDB-skriving fortsatt pågår kan ikke garanteres. Åpne ekspertflater har fremdeles sine gamle eksplisitte Lagre/Avbryt-handlinger; deres senere felt blir ikke autolagret som veivisersvar. Ingen fysisk iOS/Safari- eller full tilgjengelighetsrevisjon påstås. Tidligere avtalte utsatte flyter og regelområder over består.
