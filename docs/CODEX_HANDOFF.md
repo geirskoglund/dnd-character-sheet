@@ -1,8 +1,16 @@
 # Overlevering til Codex
 
-## Nyeste bestilling: implementer den godkjente utstyrsflyten i appen
+## Nyeste bestilling: samlet produktgjennomgang og backlog
 
-Brukeren har godkjent v2-prototypen og bedt om implementasjon i hovedappen. Krav §16 erstatter tidligere avgrensning til isolert fil. Arbeidet samles på `prototype/equipment-effects` / PR23; testet merge og Pages er delegert. [Før-koding-matrisen](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen) angir scenarioene; lokale 203 tester og faktisk produktgjennomgang er dokumentert der. CI/merge/Pages verifiseres for leveransecommit. [Utstyrsguiden](EQUIPMENT.md) beskriver gjeldende føring og bevarte beregninger.
+Brukeren har bestilt gjennomgang av hele loggen, opprinnelig v0.11/overlevering og dagens app, også det som kan kvitteres ut. [BACKLOG.md](BACKLOG.md) er samlet status og foreslått arbeidsrekkefølge. Den erstatter ikke krav/beslutninger og skjuler ikke utsatte opprinnelige krav. Eldre statuser i denne filen og leveransematrisene er historikk; bruk kildebelagt ny status før arbeid planlegges.
+
+**Ingen appimplementasjon er bestilt i denne runden.** Korte bekreftelser er diskusjonsenighet, ikke kodeordre. Nye innspill etter PR #23 er bevart i krav §18: individuelt vanlig utstyr, Forbruk under Utstyr, avgrenset standardutvalg/enkel telling og midtbåndslukking/rapportert iOS-dobbelttrykk. Navn My D&D, endelig ikon og lavere bunnmeny er også fortsatt åpne. Ikke fortsett en gammel kodebestilling fordi den står nedenfor.
+
+Kildebegrensning: separat forklaringsfil til v0.11 er ikke sikkert identifisert i tilgjengelig tre/historikk. Audit av selve v0.11 og opprinnelige spesifikasjonsfiler er gjort; ikke påstå at en annen forklaringsfil er undersøkt.
+
+## Siste appleveranse: den godkjente utstyrsflyten
+
+Godkjent v2-utstyrsflyt er levert i [PR23](https://github.com/geirskoglund/dnd-character-sheet/pull/23), merge `9518d8c`. Krav §16 erstattet tidligere avgrensning til isolert fil. [Før-koding-matrisen](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen) angir scenarioene; 203 lokale tester og faktisk produktgjennomgang er dokumentert der. CI og Pages var vellykket for mergecommit; direkte ekstern Pages-røyktest var blokkert av miljøets proxy, ikke utført. [Utstyrsguiden](EQUIPMENT.md) beskriver gjeldende føring og bevarte beregninger.
 
 Siste presisering: spør valgfritt «Hva kreves for å aktivere effekten?» med ett svar, inkludert Ikke avklart. Dette er regel-/DM-informasjon. Ikke avklart og passiv vises under Andre egenskaper. Ikke gjeninnfør obligatorisk flerkategoriplassering. Ekte karakterberegninger, én effekttekst, delte ressurser, håndvalg/kopiering og én sluttlagring skal erstatte prototypeverdiene og gammelt generisk utstyrsskjema. Eldre profiler/overstyringer/utkast skal bevares.
 

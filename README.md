@@ -58,6 +58,8 @@ Meny → Om appen viser versjons-ID. «Se etter oppdatering» ligger direkte i m
 
 ## Gjeldende produktgrunnlag
 
+Se [samlet produktgjennomgang og foreslått backlog](docs/BACKLOG.md) for levert funksjonalitet, mangler fra opprinnelig prototype/overlevering, nyere innspill og åpne produktvalg. Prioritering er til brukerreview; dokumentbestilling er ikke bestilling om appkode.
+
 Les disse før funksjonsendringer; prototypekode er ikke fasit:
 
 1. [Overlevering](docs/CODEX_HANDOFF.md)

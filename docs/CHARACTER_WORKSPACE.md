@@ -1,4 +1,4 @@
-> Nyeste arbeid: **isolert utstyrsprototype** nederst; hovedappens nyeste leveranse er prøveversjonen med forenklede flyter og [GUIDED_WORKFLOWS](GUIDED_WORKFLOWS.md). En fungerende isolert prototype retter ikke hovedappens rapporterte avvik. Tidligere matriser er historikk.
+> Gjeldende samlet status: [produktgjennomgang og backlog](BACKLOG.md), kontrollert mot master9518d8c/PR #23. Utstyrsprototypen er overført til appen; leveransebeviset står nederst. Eldre matriser under er historikk og kan ha senere løste avvik. Detaljert kontrollgrunnlag beholdes; nye funksjoner bestilles uttrykkelig før koding.
 
 # Character-arbeidsflate: krav, kilde og leveransestatus
 
