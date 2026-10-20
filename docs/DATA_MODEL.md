@@ -116,3 +116,8 @@ Utkast lagres i eksisterende IndexedDB `settings` med nøkkel `wizard-draft:<uui
 Backup2 har et valgfritt `wizardDrafts`-felt, med inntil 200 utkast. Eldre backup uten dette er gyldig. Eksport inkluderer utkast for eksporterte karakterer og uferdige nye karakterer; import avviser kollisjoner og manglende karaktertilhørighet atomisk. Utstyrs- og karakterreferanser i utkast er originale ID-er, ikke nye registreringer. Gamle karakterredigeringsutkast kan avvises ved revisjonskonflikt etter import eller senere endring; originalen skal beholdes.
 
 Penger lagres fortsatt som heltall CP. De to GP-hjulene er en visning (hele GP og 00–99), med eksakt omregning og validering innen `Number.MAX_SAFE_INTEGER`. Flyttallsavrunding skal ikke endre en lagret kobbermynt.
+
+
+## Isolert utstyrsprototype v2 – separat prøveformat
+
+Ingen endring i Character/backup2 eller IndexedDB3. Den lokale HTML-studien har eget prøveformat2 under den eksisterende nøkkelen `dnd-equipment-study-v1`. Individuelle våpen har `hand:none|left|right|both` fremfor quantity; kopiering remapper item-/effekt-ID-er og starter uten hånd/attunement. Andre utstyrsantall bevares. Ability-virkninger skiller `add` og `floor`; eldre ability-sett-til i prøven normaliseres til minsteverdi. Andre eldre absoluttverdier bevares uten ny generell beregning. En friteksteffekt har `description`, `placements[]`, valgfritt `limited/max/remaining/recharge`; Combat bruker samme data og ID, ingen duplikatpool. X bevarer separat utkast, Lagre bekrefter hele gjenstanden og lukker etter eventuell bruk. Dette er et prøveformat, ikke godkjent produksjonsmigrering; se [betjening og grenser](../prototypes/equipment-study/README.md).

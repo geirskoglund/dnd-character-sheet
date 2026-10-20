@@ -1,46 +1,65 @@
-# Utstyrsverksted – isolert interaksjonsprototype
+# Utstyrsverksted – prototype v2
 
-Åpne **[utstyrsverksted.html](utstyrsverksted.html)** direkte i Chrome eller Safari på Mac. Ingen server, installasjon, bygg, nettforbindelse eller andre filer trengs. Ved nedlasting fra GitHub er **[zip-filen](utstyrsverksted.zip)** enklest: pakk ut og dobbeltklikk HTML-filen. Zip inneholder bare den samme HTML-filen, uten tester eller bilder.
+**[Last ned zip](utstyrsverksted.zip)**, pakk ut og åpne **utstyrsverksted.html** i Chrome eller Safari på Mac. Filen inneholder alt den trenger: ingen installasjon, server eller nettforbindelse. Erstatt den gamle HTML-filen på samme sted dersom nettleseren skal kunne finne tidligere prøvedata. Nettleser/private vinduer kan begrense lokal lagring.
 
-Dette er en arbeidsflytstudie, ikke en ny appversjon. Den leser ikke appens IndexedDB, importerer ingen karakterdata og registrerer ingen service worker. Hovedappens funksjon, dataformat og publiserte versjon er uendret.
+Dette er fortsatt en isolert arbeidsflytstudie. Hovedappen, dens karakterer/IndexedDB og GitHub Pages-versjonen er uendret. Detaljene er til brukerreview før eventuell appimplementasjon.
 
-## Prøv disse tre situasjonene
+## Prøv dette
 
-1. **Våpen:** Start «Et våpen med noe ekstra». Warhammer følger som grunnmodell. Gi den navnet Steam Hammer, legg til Ekstraskade → d4 → én terning → Fire → betingelse «Når hammeren damper». Lagre, slå på I bruk og bytt til to hender. Grunnprofil/ikon skal aldri måtte fylles ut på nytt.
-2. **Amulett:** Start «En magisk amulett». Legg til Constitution → Sett til en verdi → 19, uten betingelse. Legg til Immunity → En tilstand → Frightened. Begge virkningene følger samme gjenstand. Vanlig Amulett gir ingen magisk bonus før du selv registrerer den.
-3. **Fritekstevne:** Start «En evne med tre bruk», gi gjenstanden navn og velg Egen evne. Beskriv virkningen med egne ord. Ja til begrenset antall → maks 3 → Long rest. Etter lagring starter telleren på 3/3. Bruk −/+ for å føre forbruk og korrigering. Ingen spellkobling eller tilgjengelig-nå-felt ved opprettelse.
+### Våpen med skadebonus
 
-Prøv også direkte katalogvalg gjennom gruppenes +, tilbake, lukking midt i en registrering, reload, Fortsett, redigering, sletting og angre fjerning.
+Start «Et våpen med noe ekstra». Gi Warhammer et eget navn, legg til **Skadebonus +2** og **Ekstraskade 1d4 Fire** med betingelsen «Når hammeren damper». Lagre og velg hånd som siste valg. Popupen lukkes til listen. Åpne våpenet: grunnskade, modifiers og ekstraskade vises samlet; detaljene finnes under det merkede Beregningsgrunnlag.
 
-## Funksjonelle prøvevalg
+Prøvekarakteren har Strength14 (+2), derfor blir resultatet `1d8 + 4 bludgeoning` og den betingede fire-skaden. Begge hender gir versatile-grunnskade1d10. Bruk **Kopier** for et nytt uavhengig eksemplar, uten noe Antall-felt i våpenveiviseren.
 
-- Inngangen gir kontekst; ingen duplisert kategorivelger. Et lite prøveutvalg av grunnmodeller, ikke en full katalog. Søk har hint og tilgjengelig navn. Opprett eget kommer etter listen.
-- Kort navnesteg, deretter én felles oversikt over gjenstandens virkninger. Matrisen grupperer abilities, AC/angrep/skade/maksHP/bevegelse, skills/saves, beskyttelser og egen evne. + betyr legg til; hake betyr allerede representert, flere bidrag tillates.
-- Valgt virkning bruker ett spørsmål eller én verdi per skjerm. Ingen generell «endre spillverdier»-avkrysning. Ingen egen bekreftelsesskjerm per virkning; siste svar fører direkte tilbake til oversikten. Oversikten er også oppsummeringen før én samlet lagring.
-- Merknad, antall og krav om attunement er valgfrie opplysninger i samme redigeringsflyt. Ingen parallell ekspertdialog. Grafiske fremdriftspunkter følger spørsmålsgrenen; ingen synlig stegtelling.
-- Oppslag viser I bruk øverst og relevant håndbruk/angrepsmåte. Attuned vises bare ved krav. Navnet står én gang i dialoghodet. Grunnlag kan ekspanderes med hjørnemarkør. Markøren brukes ikke på lukkekryss eller selvforklarende svar/listevalg.
-- X/Escape bevarer ett separat utkast, også spørsmålsposisjon. Uferdig redigering endrer ikke sist lagrede gjenstand. Før en annen opprettelse/redigering spør prototypen om eksisterende utkast skal forkastes. Lagrede gjenstander, ett utkast og siste slettede oppføring er forsøkt bevart i en egen localStorage-nøkkel `dnd-equipment-study-v1`.
-- Lagring kan være begrenset ved lokal filåpning/private nettleservinduer. Feil gir en tydelig advarsel, og arbeidet beholdes i minnet. Samme filplassering/nettleser anbefales. Last ned prøvedata gir en JSON-kopi; import inngår ikke. Tilbakestill sletter bare prototypens prøveoppføringer.
+### To dolker og Combat
 
-## Avgrensning og spørsmål til brukerreview
+Legg til en Dagger via gruppens +, åpne den og velg Høyre hånd. Kopier den, åpne kopien og velg Venstre hånd. Begge vises i Combat. Prøvekarakterens Dexterity16 (+3) og proficiency+2 gir:
 
-Dette prøver føring og oppslag. Tall tastes direkte i denne isolerte flytprøven; appens tallhjul er ikke kopiert inn. Ingen faktiske karaktertotaler, automatisk evaluering av vilkår, kampmotor eller hvileautomatikk beregnes. Sett-til beskrives som fast verdi; for ability-gjenstander som Amulet of Health gjelder ikke senking av en allerede høyere verdi. Avgrensningen mellom absolutt overstyring og minimumsverdi må formaliseres ved produksjonsimplementasjon.
+- Action: `d20 + 5`, skade `1d4 + 3 piercing`.
+- Bonus Action: `d20 + 5`, skade `1d4 piercing`.
 
-Hver fritekstevne kan ha egen teller. Delte charges, variabel utgift, delvis/terningbasert gjenoppretting og skiftende aktiveringsvilkår er ikke modellert. Disse kan beskrives i merknad, og telleren korrigeres manuelt. Faste bonusvirkninger, ekstraskade og beskyttelser har ikke egne brukstellere i denne prøven. Ingen full datamigrering/produksjonskonkurrenskontroll eller magisk katalog inngår. Sjeldne våpen uten grunnmodell er ikke gjennomdesignet; Opprett eget gir navn/egne virkninger, men ingen ny våpenprofilredigerer.
+Hver dolk kan være første eller andre angrep; ingen hånd er permanent koblet til Action/Bonus. Vilkåret om Attack action og et lett melee-våpen i den andre hånden står ved bonusoppslagene. Under **Prøvekarakter og beregninger** kan du endre STR/DEX/proficiency og prøve Two-Weapon Fighting-kampstilen. Magisk skadebonus beholdes også på bonusangrepet; negativ ability modifier trekkes fortsatt fra. Håndkonflikter gir advarsel med DM-unntak. Two-handed-våpen tilbyr bare Begge hender/Ikke i bruk, og vanlige dolker tilbyr bare én hånd om gangen.
 
-Vurder spesielt: Er inndelingen forståelig? Er det enkelt å føre flere virkninger? Er antallet spørsmål passende? Er forskjellen på fast bonus, sett-til, ekstraskade, beskyttelse og egen evne tydelig? Detaljflyten er et forslag til vurdering, ikke godkjent produksjonsdesign.
+### Amulett med minsteverdi
 
-## Reproduserbar kontroll
+Start «En magisk amulett». Legg til Constitution → **Hev til minst** → 19. Legg eventuelt til Immunity → En tilstand → Frightened. De er virkninger på samme gjenstand. Gjenstanden beskrives ikke lenger som uten magisk effekt. Grunnverdien er fortsatt separat; en høyere ability-verdi beholdes. Tallbidrag som Skadebonus går rett til beløpet, med feltspesifikke tekster.
 
-Fra repository-roten med eksisterende avhengigheter:
+### Magic Mist og én samlet effekttekst
+
+Start «En effekt med begrensede bruk», gi gjenstanden navn og velg **Andre effekter → + Effekt**. Skriv «Magic Mist», velg hvor den skal vises i Combat, og angi eventuelt ett bruk per Short rest. Tilgjengelig starter på maks uten eget spørsmål.
+
+Ta gjenstanden i bruk ved lagring. Beskrivelsen vises i valgte Combat-kategorier og oppslaget med samme bruksteller. Flere kategorier kan velges. Gjentatt +Effekt åpner den eksisterende teksten, fremfor å opprette et nytt felt. Merknad om gjenstanden er separat og ment for historie, opphav og utseende.
+
+## Lagring og navigering
+
+- **Lagre er tilgjengelig underveis**, også i matrisen og spørsmålene. Nødvendige mangler får konkret beskjed. En komplett virkning kan lagres uten å trykke Tilbake flere ganger.
+- Hvis gjenstanden ikke allerede er i bruk, spørres det som siste lagringsvalg. Svaret lagrer og lukker. Eksisterende bruk beholdes uten nytt spørsmål.
+- **Lagre merknad** lagrer den sammen med resten av gjenstanden og lukker etter eventuell bruk. «Merknad og attunement» inneholder ikke Antall. Antall for andre gjenstander er et separat frivillig valg; våpen har ingen antallsregistrering.
+- Oppslagets raske hånd-/I bruk-/attunement-kontroller og brukstellere lagrer direkte. Oppslaget åpnes bare når du velger det, ikke automatisk etter lagring.
+- Avbryt denne virkningen avslutter bare den aktuelle virkningen og beholder resten av gjenstandsutkastet.
+- X/Escape bevarer et separat utkast og spørsmålsposisjon. Bekreftede data endres først ved Lagre. Tilbake bevarer svar. Forkast utkast er en egen handling.
+- Lagringsfeil vises tydelig, hindrer bekreftelse/lukking og beholder utkastet. Prøvedata kan eksporteres som JSON, også fra feilvarselet. Import inngår ikke. Sletting bekreftes, og siste fjerning kan angres.
+
+## Eldre prøvedata
+
+Den samme localStorage-nøkkelen beholdes. Prøveformatet er nå versjon2, uavhengig av hovedappens format. Eldre quantity-våpen deles i individuelle kopier ved innlesing; kopiene får egne ID-er og starter uten hånd/attunement. Gamle sett-til-ability-effekter får minsteverdisemantikken som den første prøven beskrev. Beskrivelse, tellere og utkast bevares. Gamle multiple friteksteffekter bevares som historiske separate oppføringer for å unngå datatap; ny +Effekt redigerer første eksisterende og oppretter ikke flere. Eldre absolutte overstyringer utenfor abilities bevares i data/oppsummeringen, men brukes ikke som en ny generell beregningsmotor.
+
+## Avgrensning
+
+Combat er en liten prøveflate med eksplisitte prøveverdier og vanlig 2014 two-weapon-fighting, ikke et komplett karakterark eller en turtracker. Våpnene regnes som proficient; normal finesse, versatile, two-handed og faste skade-/angrepsbonuser inngår. Ubetingede aktive ability-bidrag/minsteverdier og globale bonuser fra andre aktive gjenstander brukes i prøveberegningene. Attunement-krav respekteres. Passive fritekstvirkninger vises under Andre egenskaper.
+
+Fritekst/vilkår tolkes ikke automatisk. Betingede skadebonuser/ekstraskader vises med vilkåret og vurderes av spilleren. Ingen fysiske kast simuleres. Spesielle feats, spellangrep, delte charges, variabel utgift, automatisk hvile, komplett magisk katalog, full karaktermatematikk og samtidighetskontroll mellom faner inngår ikke. Tall tastes direkte i denne isolerte filen; appens tallhjul er ikke kopiert.
+
+## Kontroller
+
+Fra repoets rot med eksisterende avhengigheter:
 
 ```sh
 node prototypes/equipment-study/check.mjs
 npm run build
 ```
 
-`CHROMIUM_PATH` kan peke til en annen Chromium. Skriptet bruker repoets Playwright og trenger ingen ny avhengighet. Det henter HTML fra disk og oppfyller dokumentforespørselen direkte i nettleseren; ingen testserver eller ekstern nettforespørsel brukes. Dette gir en testbar nettleser-origin for lokal lagring. Miljøets administrerte Chromium blokkerer `file://` med `ERR_BLOCKED_BY_ADMINISTRATOR`; direkte filåpning på Mac/Safari er derfor ikke fysisk verifisert her. HTML har kun innebygd CSS/JS/SVG og ingen import/fetch, og er konstruert for lokal filåpning.
+18 scenariogrupper kontrollerer nye og eksisterende flyter, migrering av eldre prøvedata, statgulv, konteksttekster, siste bruksspørsmål/lukking, kopiering/hender, Action/Bonus-regler, delte fritekstoppslag/tellere, betingelser, utkast, lagringsfeil, slett/angre og offline. Layout prøves gjennom faktiske spørsmål og Combat ved320/390/768/1280px og100/200%tekst. Bilder i [screenshots](screenshots/), oppdatert matrise i [CHARACTER_WORKSPACE](../../docs/CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsprototype-v2).
 
-11 scenariogrupper kontrollerer de tre flytene, redigering/bevart brukt antall, utkast/reload, direkte katalogvalg, markører, sletting/angre, tilbake/betingelsesgren, smal bredde/stor tekst, lagringsfeil/korrupt lokaldata og frakoblet betjening. Layout prøves ved 320, 390, 768 og 1280 px med 100/200 % tekst, gjennom faktiske registreringsskjermer. Bilder genereres i [screenshots](screenshots/). Resultat og observerte begrensninger føres også i [kravmatrisen](../../docs/CHARACTER_WORKSPACE.md#isolert-utstyrsprototype-2026-10-20).
-
-Zip regenereres fra HTML ved endring. Kilden er HTML-filen; zip er bare nedlastingsinnpakning.
+`CHROMIUM_PATH` kan overstyre testnettleseren. Testen leser HTML fra disk og leverer den direkte til Chromium gjennom en Playwright-route, uten testserver/eksterne forespørsler. Miljøet har tidligere blokkert file://; fysisk Mac/Safari er ikke testet her. Brukeren har prøvd første utgave på egen maskin; alle ressurser er fortsatt innebygd i én fil. Zip inneholder bare HTML og kontrolleres identisk med kilden ved pakking.

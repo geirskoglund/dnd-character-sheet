@@ -266,3 +266,18 @@ Nyeste avklaringer til prøvegrunnlaget:
 - AC-grunnlag, Beregningsgrunnlag og andre ekspanderbare flater trenger den avklarte hjørnemarkøren; ingen markør på navigasjon, lukkekryss eller selvforklarende valg. Like plussflater, luft ved redigerings-/fjernhandlinger og ingen strekk av nabofelt når tallkontroller åpnes inngår i videre UX-kontroll.
 
 Detaljert matrixutforming, støtte for alle virkningstyper, delte charges/utgiftsregler og overføring til appens datamodell er ikke endelig vedtatt. Se [prøvens scenarioer og status](CHARACTER_WORKSPACE.md#isolert-utstyrsprototype-2026-10-20).
+
+### Oppfølging: prototypeversjon 2 (bestilt 2026-10-20)
+
+Brukeren er fornøyd med veiviseruttrykket og bestiller neste isolerte utgave. Hovedappen skal fortsatt ikke endres. Nyeste avklaringer erstatter prøvevalg i første utgave:
+
+- «Skadebonus» betyr et fast signert bidrag; «Ekstraskade» betyr egne terninger/skadetype/betingelse. Oppslag samler grunnskade, relevante bonuser og ekstraskade i en skadevisning. Redigering beholder sporbare bidrag.
+- Spørsmål, tilgjengelige valg og hjelpetekst følger det konkrete feltet og handlingen. Ingen Constitution-eksempler under skadebonus; skadebonus går direkte til beløpet. Ability-effekter kan «Hev til minst», f.eks. Constitution19 uten å senke en høyere verdi. Dette er forskjellig fra generell absolutt overstyring.
+- Lagre skal være tilgjengelig uten å gå tilbake flere ganger, bekrefte samlet og lukke popupen til utstyrslisten. Nødvendige mangler vises konkret. «Lagre merknad» erstatter «Behold merknaden». En lagringshandling skal ikke åpne oppslaget på nytt.
+- Hvis gjenstanden ikke allerede er i bruk, spør som siste del av lagringen om den skal tas i bruk; våpen får direkte relevante håndvalg og Ikke nå. Allerede registrert bruk beholdes uten spørsmål. Oppslagets raske brukskontroller beholdes.
+- Våpen føres enkeltvis: fjern Antall fra våpenveiviser, innhold og «Merknad og attunement»-knapp. Kopier lager en uavhengig våpenoppføring. Våpenets bruk er Ikke i bruk / Venstre hånd / Høyre hånd / Begge hender der våpenprofilen tillater det. Behold andre gjenstanders antall uten å gjeninnføre det i våpenflyten.
+- Grunnmodellen må ikke vise «ingen magisk effekt» eller tilsvarende påstand som motsier brukerens tillegg.
+- Merknad om gjenstanden er bakgrunn/opphav/utseende. Spillmessig fritekst ligger i virkningsoversikten under **Andre effekter → + Effekt**. Knappen redigerer samme felt ved gjentatte trykk; ingen nye parallelle fritekstfelt. Ikke krev spellkobling. Plassering kan velges som Action / Bonus Action / Reaction / Andre egenskaper, flere ved behov. Samme tekst og eventuell bruksteller vises fra samme kilde i relevante Combat-oppslag.
+- Avgrenset two-weapon-fighting-oppslag følger 2014: to passende lette melee-våpen i hver sin hånd gir mulige bonusangrep med det andre våpenet etter Attack action. Positiv ability modifier utelates fra bonusangrepets skade uten relevant fighting style; negativ beholdes, vanlige angrepsmodifiers/proficiency og magiske bonuser beholdes. Venstre er ikke permanent bonus, høyre ikke permanent Action. Ingen tursporing/automatiske angrep.
+
+Prototypen kan vise dette med eksplisitte prøveverdier for karakteren og en separat Combat-prøveflate. Produksjonsintegrasjon og full regeldekning er fortsatt utenfor bestillingen. Bevar gamle prøveoppføringer og utkast så langt samme nettleser/filplassering tillater.
