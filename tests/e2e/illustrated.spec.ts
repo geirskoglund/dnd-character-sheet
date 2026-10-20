@@ -45,6 +45,7 @@ test('failed draft autosave is prominent, X stays open, and retry preserves the 
  phase('type expression');await page.getByRole('textbox',{name:'Skadeuttrykk',exact:true}).fill('1d6+2');
  phase('expect autosave error');await expect(d(page).getByRole('alert')).toContainText('Utkastet kunne ikke lagres');
  phase('close with failed storage');await click(page,'Lukk veiviseren');
+ phase('expect failed close settled');await expect(d(page).getByRole('alert')).toHaveText('Full lagring');await expect(d(page).locator('form')).not.toHaveAttribute('aria-busy','true');
  phase('expect retained editor');await expect(d(page)).toBeVisible();await expect(page.getByRole('textbox',{name:'Skadeuttrykk',exact:true})).toHaveValue('1d6+2');
  phase('recover storage');await page.evaluate(()=>(window as any).failDraft=false);
  phase('close with recovered storage');await closeWizard(page);
