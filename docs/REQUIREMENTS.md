@@ -159,3 +159,7 @@ Dette er avklart betjening og design, ikke en bestilling av appkode eller nye sl
 ### Avklart kompakt toppfelt og scrolling (2026-10-20)
 
 Brukeren godkjente at appnavnet «D&D Character Companion» og regelutgaven «5e · 2014» fjernes fra karakterens toppfelt og plasseres under «Om appen» i menyen. Toppfeltet viser portrett/placeholder, karakterens navn og art, klasse, nivå og subclass. Hele toppfeltet scroller bort med innholdet; det skal ikke være fast eller sticky. Meny og hovedfaner forblir tilgjengelige nederst. Dette er vedtatt design, ikke en ny implementasjonsbestilling; eksisterende plansjer er historiske forslag.
+
+### Individuelle ikoner valgt (2026-10-20)
+
+Brukeren valgte **B2** fra plansje 06 (Alternativer): individuelle ikoner på artsegenskaper, class features, feats, våpen, cantrips og spells, i tillegg til overskrifts-/navigasjonsikonene. Dette erstatter tidligere uavklart valg mellom B1/B2. Ved implementasjon må det finnes et komplett og stilistisk sammenhengende sett for innholdet som støttes, med lesbare navn og en gjennomtenkt reservemarkør for egne/ukjente poster. Prøveikonene er ikke et ferdig bibliotek. Ikonene skal kunne vises offline. Dette er et designvalg, ikke en bestilling om å starte produksjonskode eller generere hele ikonsettet nå.

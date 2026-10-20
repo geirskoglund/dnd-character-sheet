@@ -203,3 +203,7 @@ Ved eventuell bestilling skal akseptansescenarioer omfatte: 0 → −8 → slipp
 ### Kompakt toppfelt og scrolling avklart; ikke implementert (2026-10-20)
 
 [Brukerens vedtatte toppfelt](REQUIREMENTS.md#avklart-kompakt-toppfelt-og-scrolling-2026-10-20) beholder portrett/placeholder og karakteridentitet, flytter appnavn/regelutgave til «Om appen» og scroller helt bort med innholdet. Bunnavigasjon og menytilgang beholdes. Ingen appkode eller bilder endres her. Ved eventuell bestilling skal mobilgjennomgangen verifisere bortscrollet toppfelt, nåbar meny/faner og ingen tap av eksisterende separate scrollposisjoner. Dette er uimplementerte krav, ikke nye beståtte scenarioer. Dokumentkontroll: tekst-/beslutningskonsistens, lokale lenker/ankere og diff-kontroll.
+
+### B2 med individuelle ikoner valgt; bibliotek gjenstår (2026-10-20)
+
+Brukeren valgte [B2 med individuelle ikoner](REQUIREMENTS.md#individuelle-ikoner-valgt-2026-10-20) på artsegenskaper, features/feats, våpen og spells/cantrips. B1/B2 er ikke lenger et åpent designvalg. Fullstendig ikonbibliotek for støttet innhold, reservemarkør og kontroll av lesbarhet/tekstmengde/konsekvent uttrykk gjenstår. Prøveikoner og tidligere geometritester dokumenterer ikke ferdig dekning eller gjenkjennelighet. Ingen ny kode eller nye bilder endres i denne dokumentasjonsrunden.
