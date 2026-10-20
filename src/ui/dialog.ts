@@ -52,6 +52,7 @@ host.addEventListener('keydown',event=>{
 function open(title: string, html: string, footer: string, onCancel?: CancelHandler, initialFocus?: string, kind: 'view'|'edit'|'confirm'='edit', size: 'compact'|'large'='large') {
   if (!host.open) captureOpener();
   delete host.dataset.wizard;
+  delete host.dataset.equipmentEditor;host.classList.remove('equipment-editor');
   cancelHandler = onCancel;
   pending = false;
   host.dataset.kind=kind;host.dataset.size=size;
@@ -81,7 +82,7 @@ export function editDialog(title: string, html: string, onSubmit: (form: HTMLFor
   return d;
 }
 /** Keep a commit visible and non-dismissible until storage confirms or reports failure. */
-export async function commitDialog(action: () => Promise<void>) {
+export async function commitDialog(action: () => Promise<void>,closeAfter=true) {
   if (pending || !host.open) return;
   pending = true;
   const form = host.querySelector('form')!;
@@ -92,7 +93,8 @@ export async function commitDialog(action: () => Promise<void>) {
   const primary = form.querySelector<HTMLButtonElement>('#submit');
   const label = primary?.textContent;
   if (primary) primary.textContent = 'Lagrer …';
-  try { await action(); host.close(); }
+  let success=false;
+  try { await action();success=true;if(closeAfter)host.close(); }
   catch (error) {
     const alert = form.querySelector<HTMLElement>('#dialog-error')!;
     alert.textContent = error instanceof Error ? error.message : 'Kunne ikke lagre. Endringene er ikke bekreftet.';
@@ -104,6 +106,7 @@ export async function commitDialog(action: () => Promise<void>) {
     body.inert=false;
     form.removeAttribute('aria-busy');
   }
+  return success;
 }
 /** Keep the actual editor nodes so declining deletion restores unsaved fields and listeners. */
 export function confirmDialog(title: string, html: string, onConfirm: () => Promise<void>, submit: string) {
@@ -111,11 +114,12 @@ export function confirmDialog(title: string, html: string, onConfirm: () => Prom
   const previousCancel = cancelHandler;
   const previousFocus = document.activeElement as HTMLElement | null;
   const previousScroll = host.querySelector('#dialog-body')?.scrollTop ?? 0;
-  const kind=host.dataset.kind,size=host.dataset.size,wizard=host.dataset.wizard;
+  const kind=host.dataset.kind,size=host.dataset.size,wizard=host.dataset.wizard,equipmentEditor=host.dataset.equipmentEditor;
   const restore = previous ? () => {
     host.replaceChildren(...previous);
     cancelHandler = previousCancel;
     host.dataset.kind=kind;host.dataset.size=size;if(wizard)host.dataset.wizard=wizard;else delete host.dataset.wizard;
+    if(equipmentEditor){host.dataset.equipmentEditor=equipmentEditor;host.classList.add('equipment-editor');}
     host.querySelector('#dialog-body')!.scrollTop=previousScroll;
     if (visible(previousFocus)) previousFocus.focus({preventScroll:true});
   } : undefined;

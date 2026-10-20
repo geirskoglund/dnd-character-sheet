@@ -83,3 +83,7 @@ Faktisk produktgjennomgang: Eirik Human Fighter3/Champion STR16, katalog-Longswo
 `wizard-drafts.test.ts` dekker isolasjon, revisjon, rollback/retry, backup og eksakt penger. `e2e/illustrated.spec.ts` bruker faktiske svarflater, flere skadekomponenter, forklaring, samme posisjon etter offline reload, uferdig redigering/Combat, forkast/avbryt, lagringsfeil, to faner, endret original, backup/import, uferdig karakter og pengehjul/touch. Tidligere regresjoner er tilpasset faktisk spørsmålsnavigasjon uten å skrive skjulte felter. Fullkontrollens resultat føres i kravmatrisen.
 
 Begrensning: lokal lagring følger nettleserens vanlige varighet; systemets tvangslukking mens en IndexedDB-skriving fortsatt pågår kan ikke garanteres. Åpne ekspertflater har fremdeles sine gamle eksplisitte Lagre/Avbryt-handlinger; deres senere felt blir ikke autolagret som veivisersvar. Ingen fysisk iOS/Safari- eller full tilgjengelighetsrevisjon påstås. Tidligere avtalte utsatte flyter og regelområder over består.
+
+## Nyere utstyrsflyt fra godkjent prototype
+
+Den generiske utstyrspopupen og den første våpenveiviseren er erstattet for ny føring. Se [Utstyr: føring og oppslag](EQUIPMENT.md) og [faktisk mobilreview](reviews/equipment-app/README.md). Ett samlet virkningsområde, egne bonus-/beskyttelses-/effektspørsmål, lagring direkte fra aktuell flate, håndvalg/kopi og kildeknyttede brukstellere er nå produksjonsflyten. Historiske skjermbilder og begrensninger over beskriver forrige utgave; eldre utkast kan fortsatt fullføres med kompatibilitetsveiviseren.

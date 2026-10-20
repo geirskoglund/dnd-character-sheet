@@ -3,17 +3,17 @@ import {itemIcon} from '../domain/iconography';
 import { commitDialog } from './dialog';
 import { equipmentCatalog, type Item } from '../domain/catalog';
 import { equipmentCategories } from './equipment-form';
-import { escapeHtml as esc, select } from './html';
+import { escapeHtml as esc } from './html';
 
 export function equipmentPicker(group = '') {
-  return `<label>Søk i utstyr<input type="search" name="equipmentSearch" placeholder="Rustning, skjold, våpen…" autocomplete="off"></label>
-    ${select('Kategori', 'equipmentFilter', group, [{value:'',label:'Alt utstyr'}, {value:'other',label:'Annet utstyr'}, {value:'armor',label:'Armor og skjold'}, ...equipmentCategories.filter(category=>category.value!=='armor')])}
-    <button type="button" id="custom-equipment">Opprett eget utstyr</button>
-    <p id="equipment-count" class="muted" role="status"></p><div id="equipment-results" class="choice-list"></div>`;
+  return `<label class="sr-only" for="equipment-search">Søk i utstyr</label><input id="equipment-search" type="search" name="equipmentSearch" placeholder="Søk" autocomplete="off">
+    <input type="hidden" name="equipmentFilter" value="${esc(group)}">
+    <p id="equipment-count" class="muted" role="status"></p><div id="equipment-results" class="choice-list"></div>
+    <button type="button" id="custom-equipment">Opprett eget utstyr</button>`;
 }
 export function bindEquipmentPicker(d: HTMLDialogElement, add: (id: string) => Promise<void>, custom: (catalogId?:string) => void) {
   const search = d.querySelector<HTMLInputElement>('[name="equipmentSearch"]')!;
-  const filter = d.querySelector<HTMLSelectElement>('[name="equipmentFilter"]')!;
+  const filter = d.querySelector<HTMLInputElement>('[name="equipmentFilter"]')!;
   const results = d.querySelector<HTMLElement>('#equipment-results')!;
   const label = (category: Item['category']) => equipmentCategories.find(c => c.value === category)!.label;
   const draw = () => {

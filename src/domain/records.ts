@@ -1,5 +1,6 @@
+import {effectiveAbilities,effectiveMaxHp} from './item-effects';
 import { characterSchema, type Character } from './model';
-import { hpAfterChange } from './derived';
+import { hpAfterItemChange } from './derived';
 
 export const damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
 export const conditionNames = ['Blinded', 'Charmed', 'Deafened', 'Frightened', 'Grappled', 'Incapacitated', 'Invisible', 'Paralyzed', 'Petrified', 'Poisoned', 'Prone', 'Restrained', 'Stunned', 'Unconscious'];
@@ -25,6 +26,7 @@ export function removeRecord(character: Character, collection: RecordCollection,
     owner.effectRefs = owner.effectRefs.filter(ref => !deleted.has(ref));
     if ('actionRefs' in owner) owner.actionRefs = owner.actionRefs.filter(ref => !deleted.has(ref));
   }
+  for (const item of c.items) if(item.specialEffect?.resourceId&&deleted.has(item.specialEffect.resourceId)) delete item.specialEffect.resourceId;
   for (const action of c.actions) action.resourceRefs = action.resourceRefs.filter(ref => !deleted.has(ref));
   return characterSchema.parse(c);
 }
@@ -42,9 +44,9 @@ export function useHitDie(character: Character, resourceId: string, rolled: numb
   const c = structuredClone(character), pool = c.resources.find(row => row.id === resourceId);
   if (!pool || pool.kind !== 'hitDie' || !pool.die || pool.current < 1) throw new Error('Ingen tilgjengelig Hit Die i denne ressursen.');
   if (!Number.isInteger(rolled) || rolled < 1 || rolled > Number(pool.die.slice(1))) throw new Error('Angi resultatet fra én fysisk terning.');
-  const healing = Math.max(0, rolled + Math.floor((c.abilityScores.CON - 10) / 2));
+  const healing = Math.max(0, rolled + Math.floor((effectiveAbilities(c).CON - 10) / 2));
   pool.current--;
-  c.hp = hpAfterChange(c.hp, healing);
+  c.hp = hpAfterItemChange(c, healing);
   return characterSchema.parse(c);
 }
 export function restCharacter(character: Character, kind: 'shortRest' | 'longRest', recoverHitDice: Record<string, number> = {}): Character {
@@ -60,6 +62,6 @@ export function restCharacter(character: Character, kind: 'shortRest' | 'longRes
     if (pool.kind === 'hitDie') pool.current += recoverHitDice[pool.id] ?? 0;
     else if (pool.recharge.kind === 'shortRest' || (kind === 'longRest' && pool.recharge.kind === 'longRest')) pool.current = pool.max;
   }
-  if (kind === 'longRest') { c.hp.current = c.hp.max; c.hp.temp = 0; }
+  if (kind === 'longRest') { c.hp.current = effectiveMaxHp(c); c.hp.temp = 0; }
   return characterSchema.parse(c);
 }

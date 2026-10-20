@@ -1,3 +1,4 @@
+import {effectiveMaxHp} from './domain/item-effects';
 import {z} from 'zod';
 import {WizardDraftRepository} from './storage/wizard-drafts';
 import {newWizardDraft,type WizardDraft,type DraftToken} from './domain/wizard-draft';
@@ -7,7 +8,7 @@ import {moneyFromText} from './domain/money';
 import {flushWizard} from './ui/wizard';
 import {inspectRecord} from './ui/record-dialogs';
 import {withStandardResources} from './domain/resource-setup';
-import {equipmentWizard,equipmentDraftPayload} from './ui/equipment-wizard';
+import {equipmentWizard,equipmentDraftPayload,inspectEquipment as equipmentLookup} from './ui/equipment-wizard';
 import {guidedRecord} from './ui/guided-records';
 import {resourceDialog,resourceWizard,restDialog} from './ui/resource-dialogs';
 import {preparationDialog} from './ui/preparation';
@@ -24,14 +25,14 @@ import { libraryPicker } from './ui/library-picker';
 import { createRecordEditors } from './ui/record-editors';
 import { characterView, combatView, equipmentView, magicView } from './ui/views';
 import { characterForm, bindCharacterForm, readCharacterForm, subclassFields, bindSubclass, readSubclass } from './ui/character-form';
-import { equipmentForm, bindEquipment, readEquipment, newEquipment, weaponSummary } from './ui/equipment-form';
+import { newEquipment, weaponSummary } from './ui/equipment-form';
 import { editDialog as dialog, viewDialog, confirmDialog, commitDialog } from './ui/dialog';
 import { equipmentPicker, bindEquipmentPicker } from './ui/equipment-picker';
 import { instantiateEquipment } from './domain/catalog';
 import { historyView } from './ui/history';
 import { modifiers, signed } from './domain/modifiers';
 import { levelUpCharacter } from './domain/level-up';
-import { deriveStats, hpAfterChange, hpDeltaBounds } from './domain/derived';
+import { deriveStats, hpAfterItemChange, hpDeltaBounds } from './domain/derived';
 import { escapeHtml as esc, field, select } from './ui/html';
 import './style.css';
 
@@ -199,6 +200,8 @@ function render() {
   });
   root.querySelectorAll<HTMLButtonElement>('[data-equipment-group]').forEach(button => button.onclick = () => addEquipment(current()!,button.dataset.equipmentGroup));
   root.querySelectorAll<HTMLButtonElement>('[data-item]').forEach(button => button.onclick = () => inspectEquipment(button.dataset.item!));
+  root.querySelectorAll<HTMLButtonElement>('[data-item-counter]').forEach(button=>button.onclick=()=>void run(async()=>{const c=structuredClone(current()!),pool=c.resources.find(p=>p.id===button.dataset.pool);if(!pool)return;pool.current=Math.max(0,Math.min(pool.max,pool.current+Number(button.dataset.delta)));await saveCharacter(c,'resource',pool.name+' bruk endret');await refresh();}));
+
 }
 async function refresh() {
   characters = (await repo.list()).map(withStandardResources);
@@ -235,7 +238,7 @@ function editCharacter(source?: Character,resume?:WizardDraft) {
   bindCharacterForm(d.querySelector('form')!, draft, creating);
   bindWizard(d,[...d.querySelectorAll<HTMLElement>('#dialog-body > fieldset')].map(element=>({element})),'Lagre',{store:draftRepo,entry:resume??newWizardDraft({kind:'character',label:draft.name||'Ny karakter',characterId:creating?undefined:draft.id,editingId:creating?undefined:draft.id,payload:{source:draft,creating,classes:draft.classes}}),changed:refresh,payload:form=>({source:draft,creating,classes:readCharacterForm(form,draft,creating).classes.map(cl=>({...cl,level:Number.isFinite(cl.level)&&cl.level>=1&&cl.level<=20?cl.level:1}))})});
 }
-function inspectEquipment(id: string) { editEquipment(current()!, id); }
+function inspectEquipment(id: string) { equipmentLookup(editorContext,id); }
 function addEquipment(c: Character, group = '') {
   const d = viewDialog('Legg til utstyr', equipmentPicker(group), '[name="equipmentSearch"]','large');
   bindEquipmentPicker(d, async catalogId => {
@@ -243,24 +246,6 @@ function addEquipment(c: Character, group = '') {
     await saveCharacter({...c, items:[...c.items, item]}, 'equipment', `${item.name} lagt til`);
     message = ''; await refresh();
   }, catalogId => equipmentWizard(editorContext,catalogId?instantiateEquipment(catalogId,false):{...newEquipment(),equipped:false,category:(group==='weapon'?'weapon':group==='armor'?'armor':'equipment')}));
-}
-function editEquipment(c: Character, id?: string, group = '') {
-  const source = id ? c.items.find(i => i.id === id)! : {...newEquipment(),category:(group === 'weapon' ? 'weapon' : group === 'armor' ? 'armor' : 'equipment') as Character['items'][number]['category']};
-  const d = dialog(id ? source.name : 'Nytt utstyr', equipmentForm(source, !id), async form => {
-    const item = readEquipment(form, source);
-    const items = id ? c.items.map(i => i.id === id ? item : i) : [...c.items, item];
-    const result = characterSchema.safeParse({...c, items});
-    if (!result.success) throw new Error('Kontroller navn, antall og utstyrsverdier. Bruk hele tall der det kreves.');
-    await saveCharacter(result.data, 'equipment', `${item.name} ${id ? 'redigert' : 'lagt til'}`);
-    message = ''; await refresh();
-  });
-  bindEquipment(d.querySelector('form')!, source, c);
-  const guided=d.querySelector<HTMLButtonElement>('#guided-damage');if(guided){guided.hidden=source.category!=='weapon';guided.textContent='Rediger med veiviser';guided.onclick=()=>equipmentWizard(editorContext,readEquipment(d.querySelector('form')!,source),true);}
-  const remove = d.querySelector<HTMLButtonElement>('#delete-item');
-  if (remove) remove.onclick = () => confirmDialog('Fjern utstyr?', `<p>Vil du fjerne «${esc(source.name)}» fra karakteren?</p>`, async () => {
-    await saveCharacter({...c, items:c.items.filter(i => i.id !== id)}, 'equipment', `${source.name} fjernet`);
-    message = ''; await refresh();
-  }, 'Fjern utstyr');
 }
 function levelUp(c: Character) {
   if (!c.classes.length) { tell('Registrer klasse og klassenivå før Level Up.'); editCharacter(c); return; }
@@ -287,15 +272,15 @@ function levelUp(c: Character) {
   update();
 }
 function editHitPoints(c: Character) {
-  const bounds=hpDeltaBounds(c.hp);
-  const d=dialog('Endre HP',hpControl(c.hp),async form=>{
+  const bounds=hpDeltaBounds({...c.hp,max:effectiveMaxHp(c)});
+  const d=dialog('Endre HP',hpControl({...c.hp,max:effectiveMaxHp(c)}),async form=>{
     const delta=Number(new FormData(form).get('deltaAmount'));
     if(!Number.isInteger(delta)||delta<bounds.min||delta>bounds.max)throw new Error('Ugyldig HP-endring.');
     if(!delta)return;
-    await saveCharacter({...c,hp:hpAfterChange(c.hp,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
+    await saveCharacter({...c,hp:hpAfterItemChange(c,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
     message = '';await refresh();
   },'Oppdater HP');
-  bindHpControl(d,c.hp);
+  bindHpControl(d,{...c.hp,max:effectiveMaxHp(c)});
 }
 
 function editOverrides(c: Character) {

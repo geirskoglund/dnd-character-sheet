@@ -1,3 +1,4 @@
+import {effectiveAbilities,effectiveMaxHp} from './item-effects';
 import type {Character} from './model';
 import {classFacts,classKey,levelFacts,slotProgression} from './magic';
 import {abilityModifier} from './modifiers';
@@ -41,7 +42,7 @@ export function withStandardResources(source:Character):Character {
   if(key==='rage')max=cl.level>=20?999:cl.level>=17?6:cl.level>=12?5:cl.level>=6?4:cl.level>=3?3:2;
   if(key==='second-wind'){max=1;recharge={kind:'shortRest'};}
   if(key.startsWith('action-surge')){max=cl.level>=17?2:cl.level>=2?1:0;recharge={kind:'shortRest'};}
-  if(key==='bardic-inspiration'){max=Math.max(1,abilityModifier(c.abilityScores.CHA));recharge={kind:cl.level>=5?'shortRest':'longRest'};}
+  if(key==='bardic-inspiration'){max=Math.max(1,abilityModifier(effectiveAbilities(c).CHA));recharge={kind:cl.level>=5?'shortRest':'longRest'};}
   if(key==='font-of-magic'&&cl.level>=2)max=cl.level;
   if(key==='lay-on-hands')max=5*cl.level;
   if(key==='wild-shape'&&cl.level>=2){max=2;recharge={kind:'shortRest'};}
@@ -82,6 +83,6 @@ export function restResult(c:Character,kind:'shortRest'|'longRest',recovery:Reco
   const applies=p.recharge.kind==='shortRest'||kind==='longRest'&&p.recharge.kind==='longRest';
   if(applies&&(!p.recharge.ruleText||confirmed.has(p.id)))p.current=p.max;
  }
- if(kind==='longRest'){draft.hp.current=draft.hp.max;draft.hp.temp=0;}
+ if(kind==='longRest'){draft.hp.current=effectiveMaxHp(draft);draft.hp.temp=0;}
  return draft;
 }

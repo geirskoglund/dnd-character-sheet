@@ -57,7 +57,7 @@ test('corner marks clickability without a different status surface and item stat
  expect(new Set(status.map(s=>s.bg)).size).toBe(1);expect(new Set(status.map(s=>s.line)).size).toBe(1);
  expect(status.map(s=>s.corner==='none')).toEqual([true,true,true,false,true]);
  await equipmentTab(page);const sword=page.getByRole('button',{name:'Shortsword · i bruk',exact:true});
- await expect(sword.locator('[data-icon="sword"]')).toHaveCount(1);await expect(sword.locator('.state-mark')).toHaveText('I bruk');
+ await expect(sword.locator('[data-icon="sword"]')).toHaveCount(1);await expect(sword.locator('.state-mark')).toHaveText('Høyre hånd');
  const chosen=await sword.evaluate(el=>({fill:getComputedStyle(el).backgroundColor,corner:getComputedStyle(el,'::after').backgroundColor,line:getComputedStyle(el).borderColor}));
  expect(chosen.fill).toBe('rgba(0, 0, 0, 0)');expect(chosen.corner).toBe(chosen.line);
 });
@@ -113,8 +113,7 @@ test('own icon choices persist, automatic family fallback works, and fonts/icons
  expect(await page.evaluate(()=>document.fonts.check('16px Journal')&&document.fonts.check('16px Source'))).toBe(true);
  await expect(custom.locator('[data-icon="healing"]')).toHaveCount(1);
  await equipmentTab(page);await page.getByRole('button',{name:'Shortsword · i bruk',exact:true}).click();await itemDetails(page);
- await page.getByText('Ikon (valgfritt)',{exact:true}).click();await choose(page,'Ikonvalg','moon');
- await finish(page);await expect(page.locator('[data-item]').first().locator('[data-icon="moon"]')).toHaveCount(1);
+ await expect(page.getByRole('dialog')).not.toContainText('Ikon (valgfritt)');await closeEditor(page);await expect(page.locator('[data-item]').first().locator('[data-icon="sword"]')).toHaveCount(1);
  await context.setOffline(false);
 });
 

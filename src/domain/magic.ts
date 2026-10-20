@@ -1,3 +1,4 @@
+import {effectiveAbilities,effectiveMaxHp} from './item-effects';
 import context from '../data/srd-context.json';
 import {classCatalog} from './catalog';
 import {spellLibrary,instantiateSpell,featureLibrary} from './character-library';
@@ -28,7 +29,7 @@ export function subclassSpells(c:Character,cl:Character['classes'][number]) {
 export function preparationLimit(c:Character,cl:Character['classes'][number]) {
  const key=classKey(cl),ability=classFacts(cl)?.ability as keyof Character['abilityScores'];
  if(!['wizard','cleric','druid','paladin'].includes(key)||!maxSpellLevel(cl))return null;
- return Math.max(1,(key==='paladin'?Math.floor(cl.level/2):cl.level)+abilityModifier(c.abilityScores[ability]));
+ return Math.max(1,(key==='paladin'?Math.floor(cl.level/2):cl.level)+abilityModifier(effectiveAbilities(c)[ability]));
 }
 export interface SpellSource {id:string;label:string;classRef?:string;ref?:{kind:'feature'|'catalog';id:string};ability?:typeof import('./model').abilities[number];system?:string;maxLevel:number;cantrip:boolean;classes:string[];spellIds:string[];book?:boolean;alwaysIds?:string[]}
 export function spellSources(c:Character):SpellSource[] {
@@ -62,7 +63,7 @@ export function featureEligibility(c:Character,row:typeof featureLibrary[number]
  }
  for(const raw of meta?.prerequisites??[]){
   const p=raw as {ability_score?:{name:string};minimum_score?:number;type?:string;spell?:string;feature?:string;level?:number};
-  if(p.ability_score&&p.minimum_score!==undefined&&c.abilityScores[p.ability_score.name as keyof Character['abilityScores']]<p.minimum_score)return {eligible:false,note:`Krever ${p.ability_score.name} ${p.minimum_score}`};
+  if(p.ability_score&&p.minimum_score!==undefined&&effectiveAbilities(c)[p.ability_score.name as keyof Character['abilityScores']]<p.minimum_score)return {eligible:false,note:`Krever ${p.ability_score.name} ${p.minimum_score}`};
   if(p.type==='level'&&p.level!==undefined&&!c.classes.some(cl=>row.classes.includes(cl.name)&&cl.level>=p.level!))return {eligible:false,note:`Krever klassenivå ${p.level}`};
   if(p.type==='spell'&&!c.spells.some(s=>s.definitionRef?.id===`srd51:spell:${p.spell?.split('/').at(-1)}`))unknown.push('Spellforutsetning må bekreftes');
   else if(p.type==='feature'&&!c.features.some(f=>f.sourceRef?.id===`srd51:class:${p.feature?.split('/').at(-1)}`))unknown.push('Egenskapsforutsetning må bekreftes');

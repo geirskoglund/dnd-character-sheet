@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
 **Oppdatert:** 2026-10-20
-**Status:** Prototyping er avsluttet etter v0.11. Konsolidert implementasjonsgrunnlag finnes i [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken.  
+**Status:** Hovedappen er implementert; en ny isolert utstyrsprototype er bestilt 2026-10-20 for å prøve neste arbeidsflyt før appendring. Konsolidert grunnlag finnes i [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken.
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
@@ -302,3 +302,37 @@ Brukerens senere rapport om manglende oppdateringsmelding tas med: åpen, synlig
 Brukeren forkastet oppdeling av det gamle skjemaet med avkrysninger som en svak veiviser. Hvert bilde har nå ett valg/verdi, med forklaring og konkrete svar. Terningtype er illustrerte direktevalg; antall er eget spørsmål. Betingelse spørres Ja/Nei og forklares med eksempler, før eventuell tekst på eget steg. Valgene forgrener flyten; veiviseren er ikke en meny for å finne «Legg til ekstraskade». Eget illustrert journaluttrykk og grafiske markører er godkjent; synlig stegtelling er uttrykkelig forkastet.
 
 Lukking bevarer utkast, Fullfør bekrefter, Forkast er separat. Uferdig redigering endrer ikke eksisterende gjenstand eller Combat. Lokal persistens må tåle reload og sikre at feil/konflikter ikke gir stille tap. Brukeren bestilte samlet implementasjon etter avklaringene. Ta samtidig med todelt GP-hjul og regresjonen med manglende HP-/tempHP-hjørner. Én branch/PR/merge til slutt gjelder fortsatt.
+
+## Utstyrsreview og ny lokal prototype bestilt (2026-10-20)
+
+Den leverte veiviseren løste ikke hele utstyrsarbeidsflyten. Brukeren viste manglende klikkmarkører på ekspanderbare felt, uens +, I bruk for langt nede, strukne skjemafelt og manglende luft ved redigerings-/fjernknapper. Tidligere grønne tester er ikke bevis for at disse situasjonene er gode. Fornyet retning: én samlet gjenstand med oppslag/raske brukskontroller og en sammenhengende registrering/redigering, uten en parallell rest av et omfattende ekspertskjema.
+
+Brukeren avklarte kontekst fra gruppens inngang, søkehint uten synlig label og Opprett eget etter listen. Våpen arver grunnprofil og ikon; vanlige varianter registrerer forskjeller fremfor å spørre om alle arvede regler på nytt. Bonuser og attunement kan være relevante valg. Spacing og ordvalg for sletting er diskutert; «Fjern fra utstyrslisten» er et forslag til tydeligere ordlyd, ikke en ny slettesemantikk.
+
+Statbasert opprettelse av utstyr ble utforsket, men trukket tilbake som rotete når en gjenstand har mange ulike virkninger. Brukeren foreslo deretter en generell matrise over hva gjenstanden påvirker. Dette prøves med korte spørsmål for valgt virkning; bonus og sett-til skilles, ekstraskadebetingelse følger komponenten, og skade-/tilstandsimmunitet skilles. Ikke-tallbaserte evner er fritekst uten obligatorisk spellkobling. Begrenset evne spør om maks og gjenoppretting; tilgjengelig starter på maks, ingen ekstra opprettelsesverdi. Daggry/manuelt er prøveforslag i tillegg til short/long rest. Flere virkninger tilhører samme kildegjenstand.
+
+Brukeren valgte å prøve arbeidsflyten isolert først og bestilte «Do it». Lever én selvstendig HTML-fil som åpnes direkte på Mac. Ingen Pages-publisering eller endring av hovedappen inngår nå. Prøven bruker eksempeldata og egen lokal lagring med feilvarsel. Tre testtilfeller: våpenvariant med betinget ekstraskade, amulett med statsendring og immunitet, fritekstevne med begrensede bruk. Detaljene er prøveutforming, ikke automatisk godkjent produksjonsdesign. Kjente hovedappavvik beholdes som åpne; de erklæres ikke rettet gjennom en prototype. Se krav §15 og ny matrise nederst.
+
+## Brukerreview av utstyrsprototypen: ny utgave bestilt
+
+Brukeren likte veiviseren og bestilte uttrykkelig en ny prototype med den samlede oppfølgingen. Behold visuelt spørsmålsuttrykk; rett betydning, kontekst og navigering. Fast skadebidrag heter Skadebonus, vises samlet med skadeuttrykket i oppslag. Hjelp og valg er feltspesifikke; ability19-modellen navngis Hev til minst, og tilbys ikke ukritisk på skadebonus.
+
+Lagre uten bakovernavigering skal bekrefte og lukke til listen. Navngi handlinger Lagre merknad osv. Spør om bruk som siste lagringsvalg bare når gjenstanden ikke allerede er i bruk. Våpen har individuelle oppføringer og Kopier, relevant venstre/høyre/begge-hender-valg, ingen Antall i veiviser eller menyknappen. Brukerens siste presisering bekrefter uttrykkelig dette. Andre utstyrsantall er ikke forkastet.
+
+Fjern påstander om ingen magisk effekt fra grunnmodeller. Skill gjenstandsmerknad fra spillmessig fritekst: Andre effekter → + Effekt åpner én eksisterende beskrivelse fremfor å legge til en ny. Valgfri bruksteller følger denne virkningen, starter på maks og kan vises med samme data i Combat. Friteksten kan plasseres i flere handlingskategorier uten spellkobling.
+
+Brukeren avklarte to kopierte dolker i hver hånd og ba om at appen håndterer de ulike angreps-/skadeoppslagene. To-weapon-fighting etter 2014 beregnes ut fra oppsett og relevante modifiers/fighting style, uten permanent kobling mellom hånd og handlingskategori eller tursporing. Den isolerte prøven får eksplisitte prøveverdier og avgrenset Combat-visning; dette er ikke en implementasjonsbestilling i hovedappen.
+
+## Utstyrsprototypen godkjent for implementasjon i appen
+
+Brukeren godkjente en siste forenkling: handlingstypen er valgfri regelinformasjon/DM-avklaring, med Ikke avklart. Ikke spør hvor brukeren vil plassere teksten i UI; bruk faktisk aktiveringsmåte, normalt ett valg per beskrevet aktivering. Uavklart/passiv vises under Andre egenskaper. Deretter ble selve appimplementasjonen uttrykkelig bestilt. Tidligere «isolert prototype / ingen appendring» er historikk, ikke en blokkering av denne bestillingen.
+
+Overfør den samlede registrerings-/oppslagsflyten med faktisk karaktergrunnlag og vedvarende data. Bevar historikk, angre, kopi, eksport/import, gamle profiler/overstyringer og utkast. Ingen demo-karakter eller prototype-localStorage importeres til ekte karakterer. Arbeidet fullføres samlet på egen branch/PR, med brukerens tidligere delegerte testede merge/publisering.
+
+## Installasjonsnavn og bunnmeny (løpende brukerinnspill)
+
+Vedtatt installert navn: **My D&D**. Endelig appikon må bestemmes. Brukeren rapporterer for høy bunnmeny, spesielt i installert visning; behovet for lavere meny registreres, med bevarte trykkflater og safe area. Dette innspillet er loggført under pågående utstyrsimplementasjon; menyendring og ikonvalg er ikke erklært utført.
+
+## Utstyrsverksted overført til hovedappen
+
+Ny føring bruker virkningsoversikt og ett spørsmål per verdi. Oppslag har raske bruk-/håndvalg øverst og tydelig separat Rediger/Kopier/Fjern. Item-virkninger er kildebundne tillegg til ekte karaktergrunnlag; minimum for ability scores er «hev til minst», og tekstvilkår tolkes ikke. Én valgfri handlingstype styrer friteksteffektens Combat-oppslag; uavklart er tillatt. Bruksteller er en vanlig delt resource med sourceRef=item, ikke en parallell teller. Grunnverdier, manuelle totaler, eldre profiler og utkast bevares. Se [føring/beregningskontrakt](EQUIPMENT.md), [datamodell](DATA_MODEL.md#utstyrsvirkninger-fra-den-godkjente-veiviseren) og [produktkontroll](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen). Fysisk iOS/Safari er ikke prøvd; ikon-/menyinnspill følges separat.

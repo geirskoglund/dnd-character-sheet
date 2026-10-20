@@ -122,7 +122,7 @@ dialog > form { display: flex; flex-direction: column; min-height: 0; max-height
 .dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px var(--dialog-padding); border-bottom: 1px solid var(--soft-line); flex-shrink: 0; }
 #dialog-title { display: block; margin: 0; font-size: 2rem; line-height: 1.05; }
 #dialog-title::after { display: none; }
-.dialog-close { flex: 0 0 44px; width: 44px; height: 44px; padding: 10px; }
+.dialog-close { display:grid;place-items:center;line-height:1;flex: 0 0 44px; width: 44px; height: 44px; padding: 10px; }
 #dialog-body { flex: 1 1 auto; min-height: 0; padding: 18px var(--dialog-padding); overflow-y: auto; overscroll-behavior: contain; }
 #dialog-body > :first-child { margin-top: 0; }
 #dialog-body > label + label, #dialog-body > .form-grid, #dialog-body > .check, #dialog-body > details { margin-top: .8rem; }
@@ -287,3 +287,19 @@ dialog[data-wizard] [data-wizard-step], dialog[data-wizard] fieldset {min-width:
 .combat-health > button::after {content:'';position:absolute;bottom:0;right:0;width:9px;height:9px;background:var(--frame);clip-path:polygon(100% 0,100% 100%,0 100%);border-bottom-right-radius:inherit;pointer-events:none}
 @media (prefers-reduced-motion:no-preference){dialog[data-wizard] [data-question-id]:not([hidden]),dialog[data-wizard] label:not([hidden]) {animation:question-in .14s ease-out}@keyframes question-in {from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
 @media(max-height:650px){.wizard-art {height:90px;margin:.3rem auto}.wizard-art > .icon {width:48px;height:48px}.wizard-intro {margin-bottom:.8rem}#wizard-question{margin:.6rem auto}.wizard-options button {min-height:72px}}
+
+/* Shared journal treatment for disclosures and the approved equipment workspace. */
+details:not(.app-menu)>summary::after,.eq-expand::after,.eq-effect-row::after{content:'';position:absolute;right:0;bottom:0;width:9px;height:9px;background:var(--line);clip-path:polygon(100% 0,100% 100%,0 100%);pointer-events:none}
+details:not(.app-menu)>summary{padding:.7rem 1rem .7rem .3rem;border-bottom:1px solid var(--frame)}
+.equipment-group[data-equipment-kind="weapon"] .pills{grid-template-columns:repeat(auto-fill,minmax(min(100%,8rem),1fr))}
+.equipment-group .add-pill{max-width:none}.eq-hands{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 20px}.eq-hands [aria-pressed=true]{border-color:var(--accent);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.eq-secondary{display:grid;gap:12px;margin:24px 0}.eq-destructive{margin:30px 0 10px;padding-top:24px;border-top:1px solid var(--soft-line)}
+.eq-effect-list{display:grid;gap:8px}.eq-effect-row{display:flex;flex-direction:column;gap:6px;text-align:left}.eq-add-effect{width:100%;border-style:dashed;color:var(--accent);margin:14px 0}.eq-primary{background:var(--accent);color:var(--panel)}
+.equipment-editor .dialog-actions{flex-wrap:wrap}.equipment-editor .dialog-actions button{flex:1;min-width:0}.equipment-answer{min-width:0}.equipment-answer .wizard-options{margin-bottom:16px}.equipment-answer h4{color:var(--muted);margin:22px 0 10px}.equipment-answer label{overflow-wrap:anywhere}
+.item-combat-effect{border:1px solid var(--line);border-radius:7px;padding:14px;margin:12px 0}.item-effect-title{border:0;padding:0;font:600 1.35rem Journal;color:var(--accent)}
+.equipment-counter{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}.equipment-counter button{min-width:44px}.equipment-counter output{font-weight:600;font-variant-numeric:tabular-nums}.equipment-counter small{margin-left:auto}
+
+.item-effect-title{position:relative;padding-right:18px;border-bottom:1px solid var(--frame)}
+/* Keep whole action labels readable with enlarged text; ornament yields space first. */
+.equipment-editor .dialog-actions button{flex:1 1 7ch;min-width:min(100%,7ch);padding-inline:.4rem;overflow-wrap:normal}
+@media(max-width:360px){.equipment-editor .wizard-art{height:80px;margin:.25rem auto}.equipment-editor .wizard-art>.icon{width:48px;height:48px}}

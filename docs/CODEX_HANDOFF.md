@@ -1,5 +1,19 @@
 # Overlevering til Codex
 
+## Nyeste bestilling: implementer den godkjente utstyrsflyten i appen
+
+Brukeren har godkjent v2-prototypen og bedt om implementasjon i hovedappen. Krav §16 erstatter tidligere avgrensning til isolert fil. Arbeidet samles på `prototype/equipment-effects` / PR23; testet merge og Pages er delegert. [Før-koding-matrisen](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen) angir scenarioene; lokale 203 tester og faktisk produktgjennomgang er dokumentert der. CI/merge/Pages verifiseres for leveransecommit. [Utstyrsguiden](EQUIPMENT.md) beskriver gjeldende føring og bevarte beregninger.
+
+Siste presisering: spør valgfritt «Hva kreves for å aktivere effekten?» med ett svar, inkludert Ikke avklart. Dette er regel-/DM-informasjon. Ikke avklart og passiv vises under Andre egenskaper. Ikke gjeninnfør obligatorisk flerkategoriplassering. Ekte karakterberegninger, én effekttekst, delte ressurser, håndvalg/kopiering og én sluttlagring skal erstatte prototypeverdiene og gammelt generisk utstyrsskjema. Eldre profiler/overstyringer/utkast skal bevares.
+
+Løpende innspill i krav §17: installert navn **My D&D**, endelig appikon ubestemt, lavere bunnmeny ønsket spesielt i installert visning. Dette er loggført; ikon og meny er ikke ferdig levert.
+
+## Historikk: isolert utstyrsprototype
+
+**Nyeste oppfølging:** Brukeren har bestilt prototype v2 etter positiv veiviserreview. Samlede avklaringer står i krav §15 «Oppfølging», siste beslutningslogg og [v2-kontrollen](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsprototype-v2). Skadebonus/samlet skade, feltspesifikk hjelp, minsteverdi for abilities, Lagre uten bakovernavigering med lukking/siste bruksspørsmål, ingen Antall for våpen, Kopier og håndvalg samt én friteksteffekt med Combat-plassering er gjeldende. Hovedappen er fortsatt utenfor denne bestillingen.
+
+Etter review av utstyr ønsket brukeren å prøve en ny arbeidsflyt isolert før appendring. Bestillingen er én lokal HTML-fil for Mac, ikke en produksjonsombygging eller Pages-publisering. [Krav §15](REQUIREMENTS.md#15-ny-utstyrsregistrering-isolert-prøve-før-appendring-2026-10-20), siste DECISIONS og [nyeste matrise](CHARACTER_WORKSPACE.md#isolert-utstyrsprototype-2026-10-20) bevarer avklaringene. [Prototypen](../prototypes/equipment-study/README.md) prøver en samlet gjenstand med flere virkninger, arvet våpenprofil/ikon, statbidrag/sett-til, beskyttelser og fritekstevner med valgfri bruksteller. Ingen spellkobling kreves; tilgjengelig starter på maks. Statbasert utstyrsopprettelse ble diskutert og trukket tilbake. Detaljflyten er til UX-vurdering; ikke kopier den inn i appen uten ny bestilling. Rapporterte feil i hovedappens utstyrsflate er fortsatt åpne.
+
 ## Varig prosjektminne og aktuell status
 
 Les også [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md) før videre funksjonsarbeid. Brukeren har uttrykkelig bedt om at REQUIREMENTS og DECISIONS holdes oppdatert, slik at avklaringer ikke forsvinner når samtalen komprimeres. Før nye vedtatte avklaringer i begge dokumenter og faktisk leveransestatus i matrisen. Ikke gjeninnfør forkastede mønstre eller anta at hele SRD/Combat er ferdig bare fordi Character-flytene er utvidet. Brukeren må få fullføre løpende tilbakemeldinger før ny koding bestilles.

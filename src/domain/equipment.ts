@@ -1,20 +1,21 @@
+import {effectiveAbilities,itemAdjustment,itemUsed,weaponHand} from './item-effects';
 import type { Character } from './model';
 import { equipmentCatalog, type Item } from './catalog';
 
 const mod = (n: number) => Math.floor((n - 10) / 2);
 const sign = (n: number) => `${n >= 0 ? '+' : ''}${n}`;
-export const inUse = (i: Item) => i.equipped && i.quantity > 0;
+export const inUse = itemUsed;
 export const magicActive = (i: Item) => inUse(i) && (!i.requiresAttunement || !!i.attuned);
 export function armorClass(c: Character, i: Item): number | null {
   const p = i.armorProfile;
-  return p ? p.baseAc + (p.addDex ? Math.min(mod(c.abilityScores.DEX), p.dexCap ?? Infinity) : 0) + ((!i.requiresAttunement || i.attuned) ? i.bonuses?.ac ?? 0 : 0) : null;
+  return p ? p.baseAc + (p.addDex ? Math.min(mod(effectiveAbilities(c).DEX), p.dexCap ?? Infinity) : 0) + ((!i.requiresAttunement || i.attuned) ? i.bonuses?.ac ?? 0 : 0) : null;
 }
 export const classLevel = (c: Character, key: string) => c.classes.filter(cl => cl.definitionRef?.kind === 'catalog' && cl.definitionRef.id === `srd51:class:${key}`).reduce((n, cl) => n + cl.level, 0);
 /** Safe read-only fallback for early catalog instances. Never replace the player's text or stored profile. */
 export function weaponProfile(i: Item) {
   return i.weaponProfile ?? (i.definitionRef?.kind === 'catalog' ? equipmentCatalog.find(d => d.catalogId === i.definitionRef!.id)?.weaponProfile : undefined);
 }
-export function hands(i: Item) { return i.grip ? i.grip === 'two' ? 2 : 1 : i.handUsage === 'two' ? 2 : 1; }
+export function hands(i: Item) { if(i.hand&&i.hand!=='none')return i.hand==='both'?2:1;return i.grip ? i.grip === 'two' ? 2 : 1 : i.handUsage === 'two' ? 2 : 1; }
 export function hasStyle(c: Character, style: string) {
   return c.features.some(f => f.sourceRef?.kind === 'catalog' && [
     `srd51:class:fighter-fighting-style-${style}`, `srd51:class:ranger-fighting-style-${style}`, `srd51:class:fighting-style-${style}`,
@@ -41,7 +42,7 @@ export function weaponProficiency(c: Character, item: Item) {
   return { value: !!found, source: found ? `${found.name}: våpenproficiency${c.classes.length > 1 && c.classes[0] === found ? ' (første registrerte klasse)' : ''}` : 'Ingen kjent proficiency; kan overstyres' };
 }
 /** Only explicit, unconditional item bonuses. Complex prose is never interpreted. */
-export function itemBonuses(c: Character, target: 'ac' | 'saves') {
+export function itemBonuses(c: Character, target: 'ac' | 'saves' | 'attack' | 'damage') {
   const seen = new Set<string>();
   return [...c.items].filter(magicActive).sort((a,b)=>(b.bonuses?.[target] ?? 0)-(a.bonuses?.[target] ?? 0)).filter(i => {
     const key = i.definitionRef?.kind === 'catalog' && i.definitionRef.id.startsWith('srd51:magic-item:') ? i.definitionRef.id : i.id;
@@ -82,19 +83,24 @@ export function equipmentWarnings(c: Character) {
   for (const i of items) if (i.requiresAttunement && !i.attuned) warnings.push(`${i.name}: krever attunement; magiske bonuser er ikke medregnet.`);
   const ids = items.filter(i => i.definitionRef?.kind === 'catalog' && i.definitionRef.id.startsWith('srd51:magic-item:') && i.bonuses && Object.values(i.bonuses).some(Boolean)).map(i => i.definitionRef!.id);
   if (new Set(ids).size !== ids.length) warnings.push('Flere eksemplarer av samme gjenstand er i bruk. Like magiske effekter stables ikke.');
+  const explicit=items.filter(i=>i.category==='weapon'&&i.hand&&i.hand!=='none');
+  for(const hand of ['left','right'] as const)if(explicit.filter(i=>i.hand===hand||i.hand==='both').length>1)warnings.push(`${hand==='left'?'Venstre':'Høyre'} hånd brukes av flere våpen. Avtal unntaket med DM.`);
   return warnings;
 }
 export interface WeaponStats { attack: string; damage: string; explanation: string[]; notes: string[]; range: string; offhand: boolean }
 export function deriveWeapon(c: Character, i: Item, offhand = false): WeaponStats {
+  const scores=effectiveAbilities(c);
   const p = weaponProfile(i), notes: string[] = [], explanation: string[] = [];
-  const ability = i.attackAbility ?? (p?.kind === 'ranged' ? (p.properties.includes('finesse') && c.abilityScores.STR > c.abilityScores.DEX ? 'STR' : 'DEX') : p?.properties.includes('finesse') && c.abilityScores.DEX > c.abilityScores.STR ? 'DEX' : 'STR');
+  const ability = i.attackAbility ?? (p?.kind === 'ranged' ? (p.properties.includes('finesse') && scores.STR > scores.DEX ? 'STR' : 'DEX') : p?.properties.includes('finesse') && scores.DEX > scores.STR ? 'DEX' : 'STR');
   const monk = classLevel(c, 'monk');
   const monkWeapon = (item: Item) => { const v = weaponProfile(item);return !!v && (item.definitionRef?.id === 'srd51:equipment:shortsword' || (v.kind === 'melee' && v.category === 'simple' && !v.properties.some(p => ['two-handed','heavy'].includes(p)))); };
   const martialArts = monk > 0 && monkWeapon(i) && !c.items.some(item => inUse(item) && (['armor','shield'].includes(item.category) || (item.category === 'weapon' && !monkWeapon(item))));
-  const chosenAbility = !i.attackAbility && martialArts && c.abilityScores.DEX > c.abilityScores[ability] ? 'DEX' : ability;
-  const abilityBonus = mod(c.abilityScores[chosenAbility]), prof = weaponProficiency(c, i), pb = c.proficiencyBonusOverride ?? Math.ceil(c.level / 4) + 1;
+  const chosenAbility = !i.attackAbility && martialArts && scores.DEX > scores[ability] ? 'DEX' : ability;
+  const abilityBonus = mod(scores[chosenAbility]), prof = weaponProficiency(c, i), pb = c.proficiencyBonusOverride ?? Math.ceil(c.level / 4) + 1;
   const magic = !i.requiresAttunement || i.attuned;
-  const attackBonus = magic ? i.bonuses?.attack ?? 0 : 0, damageBonus = magic ? i.bonuses?.damage ?? 0 : 0;
+  const own=(target:'attack'|'damage')=>magic?(i.bonuses?.[target]??0)+(i.modifiers??[]).filter(m=>m.target===target&&m.operation==='add'&&!m.condition).reduce((n,m)=>n+m.amount,0):0;
+  const global=(target:'attack'|'damage')=>{const worn={...c,items:c.items.filter(item=>item.category!=='weapon')};return itemAdjustment(worn,target)+itemBonuses(worn,target).reduce((sum,b)=>sum+b.amount,0);};
+  const attackBonus=own('attack')+global('attack'),damageBonus=own('damage')+global('damage');
   const archery = p?.kind === 'ranged' && hasStyle(c, 'archery') ? 2 : 0;
   const dueling = p?.kind === 'melee' && hands(i) === 1 && !c.items.some(other => other.id !== i.id && inUse(other) && other.category === 'weapon') && hasStyle(c, 'dueling') ? 2 : 0;
   explanation.push(`${chosenAbility} ${sign(abilityBonus)}`, `Proficiency ${prof.value ? sign(pb) : '+0'} (${prof.source})`);
@@ -129,5 +135,5 @@ export function deriveWeapon(c: Character, i: Item, offhand = false): WeaponStat
 }
 export function offhandWeapons(c: Character) {
   const weapons = c.items.filter(i => inUse(i) && i.category === 'weapon' && hands(i) === 1 && weaponProfile(i)?.kind === 'melee' && weaponProfile(i)?.properties.includes('light'));
-  return weapons.length >= 2 ? weapons : [];
+  return weapons.filter(i=>weapons.some(other=>other.id!==i.id&&weaponHand(c,other)!==weaponHand(c,i)));
 }

@@ -250,3 +250,48 @@ Veiviseren er et eget grafisk element i Eventyrjournal: tematisk illustrasjon, t
 Lukk/X bevarer et lokalt utkast med svar og posisjon, også over reload/app-lukking. Fortsett åpner samme steg. Fullfør registrerer gjenstanden/verdiene; Forkast utkast er egen destruktiv handling. Ved redigering består sist bekreftede våpen og Combat-verdier til fullføring. Utkast skal ikke telles som utstyr, brukes i Combat eller skrive karakterhistorikk. Lagre-/konfliktfeil vises tydelig og skal ikke lukke eller forkaste uferdig arbeid. Karakteradministrasjon/karakterutkast hører i menyen, utstyrsutkast finnes i Utstyr.
 
 Penger har to rullefelt ved siden av hverandre: hele GP og desimaldel00–99, med felles midtrad; direkte innskriving beholdes. 55|25 betyr55,25GP og lagres som5525CP. HP og Temporary HP i Combat får hjørnetrekant fordi de åpner redigering; AC/Initiative og Character-HP forblir uten.
+
+## 15. Ny utstyrsregistrering: isolert prøve før appendring (2026-10-20)
+
+**Bestilt nå:** én selvstendig, klikkbar HTML-fil som åpnes lokalt på Mac uten server/installasjon. Prøv registrering, oppslag og redigering av (1) våpenvariant med betinget ekstraskade, (2) amulett med statsendring og immunitet, (3) gjenstand med fritekstevne og begrensede bruk. Hovedappen og dens karakterdata endres ikke. Prototypens konkrete arbeidsflyt skal vurderes av brukeren før eventuell produksjonsimplementasjon; ingen ny appimplementasjon er bestilt nå.
+
+Nyeste avklaringer til prøvegrunnlaget:
+
+- Papirarket er ledestjerne: lite nødvendig utfylling, intuitiv og logisk rekkefølge. Inngangen Våpen / Armor og skjold / Annet utstyr gir kontekst; ikke spør om samme kategori igjen. Søk har hint «Søk» og tilgjengelig navn, ingen synlig ledetekst. Opprett eget ligger etter kataloglisten.
+- Standardvåpen arver grunnprofil og ikon; normalflyten tilbyr ikke redigering av arvede regelverdier eller manuelt ikonvalg. Egne navn, antall, merknader, bonuser og ekstraskader kan være relevante. Relevant håndbruk/angrepsmåte skilles fra faste egenskaper. Eksisterende overstyringer i appen skal ikke slettes av en senere UI-forenkling. Sjeldne improviserte/homebrew-grunnlag er ikke ferdig avklart.
+- En gjenstand samler flere virkninger. En gruppert oversikt/matrise over påvirkbare verdier og beskyttelser er retningen som skal prøves, med oppfølgingsspørsmål bare for valgte virkninger. Tallbidrag må skille mellom øk/reduser og sett-til (en effekt som setter Constitution til 19 er ikke en +19-bonus). Ekstraskade har terninger, skadetype og valgfri fritekstbetingelse knyttet til akkurat den komponenten.
+- Evner som ikke endrer en beregnet verdi kan beskrives i fritekst, uten krav om spell-/katalogkobling. Valgfritt maks antall bruk og gjenoppretting; ved nyregistrering settes tilgjengelig lik maks uten eget spørsmål. Short rest / long rest og de foreslåtte alternativene daggry/manuelt prøves. Ingen automatisk regelutførelse eller fortolkning av fritekst.
+- Idéen om å opprette utstyr fra Constitution/andre statfelt ble diskutert og trukket tilbake; prøven holder registreringen samlet under gjenstanden. Katalogen har hovedsakelig vanlig utstyr; «Amulett» er ikke en ferdig magisk gjenstand. Ingen full magisk katalog forutsettes.
+- Oppslag prioriterer I bruk øverst, sammen med relevante verdier og eventuell attunement. Krever attunement, faktisk attuned og I bruk er forskjellige forhold. Bare relevante valg vises. Full redigering skal ikke ha et parallelt langt ekspertskjema som skjuler deler av registreringen.
+- AC-grunnlag, Beregningsgrunnlag og andre ekspanderbare flater trenger den avklarte hjørnemarkøren; ingen markør på navigasjon, lukkekryss eller selvforklarende valg. Like plussflater, luft ved redigerings-/fjernhandlinger og ingen strekk av nabofelt når tallkontroller åpnes inngår i videre UX-kontroll.
+
+Detaljert matrixutforming, støtte for alle virkningstyper, delte charges/utgiftsregler og overføring til appens datamodell er ikke endelig vedtatt. Se [prøvens scenarioer og status](CHARACTER_WORKSPACE.md#isolert-utstyrsprototype-2026-10-20).
+
+### Oppfølging: prototypeversjon 2 (bestilt 2026-10-20)
+
+Brukeren er fornøyd med veiviseruttrykket og bestiller neste isolerte utgave. Hovedappen skal fortsatt ikke endres. Nyeste avklaringer erstatter prøvevalg i første utgave:
+
+- «Skadebonus» betyr et fast signert bidrag; «Ekstraskade» betyr egne terninger/skadetype/betingelse. Oppslag samler grunnskade, relevante bonuser og ekstraskade i en skadevisning. Redigering beholder sporbare bidrag.
+- Spørsmål, tilgjengelige valg og hjelpetekst følger det konkrete feltet og handlingen. Ingen Constitution-eksempler under skadebonus; skadebonus går direkte til beløpet. Ability-effekter kan «Hev til minst», f.eks. Constitution19 uten å senke en høyere verdi. Dette er forskjellig fra generell absolutt overstyring.
+- Lagre skal være tilgjengelig uten å gå tilbake flere ganger, bekrefte samlet og lukke popupen til utstyrslisten. Nødvendige mangler vises konkret. «Lagre merknad» erstatter «Behold merknaden». En lagringshandling skal ikke åpne oppslaget på nytt.
+- Hvis gjenstanden ikke allerede er i bruk, spør som siste del av lagringen om den skal tas i bruk; våpen får direkte relevante håndvalg og Ikke nå. Allerede registrert bruk beholdes uten spørsmål. Oppslagets raske brukskontroller beholdes.
+- Våpen føres enkeltvis: fjern Antall fra våpenveiviser, innhold og «Merknad og attunement»-knapp. Kopier lager en uavhengig våpenoppføring. Våpenets bruk er Ikke i bruk / Venstre hånd / Høyre hånd / Begge hender der våpenprofilen tillater det. Behold andre gjenstanders antall uten å gjeninnføre det i våpenflyten.
+- Grunnmodellen må ikke vise «ingen magisk effekt» eller tilsvarende påstand som motsier brukerens tillegg.
+- Merknad om gjenstanden er bakgrunn/opphav/utseende. Spillmessig fritekst ligger i virkningsoversikten under **Andre effekter → + Effekt**. Knappen redigerer samme felt ved gjentatte trykk; ingen nye parallelle fritekstfelt. Ikke krev spellkobling. Plassering kan velges som Action / Bonus Action / Reaction / Andre egenskaper, flere ved behov. Samme tekst og eventuell bruksteller vises fra samme kilde i relevante Combat-oppslag.
+- Avgrenset two-weapon-fighting-oppslag følger 2014: to passende lette melee-våpen i hver sin hånd gir mulige bonusangrep med det andre våpenet etter Attack action. Positiv ability modifier utelates fra bonusangrepets skade uten relevant fighting style; negativ beholdes, vanlige angrepsmodifiers/proficiency og magiske bonuser beholdes. Venstre er ikke permanent bonus, høyre ikke permanent Action. Ingen tursporing/automatiske angrep.
+
+Prototypen kan vise dette med eksplisitte prøveverdier for karakteren og en separat Combat-prøveflate. Produksjonsintegrasjon og full regeldekning er fortsatt utenfor bestillingen. Bevar gamle prøveoppføringer og utkast så langt samme nettleser/filplassering tillater.
+
+## 16. Godkjent overføring av utstyrsprototypen til appen
+
+Brukeren har godkjent prototypeflyten som tilstrekkelig og bestilt «Implementer i appen». Den siste handlingstypeavklaringen erstatter obligatorisk flerkategoriplassering: spør **Hva kreves for å aktivere effekten?**, valgfritt Action / Bonus Action / Reaction / Ingen handling/passiv / Ikke avklart. Informasjonen beskriver regler eller DM-avklaring, ikke brukerens frie valg av navigasjonsplassering. Uavklart vises tydelig under Andre egenskaper og blokkerer ikke registrering.
+
+Overfør v2-flyten sammen med alle avklaringer i §15 til ekte IndexedDB/karakterdata, backup, kopi, historikk/angre, ressurser/hvile og Combat. Bevar prototypens veiviseruttrykk; bruk appens eksisterende tallhjul, faktisk karakter/proficiency og sikre beregninger. Skadebonus går direkte til beløp; abilities støtter bonus/minsteverdi. Samlet skadeoppslag, individuelle kopier/hender, én effekttekst og enkel sluttlagring er krav. Tidligere prototypetillegg om at hovedappen ikke skal endres beskriver nå historikk.
+
+Utstyrsbidrag er kildeknyttet og gjelder ved aktiv bruk og nødvendig attunement. Vilkår beskrives og fremheves uten automatisk fortolkning. Grunnverdier/manuelle overstyringer beholdes. Eldre utstyr, egne profiler, ressurser og veiviserutkast skal ikke slettes eller automatisk omskrives bare ved åpning. Én samlet branch/PR, testet merge og Pages-publisering er delegert etter tidligere føring.
+
+## 17. Installasjonsnavn og bunnmeny – nye innspill
+
+- Ved installasjon på telefonen skal appnavnet være **My D&D** (manifestets name og short_name).
+- Endelig appikon er **ikke bestemt**. Eksisterende ikon er foreløpig.
+- Bunnmenylinjen oppleves for høy, særlig som installert app. Reduser unødvendig vertikal luft; bevar tilgjengelige trykkflater og nødvendig safe area. Dette er registrert som et åpent designpunkt, ikke ferdig verifisert eller levert gjennom dette innspillet.
