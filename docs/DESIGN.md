@@ -2,6 +2,8 @@
 
 **Mål:** Et kompakt, intuitivt, vakkert digitalt karakterark som **føles personlig og inspirerende** ved et fysisk D&D-bord, uten å stjele oppmerksomheten fra spillet.
 
+Gjeldende produksjonsuttrykk er nå [Eventyrjournal](EVENTYRJOURNAL.md), implementert etter brukerens bestilling 2026-10-20. Historiske forslag under dokumenterer hvordan retningen ble valgt.
+
 ## Designintensjon
 - Moderne, gjennomarbeidet mobilprodukt med diskré fantasy/tablå-identitet. Mer **fantasy-journal og elegant verktøy** enn business-dashboard, men uten pergamentstøy, tunge border, utsmykkede knapper og klisjéer.
 - Høy kontrast, tydelig typografi, gode trykkflater, små mengder permanent tekst. Kompakt er **prioritert informasjonsarkitektur**, ikke mikroskopiske knapper.

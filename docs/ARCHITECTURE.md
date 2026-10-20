@@ -59,3 +59,7 @@ Mobilbilder av samme eksempelkarakter, med foreløpig teknisk utforming:
 
 - [Character](images/phase-1-character.png)
 - [Combat](images/phase-1-combat.png)
+
+## Eventyrjournal-moduler (2026-10-20)
+
+`domain/iconography.ts` definerer ikonvokabular, visuelle kategorier og sikre fallback-valg; modellen refererer listen for validering av valgfri metadata. `ui/icons.ts` rendrer lokale SVG-er og valgfritt ikonfelt. `ui/hp-control.ts` binder den relative native range-kontrollen til et separat utkastbeløp, med domenegrenser i `derived.ts`. `ui/combat-swipe.ts` håndterer horisontale pekergester uten tursporing. Felles `ui/dialog.ts` eier store/kompakte flater, fast topp/bekreftelse, fokus og utkastretur. Ingen backend, nye runtime-avhengigheter eller ny DB-versjon er innført. Lokale fonter og lisensinformasjon følger Workbox-precache. Se [design- og kontrollbeskrivelsen](EVENTYRJOURNAL.md).

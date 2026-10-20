@@ -4,6 +4,8 @@
 
 Les også [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md) før videre funksjonsarbeid. Brukeren har uttrykkelig bedt om at REQUIREMENTS og DECISIONS holdes oppdatert, slik at avklaringer ikke forsvinner når samtalen komprimeres. Før nye vedtatte avklaringer i begge dokumenter og faktisk leveransestatus i matrisen. Ikke gjeninnfør forkastede mønstre eller anta at hele SRD/Combat er ferdig bare fordi Character-flytene er utvidet. Brukeren må få fullføre løpende tilbakemeldinger før ny koding bestilles.
 
+Gjeldende grensesnitt er [Eventyrjournal](EVENTYRJOURNAL.md), implementert etter godkjente design-/ikon-/header-/slideravklaringer 2026-10-20. Historiske plansjer er ikke lenger hele implementasjonsstatusen. Kategoriikoner med reserve dekker også egne poster, uten regel-/tilgangsfiltrering. Kjente funksjonskrav utenfor denne leveransen er fortsatt synlige i matrisen.
+
 ## Før du endrer appen
 1. Les [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md), [DECISIONS.md](DECISIONS.md).
 2. Bruk [v0.11-prototypen](../prototypes/dnd-character-companion-v0.11.html) **kun som UX-referanse**. Den har kjente regresjoner og er ikke autoritativ kilde.

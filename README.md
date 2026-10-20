@@ -40,7 +40,7 @@ Bruk `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` hvis Chromium allerede e
 - Inspiration, death saves, conditions og exhaustion, lokalt portrett inkludert i JSON-backup.
 - Character/Combat/Utstyr-navigasjon og offline produksjons-PWA. Våpen i bruk gir beregnet attack/damage og Combat-oppslag, også relevante off-hand-valg. Finesse, ranged/thrown, proficiency/multiclass, håndbruk, faste magiske bonuser og utvalgte Fighting Styles/Martial Arts støttes. Registrerte handlinger og tilgjengelige spells beholdes. Sammensatte effekter er tekst/manuelle tilpasninger; standardhandlinger, avansert skadekalkulator og full SRD-dekning gjenstår. Se [beregningskontrakten](docs/EQUIPMENT.md).
 
-Arbeidsflaten er sammenholdt med [v0.11-prototypen](docs/PROTOTYPE_REVIEW.md), med nyere brukeravklaringer som føring. En [UX-gjennomgang av eksisterende flyter](docs/UX_REVIEW.md) dokumenterer videre opprydding av tillegg, oppslag, redigering, avbryt, fokus og historikk. Se [samlet kravmatrise og faktisk status](docs/CHARACTER_WORKSPACE.md). Utformingen er fortsatt foreløpig. Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
+Arbeidsflaten er sammenholdt med [v0.11-prototypen](docs/PROTOTYPE_REVIEW.md), med nyere brukeravklaringer som føring. En [UX-gjennomgang av eksisterende flyter](docs/UX_REVIEW.md) dokumenterer videre opprydding av tillegg, oppslag, redigering, avbryt, fokus og historikk. Se [samlet kravmatrise og faktisk status](docs/CHARACTER_WORKSPACE.md). Eventyrjournal-temaet er implementert med kategoriikoner, ability-mynter, fast bunnmeny, dialogsystem og relativ HP-kontroll. Se [designleveranse, betjening og faktiske bilder](docs/EVENTYRJOURNAL.md). Se [arkitekturen](docs/ARCHITECTURE.md) og [rettelsen av opprettelsesflyten](docs/CHARACTER_FOUNDATIONS.md).
 
 ## Data og backup
 
@@ -52,7 +52,7 @@ Eksisterende prototype-data i `localStorage` røres ikke og konverteres ikke aut
 
 Velg **Settings → Pages → Source → GitHub Actions** i GitHub. Etter merge til `master` bygger og publiserer `pages.yml` innholdet i `dist/`. Ingen backend eller hemmeligheter kreves. Vite bruker relative asset-stier; nettlesertestene kjører under `/dnd-character-sheet/` for å kontrollere Pages-understien. Publisering krever tilgang til Pages og godkjenning av GitHub-miljøet dersom repositoriet krever det. PR-er valideres av `ci.yml` og publiseres ikke.
 
-Appen viser versjons-ID og «Se etter oppdatering» i menyen. Når en ny versjon er nedlastet, bruk «Oppdater appen». Lagre redigering og lukk andre appfaner først. Karakterdata beholdes; slett aldri nettleserdata for å oppdatere. Se [oppdatering og publiseringskilde](docs/UPDATES.md) for første overgang fra eldre versjoner og feilsøking.
+Meny → Om appen viser versjons-ID. «Se etter oppdatering» ligger direkte i menyen. Når en ny versjon er nedlastet, bruk «Oppdater appen». Lagre redigering og lukk andre appfaner først. Karakterdata beholdes; slett aldri nettleserdata for å oppdatere. Se [oppdatering og publiseringskilde](docs/UPDATES.md) for første overgang fra eldre versjoner og feilsøking.
 
 ## Gjeldende produktgrunnlag
 

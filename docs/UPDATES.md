@@ -11,7 +11,7 @@ Den gamle «Deploy from a branch»-metoden kan publisere kildefiler parallelt me
 
 ## I appen
 
-Menyen viser versjonens korte commit-ID og «Se etter oppdatering». Appen sjekker også når den får fokus, blir synlig eller kommer på nett. Kontroll av service-worker-kilden omgår HTTP-cachen via `updateViaCache: none`.
+Meny → Om appen viser versjonens korte commit-ID. «Se etter oppdatering» ligger direkte i menyen. Appen sjekker også når den får fokus, blir synlig eller kommer på nett. Kontroll av service-worker-kilden omgår HTTP-cachen via `updateViaCache: none`.
 
 Når en ferdig nedlastet versjon venter, vises «Oppdater appen». Lagre eller avbryt redigering før oppdatering. Andre faner/PWA-vinduer på appens scope må lagres og lukkes først; den ventende workeren teller dem før aktivering. Først etter et eksplisitt klikk aktiveres workeren og denne siden lastes på nytt. Ved en ekstern aktivering viser en åpen side melding og lar redigeringen fortsette uten automatisk reload.
 

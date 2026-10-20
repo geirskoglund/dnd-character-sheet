@@ -255,3 +255,13 @@ Brukeren godkjente å fjerne appnavn og regelutgave fra toppfeltet og legge dem 
 ## B2 med individuelle ikoner valgt (2026-10-20)
 
 Brukeren foretrekker ikonvarianten B2 i plansje 06, med individuelle ikoner på artsegenskaper, features, feats, våpen, cantrips og spells. Detaljvalget B1/B2 er dermed avklart. Mengden ikoner godtas som del av videre designarbeid; små, konsistente og gjenkjennelige ikoner og komplett dekning av støttet innhold krever egen produksjon/kontroll. Egne/ukjente poster trenger reservemarkør. Lokale SVG-er er en egnet teknisk løsning for skarp og offline visning. Ingen appkode eller komplett ikonsett er bestilt eller implementert gjennom denne diskusjonen. Se [krav](REQUIREMENTS.md#individuelle-ikoner-valgt-2026-10-20).
+
+## Implementasjon bestilt; kategoriikoner og reserve avklart (2026-10-20)
+
+Brukeren ba uttrykkelig om å implementere valgt layout og avtalte endringer i en ny versjon. Brukerens kategoriinnspill presiserer B2: gjenbruk av kategoriikoner er ønsket, med passende familieikon og pen nøytral reserve når klassifisering ikke er mulig. Egne poster omfattes. Et ikonsett per semantisk kategori skal dekke alle støttede poster; unikt bilde per katalog-ID er ikke et krav. Lokale SVG-er og valgfri eksplisitt overstyring er tekniske valg. Ikonene tolker ikke regeltekst som spillmekanikk.
+
+Gjeldende bestilling og implementasjonsvalg for dialoger/status står i [krav §12](REQUIREMENTS.md#bestilt-implementasjon-av-eventyrjournal-2026-10-20). Den luftige modifierutformingen brukes med felles hjørnemarkør, og store mobildialoger får fast tilgjengelig lukk/avbryt og bekreftelse. Det bygges ikke en omfattende regelmotor eller nye automatiske karaktervalg som del av temaet. Produktkontroll og gjenstående funksjonskrav dokumenteres separat i matrisen.
+
+## Eventyrjournal implementert og produktkontrollert (2026-10-20)
+
+Den bestilte layouten og de avklarte kontrollendringene er implementert. [EVENTYRJOURNAL.md](EVENTYRJOURNAL.md) beskriver faktisk betjening, kategori-/reserveikoner, valgfri ikonmetadata, lokale fonter, dialogtyper, bunnmeny, Combat-sveip og relativ HP-føring. Produksjonsvalg: større våpenoppslag i Combat, tom «Andre egenskaper»-tittel skjules, tom samling får kortere inline +, og Meny følger journalens rader. Dette gjør ikke tidligere uimplementerte regel-/katalogkrav ferdige. [Kravmatrisen](CHARACTER_WORKSPACE.md#eventyrjournal-faktisk-produktkontroll-og-leveranse-2026-10-20) skiller forventninger, faktisk mobilgjennomgang og testresultater. Ingen karakterdata erstattes med designstudienes eksempler.

@@ -1,5 +1,5 @@
 # Kravspesifikasjon – D&D Character Companion
-**Status:** Implementasjonsgrunnlag v1, 2026-10-18. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
+**Status:** Gjeldende produktgrunnlag, oppdatert 2026-10-20. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
 **Spill:** D&D 5e (2014). Mobilførst, offline-først, fysisk terningkast og DM som autoritet.
 
 ## 1. Produkt og akseptansekriterier
@@ -136,8 +136,8 @@ Tre klart forskjellige fantasy-/D&D-inspirerte utseendeforslag skal vises før e
 - Elementer som åpner oppslag/dialog eller utfører en handling skal ha et subtilt, konsekvent visuelt skille fra ren informasjon. Skillet må fungere uten hover og uten bare å bygge på farge.
 - Små ikoner ved overskrifter, karakterportrettets presentasjon, meny nederst og ikoner på bunnfanene er positivt vurdert og skal videreføres. Uten portrett skal en gjennomarbeidet placeholder vises; bilde er fortsatt valgfritt.
 - HP-forløpsindikatoren vurderes av brukeren som lite viktig; den trenger ikke prioriteres. Endelig utforming er ikke fastsatt.
-- **Til diskusjon:** modifiers uten egen ramme gir ønsket luft, men gruppering og klikkbarhet må vurderes. Pillene er akseptable som utgangspunkt, ikke et låst detaljdesign.
-- **Til diskusjon:** ikoner på individuelle artsegenskaper, features/feats, våpen og spells/cantrips. Et eventuelt valg av individuelle artsegenskapsikoner forutsetter et komplett sett for det støttede innholdet, med en gjennomtenkt løsning for egne/ukjente poster. Ikonomfang og balansen mot lesbar informasjon skal avklares før generering eller implementasjon.
+- Luftige modifiers videreføres med felles hjørnemarkør etter senere avklaring. Pillene bruker samme familie med kategoriikon og inline +.
+- B2 med ikoner på artsegenskaper, features/feats, våpen og spells/cantrips er senere valgt og presisert til kategoriikoner med familie-/reservevalg for egne og ukjente poster. Navnet beholdes lesbart. Se implementasjonsbestillingen under.
 - Videre komponentstudie skal vise representative rader av alle relevante elementfamilier samlet: piller/inline +, HP/AC/øvrig status, modifiers, ability-mynter, artsegenskaper, features/feats, spells/cantrips og utstyr. Ta med lange navn og relevante tilstander. Ulike familier trenger ikke unike former; gjenbruk skal gi sammenheng og kompakthet.
 
 Dette er tilbakemelding på designstudien og valg av retning, ikke en bestilling av produksjonskode. Dialogdetaljer, ikonsett og modifierutforming er fortsatt uavklart.
@@ -163,3 +163,11 @@ Brukeren godkjente at appnavnet «D&D Character Companion» og regelutgaven «5e
 ### Individuelle ikoner valgt (2026-10-20)
 
 Brukeren valgte **B2** fra plansje 06 (Alternativer): individuelle ikoner på artsegenskaper, class features, feats, våpen, cantrips og spells, i tillegg til overskrifts-/navigasjonsikonene. Dette erstatter tidligere uavklart valg mellom B1/B2. Ved implementasjon må det finnes et komplett og stilistisk sammenhengende sett for innholdet som støttes, med lesbare navn og en gjennomtenkt reservemarkør for egne/ukjente poster. Prøveikonene er ikke et ferdig bibliotek. Ikonene skal kunne vises offline. Dette er et designvalg, ikke en bestilling om å starte produksjonskode eller generere hele ikonsettet nå.
+
+### Bestilt implementasjon av Eventyrjournal (2026-10-20)
+
+Brukeren har nå uttrykkelig bestilt en ny implementert versjon med valgt layout og avtalte endringer. Tidligere «ingen produksjonskode bestilt» beskriver historiske avklaringsrunder. Gjeldende omfang er Eventyrjournal-paletten og lokale fonter, runde ability-mynter med uniforme buede forkortelser, luftige modifiers med hjørnemarkør, portrett/placeholder og kompakt toppfelt uten merkevare-/regeltekst, fast bunnavigasjon med Meny, konsekvent styling av alle eksisterende skjemaer/dialoger/kontroller, kategoriikoner med reserveikoner og den avklarte relative HP-kontrollen. Combat-kategoriene skal også kunne sveipes gjennom. Eksisterende føring, lagring, offline, backup, fokus/scroll og Angre skal bevares.
+
+Ikonvalget presiseres etter brukerens siste innspill: hver post får ikon, men beslektede poster kan dele kategoriikon. Kjent våpentype, rustningstype, spellens skade/effekt og tilsvarende sikre kategoridata brukes til visuell klassifisering. Der spesifikk kategori mangler brukes familieikon, deretter nøytralt fantasyemblem. Egne poster dekkes også; valgfritt ikonvalg under detaljer gir manuell kontroll uten nye obligatoriske registreringsfelt. Ikonet tildeler aldri regelverdier eller tilgang. Status som «I bruk»/«Forberedt» vises med hake/tekst; hjørnet markerer klikkbarhet. Produksjonsvalg: korte oppslag er kompakte, søk/omfattende redigering får stor flate med fast topp/lukk og relevant bekreftelse. Destruktiv bekreftelse har to ulike handlinger. Ingen duplisert lukk/avbryt.
+
+Tidligere avklarte fasegrenser for avansert skadeberegning, komplett Combat-/SRD-dekning og kontekstfiltrering består; de kravene skal ikke erklæres løst av en ny visuell layout.

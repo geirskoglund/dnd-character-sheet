@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import {iconKeys} from './iconography';
+const visualIcon = z.enum(iconKeys).optional();
 
 const id = z.uuid();
 const text = z.string().max(10000);
@@ -14,7 +16,7 @@ const resource = z.object({
   die: z.enum(['d6', 'd8', 'd10', 'd12']).optional(), classRef: id.optional(), sourceRef: ref.optional(),
   recharge: z.object({ kind: z.enum(['shortRest', 'longRest', 'manual', 'special']), ruleText: text.optional() }),
 });
-const action = z.object({ id, name: text, actionEconomy: economy, sourceRef: ref.optional(), summary: text,
+const action = z.object({ id, name: text, iconKey:visualIcon, actionEconomy: economy, sourceRef: ref.optional(), summary: text,
   detail: text, attackRoll: text.optional(), damageRolls: z.array(text), saveDC: z.number().optional(),
   range: text.optional(), requirements: text.optional(), resourceRefs: z.array(id) });
 const effect = z.object({ id, sourceRef: ref.optional(), target: z.enum(['damage', 'ac', 'speed', 'roll', 'other']),
@@ -29,7 +31,7 @@ export const characterSchema = z.object({
     definitionRef: ref.optional(), level: z.number().int().min(1).max(20) })),
   species: z.object({ name: z.string().max(100), catalogId: z.string().optional(),
     walkingSpeed: count.nullable(), ignoresHeavyArmorSpeedPenalty: z.boolean(),
-    traits: z.array(z.object({ name: text, description: text })), languages: z.array(text) }), backgroundNoteId: id.optional(), campaignId: id.optional(), portraitAssetId: id.optional(),
+    traits: z.array(z.object({ name: text, description: text, iconKey:visualIcon })), languages: z.array(text) }), backgroundNoteId: id.optional(), campaignId: id.optional(), portraitAssetId: id.optional(),
   abilityScores: z.object({ STR: count, DEX: count, CON: count, INT: count, WIS: count, CHA: count }),
   proficiencyBonusOverride: z.number().optional(), derivedOverrides: z.record(z.string(), z.number()),
   hp: z.object({ current: count, max: count, temp: count }), acOverride: z.number().nullable(), speedOverride: count.nullable(),
@@ -44,16 +46,16 @@ export const characterSchema = z.object({
     sourceRef: ref.optional(), condition: condition.optional() })),
   conditionImmunities: z.array(z.object({ id, conditionId: z.string(), sourceRef: ref.optional() })),
   conditions: z.array(z.string()), exhaustionLevel: count.max(6), resources: z.array(resource),
-  features: z.array(z.object({ id, name: text, category: z.enum(['class', 'species', 'feat', 'custom', 'item']),
+  features: z.array(z.object({ id, name: text, iconKey:visualIcon, category: z.enum(['class', 'species', 'feat', 'custom', 'item']),
     sourceRef: ref.optional(), description: text, actionRefs: z.array(id), resourceRefs: z.array(id),
     effectRefs: z.array(id), activeStateRef: id.optional() })),
   actions: z.array(action), effects: z.array(effect),
-  spells: z.array(z.object({ id, definitionRef: ref.optional(), name: text, spellLevel: count.max(9),
+  spells: z.array(z.object({ id, iconKey:visualIcon, definitionRef: ref.optional(), name: text, spellLevel: count.max(9),
     castingTime: text, actionEconomy: economy, range: text, duration: text, concentration: z.boolean(),
     ritual: z.boolean(), components: z.array(text), attack: text.optional(), save: text.optional(), damage: text.optional(),
     description: text, known: z.boolean(), inSpellbook: z.boolean(), prepared: z.boolean(),
     casterClassRef: id.optional(), resourceSystemRef: z.string().optional() })),
-  items: z.array(z.object({ id, definitionRef: ref.optional(), name: text,
+  items: z.array(z.object({ id, iconKey:visualIcon, definitionRef: ref.optional(), name: text,
     category: z.enum(['weapon', 'armor', 'shield', 'equipment', 'magic']), quantity: count, equipped: z.boolean(),
     handUsage: z.enum(['one', 'two', 'versatile']).optional(), attack: text.optional(), damage: text.optional(), damageOverride: text.optional(),
     weaponProfile: z.object({ category: z.enum(['simple', 'martial', 'custom']), kind: z.enum(['melee', 'ranged']),
