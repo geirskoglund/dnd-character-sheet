@@ -247,3 +247,7 @@ Brukeren godkjente trekantuttrykket og bekreftet samme farge på trekantfyll og 
 Brukeren valgte en relativ HP-skyvekontroll med retur: dragets lengde styrer justeringen av beløpet; ved slipp beholdes beløpet og grepet går til midten; neste drag justerer videre fra det valgte beløpet. Alternativet med kontinuerlig endring mens man holder et utslag er ikke valgt. Hele kontrollen får tydelig innramming, med grepet innenfor. Tallet og forhåndsvisningen viser valgt endring, mens grepet viser pågående justering. Bekreftelse før oppdatering av karakterens HP beholdes.
 
 Brukeren presiserte grenser: HP-resultatet stopper ved 0 ved skade og maks HP ved healing. Temporary HP håndteres først ved skade som tidligere vedtatt. Se [samlede krav](REQUIREMENTS.md#avklart-hjørnefarge-og-relativ-hp-slider-2026-10-20). Ingen appkode eller nye skisser er bestilt i denne diskusjonsrunden; dette lagrer avklaringene som prosjektminne.
+
+## Kompakt identitet; toppfeltet scroller bort (2026-10-20)
+
+Brukeren godkjente å fjerne appnavn og regelutgave fra toppfeltet og legge dem under «Om appen» i menyen. Identiteten beholder portrett/placeholder, navn, art, klasse, nivå og subclass. Toppfeltet følger vanlig innholdsscrolling og skal ikke bli stående fast øverst; arbeidsflaten prioriteres mens fast bunnavigasjon/Meny gir tilgang til navigasjon. Dette erstatter eventuell tidligere usikkerhet om fast toppfelt. Ingen ny appkode eller reviderte bilder er bestilt i denne avklaringen. Se [krav](REQUIREMENTS.md#avklart-kompakt-toppfelt-og-scrolling-2026-10-20).

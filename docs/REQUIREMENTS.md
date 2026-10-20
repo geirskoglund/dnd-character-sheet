@@ -155,3 +155,7 @@ Dette er tilbakemelding på designstudien og valg av retning, ikke en bestilling
 - HP-resultatet begrenses til 0–maks: skade kan gi 0, aldri negativ HP; healing kan ikke gi vanlig HP over maks. Temporary HP absorberer skade først og økes ikke av healing, som tidligere vedtatt. Forhåndsvisning og bekreftelse beholdes; karakterens HP endres først ved bekreftelse.
 
 Dette er avklart betjening og design, ikke en bestilling av appkode eller nye sliderplansjer. Numerisk følsomhet og detaljert animasjon er ikke fastsatt. Eksisterende bilder viser ikke denne betjeningen.
+
+### Avklart kompakt toppfelt og scrolling (2026-10-20)
+
+Brukeren godkjente at appnavnet «D&D Character Companion» og regelutgaven «5e · 2014» fjernes fra karakterens toppfelt og plasseres under «Om appen» i menyen. Toppfeltet viser portrett/placeholder, karakterens navn og art, klasse, nivå og subclass. Hele toppfeltet scroller bort med innholdet; det skal ikke være fast eller sticky. Meny og hovedfaner forblir tilgjengelige nederst. Dette er vedtatt design, ikke en ny implementasjonsbestilling; eksisterende plansjer er historiske forslag.
