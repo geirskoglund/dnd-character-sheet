@@ -43,9 +43,9 @@ export function equipmentWizard(ctx:EditorContext,initial:Item,editing=false){
  }
  const readDice=(form:HTMLFormElement,prefix:string)=>value(form,prefix+'Die')==='custom'?value(form,prefix+'Expression').trim():`${Number(value(form,prefix+'Count'))}${value(form,prefix+'Die')}`;
  function read(form:HTMLFormElement){
-  const item=structuredClone(source);item.name=value(form,'itemName').trim();item.userNote=value(form,'userNote');
+  const item=structuredClone(source);item.name=value(form,'itemName').trim();const note=value(form,'userNote');if(note||source.userNote!==undefined)item.userNote=note;
   if(weapon&&value(form,'changeBase')==='yes')item.weaponProfile={category:'custom',kind:'melee',properties:[],...profile,dice:readDice(form,'base'),damageType:value(form,'baseType')};
-  if(weapon)item.extraDamage=extraIds.flatMap(id=>{const part=oldParts.find(p=>p.id===id),p='extra-'+id;if(value(form,p+(part?'Keep':'Add'))!=='yes')return [];return [{id,expression:readDice(form,p),damageType:value(form,p+'Type'),...(value(form,p+'Conditional')==='yes'?{condition:value(form,p+'Condition').trim()}: {})}];});
+  if(weapon){const parts=extraIds.flatMap(id=>{const part=oldParts.find(p=>p.id===id),p='extra-'+id;if(value(form,p+(part?'Keep':'Add'))!=='yes')return [];return [{id,expression:readDice(form,p),damageType:value(form,p+'Type'),...(value(form,p+'Conditional')==='yes'?{condition:value(form,p+'Condition').trim()}: {})}];});if(parts.length||source.extraDamage!==undefined)item.extraDamage=parts;}
   return item;
  }
  const d=wizardDialog(existing?'Rediger våpen':source.name?'Egen variant':'Eget utstyr',[

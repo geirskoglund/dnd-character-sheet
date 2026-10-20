@@ -126,6 +126,9 @@ test('multiclass totals and separate navigation scroll positions', async ({ page
   await choose(page,'Klasse',{label:'Wizard'},1);
   await fillField(page,'Klassenivå','2',1);
   await expect(page.locator('#total-level')).toHaveText('Totalt level: 5');
+  await page.getByRole('button',{name:'Fjern klasse',exact:true}).click();
+  await characterStep(page,1);await expect(page.getByRole('button',{name:'Fjern klasse',exact:true})).not.toBeVisible();
+  await page.getByRole('button',{name:'+ Klasse',exact:true}).click();await choose(page,'Klasse',{label:'Wizard'},1);await fillField(page,'Klassenivå','2',1);
   await finish(page);
   await expect(page.locator('header')).toContainText('Fighter 3 / Wizard 2');
   await page.setViewportSize({ width: 390, height: 500 });
