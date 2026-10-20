@@ -1,3 +1,6 @@
+import {bindCombatSwipe} from './ui/combat-swipe';
+import {icon,portraitPlaceholder} from './ui/icons';
+import {hpControl,bindHpControl} from './ui/hp-control';
 import { installUpdates } from './ui/updates';
 import { choosePortrait } from './ui/portrait';
 import { characterSchema, copyCharacter, createCharacter, type Character, type PortraitAsset } from './domain/model';
@@ -14,7 +17,7 @@ import { instantiateEquipment } from './domain/catalog';
 import { historyView } from './ui/history';
 import { modifiers, signed } from './domain/modifiers';
 import { levelUpCharacter } from './domain/level-up';
-import { deriveStats, hpAfterChange } from './domain/derived';
+import { deriveStats, hpAfterChange, hpDeltaBounds } from './domain/derived';
 import { escapeHtml as esc, field, select } from './ui/html';
 import './style.css';
 
@@ -63,6 +66,16 @@ function tell(text: string) {
   const status = document.querySelector('#status');
   if (status) status.textContent = text;
 }
+function menuMarkup(c:Character|undefined){
+  const button=(action:string,label:string,glyph:Parameters<typeof icon>[0])=>`<button data-action="${action}">${icon(glyph)}<span>${label}</span></button>`;
+  return `<details class="app-menu"><summary>${icon('menu')}<span>Meny</span></summary><div class="menu-panel" aria-label="Karaktermeny">
+    ${c?`<h2>Denne karakteren</h2><div class="menu-actions">${button('edit','Rediger karakter','note')}${button('portrait','Portrett','species')}${button('level-up','Level Up','magic')}${button('overrides','Beregninger og overstyringer','tools')}${button('history','Endringslogg','history')}${button('undo','Angre siste endring','history')}</div>`:''}
+    <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch=>`<option value="${ch.id}" ${selected===ch.id?'selected':''}>${esc(ch.name)}</option>`).join('')}</select></label>
+    <div class="menu-actions">${button('create','Ny karakter','plus')}${c?button('copy','Kopier karakter','feature')+button('delete','Slett karakter','close'):''}<button data-action="export" ${characters.length?'':'disabled'}>${icon('equipment')}<span>Eksporter backup</span></button>${button('import','Importer backup','equipment')}</div>
+    <p class="muted">Lokalt lagret på denne enheten. Ta JSON-backup før du rydder nettleserdata.</p>
+    <div class="menu-actions">${button('about','Om appen','feature')}${button('check-update','Se etter oppdatering','history')}</div>
+  </div></details>`;
+}
 function render() {
   const c = current();
   root.onkeydown = event => {
@@ -75,15 +88,10 @@ function render() {
     if (!(event.target as HTMLElement).closest('.app-menu')) root.querySelector('details.app-menu')?.removeAttribute('open');
   };
   root.innerHTML = `<a href="#content" class="skip-link">Til innhold</a><div class="shell">
-    <header>${portrait ? `<button class="portrait" data-action="portrait" aria-label="Vis portrett"><img src="${portrait.dataUrl}" alt="Portrett av ${esc(c?.name)}"></button>` : ''}<div class="identity"><p class="eyebrow">D&D · 5e 2014</p><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c ? `<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl => `${esc(cl.name)} ${cl.level}${cl.subclass ? ' · ' + esc(cl.subclass) : ''}`).join(' / ')}</p>` : ''}</div>
-    <details class="app-menu"><summary>Meny</summary><div class="menu-panel">
-    ${c ? '<h2>Denne karakteren</h2><div class="menu-actions"><button data-action="edit">Rediger karakter</button><button data-action="portrait">Portrett</button><button data-action="level-up">Level Up</button><button data-action="overrides">Beregninger og overstyringer</button><button data-action="history">Endringslogg</button><button data-action="undo">Angre siste endring</button></div>' : ''}
-    <h2>Karakteradministrasjon</h2><label>Bytt karakter<select id="character-select"><option value="" disabled>Velg karakter</option>${characters.map(ch => `<option value="${ch.id}" ${selected === ch.id ? 'selected' : ''}>${esc(ch.name)}</option>`).join('')}</select></label>
-    <div class="menu-actions"><button data-action="create">Ny karakter</button>${c ? '<button data-action="copy">Kopier karakter</button><button data-action="delete">Slett karakter</button>' : ''}<button data-action="export" ${characters.length ? '' : 'disabled'}>Eksporter backup</button><button data-action="import">Importer backup</button></div>
-    <p class="muted">Lokalt lagret på denne enheten. Ta JSON-backup før du rydder nettleserdata.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p class="muted">Versjon ${__APP_VERSION__}</p><button data-action="check-update">Se etter oppdatering</button></div></details></header>
+    <header class="character-header">${c?`<button class="portrait" data-action="portrait" aria-label="${portrait?'Vis portrett':'Velg portrett'}">${portrait?`<img src="${portrait.dataUrl}" alt="Portrett av ${esc(c.name)}">`:portraitPlaceholder()}</button>`:''}<div class="identity"><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c?`<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl=>`${esc(cl.name)} ${cl.level}${cl.subclass?' · '+esc(cl.subclass):''}`).join(' / ')}</p>`:''}</div></header>
     <main id="content" tabindex="-1">${c ? page === 'character' ? characterView(c) : page === 'equipment' ? equipmentView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
     <p id="status" role="status" aria-live="polite">${esc(message)}</p></div>
-    <nav aria-label="Hovednavigasjon">${['character', 'combat', 'equipment'].map(tab => `<button data-page="${tab}" ${page === tab ? 'aria-current="page"' : ''}>${tab === 'character' ? 'Character' : tab === 'combat' ? 'Combat' : 'Utstyr'}</button>`).join('')}</nav>
+    <nav class="main-nav" aria-label="Hovednavigasjon"><div class="nav-inner">${(['character','combat','equipment'] as const).map(tab=>`<button data-page="${tab}" ${page===tab?'aria-current="page"':''}>${icon(tab==='character'?'feature':tab==='combat'?'sword':'equipment')}<span>${tab==='character'?'Character':tab==='combat'?'Combat':'Utstyr'}</span></button>`).join('')}${menuMarkup(c)}</div></nav>
     `;
   root.querySelectorAll<HTMLButtonElement>('[data-page]').forEach(button => button.onclick = () => {
     scroll[page] = window.scrollY;
@@ -92,10 +100,14 @@ function render() {
     window.scrollTo(0, scroll[page]);
     document.querySelector<HTMLElement>(`[data-page="${page}"]`)?.focus({ preventScroll: true });
   });
-  root.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(button => button.onclick = () => {
-    category = button.dataset.category!; render();
-    document.querySelector<HTMLElement>(`[data-category="${category}"]`)?.focus();
-  });
+  const setCategory=(next:string,focus=false)=>{
+    if(category===next)return;
+    const position=window.scrollY;category=next;render();window.scrollTo(0,position);
+    if(focus)root.querySelector<HTMLElement>(`[data-category="${category}"]`)?.focus({preventScroll:true});
+  };
+  root.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(button=>button.onclick=()=>setCategory(button.dataset.category!,true));
+  const combatRegion=root.querySelector<HTMLElement>('[aria-label="Kampoppslag"]');
+  if(combatRegion)bindCombatSwipe(combatRegion,direction=>{const categories=['Action','Bonus','Reaction'];setCategory(categories[Math.max(0,Math.min(2,categories.indexOf(category)+direction))]);});
   root.querySelector<HTMLSelectElement>('#character-select')!.onchange = event => void run(async () => {
     const next = (event.target as HTMLSelectElement).value;
     if (!next || next === selected) return;
@@ -109,7 +121,7 @@ function render() {
   root.querySelectorAll<HTMLButtonElement>('[data-modifier]').forEach(button => button.onclick = () => {
     const c = current()!, index = Number(button.dataset.modifier);
     const options = modifiers(c);
-    const d = viewDialog('Velg modifierfavoritt', `<p>Trykk på oppslaget som skal vises i dette kortet.</p><div class="modifier-list">${options.map((m, i) => `<button type="button" data-choice="${i}" aria-pressed="${c.favoriteModifierRefs[index] === m.ref}"><span>${esc(m.name)}</span><strong>${signed(m.value)}</strong></button>`).join('')}</div>`);
+    const d = viewDialog('Velg modifierfavoritt', `<p>Trykk på oppslaget som skal vises i dette kortet.</p><div class="modifier-list">${options.map((m, i) => `<button type="button" data-choice="${i}" aria-pressed="${c.favoriteModifierRefs[index] === m.ref}"><span>${esc(m.name)}</span><strong>${signed(m.value)}</strong></button>`).join('')}</div>`,undefined,'large');
     d.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach(choice => choice.onclick = () => void commitDialog(async () => {
       if (c.favoriteModifierRefs[index] === options[Number(choice.dataset.choice)].ref) return;
       const draft = structuredClone(c);
@@ -183,7 +195,7 @@ function editCharacter(source?: Character) {
 }
 function inspectEquipment(id: string) { editEquipment(current()!, id); }
 function addEquipment(c: Character, group = '') {
-  const d = viewDialog('Legg til utstyr', equipmentPicker(group), '[name="equipmentSearch"]');
+  const d = viewDialog('Legg til utstyr', equipmentPicker(group), '[name="equipmentSearch"]','large');
   bindEquipmentPicker(d, async catalogId => {
     const item = instantiateEquipment(catalogId);
     await repo.save({...c, items:[...c.items, item]}, 'equipment', `${item.name} lagt til`);
@@ -232,31 +244,17 @@ function levelUp(c: Character) {
   update();
 }
 function editHitPoints(c: Character) {
-  const range = Math.max(c.hp.max, c.hp.current + c.hp.temp, 1);
-  const d = dialog('Endre HP', `<p>Skade bruker temporary HP først. Healing endrer bare vanlig HP.</p><label>Endring i HP<input type="range" name="delta" min="-${range}" max="${range}" value="0" step="1"></label>${field('HP-endring i tall', 'deltaAmount', 0, `type="number" min="-${range}" max="${range}" step="1" required inputmode="numeric"`)}<div class="actions"><button type="button" id="hp-minus" aria-label="Reduser endring med 1">−1</button><button type="button" id="hp-plus" aria-label="Øk endring med 1">+1</button></div><p id="hp-preview" aria-live="polite"></p>`, async form => {
-    const delta = Number(new FormData(form).get('delta'));
-    if (!Number.isInteger(delta) || delta < -range || delta > range) throw new Error('Ugyldig HP-endring.');
-    if (!delta) return;
-    await repo.save({ ...c, hp: hpAfterChange(c.hp, delta) }, 'hp', `HP endret (${delta > 0 ? '+' : ''}${delta})`);
-    message = 'HP oppdatert.'; await refresh();
-  }, 'Oppdater HP');
-  const slider = d.querySelector<HTMLInputElement>('[name="delta"]')!;
-  const amount = d.querySelector<HTMLInputElement>('[name="deltaAmount"]')!;
-  const preview = () => {
-    const delta = Number(slider.value), after = hpAfterChange(c.hp, delta);
-    amount.value = slider.value;
-    d.querySelector<HTMLButtonElement>('#submit')!.disabled = delta === 0;
-    d.querySelector('#hp-preview')!.textContent = `${delta > 0 ? '+' : ''}${delta}: HP ${c.hp.current} → ${after.current} / ${after.max} · Temporary HP ${c.hp.temp} → ${after.temp}`;
-  };
-  slider.oninput = preview;
-  amount.oninput = () => {
-    if (amount.value === '' || !amount.checkValidity()) { d.querySelector<HTMLButtonElement>('#submit')!.disabled = true; return; }
-    slider.value = amount.value; preview();
-  };
-  d.querySelector<HTMLButtonElement>('#hp-minus')!.onclick = () => { slider.stepDown(); preview(); };
-  d.querySelector<HTMLButtonElement>('#hp-plus')!.onclick = () => { slider.stepUp(); preview(); };
-  preview();
+  const bounds=hpDeltaBounds(c.hp);
+  const d=dialog('Endre HP',hpControl(c.hp),async form=>{
+    const delta=Number(new FormData(form).get('deltaAmount'));
+    if(!Number.isInteger(delta)||delta<bounds.min||delta>bounds.max)throw new Error('Ugyldig HP-endring.');
+    if(!delta)return;
+    await repo.save({...c,hp:hpAfterChange(c.hp,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
+    message='HP oppdatert.';await refresh();
+  },'Oppdater HP');
+  bindHpControl(d,c.hp);
 }
+
 function editOverrides(c: Character) {
   const stats = deriveStats({ ...c, acOverride: null, speedOverride: null });
   dialog('Beregninger og overstyringer', `<p>Grunnlaget gir AC ${stats.ac} og speed ${stats.speed ?? 'ukjent'} ft. La feltene stå tomme for å bruke beregningene.</p>
@@ -312,12 +310,13 @@ async function action(name: string) {
       }, 'Fjern');
       break;
     }
+    case 'about': viewDialog('Om appen',`<p><strong>D&amp;D Character Companion</strong></p><p>D&amp;D 5e · 2014</p><p>Versjon ${__APP_VERSION__}</p><p>Et digitalt karakterark ved det fysiske spillebordet. Lagres på denne enheten og kan brukes uten nett.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p><a href="./FONT-LICENSES.txt">Fonter og ikoner</a></p>`);break;
     case 'check-update': await updates.check(); break;
     case 'create': editCharacter(); break;
     case 'edit': editCharacter(c); break;
     case 'edit-equipment': addEquipment(c!); break;
     case 'level-up': levelUp(c!); break;
-    case 'hp': editHitPoints(c!); break;
+    case 'hp': case 'hp-change': editHitPoints(c!); break;
     case 'overrides': editOverrides(c!); break;
     case 'temp-hp': dialog('Temporary HP', `<p>Sett den nye totalen. Temporary HP stables ikke; velg hvilken total du beholder.</p>${field('Temporary HP', 'temp', c!.hp.temp, 'type="number" min="0" required')}`, async form => {
       const draft = characterSchema.parse({ ...c!, hp: { ...c!.hp, temp: Number(new FormData(form).get('temp')) } });
@@ -339,7 +338,7 @@ async function action(name: string) {
     case 'undo': await repo.undo(c!); message = 'Siste endring angret.'; await refresh(); break;
     case 'history': {
       const events = await repo.history(c!.id);
-      viewDialog('Endringslogg', historyView(events)); break;
+      viewDialog('Endringslogg', historyView(events),undefined,'large'); break;
     }
     case 'export': {
       const raw = await exportBackup(repo.db, characters);

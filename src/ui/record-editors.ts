@@ -1,3 +1,5 @@
+import {iconField,readIcon} from './icons';
+import type {IconKey} from '../domain/iconography';
 import { abilities, characterSchema, type Character } from '../domain/model';
 import { materializeLanguages, normalizeSkill, removeRecord, damageTypes, conditionNames, restCharacter, useHitDie, type RecordCollection } from '../domain/records';
 import { skillAbilities } from '../domain/modifiers';
@@ -24,8 +26,10 @@ export function createRecordEditors(ctx: EditorContext) {
   const save = (c: Character, type: string, description: string) => ctx.save(characterSchema.parse(c), type, description);
   function editor<K extends RecordCollection>(collection: K, source: Character[K][number], existing: boolean, title: string, html: string,
     read: (data: FormData, draft: Character) => Character[K][number], character = ctx.current(), operation?: () => {type:string;description:string}) {
-    const d = editDialog(title, html + (existing ? `<button type="button" id="delete-record" class="danger">Fjern ${typeLabel[collection]}</button>` : ''), async form => {
-      const draft = structuredClone(character), row = read(new FormData(form), draft);
+    const supportsIcon=['features','spells','actions'].includes(collection);
+    const d = editDialog(title, html + (supportsIcon?iconField((source as {iconKey?:IconKey}).iconKey):'') + (existing ? `<button type="button" id="delete-record" class="danger">Fjern ${typeLabel[collection]}</button>` : ''), async form => {
+      const draft = structuredClone(character), data=new FormData(form), row = read(data, draft);
+      if(supportsIcon){const target=row as {iconKey?:IconKey};const chosen=readIcon(data);if(chosen)target.iconKey=chosen;else delete target.iconKey;}
       if (collection==='languages' && existing && 'name' in row && 'name' in source && row.name===source.name) return;
       draft[collection] = (existing ? draft[collection].map(item => item.id === source.id ? row : item) : [...draft[collection],row]) as never;
       const event=operation?.() ?? {type:collection,description:`${typeLabel[collection]} ${existing ? 'redigert' : 'lagt til'}`};

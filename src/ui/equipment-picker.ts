@@ -1,3 +1,5 @@
+import {icon} from './icons';
+import {itemIcon} from '../domain/iconography';
 import { commitDialog } from './dialog';
 import { equipmentCatalog, type Item } from '../domain/catalog';
 import { equipmentCategories } from './equipment-form';
@@ -18,7 +20,7 @@ export function bindEquipmentPicker(d: HTMLDialogElement, add: (id: string) => P
     const query = search.value.trim().toLocaleLowerCase('nb');
     const matches = equipmentCatalog.filter(item => (!filter.value || (filter.value === 'armor' ? ['armor','shield'].includes(item.category) : filter.value === 'other' ? ['equipment','magic'].includes(item.category) : item.category === filter.value)) && `${item.name} ${label(item.category)}`.toLocaleLowerCase('nb').includes(query));
     d.querySelector('#equipment-count')!.textContent = matches.length ? `${matches.length} treff` : 'Ingen treff. Endre søket eller opprett eget utstyr.';
-    results.innerHTML = matches.map(item => `<button type="button" data-add-equipment="${item.catalogId}" aria-label="Legg til ${esc(item.name)}"><strong>${esc(item.name)}</strong><small>${esc(label(item.category))}</small></button>`).join('');
+    results.innerHTML = matches.map(item => `<button type="button" data-add-equipment="${item.catalogId}" aria-label="Legg til ${esc(item.name)}">${icon(itemIcon({...item,definitionRef:{kind:'catalog',id:item.catalogId}}))}<strong>${esc(item.name)}</strong><small>${esc(label(item.category))}</small></button>`).join('');
     results.querySelectorAll<HTMLButtonElement>('[data-add-equipment]').forEach(button => button.onclick = () => void commitDialog(() => add(button.dataset.addEquipment!)));
 
   };

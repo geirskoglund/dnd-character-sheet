@@ -1,3 +1,4 @@
+import {iconField,readIcon} from './icons';
 import { abilities, type Character } from '../domain/model';
 import { equipmentCatalog, type Item } from '../domain/catalog';
 import { deriveStats } from '../domain/derived';
@@ -31,6 +32,7 @@ export function equipmentForm(item: Item, creating = false) {
     <details id="item-details" ${creating && item.category === 'armor' ? 'open' : ''}><summary>Tilpass gjenstanden</summary>
       <div class="form-grid">${select('Kategori', 'itemCategory', item.category, equipmentCategories)}${field('Antall', 'itemQuantity', item.quantity, 'type="number" min="0" required')}</div>
       <label class="check"><input type="checkbox" name="requiresAttunement" ${item.requiresAttunement ? 'checked' : ''}>Krever attunement</label>
+      ${iconField(item.iconKey)}
       <fieldset><legend>Bonuser når gjenstanden brukes</legend><p class="muted">Faste bonuser. Andre effekter beskrives i notatet. Magiske bonuser krever attunement når det er angitt.</p>
         <div class="form-grid">${field('AC-bonus', 'bonus-ac', item.bonuses?.ac ?? '', 'type="number" step="1"')}${field('Bonus til alle saving throws', 'bonus-saves', item.bonuses?.saves ?? '', 'type="number" step="1"')}</div>
         <div data-weapon-bonuses ${item.category === 'weapon' ? '' : 'hidden'} class="form-grid">${field('Angrepsbonus', 'bonus-attack', item.bonuses?.attack ?? '', 'type="number" step="1"')}${field('Skadebonus', 'bonus-damage', item.bonuses?.damage ?? '', 'type="number" step="1"')}</div>
@@ -70,6 +72,7 @@ export function readEquipment(form: HTMLFormElement, source: Item): Item {
   const data = new FormData(form), item = structuredClone(source);
   const text = (key: string) => String(data.get(key) ?? '');
   item.name = text('itemName').trim(); item.category = text('itemCategory') as Item['category'];
+  const chosenIcon=readIcon(data);if(chosenIcon)item.iconKey=chosenIcon;else delete item.iconKey;
   item.quantity = Number(data.get('itemQuantity')); item.equipped = data.has('equipped');
   const setOptional = (key: 'requiresAttunement' | 'attuned', value: boolean) => { if (value || source[key] !== undefined) item[key] = value; };
   setOptional('requiresAttunement', data.has('requiresAttunement')); setOptional('attuned', data.has('attuned'));

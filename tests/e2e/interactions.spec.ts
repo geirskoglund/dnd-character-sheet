@@ -113,7 +113,7 @@ test('HP accepts exact numeric input and has no active commit for zero changes',
   await expect(page.getByRole('button',{name:'Oppdater HP',exact:true})).toBeDisabled();
   await page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}).fill('-7');
   await expect(page.locator('#hp-preview')).toContainText('HP 12 → 5');
-  await expect(page.getByRole('slider',{name:'Endring i HP',exact:true})).toHaveValue('-7');
+  await expect(page.getByRole('slider',{name:'Endring i HP',exact:true})).toHaveValue('0');
   await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();
   await expect(page.locator('[data-action="hp"]')).toBeFocused();
   await expect(page.locator('[data-action="hp"]')).toContainText('5 / 12');

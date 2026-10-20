@@ -1,4 +1,5 @@
 import { escapeHtml as esc } from './html';
+import {icon} from './icons';
 
 type CancelHandler = (() => void) | undefined;
 const host = document.createElement('dialog');
@@ -40,11 +41,20 @@ host.oncancel = event => {
   if (pending) return;
   if (cancelHandler) cancelHandler(); else host.close();
 };
-function open(title: string, html: string, footer: string, onCancel?: CancelHandler, initialFocus?: string) {
+// Native search fields otherwise consume the first Escape to clear their value.
+host.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||event.isComposing)return;
+  event.preventDefault();event.stopPropagation();
+  if(pending)return;
+  if(cancelHandler)cancelHandler();else host.close();
+},true);
+function open(title: string, html: string, footer: string, onCancel?: CancelHandler, initialFocus?: string, kind: 'view'|'edit'|'confirm'='edit', size: 'compact'|'large'='large') {
   if (!host.open) captureOpener();
   cancelHandler = onCancel;
   pending = false;
-  host.innerHTML = `<form><h2 id="dialog-title" tabindex="-1">${esc(title)}</h2><div id="dialog-body">${html}</div><p id="dialog-error" role="alert"></p><div class="dialog-actions">${footer}</div></form>`;
+  host.dataset.kind=kind;host.dataset.size=size;
+  const close=kind==='confirm'?'':`<button type="button" id="${kind==='view'?'close-dialog':'cancel'}" class="dialog-close" aria-label="${kind==='view'?'Lukk':'Avbryt'}" title="${kind==='view'?'Lukk':'Avbryt'}">${icon('close')}</button>`;
+  host.innerHTML = `<form><div class="dialog-heading"><h2 id="dialog-title" tabindex="-1">${esc(title)}</h2>${close}</div><div id="dialog-body">${html}</div><p id="dialog-error" role="alert"></p><div class="dialog-actions">${footer}</div></form>`;
   host.scrollTop = 0;
   if (!host.open) host.showModal();
   (initialFocus ? host.querySelector<HTMLElement>(initialFocus) : null)?.focus({preventScroll:true});
@@ -52,15 +62,15 @@ function open(title: string, html: string, footer: string, onCancel?: CancelHand
   return host;
 }
 /** Lookups and immediate-choice pickers have one dismissal action and never submit a form. */
-export function viewDialog(title: string, html: string, initialFocus?: string) {
-  const d = open(title, html, '<button type="button" id="close-dialog">Lukk</button>', undefined, initialFocus);
+export function viewDialog(title: string, html: string, initialFocus?: string, size: 'compact'|'large'='compact') {
+  const d = open(title, html, '', undefined, initialFocus, 'view', size);
   d.querySelector('form')!.onsubmit = event => event.preventDefault();
   d.querySelector<HTMLButtonElement>('#close-dialog')!.onclick = () => d.close();
   return d;
 }
 /** Editors and destructive confirmations have distinct commit and discard actions. */
-export function editDialog(title: string, html: string, onSubmit: (form: HTMLFormElement) => Promise<void>, submit = 'Lagre', onCancel?: CancelHandler) {
-  const d = open(title, html, `<button type="button" id="cancel">Avbryt</button><button id="submit" type="submit">${esc(submit)}</button>`, onCancel);
+export function editDialog(title: string, html: string, onSubmit: (form: HTMLFormElement) => Promise<void>, submit = 'Lagre', onCancel?: CancelHandler, confirmation=false) {
+  const d = open(title, html, `${confirmation?'<button type="button" id="cancel">Avbryt</button>':''}<button id="submit" type="submit">${esc(submit)}</button>`, onCancel, undefined, confirmation?'confirm':'edit', confirmation?'compact':'large');
   const form = d.querySelector('form')!;
   d.querySelector<HTMLButtonElement>('#cancel')!.onclick = () => { if (cancelHandler) cancelHandler(); else d.close(); };
   form.onsubmit = event => { event.preventDefault(); void commitDialog(() => onSubmit(form)); };
@@ -97,12 +107,14 @@ export function confirmDialog(title: string, html: string, onConfirm: () => Prom
   const previous = host.open ? [...host.childNodes] : null;
   const previousCancel = cancelHandler;
   const previousFocus = document.activeElement as HTMLElement | null;
-  const previousScroll = host.scrollTop;
+  const previousScroll = host.querySelector('#dialog-body')?.scrollTop ?? 0;
+  const kind=host.dataset.kind,size=host.dataset.size;
   const restore = previous ? () => {
     host.replaceChildren(...previous);
     cancelHandler = previousCancel;
-    host.scrollTop = previousScroll;
+    host.dataset.kind=kind;host.dataset.size=size;
+    host.querySelector('#dialog-body')!.scrollTop=previousScroll;
     if (visible(previousFocus)) previousFocus.focus({preventScroll:true});
   } : undefined;
-  return editDialog(title, html, onConfirm, submit, restore);
+  return editDialog(title, html, onConfirm, submit, restore, true);
 }

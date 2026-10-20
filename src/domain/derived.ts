@@ -67,3 +67,10 @@ export function hpAfterChange(hp: Character['hp'], delta: number): Character['hp
   const absorbed = Math.min(hp.temp, -delta);
   return { ...hp, temp: hp.temp - absorbed, current: Math.max(0, hp.current + delta + absorbed) };
 }
+
+/** Bounds for the pending adjustment, with temp HP included in the damage capacity. */
+export function hpDeltaBounds(hp:Character['hp']) {return {min:-(hp.current+hp.temp),max:Math.max(0,hp.max-hp.current)};}
+export function clampHpDelta(hp:Character['hp'],amount:number) {
+  const {min,max}=hpDeltaBounds(hp);
+  return Math.max(min,Math.min(max,Math.round(amount)));
+}

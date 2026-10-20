@@ -9,6 +9,6 @@ export default defineConfig({
     registerType: 'prompt',
     injectRegister: false,
     manifest: false,
-    workbox: { globPatterns: ['**/*.{js,css,html,svg,webmanifest,txt}'], cleanupOutdatedCaches: true, clientsClaim: true, importScripts: ['sw-messages.js'] },
+    workbox: { globPatterns: ['**/*.{js,css,html,svg,webmanifest,txt,ttf}'], cleanupOutdatedCaches: true, clientsClaim: true, importScripts: ['sw-messages.js'] },
   })],
 });

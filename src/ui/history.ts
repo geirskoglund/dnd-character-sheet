@@ -1,7 +1,7 @@
 import type { ChangeEvent } from '../domain/model';
 import {escapeHtml as esc} from './html';
 const labels: Record<string,string> = {
-  name:'Navn', level:'Nivå', hp:'HP', current:'Nåværende', max:'Maks', temp:'Temporary HP', goldCp:'GP',
+  iconKey:'Ikon', name:'Navn', level:'Nivå', hp:'HP', current:'Nåværende', max:'Maks', temp:'Temporary HP', goldCp:'GP',
   abilityScores:'Ability scores', species:'Art', walkingSpeed:'Grunnfart', classes:'Klasser', subclass:'Subclass',
   items:'Utstyr', quantity:'Antall', equipped:'I bruk', category:'Kategori', armorProfile:'Rustningsverdier',
   kind:'Type', baseAc:'Base AC', addDex:'Dexterity modifier', dexCap:'Maks Dexterity-bonus', strength:'Strength-krav',
