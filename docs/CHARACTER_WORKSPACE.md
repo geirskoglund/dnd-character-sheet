@@ -416,9 +416,11 @@ Avgrensninger videre: sammensatte særregler/tekstvilkår avgjøres med DM; full
 
 ## Klargjøring av backlog – dokumentasjon, ingen ny appflyt
 
-De27 oppgavene har reviderte forventninger og bevaringskrav i [BACKLOG_READY.md](BACKLOG_READY.md) og sine GitHub Issues. Første klargjøring hadde feil; etter [kvalitetsgjennomgangen](BACKLOG_REVIEW.md) er gjeldende status **7 klare, 19 med produktspørsmål og 1 avventer fysisk testtilgang**. Dette er før-implementasjonsgrunnlag, ikke nye kjørte akseptansetester. Konkrete implementasjonstråder skal angi faktisk startcommit, bekrefte relevante scenarioer før koding og føre testresultater/produktkontroll og restkrav her før levering. Ingen eksisterende feil eller manglende funksjon kvitteres ut av dokumentendringen. Dokumentgjennomgangens kontrollgrunnlag og faktiske resultater står i BACKLOG_REVIEW.
+Gjeldende oppgavedetaljer, akseptansekriterier og status vedlikeholdes i GitHub. [BACKLOG_READY.md](BACKLOG_READY.md) er indeks og historisk klargjøring, mens [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) bevarer gjennomgangen i PR #53. #25 har nå brukerens nye komponentbeskrivelse; det er ikke en appimplementasjon. Konkrete implementasjonstråder dokumenterer faktisk startcommit, testresultater/produktkontroll og restkrav ved levering. Vanlig US-redigering krever ingen ny leveransematrise eller speiling av statusopptellinger.
 
 ## Kvalitetssikring etter feil i første backlogsak
+
+Historisk kontroll av PR #53. Dette er ikke gjeldende detaljkrav eller status for den senere erstattede #25.
 
 | Bestilling / kontroll | Faktisk resultat / leveransegrense |
 | --- | --- |

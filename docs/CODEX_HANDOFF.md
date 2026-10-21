@@ -1,18 +1,24 @@
 # Overlevering til Codex
 
-## Nyeste bestilling: rette og kvalitetssikre alle backlogsaker
+## Gjeldende oppgavegrunnlag
 
-Brukeren fant at pengeunntaket i første sak var en Codex-antakelse, og bestilte rettelse og selvkritisk gjennomgang av alle27 saker. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) viser kontrollen og rettelsene. [BACKLOG_READY.md](BACKLOG_READY.md) og Issues har nå **7 Klar, 19 Trenger produktavklaring og 1 Avventer fysisk testtilgang**. #25 og #38 er ikke lenger klare; #35 har produktspørsmål i stedet for en kunstig hard avhengighet. Pengeunntaket er trukket tilbake uten å finne på en ny pengeflyt.
+[#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25) har brukerens fulle tekst med P01–P16/K1–K9, etterfulgt av akseptansekriterier og agentnotater. Den erstatter tidligere midtbåndslukking og den gamle Issue-teksten. Les Issuen som detaljert arbeidsgrunnlag; [krav §22](REQUIREMENTS.md#22-felles-tallendringsdialog) angir felles produktretning. Ingen ny appkode er bestilt gjennom denne oppgave-/dokumentoppdateringen.
 
-Dette er dokumentasjon/oppgavemerking; ingen appimplementasjon er bestilt. Eksisterende kode og tidligere Codex-tekst er ikke bevis på brukerens godkjenning. Åpne spørsmål tas én flyt om gangen; brukeren skal ikke spesifisere vedtatte prinsipper på nytt. Tekniske valg eies fortsatt av implementatøren. Unødvendige avhengigheter er fjernet; fysisk kontroll kan begynne før feilretting, med etterkontroll av senere endrede flyter.
+GitHub har aktuelle oppgavebeskrivelser, status og prioritet. [BACKLOG.md](BACKLOG.md) har produktoversikt og tidligere kontrollgrunnlag; [BACKLOG_READY.md](BACKLOG_READY.md) er indeks og historisk klargjøring. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) bevarer gjennomgangen i PR #53, ikke dagens tallhjulskrav. Ikke oppdater alle dokumenter eller speil statustellinger ved hver US-redigering. Bare nye fellesføringer og reelle motstrid krever dokumentendring. Bevar brukerens tekst/ID-er og hold egne tillegg separat.
 
-Brukeren har tidligere bestilt gjennomgang av hele loggen, opprinnelig v0.11/overlevering og dagens app, også det som kan kvitteres ut. [BACKLOG.md](BACKLOG.md) er samlet status og foreslått arbeidsrekkefølge. Den erstatter ikke krav/beslutninger og skjuler ikke utsatte opprinnelige krav. Eldre statuser i denne filen og leveransematrisene er historikk; bruk kildebelagt ny status før arbeid planlegges.
+## Arbeidsmåte og brukerreview
 
-Brukeren bestilte tidligere fullføring av PR #24 og opprettelse av de27 oppgavene i foreslått rekkefølge. Issues #25–51 er opprettet med prioritet/type og lenket fra BACKLOG. GitHub-integrasjonen avviste Project-opprettelse (`createProjectV2`: Resource not accessible by integration). Brukeren har senere opprettet Project1, men integrasjonen avviser også lesing av det. Innhold/rekkefølge kan ikke verifiseres; ikke foreslå en Projects-rettighetsbryter som appen ikke tilbyr. Se [GitHub-status og lenker](BACKLOG.md#github-backlog).
+Brukeren må uttrykkelig bestille appkode. Korte bekreftelser og en bestilling av Issue-/dokumentarbeid starter ingen appendring. Ta reelle produktspørsmål én flyt om gangen og løs tekniske valg selv. Funksjons-/UI-PR skal kunne testes og må få brukerens godkjenning før merge; dette erstatter tidligere generell delegasjon av automatisk testet merge.
 
-**Ingen appimplementasjon er bestilt i denne runden.** Korte bekreftelser er diskusjonsenighet, ikke kodeordre. Nye innspill etter PR #23 er bevart i krav §18: individuelt vanlig utstyr, Forbruk under Utstyr, avgrenset standardutvalg/enkel telling og midtbåndslukking/rapportert iOS-dobbelttrykk. Navn My D&D, endelig ikon og lavere bunnmeny er også fortsatt åpne. Ikke fortsett en gammel kodebestilling fordi den står nedenfor.
+Retningen for testpublisering er én fast testadresse på GitHub Pages, med varig testdata isolert fra produksjon. Adressen viser aktuell arbeidsbranch/PR; egen testbranch er ikke nødvendig. Testmiljøet er ikke satt opp gjennom denne bestillingen. Se [arbeidsinstruksen](../AGENTS.md) for gjeldende regler.
 
-Overleveringen omfatter v0.11 og CODEX_HANDOFF, REQUIREMENTS, DATA_MODEL, DESIGN og DECISIONS; alle er tilgjengelige og gjennomgått. En antatt ekstra forklaringsfil ble feilaktig ført som kildebegrensning i første auditutgave. Dette er korrigert etter brukerens fremvisning av den tidligere overleveringsbekreftelsen; ikke be brukeren finne en ytterligere fil på dette grunnlaget.
+## Repo og GitHub-backlog
+
+Issues #25–51 er opprettet med stabile BL-ID-er og prioritets-/typemerker. Ingen oppgave blir levert eller bestilt kodet av en statusendring. Historiske leveransestatuser må sammenholdes med nyere leveranser og faktisk kode.
+
+Brukeren har opprettet [Project1](https://github.com/users/geirskoglund/projects/1/views/1), men integrasjonen avviser også lesing av det. Appens rettigheter omfatter ikke Projects; ingen tilgjengelig bryter i installasjonsinnstillingene løser dette. Innhold/rekkefølge kan ikke verifiseres her. Issues kan fortsatt administreres; se [GitHub-status](BACKLOG.md#github-backlog).
+
+Overleveringen omfatter v0.11 og CODEX_HANDOFF, REQUIREMENTS, DATA_MODEL, DESIGN og DECISIONS. Alle er tilgjengelige. Ikke gjeninnfør den tidligere feilaktige antakelsen om en manglende ekstra forklaringsfil.
 
 ## Siste appleveranse: den godkjente utstyrsflyten
 
@@ -30,9 +36,9 @@ Etter review av utstyr ønsket brukeren å prøve en ny arbeidsflyt isolert før
 
 ## Varig prosjektminne og aktuell status
 
-Les også [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md) før videre funksjonsarbeid. Brukeren har uttrykkelig bedt om at REQUIREMENTS og DECISIONS holdes oppdatert, slik at avklaringer ikke forsvinner når samtalen komprimeres. Før nye vedtatte avklaringer i begge dokumenter og faktisk leveransestatus i matrisen. Ikke gjeninnfør forkastede mønstre eller anta at hele SRD/Combat er ferdig bare fordi Character-flytene er utvidet. Brukeren må få fullføre løpende tilbakemeldinger før ny koding bestilles.
+Les også [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md) før videre funksjonsarbeid. Brukeren har uttrykkelig bedt om at REQUIREMENTS og DECISIONS holdes oppdatert, slik at avklaringer ikke forsvinner når samtalen komprimeres. Før oppgavedetaljer i GitHub-Issuen; oppdater felleskrav/beslutningslogg bare når en vesentlig produktføring endres, og før faktisk produktkontroll ved levering. Ikke gjeninnfør forkastede mønstre eller anta at hele SRD/Combat er ferdig bare fordi Character-flytene er utvidet. Brukeren må få fullføre løpende tilbakemeldinger før ny koding bestilles.
 
-Gjeldende uttrykk er Eventyrjournal, med den nye [prøveversjonen av veiviserflyter](GUIDED_WORKFLOWS.md): Character/Combat/Magi/Utstyr og Meny, kontekstfiltre, forberedelse, automatiske slots/Hit Dice, enkle beholdninger/hvile og tallhjul. Nyere krav §13–14 og WORKFLOW_REVIEW erstatter tidligere slider-/trefane-/per-terning-forslag. Brukeren har uttrykkelig bestilt implementasjon og delegert testet merge; én samlet branch/PR, ingen merge per kommentar.
+Gjeldende uttrykk er Eventyrjournal, med den nye [prøveversjonen av veiviserflyter](GUIDED_WORKFLOWS.md): Character/Combat/Magi/Utstyr og Meny, kontekstfiltre, forberedelse, automatiske slots/Hit Dice, enkle beholdninger/hvile og tallhjul. Nyere krav §13–14 og WORKFLOW_REVIEW erstatter tidligere slider-/trefane-/per-terning-forslag. Tidligere bestilt implementasjon er levert gjennom de historiske PR-ene. Ny funksjons-/UI-PR krever brukerens test og godkjenning før merge; saml arbeid, ingen merge per kommentar.
 
 Proficiencies, skadeegenskaper og tilstandsimmunitet beholder eksisterende funksjon; ny forenkling er uttrykkelig utsatt. Samlet ny kort-hvileflyt, avansert skadeberegning, komplett SRD/standardhandlinger og ikke-SRD-klasseregler er fortsatt åpne krav. Ikke gjeninnfør rå terningkast som obligatorisk Hit Dice-føring eller generisk spell-slot/HitDice-type i vanlig Ny beholdning. Appen erstatter papirarket, ingen automatisk karakterbygger.
 

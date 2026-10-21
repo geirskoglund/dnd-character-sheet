@@ -1,5 +1,7 @@
 # Kvalitetsgjennomgang av backloggen
 
+> Historisk kontrollgrunnlag for PR #53. Gjeldende beskrivelse og status for hver sak vedlikeholdes i GitHub. #25 er senere erstattet av brukerens fulle tallhjulstekst; denne gjennomgangens tidligere åpne pengeflyt er ikke dagens arbeidsgrunnlag.
+
 Gjennomgått 2026-10-20 etter brukerens påpekning av pengeunntaket i #25 og bestillingen «Rett det opp. Vær selvkritisk og gå gjennom alle sakene for å kvalitetssikre.» Startgrunnlag er master **eefa958** (PR #52); appkoden er uendret fra PR #23. Dette gjelder dokumentasjon og alle27 Issues, ikke appimplementasjon.
 
 ## Feilen og kontrollmetoden
@@ -20,7 +22,7 @@ De konkrete kildehenvisningene står i hver [revidert saksseksjon](BACKLOG_READY
 - **Egne tekniske valg er merket som slike:** blant annet syvdagers backupperiode, 44px kontrollmål og metadata som gjennomføringsforslag. Ingen av disse er tillagt brukeren som nye beslutninger.
 - **Overflødige produktspørsmål er fjernet:** blant annet bekreftelse av ukjente skadevilkår, behov for terninger ved kort hvile og manuell potion-HP. De gjenværende spørsmålene gjelder konkrete nye flyter eller avgrensninger.
 
-Gjeldende fordeling er **7 klare, 19 trenger produktavklaring og 1 avventer fysisk testtilgang**. Alle27 Issues beholdes åpne med samme BL-ID, prioritet, type og opprinnelige rekkefølge. Klar er fortsatt ikke en kodebestilling eller en garanti mot fremtidige funn.
+Fordelingen ved PR #53 var **7 klare, 19 trengte produktavklaring og 1 avventet fysisk testtilgang**; dette er en historisk opptelling. Alle27 Issues beholdes åpne med samme BL-ID, prioritet, type og opprinnelige rekkefølge. Klar er fortsatt ikke en kodebestilling eller en garanti mot fremtidige funn.
 
 ## Kontroll per sak
 

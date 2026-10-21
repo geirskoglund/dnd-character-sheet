@@ -1,131 +1,81 @@
 # Klargjøring av backlog for egne tråder
 
-Kvalitetssikret mot master **eefa958** og brukerens etterfølgende rettelse av pengeunntaket. Appkoden er fortsatt den samme som i9518d8c. Bestillingen gjelder klargjøring og dokumentasjon av de27 eksisterende oppgavene, ikke implementasjon av appen. Ingen av scenarioene nedenfor er nye kjørte tester eller bevis for at en funksjon er levert.
+GitHub-Issuen er hovedkilden for den konkrete oppgaven: brukerens beskrivelse, krav-ID-er, akseptansekriterier, teknisk informasjon og åpne spørsmål. Status og prioritet vedlikeholdes i GitHub, uten løpende speiling eller opptelling her.
 
 ## Status og bruk
 
-**7 klare, 19 trenger produktavklaring og 1 avventer fysisk testtilgang.** Prioritet og opprinnelig BL-rekkefølge endres ikke. «Klar» betyr at en oppgave kan bestilles implementert uten en ny generell produktgjennomgang; det er ikke tillatelse til å begynne kodearbeid.
+- **Klar for implementasjon** betyr tilstrekkelig avklart produktgrunnlag, ikke at appkode er bestilt, levert eller testet. Bekreft aktuell master og testtilgang før oppstart.
+- **Trenger produktavklaring** betyr at angitte flytforslag ikke er vedtatt. Spør bare om reelle åpne produktvalg, én flyt om gangen.
+- **Avventer avhengighet** betyr nødvendig funksjonsgrunnlag eller testtilgang mangler. Kodeoverlapp alene er ikke en hard avhengighet.
 
-- **Klar for implementasjon:** flyt, omfang, forventninger og bevaringskrav er tilstrekkelig avklart; ingen åpne produktspørsmål eller utestående harde oppgaveavhengigheter. Tekniske valg/rotårsaksutredning eies av implementatøren. En uttrykkelig fysisk testport må fortsatt oppfylles før levering.
-- **Trenger produktavklaring:** teksten inneholder et konkret **forslag**, ikke en ny vedtatt løsning. Spørsmålene i oppgaven må avklares, oppdateres i krav/beslutninger og kontrolleres før Klar-merket kan settes. Ikke spør på nytt om papirarkmålet, manuell kontroll eller allerede bestemte plasseringer.
-- **Avventer avhengighet:** oppgavens forventning er beskrevet, men angitte leveranser eller fysisk testtilgang mangler. En lukket avhengighet er ikke nok i seg selv: sammenhold spesifikasjonen med den faktiske leveransen før status endres.
-
-Status føres som GitHub-merker og speiles her ved nye beslutninger/leveranser. Den vurderes ved hver ny implementasjonstråd mot gjeldende master; denne filen er ikke automatisk synkronisert med GitHub. En endret forutsetning kan gjøre en tidligere klar oppgave uklar igjen. Ingen Issue lukkes av denne klargjøringen.
+[GitHub-backloggen](https://github.com/geirskoglund/dnd-character-sheet/issues?q=is%3Aissue%20is%3Aopen%20label%3Abacklog) har aktuell status. En tidligere vurdering kan være utdatert. Oppdatering av en sak er ikke bestilling av appkode.
 
 ## Grunnlag og forslag må kunne skilles
 
-Første klargjøring i PR #52 la blant annet inn et pengeunntak uten godkjenning. Det er trukket tilbake. Se [kvalitetsgjennomgangen av alle27 saker](BACKLOG_REVIEW.md) for feil, rettelser og begrunnede statusendringer. Denne reviderte teksten går foran den første klargjøringen og historiske Issue-utdrag.
+Eksisterende kode og tidligere Codex-tekst er ikke i seg selv produktgodkjenning. Skill vedtatte krav, regelavledede forventninger, tekniske valg og forslag. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) bevarer gjennomgangen i PR #53 som historikk.
 
-Hver sak viser konkret kildegrunnlag. Eksisterende kode er bevis for hva appen gjør, ikke for hva brukeren har godkjent. Regelavledede testforventninger er ikke nye produktbeslutninger; tekniske forslag og åpne UX-valg skal heller ikke presenteres som brukerkrav. Et nytt unntak, en låst utvalgsgrense eller endret arbeidsflyt krever grunnlag, selv om det virker praktisk for implementasjonen.
-
-**Krav, regelkontroll og forslag er forskjellige:** Under en uavklart sak gjelder de vedtatte kravene fortsatt. Forslagsstatus gjelder den nye konkrete flyten/avgrensningen, ikke retten til å velge bort krav. Avhengigheter skal begrunnes med nødvendig funksjonsgrunnlag eller tilgang. Samme fil eller mulig koderekkefølge er samordning, ikke automatisk en hard avhengighet.
+BL-01 lenker til den nye brukerbeskrivelsen i #25. Seksjonene BL-02–BL-27 nedenfor er eldre klargjøringsgrunnlag fra PR #53, ikke selvstendige løpende kopier av sakene. Les alltid den gjeldende Issuen. Vanlig Issue-redigering skal ikke medføre automatisk oppdatering av disse seksjonene eller alle prosjektdokumenter.
 
 ## Felles kontrakt for alle implementasjoner
 
-1. Les oppgaven og AGENTS, REQUIREMENTS, DECISIONS, DATA_MODEL, DESIGN, BACKLOG og gjeldende leveransestatus. Nyeste eksplisitte beslutning går foran historikk. Dokumenter aktuell startcommit og hvilke scenarioer som faktisk omfattes.
+1. Les gjeldende GitHub-Issue og AGENTS, REQUIREMENTS, DECISIONS, DATA_MODEL og DESIGN. Bruk BACKLOG som produktoversikt og historisk kontrollgrunnlag. Nyeste eksplisitte beslutning går foran historikk. Dokumenter aktuell startcommit og hvilke scenarioer som faktisk omfattes.
 2. Papirkarakterarket er målet: enkel føring/oppslag, relevante valg, fysiske terninger og DM som autoritet. Generelle gyldige valg, alternative kilder og manuelle unntak bevares. Ingen automatisk karakterbygging, kamp-/turtelling eller fri regelteksttolkning.
 3. Bevar data utenfor endringen: stabile IDs, catalog/source/ownership, manuelle totaler, bruk/hender/attunement, pooler, referanser, utkast, portrett og andre karakterer. Åpning/preview/filtervalg skriver ingen karakterendring. Ukjente/importerte data må ikke normaliseres bort av UI-forenkling.
 4. Ved faktisk mutasjon: tydelig validering/feil, bevart arbeid ved retry, revisjonskontroll, én atomisk bekreftelse/hendelse og samlet Angre der flyten krever det. Nye datafelt må overleve relevant kopi/backup/import og gamle data må fortsatt kunne leses. Rene visnings-/manifestendringer trenger ikke kunstige mutasjons- eller migreringstester.
 5. UI følger Eventyrjournal, lesbar mobil, uniforme elementer, riktige hjørnemarkører, riktig fokus/scroll og tilgjengelige kontrollnavn. Rene listevalg registreres direkte. Flere verdier følger den avklarte ett-spørsmål-veiviseren; et avvik fra dette må være et godkjent konkret produktvalg.
 6. Utled nødvendige regresjonstester fra scenarioene **før koding**. Filene i hvert punkt er eksisterende relevante testsuiter, ikke en påstand om at de nye scenarioene allerede er dekket. Test faktisk inndata, grenser, feil og kontekst; ikke bare at et felt finnes.
-7. Lever på egen branch/PR. Gjør reell produktkontroll på320/390px og stor tekst av berørte flyter; beskriv begrunnede forskjeller fra prototype/gjeldende app. Fysisk iOS/Safari/standalone må ikke erklæres testet ut fra Chromium. Legg kontrollbevis og restkrav i CHARACTER_WORKSPACE og PR før merge.
-8. Hold konkrete nye beslutninger i REQUIREMENTS/DECISIONS, faktisk status i BACKLOG og oppgavens bevis i Issue/PR. Ikke merk et helt område ferdig fordi en del er levert; ikke lukk en rapportert fysisk feil uten dens testgrunnlag.
+7. Lever på egen branch/PR. Gjør reell produktkontroll på320/390px og stor tekst av berørte flyter; beskriv begrunnede forskjeller fra prototype/gjeldende app. Fysisk iOS/Safari/standalone må ikke erklæres testet ut fra Chromium. Legg kontrollbevis og restkrav i relevant produktkontroll og PR. Brukeren skal få teste funksjons-/UI-PR og godkjenne før merge.
+8. Vedlikehold oppgavedetaljer, status og prioritet i GitHub. Oppdater bare berørte felles produktføringer i REQUIREMENTS/DECISIONS; faktisk leveransebevis hører i Issue/PR og relevant produktkontroll. Ikke merk et helt område ferdig fordi en del er levert; ikke lukk en rapportert fysisk feil uten dens testgrunnlag.
 
 Egne tråder bruker separate brancher/arbeidskopier; start med én aktiv implementasjon. Samtidige tråder på samme checkout er ikke beskyttet av separate samtaler. Filoverlapp er en samordningsrisiko, ikke automatisk en funksjonell avhengighet.
 
 ## Oppgaveoversikt
 
-| Oppgave | Status | Faktisk avhengighet / leveringsport |
-| --- | --- | --- |
-| [BL-01 /#25](#bl-01) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-02 /#26](#bl-02) | Klar for implementasjon | Ingen hard oppgaveavhengighet; fysisk iPhone-kontroll kreves |
-| [BL-03 /#27](#bl-03) | Klar for implementasjon | Ingen hard oppgaveavhengighet |
-| [BL-04 /#28](#bl-04) | Klar for implementasjon | Ingen hard oppgaveavhengighet; fysisk iPhone-kontroll kreves |
-| [BL-05 /#29](#bl-05) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-06 /#30](#bl-06) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-07 /#31](#bl-07) | Trenger produktavklaring | #30; produktspørsmål nedenfor |
-| [BL-08 /#32](#bl-08) | Klar for implementasjon | Ingen hard oppgaveavhengighet |
-| [BL-09 /#33](#bl-09) | Klar for implementasjon | Ingen hard oppgaveavhengighet |
-| [BL-10 /#34](#bl-10) | Klar for implementasjon | Ingen hard oppgaveavhengighet |
-| [BL-11 /#35](#bl-11) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-12 /#36](#bl-12) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-13 /#37](#bl-13) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-14 /#38](#bl-14) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-15 /#39](#bl-15) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-16 /#40](#bl-16) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-17 /#41](#bl-17) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-18 /#42](#bl-18) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-19 /#43](#bl-19) | Klar for implementasjon | Ingen hard oppgaveavhengighet |
-| [BL-20 /#44](#bl-20) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-21 /#45](#bl-21) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-22 /#46](#bl-22) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-23 /#47](#bl-23) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-24 /#48](#bl-24) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-25 /#49](#bl-25) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-26 /#50](#bl-26) | Trenger produktavklaring | Ingen hard oppgaveavhengighet; produktspørsmål nedenfor |
-| [BL-27 /#51](#bl-27) | Avventer avhengighet | Ingen hard oppgaveavhengighet; fysisk iPhone-kontroll kreves |
+| ID | GitHub-sak |
+| --- | --- |
+| [BL-01](#bl-01) | [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25) |
+| [BL-02](#bl-02) | [#26 – Finne og rette dobbelttrykk i installert iPhone-app](https://github.com/geirskoglund/dnd-character-sheet/issues/26) |
+| [BL-03](#bl-03) | [#27 – Bruke navnet My D&D ved installasjon](https://github.com/geirskoglund/dnd-character-sheet/issues/27) |
+| [BL-04](#bl-04) | [#28 – Redusere høyden på bunnmenyen](https://github.com/geirskoglund/dnd-character-sheet/issues/28) |
+| [BL-05](#bl-05) | [#29 – Føre vanlig utstyr enkeltvis, uten Antall](https://github.com/geirskoglund/dnd-character-sheet/issues/29) |
+| [BL-06](#bl-06) | [#30 – Legge til Forbruk med et avgrenset standardutvalg](https://github.com/geirskoglund/dnd-character-sheet/issues/30) |
+| [BL-07](#bl-07) | [#31 – Bruke og fylle på Forbruk raskt](https://github.com/geirskoglund/dnd-character-sheet/issues/31) |
+| [BL-08](#bl-08) | [#32 – Legge inn relevante standardhandlinger i Combat](https://github.com/geirskoglund/dnd-character-sheet/issues/32) |
+| [BL-09](#bl-09) | [#33 – Knytte kjente klasse-/feat-/artsoppslag og tellere til samme kilde](https://github.com/geirskoglund/dnd-character-sheet/issues/33) |
+| [BL-10](#bl-10) | [#34 – Vise karakterens spell attack og save DC der spellen slås opp](https://github.com/geirskoglund/dnd-character-sheet/issues/34) |
+| [BL-11](#bl-11) | [#35 – Gjøre cantrip-scaling og upcasting lettere å slå opp riktig](https://github.com/geirskoglund/dnd-character-sheet/issues/35) |
+| [BL-12](#bl-12) | [#36 – Forenkle proficiency-registrering](https://github.com/geirskoglund/dnd-character-sheet/issues/36) |
+| [BL-13](#bl-13) | [#37 – Forenkle registrering av skadeegenskaper](https://github.com/geirskoglund/dnd-character-sheet/issues/37) |
+| [BL-14](#bl-14) | [#38 – Forenkle tilstandsimmunitet og forklare hensikten](https://github.com/geirskoglund/dnd-character-sheet/issues/38) |
+| [BL-15](#bl-15) | [#39 – Fullføre enkel feature-/featredigering også for handling/ressurs/effekt](https://github.com/geirskoglund/dnd-character-sheet/issues/39) |
+| [BL-16](#bl-16) | [#40 – Fullføre enkel registrering/redigering av spell-detaljer](https://github.com/geirskoglund/dnd-character-sheet/issues/40) |
+| [BL-17](#bl-17) | [#41 – Forenkle egne handlingsoppslag](https://github.com/geirskoglund/dnd-character-sheet/issues/41) |
+| [BL-18](#bl-18) | [#42 – Samle kort hvile uten rå terningregistrering](https://github.com/geirskoglund/dnd-character-sheet/issues/42) |
+| [BL-19](#bl-19) | [#43 – Gjøre backup-påminnelsen avhengig av faktiske endringer](https://github.com/geirskoglund/dnd-character-sheet/issues/43) |
+| [BL-20](#bl-20) | [#44 – Levere sammensatt «Ta skade», som én etterprøvbar spillerflyt](https://github.com/geirskoglund/dnd-character-sheet/issues/44) |
+| [BL-21](#bl-21) | [#45 – Dekke flere reelle spellkilder uten å skjule gyldige valg](https://github.com/geirskoglund/dnd-character-sheet/issues/45) |
+| [BL-22](#bl-22) | [#46 – Gjennomgå behov for tredjedels-caster-/andre klasseregler](https://github.com/geirskoglund/dnd-character-sheet/issues/46) |
+| [BL-23](#bl-23) | [#47 – Redigere flere koblinger og nyttige egne aktivtilstander](https://github.com/geirskoglund/dnd-character-sheet/issues/47) |
+| [BL-24](#bl-24) | [#48 – Utvide med ferdige SRD-magic-items](https://github.com/geirskoglund/dnd-character-sheet/issues/48) |
+| [BL-25](#bl-25) | [#49 – Fullføre relevant art-/underart-/valginnhold](https://github.com/geirskoglund/dnd-character-sheet/issues/49) |
+| [BL-26](#bl-26) | [#50 – Fullføre lokalt SRD-regelbibliotek](https://github.com/geirskoglund/dnd-character-sheet/issues/50) |
+| [BL-27](#bl-27) | [#51 – Gjennomføre fysisk mobil-/tilgjengelighetskontroll av relevante flyter](https://github.com/geirskoglund/dnd-character-sheet/issues/51) |
 
 ## Før neste implementasjonsbestilling
 
-BL-01/#25 er ikke lenger erklært klar: pengeunntaket er fjernet og den konkrete lukke-/gjenåpningsflyten må avklares. BL-03/#27 (My D&D) er en liten uavhengig sak som allerede har et klart produktmål. Dette omprioriterer ikke backloggen og starter ingen appoppgave.
-
-## Åpne produktvalg tas i korte runder
-
-Ta én arbeidsflyt om gangen, først den aktuelle midtbåndsflyten hvis #25 skal bestilles. Ikke send alle19 uavklarte saker som en samlet spørsmålsliste. Spør bare om faktiske åpne produktvalg; tekniske valg og avledede 2014-regler eies av implementatøren. Forbruk-gruppen, manuelle terninger, ingen tursporing og andre vedtatte prinsipper skal ikke bestemmes på nytt.
+Les den aktuelle Issuen og dens gjeldende status, krav og spørsmål. #25 har nå brukerens nye, fullstendige komponentbeskrivelse. Ta eventuelle reelle produktspørsmål én flyt om gangen; ikke gjenåpne avklarte prinsipper. Ingen oppgave starter automatisk gjennom denne indeksen.
 
 ## BL-01
 
-**[#25 – Lukke vanlig tallhjul ved trykk på valgt midtbånd](https://github.com/geirskoglund/dnd-character-sheet/issues/25)**
+**[#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25)**
 
-**Status:** Trenger produktavklaring
-
-Trykk på midtbåndet for å lukke er ønsket. Det tidligere pengeunntaket var Codex sin antakelse og er trukket tilbake. Det konkrete lukke-/gjenåpningsforløpet for pengevisningen er ikke avklart; ingen ny særregel vedtas her.
-
-**Avhengigheter:** Ingen hard oppgaveavhengighet.
-
-### Dokumentert grunnlag
-
-- [Nyere lukkeønske og direkteinnskriving; pengeunntaket er tilbakekalt.](https://github.com/geirskoglund/dnd-character-sheet/blob/master/docs/REQUIREMENTS.md#18-individuelt-utstyr-forbruk-og-tallhjul--oppfølging-etter-pr-23)
-- [To GP-rullefelt og CP-lagring, ikke et unntak fra senere betjening.](https://github.com/geirskoglund/dnd-character-sheet/blob/master/docs/REQUIREMENTS.md#14-illustrert-spørsmålsveiviser-og-utkast-bestilt-2026-10-20)
-
-### Arbeidsflyt: krav og uavklarte forslag
-
-1. Avklart mål: trykk på valgt midtbånd skal kunne lukke tallhjulet og beholde valgt verdi. Lukking alene lagrer ikke hele skjemaet.
-2. Direkte tallinnskriving skal fortsatt være tilgjengelig. Trykk på midtbåndet kan ikke samtidig være både Lukk og åpning av tastatur; de to handlingene må få tydelig hver sin inngang.
-3. Penger skal fortsatt ha to rullefelt for hele GP og 00–99. Ingen godkjent regel unntar dem fra ønsket om midtbåndslukking. Vis ett konkret forslag til hvordan de lukkes og åpnes igjen, uten å velge dette på brukerens vegne.
-
-Vedtatte krav gjelder fortsatt. Nye konkrete flytforslag må avklares; denne teksten godkjenner dem ikke.
-
-### Akseptansescenarioer – forventninger, ikke kjørte tester
-
-| Situasjon | Forventet resultat |
-| --- | --- |
-| HP 20/20, velg delta−7, trykk midtraden | Hjulet lukkes uten å åpne tastatur. Preview viser HP 13, men lagret HP er20 til Oppdater HP trykkes. |
-| Åpne samme hjul igjen; endre via tastatur | Hjulet er sentrert på−7. Direkte innskriving virker og senere scroll overskriver ikke den nye teksten. |
-| Tall ved min 0/maks 3; trykk valgt rad etter scroll | Valget beholdes innen grensene; en avsluttet momentumbevegelse endrer ikke tallet etter lukking. |
-| Penger 55,25 GP, rull hele GP/desimaler og skriv direkte | To rullefelt og eksakt lagring som 5525 CP bevares. Lukking/gjenåpning skal prøves etter den avklarte pengeflyten; ingen skjult unntaksregel eller utilsiktet lagring. |
-
-### Må bevares og avgrenses
-
-Ingen automatisk Lagre ved hjullukking. Bevar grenser, valgt tall, tilgjengelig betjening og HP-preview. Å bevare direkteinnskriving krever ikke å bevare dagens midtbåndshandling. #26 har egen fysisk feilkontroll; midtbåndsendringen alene beviser ikke at dobbelttrykk er rettet.
-
-### Berørte områder og regresjonsgrunnlag
-
-Kode/data: [number-wheel.ts](https://github.com/geirskoglund/dnd-character-sheet/blob/master/src/ui/number-wheel.ts), [hp-control.ts](https://github.com/geirskoglund/dnd-character-sheet/blob/master/src/ui/hp-control.ts), [money-control.ts](https://github.com/geirskoglund/dnd-character-sheet/blob/master/src/ui/money-control.ts).
-
-Eksisterende relevante testsuiter: [design.spec.ts](https://github.com/geirskoglund/dnd-character-sheet/blob/master/tests/e2e/design.spec.ts), [illustrated.spec.ts](https://github.com/geirskoglund/dnd-character-sheet/blob/master/tests/e2e/illustrated.spec.ts), [workflows.spec.ts](https://github.com/geirskoglund/dnd-character-sheet/blob/master/tests/e2e/workflows.spec.ts). Nye forventninger over må prøves uttrykkelig; eldre grønne tester er ikke dekning i seg selv.
-
-### Produktspørsmål før Klar-status
-
-- Hvordan skal de to pengehjulene lukkes og åpnes igjen ved trykk på midtbåndet? Avklar et konkret forslag sammen med den separate inngangen for direkteinnskriving. Det generelle lukkeønsket og to pengehjul skal ikke avklares på nytt.
-
-**Bestillingsgrense:** Klargjøring og Klar-status er ikke en kodebestilling. Implementasjon starter først når den konkrete oppgaven uttrykkelig bestilles.
+Hele brukerbeskrivelsen, P01–P16, K1–K9, akseptansekriterier og agentnotater vedlikeholdes i #25. Denne lenken erstatter den tidligere detaljerte repo-beskrivelsen; det finnes ingen ny parallell kravkopi her.
 
 ## BL-02
 
 **[#26 – Finne og rette dobbelttrykk i installert iPhone-app](https://github.com/geirskoglund/dnd-character-sheet/issues/26)**
 
-**Status:** Klar for implementasjon
+**Status ved klargjøringen i PR #53 (historikk):** Klar for implementasjon
 
 Feilen og forventet oppførsel er konkrete. Årsaksutredning er teknisk arbeid; fysisk iOS-verifikasjon er en leveringsport, ikke en uavklart produktregel.
 
@@ -172,7 +122,7 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 **[#27 – Bruke navnet My D&D ved installasjon](https://github.com/geirskoglund/dnd-character-sheet/issues/27)**
 
-**Status:** Klar for implementasjon
+**Status ved klargjøringen i PR #53 (historikk):** Klar for implementasjon
 
 Det installerte navnet My D&D er uttrykkelig bestemt. Nytt ikon er en separat åpen beslutning.
 
@@ -215,7 +165,7 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 **[#28 – Redusere høyden på bunnmenyen](https://github.com/geirskoglund/dnd-character-sheet/issues/28)**
 
-**Status:** Klar for implementasjon
+**Status ved klargjøringen i PR #53 (historikk):** Klar for implementasjon
 
 Lavere meny er bestemt. Avstanden kan velges teknisk innen eksisterende Eventyrjournal og tilgjengelige trykkflater.
 
@@ -263,7 +213,7 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 **[#29 – Føre vanlig utstyr enkeltvis, uten Antall](https://github.com/geirskoglund/dnd-character-sheet/issues/29)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Individuell føring av vanlig utstyr er dokumentert retning. Den konkrete håndteringen av eldre stabler med delte bruk krever avklaring. Ny Forbruk-gruppe trenger ikke være ferdig for å fjerne Antall fra nyregistrering av vanlig utstyr.
 
@@ -313,7 +263,7 @@ Eksisterende relevante testsuiter: [item-effects.test.ts](https://github.com/gei
 
 **[#30 – Legge til Forbruk med et avgrenset standardutvalg](https://github.com/geirskoglund/dnd-character-sheet/issues/30)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Forbruk som egen gruppe og ferdige standardvarer er bestemt. Første katalogomfang og betjeningen for egne/eldre varer trenger en konkret avgrensning.
 
@@ -362,7 +312,7 @@ Eksisterende relevante testsuiter: [records.test.ts](https://github.com/geirskog
 
 **[#31 – Bruke og fylle på Forbruk raskt](https://github.com/geirskoglund/dnd-character-sheet/issues/31)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Enkel reduksjon og samlet påfyll er ønsket, men den konkrete knappflyten ble bare foreslått. Den må avklares sammen med #30.
 
@@ -409,7 +359,7 @@ Eksisterende relevante testsuiter: [storage.test.ts](https://github.com/geirskog
 
 **[#32 – Legge inn relevante standardhandlinger i Combat](https://github.com/geirskoglund/dnd-character-sheet/issues/32)**
 
-**Status:** Klar for implementasjon
+**Status ved klargjøringen i PR #53 (historikk):** Klar for implementasjon
 
 Standardhandlingene og oppslagsprinsippet er allerede kravsatt og vist i v0.11. Ingen ny turstyringsflyt behøver å velges.
 
@@ -457,7 +407,7 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 **[#33 – Knytte kjente klasse-/feat-/artsoppslag og tellere til samme kilde](https://github.com/geirskoglund/dnd-character-sheet/issues/33)**
 
-**Status:** Klar for implementasjon
+**Status ved klargjøringen i PR #53 (historikk):** Klar for implementasjon
 
 Kildebaserte oppslag fra registrerte evner og eksisterende tellere er et opprinnelig krav. Produktmålet og kategoriene er avklart; regelkartlegging er teknisk arbeid.
 
@@ -505,7 +455,7 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 **[#34 – Vise karakterens spell attack og save DC der spellen slås opp](https://github.com/geirskoglund/dnd-character-sheet/issues/34)**
 
-**Status:** Klar for implementasjon
+**Status ved klargjøringen i PR #53 (historikk):** Klar for implementasjon
 
 Karakterberegnede spellverdier i relevante oppslag er kravsatt. Eksisterende casting-kilder og manuelle felt gir et tydelig beregningsgrunnlag.
 
@@ -553,7 +503,7 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 **[#35 – Gjøre cantrip-scaling og upcasting lettere å slå opp riktig](https://github.com/geirskoglund/dnd-character-sheet/issues/35)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Scaling og upcasting er dokumenterte oppslagsbehov. Den konkrete visningen av høyere slotnivå og første beregningsdekning er et forslag. #34 er relatert arbeid, men spell attack/DC er ikke en nødvendig forutsetning for å vise korrekt skade/scaling.
 
@@ -606,7 +556,7 @@ Eksisterende relevante testsuiter: [workflows.test.ts](https://github.com/geirsk
 
 **[#36 – Forenkle proficiency-registrering](https://github.com/geirskoglund/dnd-character-sheet/issues/36)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Alle datatypene må bevares. Den nye proficiencyflyten ble uttrykkelig utsatt og er ikke godkjent som et konkret skjermforløp.
 
@@ -657,7 +607,7 @@ Eksisterende relevante testsuiter: [modifiers.test.ts](https://github.com/geirsk
 
 **[#37 – Forenkle registrering av skadeegenskaper](https://github.com/geirskoglund/dnd-character-sheet/issues/37)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Skadetyper og varige beskyttelser er avklart; en ny registreringsflyt og hvordan vilkårstilstand vises er ennå ikke godkjent.
 
@@ -706,7 +656,7 @@ Eksisterende relevante testsuiter: [workspace.spec.ts](https://github.com/geirsk
 
 **[#38 – Forenkle tilstandsimmunitet og forklare hensikten](https://github.com/geirskoglund/dnd-character-sheet/issues/38)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Strukturerte immuniteter og forklaring av hensikten er krav. Den nye registreringsflyten ble uttrykkelig utsatt sammen med proficiencies/skadeegenskaper. Et generelt listevalgprinsipp godkjenner ikke alene dette konkrete forløpet.
 
@@ -756,7 +706,7 @@ Eksisterende relevante testsuiter: [workspace.spec.ts](https://github.com/geirsk
 
 **[#39 – Fullføre enkel feature-/featredigering også for handling/ressurs/effekt](https://github.com/geirskoglund/dnd-character-sheet/issues/39)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Vanlig featureføring er veiledet, men handling/ressurs/passiv effekt ligger fortsatt i ekspertskjema. Den samlede nye redigeringsflyten må godkjennes.
 
@@ -806,7 +756,7 @@ Eksisterende relevante testsuiter: [workspace.spec.ts](https://github.com/geirsk
 
 **[#40 – Fullføre enkel registrering/redigering av spell-detaljer](https://github.com/geirskoglund/dnd-character-sheet/issues/40)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Felt og bevaringskrav er kjent, men hvilke spørsmål en vanlig egen spell skal møte og hvordan kjent katalogtekst låses opp må konkretiseres.
 
@@ -855,7 +805,7 @@ Eksisterende relevante testsuiter: [workflows.spec.ts](https://github.com/geirsk
 
 **[#41 – Forenkle egne handlingsoppslag](https://github.com/geirskoglund/dnd-character-sheet/issues/41)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Et eget handlingsoppslag skal være enkelt, men skillet mellom ren tekst, attack/save og ressurs må få en godkjent normalflyt.
 
@@ -904,7 +854,7 @@ Eksisterende relevante testsuiter: [workspace.spec.ts](https://github.com/geirsk
 
 **[#42 – Samle kort hvile uten rå terningregistrering](https://github.com/geirskoglund/dnd-character-sheet/issues/42)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Hit Dice som telling og separat/samlet HP-delta er bestemt. Samspillet mellom disse og selve kort-hvilebekreftelsen er uttrykkelig utsatt.
 
@@ -954,7 +904,7 @@ Eksisterende relevante testsuiter: [workflows.test.ts](https://github.com/geirsk
 
 **[#43 – Gjøre backup-påminnelsen avhengig av faktiske endringer](https://github.com/geirskoglund/dnd-character-sheet/issues/43)**
 
-**Status:** Klar for implementasjon
+**Status ved klargjøringen i PR #53 (historikk):** Klar for implementasjon
 
 Endringsbasert, diskret påminnelse er kravsatt. Tidspunkt og intern markering er tekniske valg innen dette målet; syv dager er dagens implementasjon, ikke en brukerbestemt låst frist.
 
@@ -1004,7 +954,7 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 **[#44 – Levere sammensatt «Ta skade», som én etterprøvbar spillerflyt](https://github.com/geirskoglund/dnd-character-sheet/issues/44)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Det funksjonelle beregningskravet er vedtatt. Den enkle skjermflyten og valgene for ukjente vilkår må avklares før den store kalkulatoren kodes.
 
@@ -1054,7 +1004,7 @@ Eksisterende relevante testsuiter: [derived.test.ts](https://github.com/geirskog
 
 **[#45 – Dekke flere reelle spellkilder uten å skjule gyldige valg](https://github.com/geirskoglund/dnd-character-sheet/issues/45)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Alle reelle tilgangskilder skal kunne beholdes. Flere item-/art-/featgrenser krever et valgt registreringsmønster, særlig ved egne begrensninger og brukstellere.
 
@@ -1106,7 +1056,7 @@ Eksisterende relevante testsuiter: [workflows.test.ts](https://github.com/geirsk
 
 **[#46 – Gjennomgå behov for tredjedels-caster-/andre klasseregler](https://github.com/geirskoglund/dnd-character-sheet/issues/46)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Dette er en avklaringsoppgave, ikke en ordre om å implementere alle boksubclasses. Eksisterende manuell føring må være tilstrekkelig i mellomtiden.
 
@@ -1154,7 +1104,7 @@ Eksisterende relevante testsuiter: [workflows.test.ts](https://github.com/geirsk
 
 **[#47 – Redigere flere koblinger og nyttige egne aktivtilstander](https://github.com/geirskoglund/dnd-character-sheet/issues/47)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Flere koblinger og activeStates kan lagres. Ny redigering/bruk av aktivstatus må avklares. #39 og denne oppgaven har overlappende forslag til feature-oversikt; ingen av dem er vedtatt som nødvendig grunnlag for den andre.
 
@@ -1206,7 +1156,7 @@ Eksisterende relevante testsuiter: [records.test.ts](https://github.com/geirskog
 
 **[#48 – Utvide med ferdige SRD-magic-items](https://github.com/geirskoglund/dnd-character-sheet/issues/48)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Fullt lokalt SRD-innhold er et opprinnelig krav. Første magic-itemleveranses innhold og forskjellen mellom oppslag og ferdige beregnede virkninger må være eksplisitt.
 
@@ -1256,7 +1206,7 @@ Eksisterende relevante testsuiter: [item-effects.test.ts](https://github.com/gei
 
 **[#49 – Fullføre relevant art-/underart-/valginnhold](https://github.com/geirskoglund/dnd-character-sheet/issues/49)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Manglende traits/underarter skal dekkes, men utvidelsen må bevare enkel opprettelse og unngå automatisk ombygging av eksisterende karakterer.
 
@@ -1306,7 +1256,7 @@ Eksisterende relevante testsuiter: [foundations.spec.ts](https://github.com/geir
 
 **[#50 – Fullføre lokalt SRD-regelbibliotek](https://github.com/geirskoglund/dnd-character-sheet/issues/50)**
 
-**Status:** Trenger produktavklaring
+**Status ved klargjøringen i PR #53 (historikk):** Trenger produktavklaring
 
 Full SRD er vedtatt, men hvor regelkapitler/monstre slås opp og første leseflyt er ikke besluttet. Ny fane må ikke innføres på eget initiativ.
 
@@ -1355,7 +1305,7 @@ Eksisterende relevante testsuiter: [characters.spec.ts](https://github.com/geirs
 
 **[#51 – Gjennomføre fysisk mobil-/tilgjengelighetskontroll av relevante flyter](https://github.com/geirskoglund/dnd-character-sheet/issues/51)**
 
-**Status:** Avventer avhengighet
+**Status ved klargjøringen i PR #53 (historikk):** Avventer avhengighet
 
 Kontrollarbeidet kan begynne på dagens bygg så snart fysisk iPhone/testtilgang finnes. #26 og #28 er ikke forutsetninger for å oppdage feil; berørte scenarioer må prøves igjen når rettelsene er levert.
 
@@ -1404,4 +1354,4 @@ Ingen uavklarte produktvalg identifisert innen det kildebelagte omfanget. Nye fa
 
 ## Kontroll av klargjøringen
 
-Dette er revidert dokumentasjon og Issue-beskrivelser/merker etter brukerens bestilling om å rette og kvalitetssikre alle saker. Ingen appkode er endret. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) viser gjennomgangen sak for sak, kontrollmetoden og de faktiske verifikasjonsresultatene. Status og forventninger her er ikke bevis for leverte funksjoner eller fysisk testet oppførsel.
+Tidligere kilde-/testkontroll er dokumentert i [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md). Den er historikk. Ved ny implementasjon kontrolleres gjeldende Issue mot felleskrav og aktuell appkode; tidligere scenarioer er ikke nye testresultater. Detaljer og status for #25 vedlikeholdes i GitHub.
