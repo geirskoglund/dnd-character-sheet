@@ -542,3 +542,13 @@ Forventningsprøvene feilet på den tidligere implementasjonen (HP ble absorbert
 Inspiserte faktiske 390 px-mobilbilder viser HP 7 → 2 med temp HP urørt, tom tallvisning med hjulvalget +6 beholdt i Etter, og første siffer 2 som nytt endringsbeløp uten caret/tekstmarkering/håndtak. Inntastingsflaten er en vanlig ikke-selekterbar tekstvisning, ikke input/contenteditable. Tastatur, Ctrl/Cmd+A og ekte clipboard-paste er testet. 320 px / stor tekst beholder intern rulling og faste hovedknapper. Oppdaterte bilder finnes i [produktgjennomgangen](reviews/number-dialog/README.md).
 
 Normal HP-korreksjon bruker effektiv maks HP som grense, men lagrer fortsatt karakterens opprinnelige grunnmaksimum; temp HP overføres uendret. Ta skade bruker den eksisterende domenefunksjonen for temp-HP-absorpsjon. Hvile-/utstyrseffekter og øvrige skadeoperasjoner er ikke endret. Ingen datamigrering eller nye avhengigheter. Brukerens positive review av `17cccab` er ikke mergegodkjenning; disse siste to rettelsene må etterkontrolleres fysisk før brukerens uttrykkelige godkjenning.
+
+## Før-koding-kontroll: visuell null i tom tallvisning
+
+Brukeren har bestilt en visuell 0 når tallvisningen er tom. Dette presiserer den tidligere tomme presentasjonen; selve innskrivingen skal fortsatt være tom og beholde hjulvalget uten inntasting.
+
+| Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
+| --- | --- | --- | --- | --- | --- |
+| Visuell null ved tom innskriving | Ny brukeravklaring; Alva Fighter1, GP-hjul satt til +6. Klasse/subclass og D&D-regler har ingen betydning for denne visningsdetaljen | Midttrykk viser en diskret 0 som plassholder. Første tegn skjuler den; sletting av alt viser den igjen. Den er ikke en registrert verdi: Før/Etter og OK uten inntasting beholder +6. Ingen native input eller markering | Utvid eksisterende `number-corrections.spec.ts` med åpning, inntasting og tømming; kontroller eksisterende panel-/mobilprøver | Samme tallpanel; bare tomtilstanden endres | Produksjonsbygg og 7/7 berørte nettlesertester bestått |
+
+Egen produktgjennomgang: faktiske mobilbilder viser en svak 0 ved tom innskriving, ingen plassholder sammen med innskrevet 2, og uendret Etter (+6) når siste siffer slettes. Tallstil, knapper og plassering er beholdt på 320/390 px; eksisterende panelprøver med stor tekst og ekte innliming bestod. Endringen er kun presentasjon og tilgjengelig plassholderbeskrivelse; domenelogikk og lagring er uendret. Tidligere full kontroll på `50ea969` gjenbrukes for uendrede flyter; sluttcommiten valideres av GitHub før testpublisering. Fysisk brukerreview og uttrykkelig mergegodkjenning gjenstår.

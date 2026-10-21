@@ -1,10 +1,10 @@
 # Produktbilder: tallendringsdialog #25
 
-Faktiske Chromium-bilder fra `tests/e2e/number-review.spec.ts` og `number-corrections.spec.ts` mot produksjonsbygget etter godkjent brukerreview. Før/Etter er større, Etter prioriteres, og båndet står fast utenfor tallrekken. GP/CP deler ett tallpanel; tallvisningen er en ikke-selekterbar tekstflate og åpner tomt. Ingen native input, teksthåndtak eller systemtastatur brukes. Vanlig tastatur, ekte clipboard-paste og talltastene er funksjonelt prøvd.
+Faktiske Chromium-bilder fra `tests/e2e/number-review.spec.ts` og `number-corrections.spec.ts` mot produksjonsbygget etter godkjent brukerreview. Før/Etter er større, Etter prioriteres, og båndet står fast utenfor tallrekken. GP/CP deler ett tallpanel; tallvisningen er en ikke-selekterbar tekstflate og viser en diskret null-plassholder når innskrivingen er tom. Plassholderen forsvinner ved inntasting og kommer tilbake ved tømming uten å endre hjulvalget. Ingen native input, teksthåndtak eller systemtastatur brukes. Vanlig tastatur, ekte clipboard-paste og talltastene er funksjonelt prøvd.
 
 ![GP/CP-hjul, 390 × 844](money-390.png)
 
-![Tomt tallpanel som bevarer hjulvalget +6](blank-keypad-390.png)
+![Null-plassholder ved tom innskriving; hjulvalget +6 er bevart](blank-keypad-390.png)
 
 ![Første siffer erstatter endringsbeløpet, uten tekstmarkering](typed-keypad-390.png)
 
