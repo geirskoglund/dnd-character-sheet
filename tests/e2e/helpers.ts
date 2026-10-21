@@ -1,4 +1,4 @@
-import {expect,type Page} from '@playwright/test';
+import {expect,type Page,type Locator} from '@playwright/test';
 export async function openMenu(page: Page) {
   const menu = page.locator('details.app-menu');
   if (await menu.getAttribute('open') === null) await menu.locator('summary').click();
@@ -62,10 +62,45 @@ export async function choose(page:Page,name:string,option:string|{label:string}|
  if(label===undefined)throw new Error('Fant ikke valget i '+name);
  await page.getByRole('dialog').locator('[data-wizard-active]').getByRole('button',{name:label,exact:true}).click();
 }
-export async function fillField(page:Page,name:string,value:string,index=0){const field=await revealField(page,name,index);await field.fill(value);}
+export async function typeWheelText(page:Page,name:string,value:string){
+ const label=name==='Hele GP'?'GP':name==='Hundredeler'?'CP':name;
+ const input=page.locator('dialog.number-change-dialog').getByRole('textbox',{name:label,exact:true});
+ await input.press('ControlOrMeta+A');
+ if(value)await input.pressSequentially(value);else await input.press('Backspace');
+}
+export async function wheelEntry(page:Page,name:string,value:string){
+ const label=name==='Hele GP'?'GP':name==='Hundredeler'?'CP':name;
+ const d=page.locator('dialog.number-change-dialog'),input=d.getByRole('textbox',{name:label,exact:true});
+ if(!await input.isVisible()){
+  if(await d.locator('.number-entry-panel').isVisible())await d.locator('.number-entry-tabs').getByRole('button',{name:label,exact:true}).click();
+  else await d.getByRole('button',{name:`Skriv inn ${label}`,exact:true}).click();
+ }
+ await typeWheelText(page,label,value);await d.getByRole('heading').click();
+}
+export async function setNumberField(page:Page,field:Locator,value:string){
+ if(value===''){await field.locator('..').getByRole('button',{name:/^Fjern /}).click();return;}
+ const original=Number(await field.inputValue())||0;
+ await field.click();await wheelEntry(page,'Endring',String(Number(value)-original));
+ await page.locator('dialog.number-change-dialog').getByRole('button',{name:'OK',exact:true}).click();
+ await expect(page.locator('dialog.number-change-dialog')).toHaveCount(0);
+}
+export async function fillField(page:Page,name:string,value:string,index=0){
+ const change=page.locator('dialog.number-change-dialog');
+ if(await change.count()){
+  if(name==='HP-endring i tall'||name==='Temporary HP'){await wheelEntry(page,'Endring',value);return;}
+  if(name==='GP'){
+   const before=await change.locator('.number-before b').innerText();const original=Math.round(Number(before.replace('−','-').replace(',','.'))*100);
+   const diff=Math.round(Number(value)*100)-original;
+   await wheelEntry(page,'Hele GP',String(Math.trunc(diff/100)));await wheelEntry(page,'Hundredeler',String(diff%100));return;
+  }
+ }
+ const field=await revealField(page,name,index);
+ if(await field.getAttribute('data-wheel-bound'))await setNumberField(page,field,value);else await field.fill(value);
+}
 export async function characterStep(page:Page,index:number){await revealField(page,['Navn','Klasse','STR'][index]);}
 export async function finish(page:Page){
  const d=page.getByRole('dialog');
+ if(await d.getAttribute('class')==='number-change-dialog'){await d.getByRole('button',{name:'OK',exact:true}).click();await expect(d).not.toBeVisible();return;}
  await expect(d.locator('form')).not.toHaveAttribute('aria-busy','true');
  if(await d.getAttribute('data-equipment-editor')){if(await page.locator('dialog #wizard-question').textContent()!=='Vil du ta gjenstanden i bruk?')await d.getByRole('button',{name:/^Lagre(?: merknad| antall)?$/,exact:true}).click();if(await d.isVisible()&&await page.locator('dialog #wizard-question').textContent()==='Vil du ta gjenstanden i bruk?')await d.getByRole('button',{name:'Ikke i bruk',exact:true}).or(d.getByRole('button',{name:'Nei',exact:true})).click();return;}
  if(await d.getAttribute('data-kind')==='view'){await d.getByRole('button',{name:'Lukk',exact:true}).click();return;}
@@ -86,11 +121,11 @@ export async function advancedRecord(page:Page){
  await page.getByRole('button',{name:'Flere detaljer',exact:true}).click();
 }
 
-export async function closeEditor(page:Page){const d=page.getByRole('dialog'),confirmation=await d.getAttribute('data-kind')==='confirm';const close=d.getByRole('button',{name:'Lukk veiviseren',exact:true});if(await close.isVisible())await close.click();else await d.getByRole('button',{name:'Avbryt',exact:true}).or(d.getByRole('button',{name:'Lukk',exact:true})).click();if(!confirmation)await d.waitFor({state:'hidden'});}
+export async function closeEditor(page:Page){const d=page.getByRole('dialog').last(),confirmation=await d.getAttribute('data-kind')==='confirm';const close=d.getByRole('button',{name:'Lukk veiviseren',exact:true});if(await close.isVisible())await close.click();else await d.getByRole('button',{name:'Avbryt',exact:true}).or(d.getByRole('button',{name:'Lukk',exact:true})).click();if(!confirmation)await d.waitFor({state:'hidden'});}
 
 /** Equipment helpers follow the public guided questions; no hidden controls or direct writes. */
 export async function equipmentOverview(page:Page){const d=page.getByRole('dialog');for(let n=0;n<20;n++){const title=await page.locator('dialog #wizard-question').textContent();if(title==='Hva gjør gjenstanden?')return;if(title?.startsWith('Hva heter')){await d.getByRole('button',{name:'Neste',exact:true}).click();continue;}await d.getByRole('button',{name:'Tilbake',exact:true}).click();}throw Error('Fant ikke virkningsoversikten');}
-export async function addItemBonus(page:Page,label:string,value:string){const d=page.getByRole('dialog');await equipmentOverview(page);await d.getByRole('button',{name:'+ Legg til virkning',exact:true}).click();await d.getByRole('button',{name:label,exact:true}).click();await d.getByRole('spinbutton',{name:label==='Skadebonus'?'Skadebonus':'Verdi',exact:true}).fill(value);await d.getByRole('button',{name:'Neste',exact:true}).click();await d.getByRole('button',{name:'Nei',exact:true}).click();}
+export async function addItemBonus(page:Page,label:string,value:string){const d=page.getByRole('dialog');await equipmentOverview(page);await d.getByRole('button',{name:'+ Legg til virkning',exact:true}).click();await d.getByRole('button',{name:label,exact:true}).click();await setNumberField(page,d.getByRole('spinbutton',{name:label==='Skadebonus'?'Skadebonus':'Verdi',exact:true}),value);await d.getByRole('button',{name:'Neste',exact:true}).click();await d.getByRole('button',{name:'Nei',exact:true}).click();}
 async function equipmentField(page:Page,name:string){const d=page.getByRole('dialog'),field=()=>d.getByLabel(name,{exact:true});if(await field().isVisible())return field();await equipmentOverview(page);
  if(['Angrepsbonus','AC-bonus','Skadebonus'].includes(name)){await d.getByRole('button',{name:'+ Legg til virkning',exact:true}).click();await d.getByRole('button',{name:name==='AC-bonus'?'AC':name,exact:true}).click();return d.getByRole('spinbutton',{name:name==='Skadebonus'?name:'Verdi',exact:true});}
  if(name==='Antall'){await d.getByRole('button',{name:'Antall',exact:true}).click();return field();}

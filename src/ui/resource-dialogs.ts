@@ -1,3 +1,4 @@
+import {numberChangeDialog} from './number-change-dialog';
 import type {Character} from '../domain/model';
 import {characterSchema} from '../domain/model';
 import {adjustPool,defaultHitRecovery,restResult,hitRecoveryBudget} from '../domain/resource-setup';
@@ -46,7 +47,11 @@ export function resourceWizard(ctx:EditorContext,id?:string,kind:Character['reso
 }
 export function resourceDialog(ctx:EditorContext,id:string,onHp?:()=>void){
  const c=ctx.current(),pool=c.resources.find(p=>p.id===id);if(!pool)return;
- const d=viewDialog(pool.name,`<p class="resource-total">${pool.current} / ${pool.max}${pool.die?' '+esc(pool.die):''}</p><div class="resource-quick"><button type="button" data-adjust="-1" ${pool.current<=0?'disabled':''}>Bruk én</button><button type="button" data-adjust="1" ${pool.current>=pool.max?'disabled':''}>Gi tilbake én</button></div>${pool.recharge.ruleText?`<p class="muted">${esc(pool.recharge.ruleText)}</p>`:''}<div class="actions"><button type="button" id="pool-customize">Tilpass</button>${pool.kind==='hitDie'&&onHp?'<button type="button" id="pool-hp">Endre HP</button>':''}</div>`);
+ const d=viewDialog(pool.name,`<button type="button" class="resource-total number-value" id="pool-value" aria-label="Endre ${esc(pool.name)}">${pool.current} / ${pool.max}${pool.die?' '+esc(pool.die):''}</button><div class="resource-quick"><button type="button" data-adjust="-1" ${pool.current<=0?'disabled':''}>Bruk én</button><button type="button" data-adjust="1" ${pool.current>=pool.max?'disabled':''}>Gi tilbake én</button></div>${pool.recharge.ruleText?`<p class="muted">${esc(pool.recharge.ruleText)}</p>`:''}<div class="actions"><button type="button" id="pool-customize">Tilpass</button>${pool.kind==='hitDie'&&onHp?'<button type="button" id="pool-hp">Endre HP</button>':''}</div>`);
+ d.querySelector<HTMLButtonElement>('#pool-value')!.onclick=()=>numberChangeDialog({name:pool.name,icon:'resource',original:pool.current,min:0,max:pool.max,onConfirm:async result=>{
+  if(result!==pool.current)await ctx.save(adjustPool(c,id,result-pool.current),'resources',`${pool.name}: ${pool.current} → ${result}`);
+  resourceDialog(ctx,id,onHp);
+ }});
  d.querySelectorAll<HTMLButtonElement>('[data-adjust]').forEach(b=>b.onclick=()=>void commitDialog(()=>ctx.save(adjustPool(c,id,Number(b.dataset.adjust)),'resources',`${pool.name}: ${Number(b.dataset.adjust)<0?'én brukt':'én gitt tilbake'}`)));
  d.querySelector<HTMLButtonElement>('#pool-customize')!.onclick=()=>resourceWizard(ctx,id,pool.kind);
  const hp=d.querySelector<HTMLButtonElement>('#pool-hp');if(hp)hp.onclick=onHp!;

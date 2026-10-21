@@ -97,14 +97,14 @@ test('declining note deletion keeps the edited text; unchanged saving leaves und
   await page.getByRole('button',{name:'Min historie',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Tekst',exact:true})).toHaveValue('Original');
 });
-test('HP accepts exact numeric input and has no active commit for zero changes', async ({page}) => {
+test('HP accepts exact numeric input and zero changes make no storage event', async ({page}) => {
   await createCharacter(page);await page.getByRole('button',{name:'Combat',exact:true}).click();
   await page.locator('[data-action="hp"]').click();
-  await expect(page.getByRole('button',{name:'Oppdater HP',exact:true})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'OK',exact:true})).toBeEnabled();
   await fillField(page,'HP-endring i tall','-7');
-  await expect(page.locator('#hp-preview')).toContainText('HP 12 → 5');
-  await expect(page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true})).toHaveAttribute('aria-valuenow','-7');
-  await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();
+  await expect(page.locator('.number-breakdown')).toContainText('HP 12 → 5');
+  await expect(page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true})).toHaveAttribute('aria-valuenow','-7');
+  await page.getByRole('button',{name:'OK',exact:true}).click();
   await expect(page.locator('[data-action="hp"]')).toBeFocused();
   await expect(page.locator('[data-action="hp"]')).toContainText('5 / 12');
   await menuAction(page,'Endringslogg');

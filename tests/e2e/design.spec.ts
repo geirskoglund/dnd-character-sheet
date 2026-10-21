@@ -1,3 +1,4 @@
+import {wheelEntry} from './helpers';
 import {closeEditor} from './helpers';
 import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {finish,advancedRecord} from './helpers';
@@ -62,26 +63,26 @@ test('corner marks clickability without a different status surface and item stat
  expect(chosen.fill).toBe('rgba(0, 0, 0, 0)');expect(chosen.corner).toBe(chosen.line);
 });
 
-test('the finite number wheel scrolls to a chosen change, keeps it until commit and supports undo',async({page})=>{
- await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
- const wheel=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
- await wheel.hover();await page.mouse.wheel(0,-320);await expect(amount).toHaveValue('-8');
- await page.waitForTimeout(250);await expect(amount).toHaveValue('-8');
- await page.mouse.wheel(0,-320);await expect(amount).toHaveValue('-16');
+test('the signed number wheel scrolls down to damage, keeps the delta and supports undo',async({page})=>{
+ await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Ta skade',exact:true}).click();
+ const wheel=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
+ await wheel.hover();await page.mouse.wheel(0,352);await expect(wheel).toHaveAttribute('aria-valuenow','-8');
+ await page.waitForTimeout(300);await expect(wheel).toHaveAttribute('aria-valuenow','-8');
+ await page.mouse.wheel(0,352);await expect(wheel).toHaveAttribute('aria-valuenow','-16');
  expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
- await expect(page.locator('#hp-preview')).toContainText('HP 28 → 17');
+ await expect(page.locator('.number-breakdown')).toContainText('HP 28 → 17');
  await finish(page);expect((await readState(page)).hp).toEqual({current:17,max:38,temp:0});
  await menuAction(page,'Angre siste endring');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
 });
 
-test('HP keyboard, exact entry, bounds and cancellation preserve the pending transaction',async({page})=>{
+test('HP keyboard, bounds and cancellation preserve the pending transaction',async({page})=>{
  await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
- const slider=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
- await slider.focus();await page.keyboard.press('ArrowLeft');await expect(amount).toHaveValue('-1');await expect(slider).toHaveAttribute('aria-valuenow','-1');
- await page.keyboard.press('Home');await expect(amount).toHaveValue('-33');await expect(page.locator('#hp-preview')).toContainText('HP 28 → 0');await expect(page.getByRole('button',{name:'Reduser endring med 1',exact:true})).toBeDisabled();
- await page.keyboard.press('End');await expect(amount).toHaveValue('10');await expect(page.locator('#hp-preview')).toContainText('Temporary HP 5 → 5');
- await amount.fill('-1000');await expect(amount).toHaveValue('-33');await amount.fill('1000');await expect(amount).toHaveValue('10');
- await amount.fill('');await expect(page.getByRole('button',{name:'Oppdater HP',exact:true})).toBeDisabled();
+ const wheel=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
+ await wheel.focus();await page.keyboard.press('ArrowDown');await expect(wheel).toHaveAttribute('aria-valuenow','-1');
+ await page.keyboard.press('Home');await expect(wheel).toHaveAttribute('aria-valuenow','-28');await expect(page.locator('.number-breakdown')).toContainText('HP 28 → 0');
+ await page.keyboard.press('End');await expect(wheel).toHaveAttribute('aria-valuenow','10');await expect(page.locator('.number-breakdown')).toContainText('Temporary HP endres ikke');
+ await wheelEntry(page,'Endring','-1000');await expect(wheel).toHaveAttribute('aria-valuenow','-28');
+ await wheelEntry(page,'Endring','1000');await expect(wheel).toHaveAttribute('aria-valuenow','10');
  await page.keyboard.press('Escape');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
 });
 
@@ -145,24 +146,24 @@ test('journal components remain readable without overflow at 320/390 pixels and 
   }
   await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
   expect(await page.getByRole('dialog').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
-  const wheel=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true});
+  const wheel=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
   expect(await wheel.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   await page.keyboard.press('Escape');
  }
 });
 
 test('HP save failure preserves the chosen amount and retry commits once; wheel selection stays visible',async({page})=>{
- await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
- const slider=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true}),amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true});
- await amount.fill('-8');await expect(slider).toHaveAttribute('aria-valuenow','-8');
+ await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Ta skade',exact:true}).click();
+ const slider=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
+ await wheelEntry(page,'Endring','-8');await expect(slider).toHaveAttribute('aria-valuenow','-8');
  await page.evaluate(()=>{
   const original=IDBObjectStore.prototype.put;
   (window as unknown as {failHp:boolean}).failHp=true;
   IDBObjectStore.prototype.put=function(...args){if(this.name==='characters'&&(window as unknown as {failHp:boolean}).failHp)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};
  });
- await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();await expect(page.getByRole('dialog').getByRole('alert')).toContainText('Full lagring');
- await expect(amount).toHaveValue('-8');await expect(slider).toHaveAttribute('aria-valuenow','-8');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
+ await page.getByRole('button',{name:'OK',exact:true}).click();await expect(page.getByRole('dialog').getByRole('alert')).toContainText('Full lagring');
+ await expect(slider).toHaveAttribute('aria-valuenow','-8');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
  await page.evaluate(()=>(window as unknown as {failHp:boolean}).failHp=false);
- await page.getByRole('button',{name:'Oppdater HP',exact:true}).click();expect((await readState(page)).hp).toEqual({current:25,max:38,temp:0});
+ await page.getByRole('button',{name:'OK',exact:true}).click();expect((await readState(page)).hp).toEqual({current:25,max:38,temp:0});
  await menuAction(page,'Angre siste endring');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
 });

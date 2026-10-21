@@ -39,14 +39,14 @@ export function equipmentForm(item: Item, creating = false) {
       <label class="check"><input type="checkbox" name="requiresAttunement" ${item.requiresAttunement ? 'checked' : ''}>Krever attunement</label>
       ${iconField(item.iconKey)}
       <fieldset><legend>Bonuser når gjenstanden brukes</legend><p class="muted">Faste bonuser. Andre effekter beskrives i notatet. Magiske bonuser krever attunement når det er angitt.</p>
-        <div class="form-grid">${field('AC-bonus', 'bonus-ac', item.bonuses?.ac ?? '', 'type="number" step="1"')}${field('Bonus til alle saving throws', 'bonus-saves', item.bonuses?.saves ?? '', 'type="number" step="1"')}</div>
-        <div data-weapon-bonuses ${item.category === 'weapon' ? '' : 'hidden'} class="form-grid">${field('Angrepsbonus', 'bonus-attack', item.bonuses?.attack ?? '', 'type="number" step="1"')}${field('Skadebonus', 'bonus-damage', item.bonuses?.damage ?? '', 'type="number" step="1"')}</div>
+        <div class="form-grid">${field('AC-bonus', 'bonus-ac', item.bonuses?.ac ?? '', 'type="number" step="1" data-allow-negative')}${field('Bonus til alle saving throws', 'bonus-saves', item.bonuses?.saves ?? '', 'type="number" step="1" data-allow-negative')}</div>
+        <div data-weapon-bonuses ${item.category === 'weapon' ? '' : 'hidden'} class="form-grid">${field('Angrepsbonus', 'bonus-attack', item.bonuses?.attack ?? '', 'type="number" step="1" data-allow-negative')}${field('Skadebonus', 'bonus-damage', item.bonuses?.damage ?? '', 'type="number" step="1" data-allow-negative')}</div>
       </fieldset>
       <details data-armor-fields ${item.category === 'armor' ? '' : 'hidden'} ${creating && item.category === 'armor' ? 'open' : ''}><summary>Rustningens regelverdier</summary>
         ${select('Rustningstype', 'armorKind', profile?.kind ?? 'custom', [{value:'light',label:'Light'}, {value:'medium',label:'Medium'}, {value:'heavy',label:'Heavy'}, {value:'custom',label:'Egen'}])}
         ${field('Base AC for rustningen', 'baseAc', profile?.baseAc ?? 10, 'type="number" min="0"')}
         <label class="check"><input type="checkbox" name="addDex" ${profile?.addDex !== false ? 'checked' : ''}>Legg til Dexterity modifier</label>
-        ${field('Maks Dexterity-bonus (tomt = ingen grense)', 'dexCap', profile?.dexCap ?? '', 'type="number"')}
+        ${field('Maks Dexterity-bonus (tomt = ingen grense)', 'dexCap', profile?.dexCap ?? '', 'type="number" data-allow-negative')}
         ${field('Strength-krav', 'armorStrength', profile?.strength ?? 0, 'type="number" min="0"')}
         <label class="check"><input type="checkbox" name="armorStealth" ${profile?.stealthDisadvantage ? 'checked' : ''}>Disadvantage på Stealth</label>
       </details>

@@ -348,3 +348,9 @@ Det gjennomgående tallendringsmønsteret er en egen fullskjermdialog, med endri
 P01 presiserer fullskjerm som generell popupføring. Eldre designformuleringer om kompakte popups beskriver tidligere praksis. Ved tallredigering fra en annen popup skal den underliggende popupens tilstand bevares. «Opprinnelig verdi» tilhører kalleren, også når den er et uferdig skjema.
 
 Denne føringen erstatter tidligere tallhjulsbetjening som produktkrav. Nåværende appkode, veiledningsbilder og tidligere testresultater dokumenterer fortsatt bare den leverte versjonen. Oppdatering av #25/dokumentene er ikke en bestilling av appkode.
+
+### Godkjent oppfølging etter fysisk test av #25
+
+Direkteinnskriving skal bruke et eget tallpanel i stedet for hjulområdet, slik at systemtastaturet ikke skjuler tallet. Før/Etter og OK/Avbryt beholder plasseringen. Etter er den mest fremtredende tallverdien. Spinnerbåndet står fast mens tallrekken ruller, og dialogen skal ikke dras ut av skjermen ved sveip utenfor hjulet. Heltallshjulet trenger ikke synlig Endring-etikett; pengekolonnene heter GP/CP. Tallpanelet åpner med tom innskriving uten inputfelt eller tekstmarkering. En visuell 0 vises bare mens innskrivingen er tom; den påvirker ikke hjulvalget eller beregningen. Uten inntasting beholdes hjulvalget; første siffer erstatter endringsbeløpet. Bevar tastaturtilgjengelighet, tilgjengelig zoom, grensekontroll og én bekreftelse.
+
+Ta skade skal foreløpig kalle samme komponent med egen tittel og bare reduksjon, mens HP-pillen korrigerer bare vanlig HP mellom 0 og effektiv maks HP, uavhengig av temp HP. Temp HP-absorpsjon gjelder Ta skade. Vanlig HP og temp HP vises separat i skadeflyten, og eksisterende lagring/Angre bevares. Senere egen skadekalkulator er fortsatt eget omfang. Se [beslutningen](DECISIONS.md#tallendring-etter-fysisk-brukerreview-av-25) og [produktkontrollen](CHARACTER_WORKSPACE.md#før-koding-kontroll-oppfølging-av-25-etter-fysisk-brukerreview).
