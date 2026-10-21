@@ -1,0 +1,674 @@
+[
+  {
+    "state": "before",
+    "width": 390,
+    "font": "100%",
+    "screen": "species",
+    "scrollHeight": 859,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Dragonborn",
+        "height": 92
+      },
+      {
+        "label": "Dwarf",
+        "height": 92
+      },
+      {
+        "label": "Elf",
+        "height": 92
+      },
+      {
+        "label": "Gnome",
+        "height": 92
+      },
+      {
+        "label": "Half-Elf",
+        "height": 92
+      },
+      {
+        "label": "Half-Orc",
+        "height": 92
+      },
+      {
+        "label": "Halfling",
+        "height": 92
+      },
+      {
+        "label": "Human",
+        "height": 92
+      },
+      {
+        "label": "Tiefling",
+        "height": 92
+      },
+      {
+        "label": "Opprett egen art / underart",
+        "height": 92
+      }
+    ]
+  },
+  {
+    "state": "before",
+    "width": 390,
+    "font": "100%",
+    "screen": "class",
+    "scrollHeight": 1175,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Barbarian",
+        "height": 92
+      },
+      {
+        "label": "Bard",
+        "height": 92
+      },
+      {
+        "label": "Cleric",
+        "height": 92
+      },
+      {
+        "label": "Druid",
+        "height": 92
+      },
+      {
+        "label": "Fighter",
+        "height": 92
+      },
+      {
+        "label": "Monk",
+        "height": 92
+      },
+      {
+        "label": "Paladin",
+        "height": 92
+      },
+      {
+        "label": "Ranger",
+        "height": 92
+      },
+      {
+        "label": "Rogue",
+        "height": 92
+      },
+      {
+        "label": "Sorcerer",
+        "height": 92
+      },
+      {
+        "label": "Warlock",
+        "height": 92
+      },
+      {
+        "label": "Wizard",
+        "height": 92
+      },
+      {
+        "label": "Opprett egen klasse",
+        "height": 92
+      }
+    ]
+  },
+  {
+    "state": "before",
+    "width": 320,
+    "font": "100%",
+    "screen": "species",
+    "scrollHeight": 889,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Dragonborn",
+        "height": 92
+      },
+      {
+        "label": "Dwarf",
+        "height": 92
+      },
+      {
+        "label": "Elf",
+        "height": 92
+      },
+      {
+        "label": "Gnome",
+        "height": 92
+      },
+      {
+        "label": "Half-Elf",
+        "height": 92
+      },
+      {
+        "label": "Half-Orc",
+        "height": 92
+      },
+      {
+        "label": "Halfling",
+        "height": 92
+      },
+      {
+        "label": "Human",
+        "height": 92
+      },
+      {
+        "label": "Tiefling",
+        "height": 92
+      },
+      {
+        "label": "Opprett egen art / underart",
+        "height": 92
+      }
+    ]
+  },
+  {
+    "state": "before",
+    "width": 320,
+    "font": "100%",
+    "screen": "class",
+    "scrollHeight": 1204,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Barbarian",
+        "height": 92
+      },
+      {
+        "label": "Bard",
+        "height": 92
+      },
+      {
+        "label": "Cleric",
+        "height": 92
+      },
+      {
+        "label": "Druid",
+        "height": 92
+      },
+      {
+        "label": "Fighter",
+        "height": 92
+      },
+      {
+        "label": "Monk",
+        "height": 92
+      },
+      {
+        "label": "Paladin",
+        "height": 92
+      },
+      {
+        "label": "Ranger",
+        "height": 92
+      },
+      {
+        "label": "Rogue",
+        "height": 92
+      },
+      {
+        "label": "Sorcerer",
+        "height": 92
+      },
+      {
+        "label": "Warlock",
+        "height": 92
+      },
+      {
+        "label": "Wizard",
+        "height": 92
+      },
+      {
+        "label": "Opprett egen klasse",
+        "height": 92
+      }
+    ]
+  },
+  {
+    "state": "before",
+    "width": 320,
+    "font": "200%",
+    "screen": "species",
+    "scrollHeight": 1647,
+    "clientHeight": 644,
+    "buttons": [
+      {
+        "label": "Dragonborn",
+        "height": 158
+      },
+      {
+        "label": "Dwarf",
+        "height": 158
+      },
+      {
+        "label": "Elf",
+        "height": 158
+      },
+      {
+        "label": "Gnome",
+        "height": 158
+      },
+      {
+        "label": "Half-Elf",
+        "height": 158
+      },
+      {
+        "label": "Half-Orc",
+        "height": 158
+      },
+      {
+        "label": "Halfling",
+        "height": 158
+      },
+      {
+        "label": "Human",
+        "height": 158
+      },
+      {
+        "label": "Tiefling",
+        "height": 342
+      },
+      {
+        "label": "Opprett egen art / underart",
+        "height": 342
+      }
+    ]
+  },
+  {
+    "state": "before",
+    "width": 320,
+    "font": "200%",
+    "screen": "class",
+    "scrollHeight": 1987,
+    "clientHeight": 644,
+    "buttons": [
+      {
+        "label": "Barbarian",
+        "height": 158
+      },
+      {
+        "label": "Bard",
+        "height": 158
+      },
+      {
+        "label": "Cleric",
+        "height": 112
+      },
+      {
+        "label": "Druid",
+        "height": 112
+      },
+      {
+        "label": "Fighter",
+        "height": 158
+      },
+      {
+        "label": "Monk",
+        "height": 158
+      },
+      {
+        "label": "Paladin",
+        "height": 158
+      },
+      {
+        "label": "Ranger",
+        "height": 158
+      },
+      {
+        "label": "Rogue",
+        "height": 158
+      },
+      {
+        "label": "Sorcerer",
+        "height": 158
+      },
+      {
+        "label": "Warlock",
+        "height": 158
+      },
+      {
+        "label": "Wizard",
+        "height": 158
+      },
+      {
+        "label": "Opprett egen klasse",
+        "height": 250
+      }
+    ]
+  },
+  {
+    "state": "after",
+    "width": 390,
+    "font": "100%",
+    "screen": "species",
+    "scrollHeight": 693,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Dragonborn",
+        "height": 48
+      },
+      {
+        "label": "Dwarf",
+        "height": 48
+      },
+      {
+        "label": "Elf",
+        "height": 48
+      },
+      {
+        "label": "Gnome",
+        "height": 48
+      },
+      {
+        "label": "Half-Elf",
+        "height": 48
+      },
+      {
+        "label": "Half-Orc",
+        "height": 48
+      },
+      {
+        "label": "Halfling",
+        "height": 48
+      },
+      {
+        "label": "Human",
+        "height": 48
+      },
+      {
+        "label": "Tiefling",
+        "height": 62
+      },
+      {
+        "label": "Opprett egen art / underart",
+        "height": 62
+      }
+    ]
+  },
+  {
+    "state": "after",
+    "width": 390,
+    "font": "100%",
+    "screen": "class",
+    "scrollHeight": 711,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Barbarian",
+        "height": 48
+      },
+      {
+        "label": "Bard",
+        "height": 48
+      },
+      {
+        "label": "Cleric",
+        "height": 48
+      },
+      {
+        "label": "Druid",
+        "height": 48
+      },
+      {
+        "label": "Fighter",
+        "height": 48
+      },
+      {
+        "label": "Monk",
+        "height": 48
+      },
+      {
+        "label": "Paladin",
+        "height": 48
+      },
+      {
+        "label": "Ranger",
+        "height": 48
+      },
+      {
+        "label": "Rogue",
+        "height": 48
+      },
+      {
+        "label": "Sorcerer",
+        "height": 48
+      },
+      {
+        "label": "Warlock",
+        "height": 48
+      },
+      {
+        "label": "Wizard",
+        "height": 48
+      },
+      {
+        "label": "Opprett egen klasse",
+        "height": 48
+      }
+    ]
+  },
+  {
+    "state": "after",
+    "width": 320,
+    "font": "100%",
+    "screen": "species",
+    "scrollHeight": 693,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Dragonborn",
+        "height": 48
+      },
+      {
+        "label": "Dwarf",
+        "height": 48
+      },
+      {
+        "label": "Elf",
+        "height": 48
+      },
+      {
+        "label": "Gnome",
+        "height": 48
+      },
+      {
+        "label": "Half-Elf",
+        "height": 48
+      },
+      {
+        "label": "Half-Orc",
+        "height": 48
+      },
+      {
+        "label": "Halfling",
+        "height": 48
+      },
+      {
+        "label": "Human",
+        "height": 48
+      },
+      {
+        "label": "Tiefling",
+        "height": 62
+      },
+      {
+        "label": "Opprett egen art / underart",
+        "height": 62
+      }
+    ]
+  },
+  {
+    "state": "after",
+    "width": 320,
+    "font": "100%",
+    "screen": "class",
+    "scrollHeight": 754,
+    "clientHeight": 693,
+    "buttons": [
+      {
+        "label": "Barbarian",
+        "height": 48
+      },
+      {
+        "label": "Bard",
+        "height": 48
+      },
+      {
+        "label": "Cleric",
+        "height": 48
+      },
+      {
+        "label": "Druid",
+        "height": 48
+      },
+      {
+        "label": "Fighter",
+        "height": 48
+      },
+      {
+        "label": "Monk",
+        "height": 48
+      },
+      {
+        "label": "Paladin",
+        "height": 48
+      },
+      {
+        "label": "Ranger",
+        "height": 48
+      },
+      {
+        "label": "Rogue",
+        "height": 48
+      },
+      {
+        "label": "Sorcerer",
+        "height": 48
+      },
+      {
+        "label": "Warlock",
+        "height": 48
+      },
+      {
+        "label": "Wizard",
+        "height": 48
+      },
+      {
+        "label": "Opprett egen klasse",
+        "height": 62
+      }
+    ]
+  },
+  {
+    "state": "after",
+    "width": 320,
+    "font": "200%",
+    "screen": "species",
+    "scrollHeight": 1233,
+    "clientHeight": 644,
+    "buttons": [
+      {
+        "label": "Dragonborn",
+        "height": 119
+      },
+      {
+        "label": "Dwarf",
+        "height": 119
+      },
+      {
+        "label": "Elf",
+        "height": 78
+      },
+      {
+        "label": "Gnome",
+        "height": 78
+      },
+      {
+        "label": "Half-Elf",
+        "height": 119
+      },
+      {
+        "label": "Half-Orc",
+        "height": 119
+      },
+      {
+        "label": "Halfling",
+        "height": 119
+      },
+      {
+        "label": "Human",
+        "height": 119
+      },
+      {
+        "label": "Tiefling",
+        "height": 242
+      },
+      {
+        "label": "Opprett egen art / underart",
+        "height": 242
+      }
+    ]
+  },
+  {
+    "state": "after",
+    "width": 320,
+    "font": "200%",
+    "screen": "class",
+    "scrollHeight": 1393,
+    "clientHeight": 644,
+    "buttons": [
+      {
+        "label": "Barbarian",
+        "height": 119
+      },
+      {
+        "label": "Bard",
+        "height": 119
+      },
+      {
+        "label": "Cleric",
+        "height": 78
+      },
+      {
+        "label": "Druid",
+        "height": 78
+      },
+      {
+        "label": "Fighter",
+        "height": 78
+      },
+      {
+        "label": "Monk",
+        "height": 78
+      },
+      {
+        "label": "Paladin",
+        "height": 78
+      },
+      {
+        "label": "Ranger",
+        "height": 78
+      },
+      {
+        "label": "Rogue",
+        "height": 119
+      },
+      {
+        "label": "Sorcerer",
+        "height": 119
+      },
+      {
+        "label": "Warlock",
+        "height": 119
+      },
+      {
+        "label": "Wizard",
+        "height": 119
+      },
+      {
+        "label": "Opprett egen klasse",
+        "height": 160
+      }
+    ]
+  }
+]

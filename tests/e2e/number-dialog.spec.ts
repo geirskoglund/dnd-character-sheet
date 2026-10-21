@@ -87,14 +87,14 @@ test('P09/P10 K3/K4: both decimal wheels accept signed integers, endpoints and s
  await d.getByRole('button',{name:'OK',exact:true}).click();
 });
 
-test('P08/P14/P15: signed optional overrides and their removal stay in the caller until Save',async({page})=>{
+test('P08/P14/P15: signed optional overrides stay in the caller without a Remove value button (#58 WP04)',async({page})=>{
  await createCharacter(page);await menuAction(page,'Beregninger og overstyringer');
  const field=page.getByRole('spinbutton',{name:'Manuell Initiative (valgfritt)',exact:true});await field.click();
  const d=page.locator('.number-change-dialog');
  await expect(d.locator('[data-icon="emblem"]').filter({visible:true})).toHaveCount(1);
  await d.getByRole('button',{name:'Skriv inn Endring',exact:true}).click();await typeWheelText(page,'Endring','-5');
  await d.getByRole('button',{name:'OK',exact:true}).click();await expect(field).toHaveValue('-5');
- await page.getByRole('button',{name:'Fjern Manuell Initiative (valgfritt)',exact:true}).click();await expect(field).toHaveValue('');
+ await expect(page.getByRole('button',{name:/^Fjern .*Initiative/})).toHaveCount(0);await expect(field).toHaveValue('-5');
  await page.keyboard.press('Escape');
 });
 

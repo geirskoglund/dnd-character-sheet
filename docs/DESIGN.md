@@ -38,7 +38,7 @@ Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge re
 
 ## Liten skjerm / tilgjengelighet
 - Primær bredde 360–390 CSS px; vurder 320 px, stor skrift, smale layouts og nettbrett. Horisontal scrolling kun som bevisst interaksjon for Combat faner, ikke for formular.
-- Klare fokusindikatorer, tastaturbetjening for desktop, touch targets omtrent 44px når praktisk mulig, semantiske labels og god skjermleserstøtte.
+- Ingen ekstra ramme rundt aktive elementer (#58 GP07); fungerende fokusstyring og tastaturbetjening for desktop, touch targets omtrent 44px når praktisk mulig, semantiske labels og god skjermleserstøtte.
 - Nyeste popupføring er fullskjerm (P01 i #25). Tallendring fra en annen popup skal bevare den underliggende flaten og dens tilstand. Eldre kompakt-/stor-varianter er eksisterende implementasjon; de overstyrer ikke den nye føringen. Unngå unødvendige mellomdialoger.
 - Tydelige, merkbare feil ved mislykket lagring eller fare for tap av data; ingen rutinemeldinger om vellykket lagring. Undo, tom/oppbrukt ressurs og uavklarte betingelser skal være forståelige.
 

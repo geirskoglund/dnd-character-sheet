@@ -135,7 +135,7 @@ test('damage and temp HP only in Combat, preview/cancel and atomic undo', async 
   await expectCharacterStatus(page,'42 / 50');
   await expect(page.getByRole('main')).not.toContainText('Temporary HP');
 });
-test('manual overrides can be removed through the menu', async ({page}) => {
+test('manual overrides persist without Remove value buttons and can be undone', async ({page}) => {
   await openCharacter(page); await save(page);
   await menuAction(page,'Beregninger og overstyringer');
   await fillField(page,'Manuell AC (valgfritt)','21');
@@ -144,8 +144,8 @@ test('manual overrides can be removed through the menu', async ({page}) => {
   await expect(page.getByLabel('Karakterstatus')).toContainText('AC21');
   await expectCharacterStatus(page,'Speed50 ft');
   await menuAction(page,'Beregninger og overstyringer');
-  await fillField(page,'Manuell AC (valgfritt)','');
-  await fillField(page,'Manuell speed (ft, valgfritt)',''); await save(page);
+  await expect(page.getByRole('button',{name:/^Fjern .*valgfritt/})).toHaveCount(0);
+  await closeEditor(page);await menuAction(page,'Angre siste endring');
   await expectCharacterStatus(page,'AC13');
   await expectCharacterStatus(page,'Speed30 ft');
 });

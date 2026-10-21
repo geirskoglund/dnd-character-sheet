@@ -1,6 +1,8 @@
+import {enhanceText} from './text-editor';
 import {numberChangeDialog} from './number-change-dialog';
 /** Numeric form values open the same additive modal as values on the character sheet. */
 export function enhanceNumbers(root:ParentNode){
+ enhanceText(root);
  root.querySelectorAll<HTMLInputElement>('input[type="number"]:not([data-wheel-bound]):not([data-no-wheel])').forEach(input=>{
   input.dataset.wheelBound='true';
   const label=input.getAttribute('aria-label')||input.closest('label')?.childNodes[0]?.textContent?.trim()||input.name;
@@ -19,10 +21,5 @@ export function enhanceNumbers(root:ParentNode){
   input.onclick=open;
   input.addEventListener('beforeinput',event=>{event.preventDefault();});
   input.onkeydown=event=>{if(event.key==='Tab'||event.key==='Escape')return;if(event.ctrlKey||event.metaKey)return;event.preventDefault();open();};
-  // Optional numeric overrides must still be removable without substituting zero.
-  if(!input.required){
-   const clear=document.createElement('button');clear.type='button';clear.className='number-clear';clear.textContent='Fjern verdi';clear.setAttribute('aria-label',`Fjern ${label}`);
-   clear.onclick=()=>{input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));};input.after(clear);
-  }
  });
 }

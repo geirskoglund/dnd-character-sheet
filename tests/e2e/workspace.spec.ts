@@ -79,7 +79,7 @@ test('feats own an action, limited pool and conditional effect; deletion and und
   await page.getByRole('checkbox',{name:'Har egen skadeeffekt',exact:true}).check();
   await fillField(page,'Beløp (ved flat reduksjon)','3');
   await fillField(page,'Skadetyper (kommadelt)','Bludgeoning, Piercing, Slashing');
-  await page.getByRole('textbox',{name:'Vilkår (valgfritt)',exact:true}).fill('Heavy armor; ikke-magisk angrep');await save(page);
+  await fillField(page,'Vilkår (valgfritt)','Heavy armor; ikke-magisk angrep');await save(page);
   let c=await state(page);expect(c.features).toHaveLength(1);expect(c.actions).toHaveLength(1);expect(c.resources.filter(r=>r.kind==='custom')).toHaveLength(1);expect(c.effects[0].condition?.state).toBe('unknown');
   expect(c.features[0].actionRefs).toEqual([c.actions[0].id]);expect(c.actions[0].resourceRefs).toEqual([c.resources.find(r=>r.kind==='custom')!.id]);
   await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Reaction',exact:true}).click();
@@ -125,10 +125,10 @@ test('languages, simultaneous damage defenses and condition immunity persist sep
   await pill(page,'Languages','Undercommon');await page.getByRole('button',{name:'Fjern språk',exact:true}).click();await dialog(page).getByRole('button',{name:'Fjern',exact:true}).click();
   for (const kind of ['resistance','vulnerability','immunity']) {
     await page.getByRole('button',{name:'Legg til skadeegenskap',exact:true}).click();
-    await page.getByRole('combobox',{name:'Skadetype',exact:true}).fill('Fire');await choose(page,'Egenskap',kind);
+    await fillField(page,'Skadetype','Fire');await choose(page,'Egenskap',kind);
     if(kind==='resistance') await fillField(page,'Vilkår (valgfritt)','Når DM bekrefter');await save(page);
   }
-  await page.getByRole('button',{name:'Legg til tilstandsimmunitet',exact:true}).click();await page.getByRole('combobox',{name:'Tilstand',exact:true}).fill('Poisoned');await save(page);
+  await page.getByRole('button',{name:'Legg til tilstandsimmunitet',exact:true}).click();await fillField(page,'Tilstand','Poisoned');await save(page);
   await page.reload();const c=await state(page);expect(c.languages.map(row=>row.name).sort()).toEqual(['Draconic','Elvish']);expect(c.damageDefenses).toHaveLength(3);expect(c.conditionImmunities[0].conditionId).toBe('Poisoned');expect(c.species.languages).toEqual([]);
   await pill(page,'Skadeegenskaper','Fire Resistance');await choose(page,'Vilkåret er','true');await save(page);
   expect((await state(page)).damageDefenses[0].condition?.state).toBe('true');
@@ -215,7 +215,7 @@ test('new structured editors retain entered values on storage error and support 
     const original=IDBObjectStore.prototype.put;(window as unknown as {blockWrites:boolean}).blockWrites=true;
     IDBObjectStore.prototype.put=function(...args){if(this.name==='characters' && (window as unknown as {blockWrites:boolean}).blockWrites)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};
   });
-  await finish(page);await expect(dialog(page).getByRole('alert')).toContainText('Full lagring');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toHaveValue('Dwarvish');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toBeEditable();
+  await finish(page);await expect(dialog(page).getByRole('alert')).toContainText('Full lagring');await expect(page.getByRole('textbox',{name:'Navn',exact:true})).toHaveValue('Dwarvish');await page.getByRole('textbox',{name:'Navn',exact:true}).click();await expect(page.locator('dialog.text-editor').getByRole('textbox',{name:'Navn',exact:true})).toBeEditable();await page.locator('dialog.text-editor').getByRole('button',{name:'Avbryt',exact:true}).click();
   await page.evaluate(()=>(window as unknown as {blockWrites:boolean}).blockWrites=false);await save(page);expect((await state(page)).languages.filter(row=>row.name==='Dwarvish')).toHaveLength(1);
 });
 

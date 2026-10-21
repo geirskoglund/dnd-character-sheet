@@ -18,7 +18,7 @@ button:disabled { opacity: .5; cursor: default; }
 button:disabled::after { display: none; }
 button:active:not(:disabled) { transform: translateY(1px); }
 @media (hover: hover) { button:hover:not(:disabled), summary:hover { box-shadow: inset 0 0 0 1px var(--soft-line); } }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+:focus, :focus-visible { outline:none; }
 [hidden] { display: none !important; }
 a { color: var(--accent); text-underline-offset: 3px; }
 p, small, dt, legend, summary { overflow-wrap: anywhere; }
@@ -103,7 +103,6 @@ label { display: grid; grid-template-columns: minmax(0,1fr); gap: .35rem; min-wi
 input, select, textarea { width: 100%; min-width: 0; min-height: 44px; padding: .6rem .7rem; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
 textarea { resize: vertical; }
 input::placeholder { color: var(--muted); opacity: 1; }
-input[name=name]:focus::placeholder { opacity: 0; }
 input[type=checkbox], input[type=radio] { accent-color: var(--accent); }
 fieldset { min-width: 0; border: 1px solid var(--soft-line); border-radius: 6px; margin: 1rem 0; padding: .8rem; }
 legend { max-width: 100%; padding: 0 .3rem; font-weight: 600; }
@@ -332,7 +331,6 @@ dialog.number-change-dialog{position:fixed;inset:0;max-height:none;overflow:hidd
 .number-help{font-size:.85rem;color:var(--muted);margin:0;text-align:center;flex-shrink:0}
 .number-breakdown{font-size:.9rem;margin:0;max-width:50ch;flex-shrink:0}
 .number-value{cursor:pointer;font-weight:600;background:var(--panel);border-color:var(--line)}
-.number-clear{font-size:.8rem;margin-top:6px;min-height:36px}
 .number-change-dialog .dialog-actions>button{padding:10px 8px;white-space:nowrap;overflow-wrap:normal}
 input.number-value{appearance:textfield;caret-color:transparent}
 input.number-value::-webkit-inner-spin-button,input.number-value::-webkit-outer-spin-button{appearance:none;margin:0}
@@ -345,4 +343,38 @@ input.number-value::-webkit-inner-spin-button,input.number-value::-webkit-outer-
 }
 
 .number-entry-value:focus{outline:none}
-.number-entry-value:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* #58: journal values, compact choices, and no transient focus frames. */
+input.text-value, textarea.text-value {cursor:pointer;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;box-shadow:none;caret-color:transparent;resize:none}
+.text-value::placeholder {color:var(--muted);opacity:.65}
+input.number-value {width:7rem;max-width:100%;min-height:60px;border:0;border-radius:45%;background:radial-gradient(ellipse,#f0e1c6,transparent);font:600 1.8rem Journal;text-align:center;box-shadow:inset 0 -2px var(--soft-line)}
+.wizard-options {gap:8px}
+.wizard-options button {min-height:48px;padding:.55rem;gap:4px;font-size:1.05rem;border-radius:8px}
+.wizard-options button > .icon {width:22px;height:22px}
+[data-wizard-split=true] .class-row {padding-bottom:0;margin-bottom:0;border-bottom:0}
+[data-wizard-split=true]:not(:has([data-wizard-active])) {display:none}
+dialog.text-editor {position:fixed;inset:auto 0 0;top:0;margin:0;width:100%;max-width:none;max-height:none;padding:max(12px,env(safe-area-inset-top)) 16px max(12px,env(safe-area-inset-bottom));border:0;border-radius:0;background:var(--paper);overflow:hidden;box-sizing:border-box}
+.text-editor form {height:100%;display:flex;flex-direction:column;min-height:0}
+.text-editor .dialog-heading {flex:none}
+.text-editor-body {flex:1;min-height:0;display:flex;overflow:auto;padding:12px 0}
+.text-editor-body input,.text-editor-body textarea {width:100%;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;min-height:48px;font-size:1.1rem}
+.text-editor-body input {align-self:flex-start}
+.text-editor-body textarea {height:100%;resize:none}
+.text-editor .dialog-actions {flex:none;position:static}
+
+.text-title-icon {color:var(--accent);display:flex}.text-title-icon .icon {width:26px;height:26px}
+.text-editor .dialog-actions [type=submit] {background:var(--accent);color:var(--panel)}
+.text-editor-body {overscroll-behavior:contain}.text-editor-body textarea {overflow:auto;overscroll-behavior:contain}
+.text-editor .dialog-actions {padding:12px 0 0;gap:8px;background:transparent}
+.text-editor .dialog-actions button {padding:.5rem .3rem;min-height:48px;line-height:1.2}
+dialog[data-wizard] #add-class {min-height:44px;padding:.5rem .7rem;font-size:1rem}
+textarea.text-value {min-height:44px;max-height:10rem;field-sizing:content}
+.text-editor .dialog-heading {max-height:35%;min-height:48px;align-items:flex-start;overflow:hidden}
+.text-editor .dialog-heading h2 {max-height:3.3em;overflow:auto}
+/* Leave more room for the actual answers in list questions. */
+dialog:has([data-wizard-active] .wizard-options) .wizard-intro,
+.equipment-editor:has(.equipment-answer .wizard-options) .wizard-intro {margin-bottom:.5rem}
+dialog:has([data-wizard-active] .wizard-options) .wizard-art,
+.equipment-editor:has(.equipment-answer .wizard-options) .wizard-art {height:96px;margin:.35rem auto}
+dialog:has([data-wizard-active] .wizard-options) #wizard-question,
+.equipment-editor:has(.equipment-answer .wizard-options) #wizard-question {margin:.5rem auto .4rem}
