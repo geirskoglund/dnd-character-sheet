@@ -4,8 +4,9 @@ import {draftPrefix,type DraftToken} from '../domain/wizard-draft';
 import {checkDraft} from './wizard-drafts';
 import { migrateCharacter } from '../domain/migrations';
 import { characterSchema, portraitSchema, type PortraitAsset, type Character, type ChangeEvent } from '../domain/model';
+import { databaseName } from '../app-environment';
 
-export const DB_NAME = 'dnd-character-companion';
+export const DB_NAME = databaseName;
 export const DB_VERSION = 3;
 export function openDatabase(name = DB_NAME): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {

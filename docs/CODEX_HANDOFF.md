@@ -10,7 +10,7 @@ GitHub har aktuelle oppgavebeskrivelser, status og prioritet. [BACKLOG.md](BACKL
 
 Brukeren må uttrykkelig bestille appkode. Korte bekreftelser og en bestilling av Issue-/dokumentarbeid starter ingen appendring. Ta reelle produktspørsmål én flyt om gangen og løs tekniske valg selv. Funksjons-/UI-PR skal kunne testes og må få brukerens godkjenning før merge; dette erstatter tidligere generell delegasjon av automatisk testet merge.
 
-Retningen for testpublisering er én fast testadresse på GitHub Pages, med varig testdata isolert fra produksjon. Adressen viser aktuell arbeidsbranch/PR; egen testbranch er ikke nødvendig. Testmiljøet er ikke satt opp gjennom denne bestillingen. Se [arbeidsinstruksen](../AGENTS.md) for gjeldende regler.
+Testmiljøet er bestilt som egen oppgave [#55](https://github.com/geirskoglund/dnd-character-sheet/issues/55). Én fast testadresse på GitHub Pages viser valgt PR, med varige testdata isolert fra produksjon; egen testbranch er ikke nødvendig. Se [testpublisering og førstegangsbruk](TESTING.md) og [arbeidsinstruksen](../AGENTS.md). #25 implementeres separat og funksjons-PR skal testes før brukerens mergegodkjenning.
 
 ## Repo og GitHub-backlog
 

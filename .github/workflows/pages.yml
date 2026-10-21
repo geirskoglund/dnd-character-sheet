@@ -3,18 +3,96 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      preview:
+        description: 'Testversjon: PR-nummer, master, eller keep for å beholde valgt utgave'
+        required: true
+        default: keep
+        type: string
+  workflow_run:
+    workflows: [Validate]
+    types: [completed]
 permissions:
   contents: read
-  pages: write
-  id-token: write
 concurrency:
   group: pages
   cancel-in-progress: false
 jobs:
-  build:
+  plan:
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+      pull-requests: read
+      checks: read
+    outputs:
+      deploy: ${{ steps.plan.outputs.deploy }}
+      production: ${{ steps.plan.outputs.production }}
+      preview: ${{ steps.plan.outputs.preview }}
+      pr: ${{ steps.plan.outputs.pr }}
+      metadata: ${{ steps.plan.outputs.metadata }}
+    steps:
+      # Never execute a PR's planning script with the deployment token.
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          persist-credentials: false
+      - uses: actions/github-script@v7
+        id: plan
+        env:
+          PREVIEW_SELECTION: ${{ inputs.preview || 'keep' }}
+        with:
+          script: |
+            const {planPages} = await import(`${process.env.GITHUB_WORKSPACE}/scripts/pages-plan.mjs`);
+            const repo = context.repo;
+            const {data:master} = await github.rest.repos.getBranch({...repo, branch:'master'});
+            let previous;
+            if (process.env.PREVIEW_SELECTION === 'keep') {
+              const {data:pages} = await github.rest.repos.getPages(repo);
+              const url = new URL('deployment.json', pages.html_url);
+              url.searchParams.set('run', context.runId);
+              const response = await fetch(url, {signal:AbortSignal.timeout(30000), cache:'no-store'});
+              if (response.ok) previous = await response.json();
+              else if (response.status !== 404) throw new Error(`Kunne ikke lese valgt testutgave (${response.status}). Ingen publisering.`);
+            }
+            const metadata = await planPages({
+              selection:process.env.PREVIEW_SELECTION, eventName:context.eventName, event:context.payload,
+              productionSha:master.commit.sha, previous, repository:`${repo.owner}/${repo.repo}`,
+              getPull:async pull_number => (await github.rest.pulls.get({...repo,pull_number})).data,
+              isValidated:async ref => {
+                const checks = await github.paginate(github.rest.checks.listForRef,{...repo,ref});
+                return checks.some(check => check.name === 'validate' && check.app?.slug === 'github-actions' && check.conclusion === 'success');
+              },
+            });
+            core.setOutput('deploy', Boolean(metadata));
+            if (!metadata) { await core.summary.addRaw('Ingen ny commit for valgt test-PR.').write(); return; }
+            core.setOutput('production',metadata.production.sha);
+            core.setOutput('preview',metadata.preview.sha);
+            core.setOutput('pr',metadata.preview.pr ?? '');
+            core.setOutput('metadata',JSON.stringify({...metadata,publishedAt:new Date().toISOString()}));
+            await core.summary.addTable([
+              [{data:'Miljø',header:true},{data:'Commit',header:true}],
+              ['Produksjon (master)',metadata.production.sha],
+              [`Test (${metadata.preview.pr ? `PR #${metadata.preview.pr}` : 'master'})`,metadata.preview.sha],
+            ]).write();
+  build:
+    needs: plan
+    if: needs.plan.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        target: [production, preview]
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.target == 'production' && needs.plan.outputs.production || needs.plan.outputs.preview }}
+          persist-credentials: false
+      - name: Check test-environment support
+        run: |
+          test -f src/app-environment.ts || { echo 'Merge/rebase master med testmiljø-støtte inn i PR-branchen først.'; exit 1; }
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -22,17 +100,79 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+        env:
+          VITE_APP_CHANNEL: ${{ matrix.target == 'preview' && 'test' || 'production' }}
+          VITE_PREVIEW_PR: ${{ needs.plan.outputs.pr }}
+      - uses: actions/upload-artifact@v4
         with:
-          path: dist
+          name: pages-${{ matrix.target }}
+          path: dist/
+          retention-days: 7
   deploy:
+    runs-on: ubuntu-latest
+    needs: [plan, build]
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
+      # This job never checks out or executes PR code.
+      - uses: actions/download-artifact@v4
+        with:
+          name: pages-production
+          path: site
+      - uses: actions/download-artifact@v4
+        with:
+          name: pages-preview
+          path: site/test
+      - name: Write deployment selection
+        env:
+          DEPLOYMENT_METADATA: ${{ needs.plan.outputs.metadata }}
+        run: node -e "require('node:fs').writeFileSync('site/deployment.json', JSON.stringify(JSON.parse(process.env.DEPLOYMENT_METADATA), null, 2))"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Show test address
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          PREVIEW_SHA: ${{ needs.plan.outputs.preview }}
+        run: |
+          echo "Testadresse: ${PAGES_URL}test/" >> "$GITHUB_STEP_SUMMARY"
+          echo "Test-commit: ${PREVIEW_SHA}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify published URLs
+        uses: actions/github-script@v7
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          DEPLOYMENT_METADATA: ${{ needs.plan.outputs.metadata }}
+        with:
+          script: |
+            const expected = JSON.parse(process.env.DEPLOYMENT_METADATA);
+            const base = process.env.PAGES_URL;
+            let error;
+            for (let attempt=0;attempt<10;attempt++) {
+              try {
+                const get = async path => {
+                  const url = new URL(path,base); url.searchParams.set('run',context.runId);
+                  const response = await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(10000)});
+                  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+                  return response;
+                };
+                const actual = await (await get('deployment.json')).json();
+                if (actual.production.sha !== expected.production.sha || actual.preview.sha !== expected.preview.sha) throw new Error('Publiseringen er ikke synlig ennå.');
+                const production = await (await get('')).text();
+                const preview = await (await get('test/')).text();
+                const manifest = await (await get('test/manifest.webmanifest')).json();
+                const productionManifest = await (await get('manifest.webmanifest')).json();
+                if (!production.includes('id="app"') || production.includes('<title>My D&D Test</title>') || !preview.includes('<title>My D&D Test</title>') || manifest.name !== 'My D&D Test' || productionManifest.name === manifest.name) throw new Error('Feil miljøidentitet på publisert adresse.');
+                await core.summary.addRaw('\nPublisert produksjon, testadresse, testmanifest og commit-metadata er kontrollert over HTTPS.\n').write();
+                return;
+              } catch (caught) { error=caught; await new Promise(resolve=>setTimeout(resolve,3000)); }
+            }
+            throw error;
