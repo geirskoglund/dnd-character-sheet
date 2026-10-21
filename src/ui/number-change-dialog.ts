@@ -128,6 +128,12 @@ export function numberChangeDialog(options:NumberChangeOptions) {
   catch(failure){error.textContent=failure instanceof Error?failure.message:'Kunne ikke lagre. Endringen er bevart.';}
   finally{pending=false;d.removeAttribute('aria-busy');d.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=false);update();}
  };
+ // Safari may keep input focus when tapping non-focusable help/empty space. Do not rely on blur.
+ d.addEventListener('click',event=>{
+  const target=event.target as HTMLElement;
+  if(target.closest('input,.wheel-sign,[data-dismiss],[type=submit]'))return;
+  for(const w of wheels)if(!w.flush()){event.stopImmediatePropagation();break;}
+ },true);
  d.showModal();wheels.forEach(w=>w.draw());update();d.querySelector<HTMLElement>('h2')!.focus({preventScroll:true});
  // Keep actions visible when the on-screen keyboard reduces the visual viewport.
  const fit=()=>{d.style.height=`${window.visualViewport?.height??innerHeight}px`;d.style.top=`${window.visualViewport?.offsetTop??0}px`;};

@@ -46,7 +46,10 @@ test('P03/P07/P10 K4–K7: the same basis, no product maximum, valid signed entr
  for(const invalid of ['1.5','1,5','1e3','-']){
   await input.fill(invalid);await d.getByRole('heading').click();await expect(d.getByRole('alert')).toContainText('heltall');await expect(input).toBeVisible();
  }
- await input.fill('+6');await d.getByRole('heading').click();
+ await input.fill('-1000');
+ // A dispatched click has no browser focus/blur default action: this tests the explicit outside path.
+ await d.locator('.number-help').dispatchEvent('click');await expect(input).toBeHidden();await expect(d.locator('.number-after b')).toHaveText('1');
+ await d.getByRole('button',{name:'Skriv inn Endring',exact:true}).click();await input.fill('+6');await d.getByRole('heading').click();
  await expect(d.locator('.number-before b')).toHaveText('22');await expect(d.locator('.number-after b')).toHaveText('28');
  await d.getByRole('spinbutton').evaluate(el=>{el.scrollTop+=44;el.dispatchEvent(new Event('scroll'));});
  await expect(d.locator('.number-after b')).toHaveText('28');
