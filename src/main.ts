@@ -1,4 +1,5 @@
 import {effectiveMaxHp} from './domain/item-effects';
+import {isTestApp,testVersion} from './app-environment';
 import {z} from 'zod';
 import {WizardDraftRepository} from './storage/wizard-drafts';
 import {newWizardDraft,type WizardDraft,type DraftToken} from './domain/wizard-draft';
@@ -126,6 +127,7 @@ function render() {
     if (!(event.target as HTMLElement).closest('.app-menu')) root.querySelector('details.app-menu')?.removeAttribute('open');
   };
   root.innerHTML = `<a href="#content" class="skip-link">Til innhold</a><div class="shell">
+    ${isTestApp?`<p class="test-version" aria-label="Testversjon">${esc(testVersion)}</p>`:''}
     <header class="character-header">${c?`<button class="portrait" data-action="portrait" aria-label="${portrait?'Vis portrett':'Velg portrett'}">${portrait?`<img src="${portrait.dataUrl}" alt="Portrett av ${esc(c.name)}">`:portraitPlaceholder()}</button>`:''}<div class="identity"><h1>${esc(c?.name ?? 'Ditt neste eventyr')}</h1>${c?`<p class="identity-detail">${esc(c.species.name)} · ${c.classes.map(cl=>`${esc(cl.name)} ${cl.level}${cl.subclass?' · '+esc(cl.subclass):''}`).join(' / ')}</p>`:''}</div></header>
     <main id="content" tabindex="-1">${c&&page==='equipment'&&drafts.some(d=>d.kind==='equipment'&&d.characterId===c.id)?`<section aria-label="Utstyrsutkast"><h2>Utkast</h2><div class="draft-list">${draftButtons(drafts.filter(d=>d.kind==='equipment'&&d.characterId===c.id))}</div></section>`:''}${c ? page === 'character' ? characterView(c) : page === 'equipment' ? equipmentView(c) : page === 'magic' ? magicView(c) : combatView(c, category) : '<section class="empty"><h2>Et ark som er ditt</h2><p>Opprett en karakter og før inn verdiene fra karakterarket ditt. Data lagres lokalt på denne enheten.</p><button data-action="create">Opprett første karakter</button></section>'}</main>
     <p id="status" role="status" aria-live="polite">${esc(message)}</p></div>
@@ -339,7 +341,7 @@ async function action(name: string) {
       break;
     }
     case 'prepare': preparationDialog(editorContext);break;
-    case 'about': viewDialog('Om appen',`<p><strong>D&amp;D Character Companion</strong></p><p>D&amp;D 5e · 2014</p><p>Versjon ${__APP_VERSION__}</p><p>Et digitalt karakterark ved det fysiske spillebordet. Lagres på denne enheten og kan brukes uten nett.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p><a href="./FONT-LICENSES.txt">Fonter og ikoner</a></p>`);break;
+    case 'about': viewDialog('Om appen',`<p><strong>D&amp;D Character Companion</strong></p><p>D&amp;D 5e · 2014</p><p>${isTestApp?esc(testVersion):`Versjon ${__APP_VERSION__}`}</p><p>Et digitalt karakterark ved det fysiske spillebordet. Lagres på denne enheten og kan brukes uten nett.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p><a href="./FONT-LICENSES.txt">Fonter og ikoner</a></p>`);break;
     case 'check-update': await updates.check(); break;
     case 'create': editCharacter(); break;
     case 'edit': editCharacter(c); break;
@@ -394,7 +396,7 @@ async function start() {
     const last = await repo.setting<number>('lastExport');
     if (characters.length && (!last || Date.now() - last > 7 * 86400000)) tell('Husk å eksportere JSON-backup av karakterene dine.');
     try {
-      if (localStorage.getItem('dnd-5e-pwa-data')) tell('Prototype-data finnes fortsatt i nettleseren. De er bevart, men importeres ikke automatisk. Åpne den gamle versjonen og eksporter før du flytter data manuelt.');
+      if (!isTestApp && localStorage.getItem('dnd-5e-pwa-data')) tell('Prototype-data finnes fortsatt i nettleseren. De er bevart, men importeres ikke automatisk. Åpne den gamle versjonen og eksporter før du flytter data manuelt.');
     } catch { /* IndexedDB can still work when localStorage access is restricted. */ }
   } catch (error) {
     root.innerHTML = `<main><h1>Kunne ikke åpne lokal lagring</h1><p role="alert">${esc(error instanceof Error ? error.message : error)}</p><p>Ikke slett nettleserdata. Tillat lokal lagring og prøv igjen.</p><button onclick="location.reload()">Prøv igjen</button></main>`;

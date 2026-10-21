@@ -31,6 +31,7 @@ h2 > .icon { width: 15px; height: 15px; color: var(--accent); }
 h3 { font-size: 1.3rem; margin: .6rem 0; }
 section { margin: 0 0 1.25rem; min-width: 0; }
 .shell { max-width: 680px; margin: auto; padding: 20px 18px calc(7rem + env(safe-area-inset-bottom)); }
+.test-version { margin: 0 0 12px; padding: 6px 10px; border: 1px solid var(--accent); border-radius: 5px; color: var(--accent); font-size: .8rem; text-align: center; overflow-wrap: anywhere; }
 .character-header { display: flex; gap: 14px; align-items: center; border-bottom: 3px double var(--line); padding-bottom: 18px; margin-bottom: 18px; position: static; }
 .identity { min-width: 0; flex: 1; }
 .identity-detail { font-size: .88rem; line-height: 1.4; color: var(--muted); margin: .35rem 0 0; }

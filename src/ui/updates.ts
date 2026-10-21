@@ -9,7 +9,10 @@ export function installUpdates() {
   let registration: ServiceWorkerRegistration | undefined;
   let dismissedWorker: ServiceWorker | undefined;
   let checking = false, activating = false, reloadRequested = false, manualCheck = false;
-  let hasController = 'serviceWorker' in navigator && Boolean(navigator.serviceWorker.controller);
+  const workerUrl = new URL('./sw.js', document.baseURI).href;
+  // A first visit to /test/ may initially be controlled by the parent worker.
+  // Its handover to the new test worker is an installation, not an app update.
+  let hasController = 'serviceWorker' in navigator && navigator.serviceWorker.controller?.scriptURL === workerUrl;
   const show = (message: string) => { text.textContent = message; banner.hidden = false; };
   const ready = (force=false) => {
     if (!registration?.waiting || !registration.active || (!force && registration.waiting===dismissedWorker)) return;
@@ -25,7 +28,7 @@ export function installUpdates() {
     });
   };
   const supported = 'serviceWorker' in navigator && import.meta.env.PROD;
-  const registered = supported ? navigator.serviceWorker.register(new URL('./sw.js', document.baseURI), { updateViaCache: 'none' })
+  const registered = supported ? navigator.serviceWorker.register(workerUrl, { updateViaCache: 'none' })
     .then(reg => {
       registration = reg;
       reg.addEventListener('updatefound', () => watch(reg.installing));
@@ -49,7 +52,7 @@ export function installUpdates() {
       if (manualCheck) show('Ser etter en ny versjon …');
       // Retry registration if its first attempt failed; no storage is removed.
       if (!registration) {
-        registration = await navigator.serviceWorker.register(new URL('./sw.js', document.baseURI), { updateViaCache: 'none' });
+        registration = await navigator.serviceWorker.register(workerUrl, { updateViaCache: 'none' });
         registration.addEventListener('updatefound', () => watch(registration!.installing));
         watch(registration.installing);
       }
@@ -91,6 +94,7 @@ export function installUpdates() {
   };
   if (supported) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (navigator.serviceWorker.controller?.scriptURL !== workerUrl) return;
       if (!hasController && !reloadRequested) { hasController = true; return; }
       hasController = true;
       if (reloadRequested && !document.querySelector('dialog[open]')) window.location.reload();
