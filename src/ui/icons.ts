@@ -19,6 +19,7 @@ const paths = {
   hand:'<path d="M5 12V8a1.5 1.5 0 0 1 3 0v4-7a1.5 1.5 0 0 1 3 0v7-8a1.5 1.5 0 0 1 3 0v8-6a1.5 1.5 0 0 1 3 0v8l2-3c2-2 4 0 2 3l-4 7H9l-6-7c-1-2 0-4 2-2z"/>',
   tools:'<path d="m5 4 4-1 1 6-3 3-5-2 1-4 3 2 2-2zM9 10l11 10-2 2L8 12M19 3l2 2-9 9m-6 3-4 4"/>',
   note:'<path d="M5 2h10l5 5v15H5zM15 2v6h5M8 12h9M8 16h9M8 19h6"/>',
+  coins:'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v5c0 4 16 4 16 0V6M4 11v6c0 4 16 4 16 0v-6"/>',
   resource:'<path d="m12 2 9 5v10l-9 5-9-5V7zM3 7l9 5 9-5M12 12v10M12 2v10"/>',
   condition:'<path d="M12 3 2 21h20zM12 9v5M12 17v1"/>',
   sword:'<path d="m16 2 5 1-1 5L9 19l-4-4zM3 13l8 8M7 17l-4 4M13 10l4-4"/>',

@@ -1,11 +1,11 @@
+import {numberChangeDialog} from './ui/number-change-dialog';
 import {effectiveMaxHp} from './domain/item-effects';
 import {isTestApp,testVersion} from './app-environment';
 import {z} from 'zod';
 import {WizardDraftRepository} from './storage/wizard-drafts';
 import {newWizardDraft,type WizardDraft,type DraftToken} from './domain/wizard-draft';
 import type {EditorContext} from './ui/record-editors';
-import {moneyControl,bindMoneyControl} from './ui/money-control';
-import {moneyFromText} from './domain/money';
+import {changeMoney} from './ui/money-control';
 import {flushWizard} from './ui/wizard';
 import {inspectRecord} from './ui/record-dialogs';
 import {withStandardResources} from './domain/resource-setup';
@@ -16,7 +16,7 @@ import {preparationDialog} from './ui/preparation';
 import {bindWizard} from './ui/wizard';
 import {bindCombatSwipe} from './ui/combat-swipe';
 import {icon,portraitPlaceholder} from './ui/icons';
-import {hpControl,bindHpControl} from './ui/hp-control';
+import {changeHp} from './ui/hp-control';
 import { installUpdates } from './ui/updates';
 import { choosePortrait } from './ui/portrait';
 import { characterSchema, copyCharacter, createCharacter, type Character, type PortraitAsset } from './domain/model';
@@ -33,7 +33,7 @@ import { instantiateEquipment } from './domain/catalog';
 import { historyView } from './ui/history';
 import { modifiers, signed } from './domain/modifiers';
 import { levelUpCharacter } from './domain/level-up';
-import { deriveStats, hpAfterItemChange, hpDeltaBounds } from './domain/derived';
+import { deriveStats, hpAfterItemChange } from './domain/derived';
 import { escapeHtml as esc, field, select } from './ui/html';
 import './style.css';
 
@@ -274,15 +274,10 @@ function levelUp(c: Character) {
   update();
 }
 function editHitPoints(c: Character) {
-  const bounds=hpDeltaBounds({...c.hp,max:effectiveMaxHp(c)});
-  const d=dialog('Endre HP',hpControl({...c.hp,max:effectiveMaxHp(c)}),async form=>{
-    const delta=Number(new FormData(form).get('deltaAmount'));
-    if(!Number.isInteger(delta)||delta<bounds.min||delta>bounds.max)throw new Error('Ugyldig HP-endring.');
-    if(!delta)return;
+  changeHp({...c.hp,max:effectiveMaxHp(c)},async delta=>{
     await saveCharacter({...c,hp:hpAfterItemChange(c,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
-    message = '';await refresh();
-  },'Oppdater HP');
-  bindHpControl(d,{...c.hp,max:effectiveMaxHp(c)});
+    message='';await refresh();
+  });
 }
 
 function editOverrides(c: Character) {
@@ -291,9 +286,9 @@ function editOverrides(c: Character) {
     <p>${esc(stats.acExplanation)}</p><p>${esc(stats.speedExplanation)}</p>${stats.warnings.map(w => `<p class="warning">${esc(w)}</p>`).join('')}
     ${field('Manuell AC (valgfritt)', 'ac', c.acOverride ?? '', 'type="number" min="0"')}
     ${field('Manuell speed (ft, valgfritt)', 'speed', c.speedOverride ?? '', 'type="number" min="0"')}
-    ${field('Manuell proficiency bonus (valgfritt)', 'proficiencyBonus', c.proficiencyBonusOverride ?? '', 'type="number" step="1"')}
-    ${field('Manuell Initiative (valgfritt)', 'initiative', c.derivedOverrides.initiative ?? '', 'type="number" step="1"')}
-    ${field('Manuell Passive Perception (valgfritt)', 'passivePerception', c.derivedOverrides.passivePerception ?? '', 'type="number" step="1"')}
+    ${field('Manuell proficiency bonus (valgfritt)', 'proficiencyBonus', c.proficiencyBonusOverride ?? '', 'type="number" step="1" data-allow-negative')}
+    ${field('Manuell Initiative (valgfritt)', 'initiative', c.derivedOverrides.initiative ?? '', 'type="number" step="1" data-allow-negative')}
+    ${field('Manuell Passive Perception (valgfritt)', 'passivePerception', c.derivedOverrides.passivePerception ?? '', 'type="number" step="1" data-allow-negative')}
     ${select('Unarmored Defense', 'unarmoredDefense', c.unarmoredDefense, [{ value: 'auto', label: 'Fra registrert klasse' }, { value: 'none', label: 'Vanlig AC / rustning' }, { value: 'barbarian', label: 'Fra Barbarian' }, { value: 'monk', label: 'Fra Monk' }])}
     <p>Multiclass: Du kan ikke få Unarmored Defense en gang til fra en annen klasse. Velg den karakteren faktisk har. Rustning og skjold må fortsatt oppfylle egenskapens vilkår.</p>`, async form => {
     const data = new FormData(form), ac = String(data.get('ac')), speed = String(data.get('speed'));
@@ -349,14 +344,12 @@ async function action(name: string) {
     case 'level-up': levelUp(c!); break;
     case 'hp': case 'hp-change': editHitPoints(c!); break;
     case 'overrides': editOverrides(c!); break;
-    case 'temp-hp': dialog('Temporary HP', `<p>Sett den nye totalen. Temporary HP stables ikke; velg hvilken total du beholder.</p>${field('Temporary HP', 'temp', c!.hp.temp, 'type="number" min="0" required')}`, async form => {
-      const draft = characterSchema.parse({ ...c!, hp: { ...c!.hp, temp: Number(new FormData(form).get('temp')) } });
-      await saveCharacter(draft, 'temp-hp', 'Temporary HP endret'); message = ''; await refresh();
-    }); break;
-    case 'money': {const d=dialog('Penger',moneyControl(c!.goldCp), async form => {
-      const draft = characterSchema.parse({ ...c!, goldCp: moneyFromText(String(new FormData(form).get('gold'))) });
-      await saveCharacter(draft, 'money', 'Penger endret'); message = ''; await refresh();
-    });bindMoneyControl(d);break;}
+    case 'temp-hp': numberChangeDialog({name:'Temporary HP',icon:'healing',original:c!.hp.temp,min:0,
+      preview:()=> 'Temporary HP stables ikke. Før inn forskjellen til totalen du skal beholde.',
+      onConfirm:async result=>{if(result!==c!.hp.temp){await saveCharacter(characterSchema.parse({...c!,hp:{...c!.hp,temp:result}}),'temp-hp','Temporary HP endret');message='';await refresh();}}});break;
+    case 'money': changeMoney(c!.goldCp,async cp=>{
+      await saveCharacter(characterSchema.parse({...c!,goldCp:cp}),'money','Penger endret');message='';await refresh();
+    });break;
     case 'note': editNote(); break;
     case 'copy': {
       const copy = copyCharacter(c!);

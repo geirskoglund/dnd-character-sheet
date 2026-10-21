@@ -1,5 +1,7 @@
 # Prøveversjon: enklere føring ved bordet
 
+> Tallbetjeningen nedenfor og eldre bilder er historiske. #25 erstatter innfelte hjul/absolutte GP-verdier med felles fullskjermdialog: trykk verdien, velg en endring fra 0, kontroller Før/Etter og bekreft med OK eller forkast med Avbryt/X. Midttrykk åpner direkte heltallsinnskriving på hvert hjul. Penger har signerte heltalls-/hundredelshjul. Se [produktkontrollen](CHARACTER_WORKSPACE.md#før-koding-kontroll-felles-tallendringsdialog-25) og [testinstruksjonene](TESTING.md#test-av-tallendringsdialogen-25).
+
 Dette er den samlede implementasjonen bestilt etter gjennomgangen i [WORKFLOW_REVIEW](WORKFLOW_REVIEW.md), med [krav §13](REQUIREMENTS.md#13-konseptuell-opprydding-og-arbeidsflyter-2026-10-20) og nyere avklaringer som føring. v0.11 er brukt som funksjonell referanse; papirarket og spillerens manuelle føring er målet. Historiske slider-/trefane-/per-terning-forslag er erstattet av valgene under.
 
 ## Betjening

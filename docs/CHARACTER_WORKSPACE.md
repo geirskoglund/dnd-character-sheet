@@ -443,3 +443,57 @@ Omfang og akseptanse: [#55](https://github.com/geirskoglund/dnd-character-sheet/
 | Velge og bevare riktig testutgave | #55; master-push, valgt PR og urelaterte/stale/feilende valideringer | Master i produksjon, valgt commit beholdes på test; bare valgt PR med grønn validering oppdateres | `pages-plan.test.ts`: 21 scenarioer passert; actionlint og JS-syntaks passert | Ingen ny brukerflyt i produksjon | Faktisk GitHub-deploy/HTTPS-kontroll gjenstår |
 
 Full lokal kontroll: `CI=1 CHROMIUM_PATH=/usr/bin/chromium npm run check` passerer med 148 enhets-/integrasjonstester, TypeScript/Vite-produksjonsbygg og 77 Playwright-scenarioer. Begge scope-oppdateringer er også kjørt separat sammen med den eksisterende oppdateringstesten (2/2). `actionlint`, JS-syntaks og `git diff --check` passerer. Ingen fysisk iOS-verifikasjon påstås. Publisering/HTTPS-resultat føres i infrastruktur-PR-en etter aktivering av master-workflowen.
+
+## Før-koding-kontroll: felles tallendringsdialog #25
+
+Gjeldende GitHub-sak #25 (P01–P16, K1–K9 og AK-ID-er) er detaljkilden. Mastergrunnlag: `2e8ed27`. Nyeste dialogføring erstatter prototypens absolutte/innfelte tallvalg; Eventyrjournal, manuell føring og eksisterende domenegrenser beholdes. Ingen ny regelmotor eller datamigrering.
+
+| Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
+| --- | --- | --- | --- | --- | --- |
+| Heltall, fortegn og grenser | #25 P01–P08/P10–P16, K1–K8; manuell stamina 22, valgfritt intervall −10…30 | Fullskjerm «Endre …», 0 i sentrum, positive over og negative under. +6 gir 28; −4 gir 18. Ingen produktmaks uten oppgitt grense. Direkte heltallsinnskriving begrenses ved avslutning. Ett OK/Avbryt/X, ingen fokus-/etterrullingsoverskriving | `number-change.test.ts` og `number-dialog.spec.ts`: bestått; se dekningsmatrisen nedenfor | Gjennomgått i Chromium 320/390 px, 100/200 % tekst og 350/568 px høyde; fysisk iPhone separat | Verifisert i Chromium; fysisk iPhone gjenstår |
+| Penger | #25 P07/P09/P10/P16; Alva Rogue5 med 10,50 GP | Begge hjul starter 0; −10 / −50 gir 0. Fra 0 gir 9/80 og 10/−20 begge 9,80. CP forblir heltall. Begge hjul har egen direkteinntasting; desimalhjul −99…99 | Domeneprøver, money-scenarioer i `number-dialog.spec.ts` og oppdatert `illustrated.spec.ts`: bestått | To samtidige hjul med felles før/etter, ingen absolutt GP-editor | Verifisert i Chromium; fysisk iPhone gjenstår |
+| HP/temp HP og lagringsfeil | #25 P03/P07/P16, domenegrensene i hpDeltaBounds; Alva Rogue5, HP28/38 og temp5 | Endre HP fra Combat; samlet HP+temp er det additive grunnlaget. Skade bruker temp først, healing begrenses til maks vanlig HP. Begge delverdier vises. Bekreft én atomisk lagring; feil bevarer endring for retry og Angre gjenoppretter begge | `design.spec.ts` HP skade/healing/grenser/lagringsfeil/Angre og `interactions.spec.ts`: bestått | Ingen ekstra hjulknapp; eksisterende HP-regler beholdes | Verifisert i Chromium; fysisk iPhone gjenstår |
+| Uferdig skjema under dialog | #25 P15/K9; ny Fighter med delvis navn/klasse og maks HP; egne utstyrsbonuser, beholdninger/hvile | Verdi-elementet åpner overliggende tallendring. OK oppdaterer kun feltet; X/Escape/Avbryt forkaster kun tallendringen. Spørsmål, andre felt, scroll og utkast i underliggende dialog beholdes; null endring ved ny åpning | `number-dialog.spec.ts`, illustrerte veivisere og workflow-suitene: bestått | Egen native modal over eksisterende noder; ingen destruktiv erstatning | Verifisert i Chromium; fysisk iPhone gjenstår |
+| Beholdningsoppslag og innganger | #25 K9; Fighter3 med Second Wind og Wizard3 med slots; multiclass gir separate eksisterende pools | Pille som allerede åpner oppslag beholder oppslaget; tilgjengelig-tallet der åpner tallendring 0…maks. Tilpass, Bruk én og hvile bevarer eksisterende formål | Ny nestet beholdningsprøve og eksisterende Wizard/Monk/multiclass/hvile-prøver: bestått | Begrunnet K9-unntak: oppslag viser også recharge/Hit Dice/tilpasning | Verifisert i Chromium; fysisk iPhone gjenstår |
+| Fysisk installert iPhone | #25 AK-K1/AK-K8 og #26 | Raske/langsomme sveip og stopp oppleves naturlig; OK/Avbryt/X virker på første trykk også med tastatur. Sammenlign Safari | Ikke tilgjengelig i dette skymiljøet; skal prøves av bruker på publisert testversjon | Chromium er ikke fysisk iPhone-bevis | Avventer fysisk test før mergegodkjenning |
+
+
+### Kontrollresultat og dekning for #25
+
+P-/K-tekstene vedlikeholdes i GitHub-saken; tabellen under viser kontrollbevis uten å erstatte kravene. Første regresjonskjøring fant en fokusreturfeil og to tester som brukte gammel betjening; fokusreturen ble rettet, testene ble tilpasset synlig dialogflyt, og berørte suiter bestod ved ny kjøring. Ingen assertioner/dekning er slått av. Fysisk iOS er fortsatt utestet.
+
+| Krav-ID | Implementasjon og faktisk kontroll | Resultat / gjenværende |
+| --- | --- | --- |
+| P01 | Selvstendig native modal, hele viewporten; øvrige popups bruker også fullskjerm. `number-dialog.spec.ts` prøver mål på 320/390 px, 350/568 px høyde og stor tekst | Bestått Chromium |
+| P02 | Navnet kommer fra faktisk felt/kaller; headingprøve for maks HP, egne HP-/beløpstitler | Bestått |
+| P03 | Original 22, +6 → 28 i synlig dialog; opprinnelig verdi står fast | Bestått |
+| P04 | Domenet prøver 22 +6 / −4; hjul/input gir signert endring, ikke en ny absoluttverdi | Bestått |
+| P05 | Nye åpninger etter bekreftelse og avbrudd har 0; klassenivå/maks HP-prøvene sjekker gjenåpning | Bestått |
+| P06 | Synlig synkende tallrekke; rulling ned gir minus, opp gir pluss. Native touch fra valgt midttall og mus/tastatur er prøvd | Bestått Chromium; fysisk følelse gjenstår |
+| P07 | Originalgrunnlaget er uforanderlig under redigering. HP-kalleren bruker samlet HP + temp HP for additivt resultat og viser begge delverdier separat; eksisterende absorpsjon/healing beholdes | Domene- og HP-prøver bestått |
+| P08 | Standardminimum 0, eksplisitt signed override og normalisering −10 fra 3 til 0 | Domene-/nettleserprøver bestått |
+| P09 | Samtidige heltalls-/hundredelshjul; 9/80 og 10/−20 gir 9,80; −10/−50 fra 10,50 gir 0 | Bestått; CP-heltall beholdt |
+| P10 | Begrenser visningsvinduet til høyst 121 rader og sentrerer rundt gjeldende valg; ingen produktmaks uten kallergrense. +2 milliarder og teknisk MAX_SAFE_INTEGER prøves. Hundredeler −99…99 har egne endpoint-prøver | Bestått; JavaScripts eksakte heltallsområde er teknisk grense |
+| P11 | Første OK validerer aktiv input, kaller eksisterende lagring og lukker etter bekreftelse. Lagringsfeil bevarer dialog/verdi for retry; pending blokkerer ny commit | Chromium-klikk/HP-retry bestått; fysisk første trykk gjenstår |
+| P12 | Avbryt, X og Escape forkaster kun tallredigeringen; både Avbryt/X er prøvd med aktiv input | Bestått Chromium |
+| P13 | HP bruker hjerte, penger mynter, beholdninger ressursikon; lokale SVG-er fungerer offline | Produktgjennomgått og eksisterende offline-suite bestått |
+| P14 | Vanlige felter bruker standardemblem, prøvd i signed override-dialogen | Bestått |
+| P15 | Egen showModal over kallerens eksisterende noder, to åpne native dialoger. OK endrer bare feltet, ikke veiviserens øvrige svar. Beholdningsoppslag oppdateres og blir værende. Fokus/scroll returneres; ingen destruktiv erstatning av uferdige skjemaer | Nestet skjema-/beholdningsprøve og veiviserregresjoner bestått |
+| P16 | Utleder deltagrenser fra resultatgrenser. Domeneprøver −10…30, klassenivå 1…20, HP og beholdning 0…maks; de to desimalhjulene normaliseres samlet ved grensen med BigInt | Bestått |
+| K1 | Browserens native touch-scroll/inerti og scroll-snap, markert midttall med større skrift, falmende naborader. Touch starter på selve midttallet; nye innskrivinger stopper etterrulling | Bestått Chromium; fysisk langsom/rask/stopp-gjennomgang utestet |
+| K2 | Denne matrisen angir dekning separat for hver P-ID; samlet testresultat erstatter ikke fysisk kontroll | Dokumentert |
+| K3 | Midttrykk på heltalls- og begge desimalhjul åpner diskret input. ±-knapp gir fortegn også uten minustast på mobiltastaturet | Bestått |
+| K4 | Signerte heltall inkl. 0; tester avviser komma, punkt, exponent, tomt/ufullstendig fortegn og utrygge heltall | Bestått |
+| K5 | Eksplisitt blur/OK normaliserer mot resultatgrenser; ikke bare delta. Store tall mot klasse-/HP-/beholdningsgrenser prøvd | Bestått |
+| K6 | Samme lokale font, farge og transparent bakgrunn i direkte input. Gjennomgåtte bilder i `reviews/number-dialog/`; stor tekst ga først uheldig knappelinjebrudd, deretter rettet padding/radhøyde | Bestått Chromium |
+| K7 | Blur normaliserer og tegner naborader/før–etter samtidig. Et sent scroll-event etter innskriving får ikke overskrive valgt verdi | Bestått |
+| K8 | Ingen automatisk input-/hjulfokus ved åpning. OK leser/validerer før lagring; Avbryt/X er uavhengig av blur og validering. Fokus returneres også etter at karaktervisningen er rendret på nytt | Chromium bestått; fysisk iPhone/standalone og sammenligning med nettleser gjenstår. #26 erklæres ikke løst |
+| K9 | Eksisterende tallfelt og GP/HP/temp HP-piller åpner dialog direkte. Alle `enhanceNumbers`-kallere omfattes: karaktergrunnlag/ny klasse/level-up, veivisere (og eldre utkast), equipment-bidrag/antall, proficiency/spell/action-detaljer, death saves/exhaustion, ressurs-/hvilefelter og overstyringer. Beholdningspillens eksisterende oppslag er begrunnet unntak: trykk tallet der for hjul, med gjenoppretting/tilpasning fortsatt tilgjengelig | Flytene og eksisterende regresjoner prøvd; separate Bruk én/Gi tilbake én beholdes som raske, eksplisitte handlinger |
+
+### Egen produktgjennomgang og mergeport
+
+Gjennomgått med konkret Alva/Fighter og Alva Nattvind/Rogue5 (HP28/38, temp5), GP-eksemplene over og Hit Dice/slots fra eksisterende Wizard3/Monk4/multiclass-prøver. Klasse/subclass påvirker bare kallerens eksisterende beholdninger/grenser, ikke tallkomponenten; ingen ny D&D-regelmotor, automatisk healing fra Hit Dice eller annen tolkning er innført.
+
+På 390 px er Før/Etter, to parallelle hjul, midttrykk og separate OK/Avbryt synlige uten unødvendig inngangsknapp. På 320 px med 200 % tekst er illustrasjonen redusert, radhøyden følger skriften og knappene har lesbar tekst. Kort tastaturstørrelse beholder handlingene og lar innholdet rulle. Bilder ble inspisert manuelt; viewportreduksjon er en layoutprøve, ikke et ekte iPhone-tastatur. Underliggende felt/utkast er beholdt, og lagringsfeil vises uten å lukke. I motsetning til v0.11 og tidligere leveranse bruker alle hjul nå endringsbeløp i egen modal; dette følger #25, ikke prototypens gamle betjening.
+
+**Mergeport:** Teknisk implementasjon er klar til PR og testpublisering. Fysisk iPhone AK-K1/AK-K8/#26 skal prøves på testversjonen, og brukeren må uttrykkelig godkjenne merge. Ingen automatisk merge eller bekreftet fysisk iOS-retting inngår. Teststeg står i [TESTING.md](TESTING.md#test-av-tallendringsdialogen-25).

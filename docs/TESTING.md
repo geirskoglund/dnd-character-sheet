@@ -49,3 +49,15 @@ Data finnes i nettleseren/installasjonen som opprettet dem. Ny nettleser, privat
 `tests/e2e/preview.spec.ts` bygger to faktiske testutgaver og serverer produksjon/test på samme origin. Den prøver backup-import én gang, uavhengig redigering, portrett, historikk, veiviserutkast, oppdatering av begge scopes mens det andre er åpent, bytte av test-PR, beholdte databaser og offline-reload etter begge aktiveringer. Workflowen kontrollerer også publiserte HTTPS-adresser, testmanifest og commit-metadata.
 
 Fysisk installering og oppdatering på iPhone er ikke dekket av Chromium-testen og skal rapporteres separat. Oppsettet implementerer ikke tallhjulssak #25.
+
+## Test av tallendringsdialogen #25
+
+Prøv den valgte funksjons-PR-en på testadressen over. Kontroller «Testversjon» og PR/commit i appen før test. Bruk «Se etter oppdatering» / «Oppdater appen» ved en eldre utgave; bevar testkarakterene og ta gjerne backup først.
+
+1. **Vanlige tall og nestet redigering:** Meny → Rediger karakter → trykk klassenivå eller maks HP. Dialogen heter «Endre …», viser Før/Etter og starter alltid med 0. Positive tall står over, negative under. Rull, bekreft med OK, og kontroller at bare dette feltet i skjemaet endres. Avbryt/X/Escape skal bevare skjemaet uten tallendringen. Karakteren endres først når du fullfører skjemaet.
+2. **Direkte innskriving:** Trykk midttallet, skriv positivt/negativt heltall og trykk utenfor. Prøv ±-knappen dersom tastaturet mangler minus. Valget og Før/Etter skal stemme; desimalpunkt/komma i ett hjul skal gi forklaring. Store endringer mot klassens 1–20-grense begrenses til nærmeste gyldige resultat. Valgfrie overstyringer kan fortsatt fjernes.
+3. **Penger:** Trykk GP-pillen. Fra 0 gir `9 | 80` og `10 | −20` begge 9,80 GP. Fra 10,50 gir `−10 | −50` null. Hundredelshjulet har −99…99; resultatet skal aldri bli negativt. Avbryt bevarer beløpet, OK lagrer, og Angre gjenoppretter.
+4. **HP og beholdninger:** På Combat: før f.eks. 5 temp HP, åpne HP og velg −8. Temp HP brukes først; før/etter-tallene viser samlet HP + temp HP, og teksten viser hver del separat. OK lagrer én hendelse; Angre gjenoppretter begge delverdier. Fra en beholdningspille åpner tallet i oppslaget dialogen; verdien begrenses til 0…maks og oppslaget er tilgjengelig etterpå.
+5. **Fysisk iPhone – fortsatt nødvendig før merge:** Gjenta langsomme/raske sveip, stopp, midttrykk og direkteinnskriving i installert **My D&D Test**, deretter i vanlig nettleser på samme telefon. Mens tastaturet er åpent: trykk OK én gang, Avbryt én gang og X én gang i hver sin åpning. Hver handling skal virke på første trykk og bare én gang. Kontroller også neste handling i skjemaet, HP ved 0 og smal skjerm/stor tekst. Meld iOS-versjon, nettleser/installert modus, PR/commit og konkret feilforløp ved avvik. Chromium-testene kvitterer ikke ut #26 eller fysisk AK-K8.
+
+PR-en skal stå åpen til brukeren har testet og uttrykkelig godkjent merge.

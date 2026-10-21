@@ -1,3 +1,4 @@
+import {setNumberField} from './helpers';
 import {fillField,choose,revealField,nextQuestion} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import {createCharacter,characterStep,finish,menuAction,equipmentTab,useEquipment} from './helpers';
@@ -71,13 +72,13 @@ test('weapon variant branches only when needed, preserves back navigation, per-d
 });
 test('HP reaches zero and can increase again with a real touch wheel; navigation and obvious buttons have no triangles',async({page,context})=>{
  await createCharacter(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
- const amount=page.getByRole('spinbutton',{name:'HP-endring i tall',exact:true}),wheel=page.getByRole('spinbutton',{name:'Tallhjul: HP-endring i tall',exact:true});
- await amount.fill('-12');await expect(wheel).toHaveAttribute('aria-valuenow','-12');await finish(page);await expect(d(page)).not.toBeVisible();
+ const wheel=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
+ await fillField(page,'HP-endring i tall','-12');await expect(wheel).toHaveAttribute('aria-valuenow','-12');await finish(page);await expect(d(page)).not.toBeVisible();
  await page.locator('[data-action="hp"]').click();await expect(wheel).toHaveAttribute('aria-valuemin','0');
  await wheel.scrollIntoViewIfNeeded();const r=(await wheel.boundingBox())!,x=r.x+r.width/2,y=r.y+r.height/2;
- const client=await context.newCDPSession(page);await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y:y+35}]});
- for(let i=1;i<=5;i++)await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y+35-i*8}]});
- await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await expect.poll(async()=>Number(await amount.inputValue())).toBeGreaterThan(0);
+ const client=await context.newCDPSession(page);await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y:y-35}]});
+ for(let i=1;i<=5;i++)await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y-35+i*8}]});
+ await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await expect.poll(async()=>Number(await wheel.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
  await page.keyboard.press('Escape');expect((await state(page)).hp.current).toBe(0);
  const triangles=await page.locator('nav button, .app-menu summary, .combat-tabs button').evaluateAll(els=>els.map(el=>getComputedStyle(el,'::after').clipPath));expect(triangles.every(v=>v==='none')).toBe(true);
 });
@@ -90,7 +91,7 @@ test('multiclass spell selection uses each class level and asks source only when
  const c=await state(page);expect(c.spells[0]).toMatchObject({casterClassRef:c.classes[1].id,castingAbility:'WIS',sourceLabel:'Cleric'});
  const stored=JSON.stringify(c);await page.reload();await magic(page);await page.getByRole('button',{name:'Combat',exact:true}).click();expect(JSON.stringify(await state(page))).toBe(stored);
  for(const cls of ['Wizard','Cleric','Cleric','Cleric','Cleric']){await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:new RegExp('^'+cls+' · d')}).click();await page.getByRole('button',{name:'Bruk én',exact:true}).click();await expect(d(page)).not.toBeVisible();}
- await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:'Lang hvile',exact:true}).click();await expect(d(page)).toContainText('Velg inntil 2 terninger totalt.');await page.getByRole('spinbutton',{name:/Wizard · d6/}).fill('1');await page.getByRole('spinbutton',{name:/Cleric · d8/}).fill('2');await expect(page.getByRole('button',{name:'Fullfør hvilen',exact:true})).toBeDisabled();await page.getByRole('spinbutton',{name:/Cleric · d8/}).fill('1');await finish(page);await expect(d(page)).not.toBeVisible();expect((await state(page)).resources.filter(p=>p.kind==='hitDie').map(p=>[p.die,p.current])).toEqual([['d6',1],['d8',1]]);
+ await page.getByRole('button',{name:'Hvile',exact:true}).click();await page.getByRole('button',{name:'Lang hvile',exact:true}).click();await expect(d(page)).toContainText('Velg inntil 2 terninger totalt.');await setNumberField(page,page.getByRole('spinbutton',{name:/Wizard · d6/}),'1');await setNumberField(page,page.getByRole('spinbutton',{name:/Cleric · d8/}),'2');await expect(page.getByRole('button',{name:'Fullfør hvilen',exact:true})).toBeDisabled();await setNumberField(page,page.getByRole('spinbutton',{name:/Cleric · d8/}),'1');await finish(page);await expect(d(page)).not.toBeVisible();expect((await state(page)).resources.filter(p=>p.kind==='hitDie').map(p=>[p.die,p.current])).toEqual([['d6',1],['d8',1]]);
 
 });
 test('Monk4 gets count-only Hit Dice and conditional Ki; long rest previews, retries and undoes atomically',async({page})=>{
