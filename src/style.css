@@ -281,53 +281,66 @@ details:not(.app-menu)>summary{padding:.7rem 1rem .7rem .3rem;border-bottom:1px 
 .equipment-editor .dialog-actions button{flex:1 1 7ch;min-width:min(100%,7ch);padding-inline:.4rem;overflow-wrap:normal}
 @media(max-width:360px){.equipment-editor .wizard-art{height:80px;margin:.25rem auto}.equipment-editor .wizard-art>.icon{width:48px;height:48px}}
 
-/* #25: one additive, full-screen modal, also above an unfinished editor. */
-dialog.number-change-dialog{inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:none;border:0;border-radius:0;--dialog-padding:clamp(16px,5vw,32px)}
-.number-change-dialog>form{height:100%;max-height:100%;min-height:0}
-.number-change-dialog .dialog-heading{padding-top:max(16px,env(safe-area-inset-top));align-items:flex-start}
-.number-change-dialog h2{font-size:clamp(1.35rem,5vw,2rem);margin:0;overflow-wrap:anywhere}
-.number-change-dialog h2::after{display:none}
-.number-change-body{overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0;padding:12px var(--dialog-padding) 24px;display:flex;align-items:center;flex-direction:column;gap:14px}
-.number-change-body .wizard-art{height:100px;flex-shrink:0;margin:0;max-width:260px;width:100%}
-.number-comparison{display:flex;align-items:center;justify-content:center;gap:clamp(12px,4vw,36px);max-width:100%;font:600 clamp(1.3rem,5vw,2rem) Journal}
-.number-comparison>span{min-width:0;overflow-wrap:anywhere;text-align:center}
-.number-comparison small{display:block;font:400 .8rem Source;color:var(--muted);margin-bottom:4px}
-.change-wheels{display:flex;width:min(100%,460px);gap:16px;justify-content:center}
-.change-wheel{position:relative;min-width:0;flex:1;max-width:300px;text-align:center;color:var(--accent)}
-.change-wheel-label{display:block;font-size:.85rem;margin-bottom:8px;min-height:24px}
-.change-wheel-track{height:220px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scroll-snap-type:y mandatory;scrollbar-width:none;padding-block:88px;mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);font:500 1.6rem/44px Journal}
-.change-wheel-track::-webkit-scrollbar{display:none}
-.change-wheel-row{height:44px;line-height:44px;scroll-snap-align:center;cursor:pointer;white-space:nowrap}
-.wheel-value,.wheel-entry{position:absolute;top:120px;left:0;width:100%;height:44px;margin:0;border:0;border-block:1px solid var(--line);border-radius:0;background:var(--paper);color:var(--accent);font:700 1.9rem/44px Journal;text-align:center;padding:0;white-space:nowrap}
-.wheel-value::after{display:none}
-.wheel-entry{display:flex;align-items:center}
-.wheel-entry[hidden],.wheel-value[hidden]{display:none}
-.wheel-entry input{width:100%;min-width:0;border:0;background:transparent;box-shadow:none;color:inherit;text-align:center;font:inherit;padding:0;height:42px;outline-offset:-2px;border-radius:0}
-.wheel-sign{font:600 1.2rem Source;flex:0 0 36px;padding:0;min-height:44px;border:0;background:transparent}
-.number-change-error{color:var(--danger);font-weight:600}.number-change-error:empty{display:none}
-.number-help{font-size:.85rem;color:var(--muted);margin:0;text-align:center}.number-breakdown{font-size:.9rem;margin:0;max-width:50ch}
-.number-value{cursor:pointer;font-weight:600;background:var(--panel);border-color:var(--line)}
-.number-clear{font-size:.8rem;margin-top:6px;min-height:36px}
-@media(max-height:600px){.number-change-body{gap:8px}.number-change-body .wizard-art{height:52px}.number-change-body{padding-top:8px}.number-change-dialog .dialog-heading{padding-block:12px}}
-/* The selected button lives in its scroll row, so swiping it retains native inertia. */
-.change-wheel-row .wheel-value{position:static;display:block;height:44px;width:100%;line-height:44px;min-height:44px;overflow:hidden;text-overflow:ellipsis}
-.change-wheel-row:has(.wheel-value){font-weight:700}
-
-/* P01: popups use the whole screen, including lookups below a number editor. */
+/* #25: an anchored dialog with independent wheel tracks and a shared number pad. */
 dialog,dialog[data-size=large]{inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:100dvh;border:0;border-radius:0}
 dialog>form{height:100%}
 .dialog-heading{padding-top:max(18px,env(safe-area-inset-top))}
-.number-change-dialog{--wheel-row:max(44px,2.2rem)}
-.change-wheel-track{height:calc(5 * var(--wheel-row));padding-block:calc(2 * var(--wheel-row));line-height:var(--wheel-row)}
-.change-wheel-row,.change-wheel-row .wheel-value{height:var(--wheel-row);min-height:var(--wheel-row);line-height:var(--wheel-row)}
-.wheel-entry{top:calc(32px + 2 * var(--wheel-row));height:var(--wheel-row)}
-.wheel-entry input{height:calc(var(--wheel-row) - 2px)}
+dialog.number-change-dialog{position:fixed;inset:0;max-height:none;overflow:hidden;overscroll-behavior:none;--dialog-padding:clamp(16px,5vw,32px);--wheel-row:max(46px,2.6rem);--number-area:max(300px,calc(5 * var(--wheel-row) + 2rem))}
+.number-change-dialog>form{height:100%;max-height:100%;min-height:0;overflow:hidden}
+.number-change-dialog .dialog-heading{align-items:center;gap:12px;flex-shrink:0;padding-top:max(16px,env(safe-area-inset-top))}
+.number-change-dialog h2{font-size:clamp(1.35rem,5vw,2rem);margin:0;overflow-wrap:anywhere;flex:1;min-width:0}
+.number-change-dialog h2::after{display:none}
+/* The heading is an announcement target, not an interactive control. */
+#number-change-title:focus{outline:none}
+.number-title-icon{display:none;color:var(--accent);flex-shrink:0}
+.number-change-body{overflow-y:auto;overscroll-behavior:none;flex:1;min-height:0;padding:12px var(--dialog-padding) 20px;display:flex;align-items:center;flex-direction:column;gap:12px}
+.number-change-body .wizard-art{height:64px;flex-shrink:0;margin:0;max-width:260px;width:100%}
+.number-change-body .wizard-art>.icon{width:44px;height:44px}
+.number-comparison{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1.4fr);align-items:center;gap:12px;width:min(100%,540px);flex-shrink:0;font-family:Journal}
+.number-comparison>span{min-width:0;overflow-wrap:anywhere;text-align:center}
+.number-comparison small{display:block;font:500 1.05rem/1.2 Source;color:var(--muted);margin-bottom:4px}
+.number-comparison b{display:block;line-height:1.1;font-weight:600}
+.number-before b{font-size:clamp(1.9rem,7vw,2.6rem)}
+.number-after b{font-size:clamp(2.5rem,12vw,3.5rem);color:var(--accent)}
+.number-comparison [data-detail]{display:block;font:400 .95rem/1.3 Source;color:var(--muted);margin-top:6px}
+.number-comparison [data-detail]:empty{display:none}
+.number-result-arrow{font-size:1.7rem}
+.number-control-area{height:var(--number-area);min-height:var(--number-area);width:min(100%,460px);position:relative;display:grid;align-items:center}
+.change-wheels{display:flex;width:100%;gap:16px;justify-content:center;align-items:center}
+.change-wheel{position:relative;min-width:0;flex:1;max-width:300px;text-align:center;color:var(--accent)}
+.change-wheel-label{display:block;font-size:1rem;line-height:24px;height:24px;margin-bottom:8px}
+.change-wheel-window{position:relative}
+.change-wheel-track{height:calc(5 * var(--wheel-row));overflow-y:auto;overscroll-behavior:none;touch-action:pan-y pinch-zoom;scroll-snap-type:y mandatory;scrollbar-width:none;padding-block:calc(2 * var(--wheel-row));mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);font:500 1.8rem/var(--wheel-row) Journal}
+.change-wheel-track::-webkit-scrollbar{display:none}
+.change-wheel-row{height:var(--wheel-row);line-height:var(--wheel-row);scroll-snap-align:center;cursor:pointer;white-space:nowrap}
+.wheel-band{position:absolute;top:calc(2 * var(--wheel-row));left:0;right:0;height:var(--wheel-row);border-block:1px solid var(--line);pointer-events:none}
+.change-wheel-row .wheel-value{display:block;position:static;width:100%;height:var(--wheel-row);min-height:var(--wheel-row);line-height:var(--wheel-row);margin:0;padding:0;border:0;border-radius:0;background:transparent;color:var(--accent);font:700 2.1rem/var(--wheel-row) Journal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wheel-value::after{display:none}
+.change-wheel-row .wheel-value:active{transform:none}
+.number-entry-panel{height:100%;width:100%;max-width:340px;justify-self:center;display:grid;grid-template-rows:44px max(48px,2.7rem) minmax(0,1fr);gap:6px}
+.number-entry-toolbar{display:flex;align-items:center;gap:12px}
+.number-entry-back{width:44px;padding:8px;flex-shrink:0;display:grid;place-items:center}
+.number-entry-back .icon{transform:rotate(180deg)}
+.number-entry-tabs{display:flex;gap:8px;flex:1;justify-content:end}
+.number-entry-tabs button{padding:4px 16px;min-width:60px;line-height:1.1}
+.number-entry-tabs [aria-pressed=true]{border-color:var(--accent);background:var(--panel);font-weight:600}
+input.number-entry-input{width:100%;min-width:0;max-width:none;height:100%;min-height:48px;padding:0 6px;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;background:transparent;color:var(--accent);font:600 2.3rem/1 Journal;text-align:center;caret-color:var(--accent);touch-action:manipulation}
+.number-keypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(4,minmax(44px,1fr));gap:4px}
+.number-keypad button{padding:0;min-width:0;background:var(--panel);font:500 1.9rem Journal;touch-action:manipulation}
+.number-change-error{color:var(--danger);font-weight:600;max-width:50ch;flex-shrink:0}.number-change-error:empty{display:none}
+.number-help{font-size:.85rem;color:var(--muted);margin:0;text-align:center;flex-shrink:0}
+.number-breakdown{font-size:.9rem;margin:0;max-width:50ch;flex-shrink:0}
+.number-value{cursor:pointer;font-weight:600;background:var(--panel);border-color:var(--line)}
+.number-clear{font-size:.8rem;margin-top:6px;min-height:36px}
 .number-change-dialog .dialog-actions>button{padding:10px 8px;white-space:nowrap;overflow-wrap:normal}
-@media(max-height:600px){
- .number-change-body{gap:6px}
- .number-change-body .wizard-art{height:24px}
- .number-change-body .wizard-art>.icon{width:24px;height:24px}
- .number-change-body .wizard-orbit{display:none}
-}
 input.number-value{appearance:textfield;caret-color:transparent}
 input.number-value::-webkit-inner-spin-button,input.number-value::-webkit-outer-spin-button{appearance:none;margin:0}
+@media(max-height:700px){
+ .number-change-body{gap:8px;padding-top:8px;padding-bottom:12px}
+ .number-change-body>.wizard-art{display:none}
+ .number-title-icon{display:block}
+ .number-title-icon>.icon{width:24px;height:24px}
+ .number-change-dialog .dialog-heading{padding-bottom:12px}
+}
+
+input.number-entry-input:focus{outline:none;box-shadow:0 2px 0 var(--accent)}

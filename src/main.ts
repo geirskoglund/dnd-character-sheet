@@ -273,11 +273,11 @@ function levelUp(c: Character) {
   form.addEventListener('change', () => bindSubclass(form));
   update();
 }
-function editHitPoints(c: Character) {
+function editHitPoints(c: Character, damageOnly=false) {
   changeHp({...c.hp,max:effectiveMaxHp(c)},async delta=>{
     await saveCharacter({...c,hp:hpAfterItemChange(c,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
     message='';await refresh();
-  });
+  },{damageOnly});
 }
 
 function editOverrides(c: Character) {
@@ -342,7 +342,8 @@ async function action(name: string) {
     case 'edit': editCharacter(c); break;
     case 'edit-equipment': addEquipment(c!); break;
     case 'level-up': levelUp(c!); break;
-    case 'hp': case 'hp-change': editHitPoints(c!); break;
+    case 'hp': editHitPoints(c!); break;
+    case 'hp-change': editHitPoints(c!,true); break;
     case 'overrides': editOverrides(c!); break;
     case 'temp-hp': numberChangeDialog({name:'Temporary HP',icon:'healing',original:c!.hp.temp,min:0,
       preview:()=> 'Temporary HP stables ikke. Før inn forskjellen til totalen du skal beholde.',

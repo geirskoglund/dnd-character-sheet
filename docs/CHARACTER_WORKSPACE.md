@@ -460,6 +460,8 @@ Gjeldende GitHub-sak #25 (P01–P16, K1–K9 og AK-ID-er) er detaljkilden. Maste
 
 ### Kontrollresultat og dekning for #25
 
+Denne seksjonen dokumenterer første leveranse `dfe853e` før fysisk brukerreview. Nyere føringer og kontrollresultat står under oppfølgingen nederst.
+
 P-/K-tekstene vedlikeholdes i GitHub-saken; tabellen under viser kontrollbevis uten å erstatte kravene. Første regresjonskjøring fant en fokusreturfeil og to tester som brukte gammel betjening; fokusreturen ble rettet, testene ble tilpasset synlig dialogflyt, og berørte suiter bestod ved ny kjøring. Ingen assertioner/dekning er slått av. Fysisk iOS er fortsatt utestet.
 
 | Krav-ID | Implementasjon og faktisk kontroll | Resultat / gjenværende |
@@ -497,3 +499,28 @@ Gjennomgått med konkret Alva/Fighter og Alva Nattvind/Rogue5 (HP28/38, temp5), 
 På 390 px er Før/Etter, to parallelle hjul, midttrykk og separate OK/Avbryt synlige uten unødvendig inngangsknapp. På 320 px med 200 % tekst er illustrasjonen redusert, radhøyden følger skriften og knappene har lesbar tekst. Kort tastaturstørrelse beholder handlingene og lar innholdet rulle. Bilder ble inspisert manuelt; viewportreduksjon er en layoutprøve, ikke et ekte iPhone-tastatur. Underliggende felt/utkast er beholdt, og lagringsfeil vises uten å lukke. I motsetning til v0.11 og tidligere leveranse bruker alle hjul nå endringsbeløp i egen modal; dette følger #25, ikke prototypens gamle betjening.
 
 **Mergeport:** Teknisk implementasjon er klar til PR og testpublisering. Fysisk iPhone AK-K1/AK-K8/#26 skal prøves på testversjonen, og brukeren må uttrykkelig godkjenne merge. Ingen automatisk merge eller bekreftet fysisk iOS-retting inngår. Teststeg står i [TESTING.md](TESTING.md#test-av-tallendringsdialogen-25).
+
+## Før-koding-kontroll: oppfølging av #25 etter fysisk brukerreview
+
+Brukerens uttrykkelige bestilling følger gjennomgangen i denne tråden. Forrige publiserte utgave `dfe853e` er prøvd på fysisk iOS som installert webapp med eget ikon: brukeren bekrefter første trykk på knapper uten det tidligere fokusproblemet, og korrekt temp-HP-absorpsjon. Dette gjelder den prøvde utgaven og erstatter ikke ny fysisk kontroll etter følgende endringer. iOS-versjon og separat nettlesersammenligning er ikke oppgitt.
+
+Nyeste avklaring går foran eldre betjeningsdetaljer: eget tallpanel erstatter hjulområdet ved midttrykk; systemtastaturet skal ikke skjule tallet. Spinnerbåndet og popupen skal stå stille. Etter er den viktigste tallvisningen, Før/Etter og hjultall blir større; generell Endring-etikett tas bort, mens pengekolonnene heter GP/CP. Overskriften får ikke automatisk rød fokusramme, og tastaturbetjening beholder synlig fokus. Hjelpetekstens størrelse beholdes.
+
+| Flyt / scenario | Kilde og karaktertilstand | Forventet spilleropplevelse | Testreferanse og kjøreresultat | Mobilgjennomgang / forskjell fra referanse | Status / gjenværende avvik |
+| --- | --- | --- | --- | --- | --- |
+| Visuell prioritet og fast bånd | Brukerreview #25; Alva Fighter1, maks HP12 / egne tall i skjema | Tydelig større Før/Etter, Etter størst, litt større spinnertekst. Ingen synlig Endring-etikett eller automatisk rød overskriftsramme. Båndets koordinater står stille mens tallene flytter seg og snapper | `number-review.spec.ts`: fast bånd under native rulling, ingen heading-ramme, Etter større enn Før/spinner; bestått | Faktiske bilder gjennomgått på 320/390 px og 200 % tekst; tall tilpasses bredden uten unødvendig linjebrudd | Verifisert i Chromium; ny fysisk etterkontroll gjenstår |
+| Dialog uten bakgrunnsdrag | Fysisk observert på installert iPhone; samme karakter og uferdig veiviser under | Sveip over/under/ved siden av hjulet flytter ikke popupen eller avdekker bakgrunnen. Innhold kan rulles internt ved faktisk plassbehov; underliggende scroll/utkast bevares ved lukking | `number-review.spec.ts`: CDP-touch på begge sider, over og under; dialogens koordinater og retur-scroll beholdt; bestått | Fysisk iOS må etterprøves; ingen deaktivering av tilgjengelig zoom | Verifisert i Chromium; ny fysisk etterkontroll gjenstår |
+| Eget tallpanel | Brukerens godkjente forslag; heltall og beløp, start 0 og ikke-null | Midttrykk erstatter hjulområdet med store talltaster, ± og slett. Før/Etter og OK/Avbryt beholder plasseringen; tallet skjules ikke av systemtastatur. Vanlig tastatur, lim inn, grensekontroll, retur til hjul og første trykk fungerer | `number-review.spec.ts`: talltaster, vanlig tastatur og ekte clipboard-paste, stabil Før/Etter/footer og ingen klipt input ved 200 % tekst; bestått | Erstattet det tidligere systemtastaturet etter brukerens avklaring | Verifisert i Chromium; ny fysisk etterkontroll gjenstår |
+| Penger GP/CP | #25 P07/P09/P16, ny brukeravklaring; Alva med 10,50 GP | GP og CP over hjulene. Begge hjul bruker samme panel og grenser; −10/−50 gir 0, 10/−20 fra0 gir9,80. Eksakt CP-lagring og Angre beholdes | `number-dialog.spec.ts`, `illustrated.spec.ts` og domenetestene: GP/CP, fortegn, grenser, eksakt beløp og Angre; bestått | To hjul, én delt inntastingsflate, tydelig valgt kolonne | Verifisert i Chromium; ny fysisk etterkontroll gjenstår |
+| HP-pille og Ta skade | Brukerens eksplisitte presisering (HP19/21, temp3); automatisk prøve Alva Fighter1 HP7/12, temp3 | HP-pille åpner Endre HP med skade/healing. Ta skade åpner samme komponent med tittelen Ta skade og bare 0/negative endringer. Temp HP absorberer først og resultat har minimum0. Vanlig HP og temp HP vises hver for seg | `number-review.spec.ts`: Ta skade +100 → 0 endring, −5 gir HP7 →5/temp3 →0; Angre og healing via HP-pille. Eksisterende HP/retry bestått | Midlertidig parameterstyrt flyt frem til egen skadekalkulator; ingen ny regelmotor | Verifisert i Chromium; ny fysisk etterkontroll gjenstår |
+
+
+### Faktisk produktgjennomgang av oppfølgingen
+
+Full lokal `CI=1 CHROMIUM_PATH=/usr/bin/chromium npm run check` bestod med 152 enhets-/integrasjonstester, TypeScript/Vite/PWA-bygg og 91 nettlesertester. Etter siste tilpasning av tallfeltets høyde ved 200 % tekst ble oppfølgingssuiten kjørt separat: 5/5 bestått, inkludert ekte clipboard-paste via Ctrl/Cmd+V. Bildeprøvene for HP/panel/mobil bestod også. Ingen tester ble deaktivert.
+
+Før/Etter og tallet i input er inspisert på faktiske Chromium-bilder. Etter er større enn Før og spinneren; vanlig HP og temp HP skilles, og Ta skade viser bare 0/negative hjulverdier. GP/CP deler ett panel med tydelig valgt kolonne. Ved 320 × 568 px har input, alle talltaster og OK/Avbryt plass ved normal tekst. Ved 200 % tekst kan innhold rulles internt; feltets høyde følger skriften, tallet klippes ikke, og den faste dialogrammen/footer blir i viewporten. Illustrasjonen flyttes til en liten overskriftsmarkør på korte skjermer. Hjelpetekstens størrelse er beholdt og teksten tilpasses hjul/panel.
+
+Båndet ligger som et eget lag utenfor scroll-sporet. Native sveip fra midttallet og utenfor hjulene er prøvd, også etterrulling fulgt av inntasting. Underliggende veivisernoder, øvrige svar, utkast og scroll beholdes. Rullelåsen gjenoppretter bare stilene den selv endret; øvrig lokal tilstand beholdes. Pinch-zoom er ikke deaktivert. Kontroller og bilder ligger i [produktbildene](reviews/number-dialog/README.md).
+
+Den tidligere positive fysiske iOS-observasjonen gjelder `dfe853e`. Nytt tallpanel og rullelås er teknisk verifisert i Chromium; fysisk etterkontroll av den nye publiserte utgaven og brukerens uttrykkelige mergegodkjenning gjenstår. Ta skade er fortsatt en parameterstyrt snarvei til HP-endring, ikke en ferdig skadekalkulator.

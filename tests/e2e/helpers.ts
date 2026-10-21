@@ -62,12 +62,20 @@ export async function choose(page:Page,name:string,option:string|{label:string}|
  if(label===undefined)throw new Error('Fant ikke valget i '+name);
  await page.getByRole('dialog').locator('[data-wizard-active]').getByRole('button',{name:label,exact:true}).click();
 }
+export async function typeWheelText(page:Page,name:string,value:string){
+ const label=name==='Hele GP'?'GP':name==='Hundredeler'?'CP':name;
+ const input=page.locator('dialog.number-change-dialog').getByRole('textbox',{name:label,exact:true});
+ await input.press('ControlOrMeta+A');
+ if(value)await input.pressSequentially(value);else await input.press('Backspace');
+}
 export async function wheelEntry(page:Page,name:string,value:string){
- const d=page.locator('dialog.number-change-dialog');
- await d.getByRole('button',{name:`Skriv inn ${name}`,exact:true}).click();
- await d.getByRole('textbox',{name,exact:true}).fill(value);
- // Commit/blur uses the same public action as tapping outside the keyboard on a phone.
- await d.getByRole('heading').click();
+ const label=name==='Hele GP'?'GP':name==='Hundredeler'?'CP':name;
+ const d=page.locator('dialog.number-change-dialog'),input=d.getByRole('textbox',{name:label,exact:true});
+ if(!await input.isVisible()){
+  if(await d.locator('.number-entry-panel').isVisible())await d.locator('.number-entry-tabs').getByRole('button',{name:label,exact:true}).click();
+  else await d.getByRole('button',{name:`Skriv inn ${label}`,exact:true}).click();
+ }
+ await typeWheelText(page,label,value);await d.getByRole('heading').click();
 }
 export async function setNumberField(page:Page,field:Locator,value:string){
  if(value===''){await field.locator('..').getByRole('button',{name:/^Fjern /}).click();return;}
