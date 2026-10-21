@@ -91,7 +91,7 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
   header.querySelector('#wizard-help')!.textContent=q.help;header.querySelector('.wizard-picture')!.innerHTML=wizardArt(q.art??(q.element.closest('[data-class-id]')?'feature':'note'));
   const progress=header.querySelector<HTMLElement>('.wizard-progress')!;progress.setAttribute('aria-valuemin','1');progress.setAttribute('aria-valuemax',String(list.length));progress.setAttribute('aria-valuenow',String(at+1));progress.setAttribute('aria-valuetext',`${at+1} av ${list.length}`);
   progress.innerHTML=list.map((_,i)=>`<span class="${i<at?'done':i===at?'current':''}"></span>`).join('');
-  back.hidden=at===0;submit.textContent=at===list.length-1?label:'Neste';submit.hidden=!!q.element.querySelector('[data-choice-field]')&&at<list.length-1;
+  back.hidden=at===0;submit.textContent=at===list.length-1?label:'Neste';
   q.element.querySelectorAll<HTMLButtonElement>('[data-wizard-choice]').forEach(button=>{
    const holder=button.closest<HTMLElement>('[data-choice-field]')!,field=holder.dataset.nativeChoice?q.element.querySelector<HTMLInputElement|HTMLSelectElement>(`[name="${CSS.escape(holder.dataset.nativeChoice)}"]`):holder.querySelector<HTMLInputElement>('input');
    const value=field instanceof HTMLInputElement&&field.type==='checkbox'?(field.checked?'yes':'no'):field?.value;
@@ -101,6 +101,8 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
     field.dispatchEvent(new Event('change',{bubbles:true}));goNext(true);
    };
   });
+  // An existing/default answer always has a visible way forward. Unanswered choices stay direct.
+  submit.hidden=!!q.element.querySelector('[data-choice-field]')&&!q.element.querySelector('[data-wizard-choice][aria-pressed=true]')&&at<list.length-1;
   updateValidity();body.scrollTop=0;
  };
  const updateValidity=()=>{

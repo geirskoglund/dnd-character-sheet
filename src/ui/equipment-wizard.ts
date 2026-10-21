@@ -53,6 +53,8 @@ export function equipmentWizard(ctx:EditorContext,initial:Item,editing=false){
   const path=work.screen==='effect'?questionPath():['name','overview','use'],at=work.screen==='effect'?Math.max(0,path.indexOf(work.question!)):work.screen==='name'||work.screen==='base'?0:work.screen==='use'?2:1;
   d=viewDialog(existing?'Rediger gjenstanden':'Ny gjenstand',`<div class="wizard-intro"><div class="wizard-progress" role="progressbar" aria-label="Fremdrift" aria-valuemin="1" aria-valuemax="${path.length}" aria-valuenow="${at+1}">${path.map((_,i)=>`<span class="${i<at?'done':i===at?'current':''}"></span>`).join('')}</div>${wizardArt(art)}<h3 id="wizard-question" tabindex="-1">${esc(title)}</h3><p id="wizard-help">${esc(help)}</p></div>${work.error?`<p class="warning" role="alert">${esc(work.error)}</p>`:''}<div class="equipment-answer">${html}</div><button type="button" class="wizard-discard" data-eq="discard">Forkast utkast</button>`,undefined,'large');
   d.dataset.wizard='true';d.dataset.equipmentEditor=entry.id;d.classList.add('equipment-editor');
+  const selected=d.querySelector<HTMLButtonElement>('.equipment-answer [data-eq][data-value][aria-pressed=true]');
+  if(selected&&!footer.includes('data-eq="next"'))footer+='<button type="button" class="eq-primary" data-eq="continue">Neste</button>';
   d.querySelector('.dialog-actions')!.innerHTML=footer;d.querySelector('form')!.noValidate=true;
   d.querySelector('form')!.onsubmit=e=>{e.preventDefault();void act(d.querySelector<HTMLButtonElement>('.dialog-actions .eq-primary')?.dataset.eq||'save');};
   const close=()=>void commitDialog(async()=>{await flush();await ctx.draftChanged?.();});
@@ -137,7 +139,9 @@ export function equipmentWizard(ctx:EditorContext,initial:Item,editing=false){
  }
  async function commit(){await commitDialog(async()=>{const c=result(),token=await flush();await ctx.save(c,'equipment',name()+(existing?' redigert':' lagt til'),token);});}
  function trySave(){if(!readVisible()||!applyPending())return;if(!work.item.name.trim()){work.screen='name';work.error='Skriv navnet på gjenstanden.';draw();return;}if(!existing&&work.item.category==='armor'&&!work.item.armorProfile&&!work.item.definitionRef){go('armor');return;}if(!existing&&work.item.category==='weapon'&&!weaponProfile(work.item)&&!work.item.attack&&!work.item.damageOverride){work.screen='base';draw();return;}if(!work.item.equipped||work.item.hand==='none'){go('use');return;}void commit();}
- async function act(action:string,value?:string){work.error='';switch(action){
+ async function act(action:string,value?:string){work.error='';
+  if(action==='continue'){const selected=d.querySelector<HTMLButtonElement>('.equipment-answer [data-eq][data-value][aria-pressed=true]');if(selected)await act(selected.dataset.eq!,selected.dataset.value);return;}
+  switch(action){
  case 'base':{const base=instantiateEquipment(value!,false);work.item={...base,id:work.item.id,name:work.item.name||base.name};work.screen='name';draw();break;}
  case 'next':if(!readVisible())return;if(work.screen==='name')go('overview');else if(work.screen==='armor')go('armorDex');else{const e=p(),q=work.question!;if(q==='amount')qgo('conditional');else if(q==='count'||q==='expression')qgo('damageType');else if(q==='condition')finishEffect();else if(q==='description')qgo('activation');else if(q==='max')qgo('recharge');}break;
  case 'back':if(work.screen==='effect'&&work.trail.length)work.question=work.trail.pop();else work.screen=work.history.pop()||'overview';draw();break;

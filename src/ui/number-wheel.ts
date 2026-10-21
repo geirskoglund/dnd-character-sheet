@@ -8,7 +8,14 @@ export function enhanceNumbers(root:ParentNode){
   const label=input.getAttribute('aria-label')||input.closest('label')?.childNodes[0]?.textContent?.trim()||input.name;
   input.setAttribute('aria-label',label);input.setAttribute('aria-haspopup','dialog');
   // Keep native numeric validation and FormData, but send actual user input through the modal.
-  input.inputMode='none';input.classList.add('number-value');
+  input.inputMode='none';input.classList.add('number-value');input.placeholder||='—';
+  const pill=input.closest('label');
+  if(pill){
+   pill.classList.add('number-pill');
+   const caption=document.createElement('small');caption.textContent=label;
+   for(const node of [...pill.childNodes])if(node.nodeType===Node.TEXT_NODE)node.remove();
+   pill.prepend(caption);
+  }
   const open=()=>{
    if(input.disabled||input.closest('[inert]'))return;
    const original=Number.isFinite(input.valueAsNumber)?input.valueAsNumber:0;

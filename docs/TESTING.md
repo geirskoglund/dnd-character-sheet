@@ -73,3 +73,9 @@ Primær test er installert **My D&D Test** på fysisk iPhone. Gjenta tastaturpr�
 5. Åpne utstyrsvelger og innholdsbibliotek på nytt. Søk skal ikke få fokus eller åpne tastaturet automatisk. Trykk søk aktivt og skriv direkte. Kontroller Character, Combat, Magi, Utstyr og meny: ingen røde fokusrammer skal dukke opp.
 
 Rapporter iOS-versjon, installert modus/nettleser, PR/commit og konkret forløp ved avvik. Chromium-testene og de simulerte viewportene dokumenterer ikke fysisk iPhone-tastatur. Fysisk kontroll og uttrykkelig mergegodkjenning gjenstår ved overlevering.
+
+### Etterkontroll av PWA-reviewet
+
+- **Valgt svar og Neste:** Ny Jones → Dragonborn → Rogue. «Ingen / ikke valgt» skal ha Neste. Gå videre, Tilbake, velg Thief og gå Tilbake igjen. Det markerte svaret og Neste skal vises sammen. Lukk hele veiviseren og gjenoppta utkastet. Gjenta med et allerede valgt utstyrssvar.
+- **Tall og klassehandlinger:** Klassenivå og maks HP skal vises i en midtstilt pille med ledetekst inni, ramme og hjørnetrekant som Combat. Trykk også på ledeteksten. Prøv én og to klasser; + Klasse og Fjern klasse skal være kompakte også i installert PWA. Prøv kort skjerm og stor tekst, med intern rulling der det trengs.
+- **Feltgrenser:** Notattittel er én linje / 100 tegn; notattekst tillater linjeskift / 10 000 tegn. Manuell angrepstekst for utstyr er én linje / 1 000 tegn. Prøv typing og lim inn, samt Avbryt/X. Grensene er feltinnstillinger; en avbrutt editor skal aldri endre feltet under.

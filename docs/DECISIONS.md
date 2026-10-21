@@ -403,3 +403,7 @@ Brukeren bekrefter at knapper virket på første trykk i forrige testversjon `df
 ## UI-prinsipper og primærbruk som PWA (2026-10-22)
 
 Brukeren har bestilt implementasjon av [#58](https://github.com/geirskoglund/dnd-character-sheet/issues/58) og presisert at primærbruken er som PWA. Sakens teksteditor, grafiske tallverdier, validering, kompakte valg og fokusføring er gjeldende; GP07 og WP04 erstatter eldre ekstra fokusrammer og Fjern verdi-kontroll. Fysisk iPhone i installert testapp og nettleser skal etterprøves før merge; leveransen skal være åpen PR og publisert testversjon, uten merge før uttrykkelig brukergodkjenning.
+
+### Oppfølging etter brukerens PWA-review av PR #59
+
+Brukeren bestilte samlet rettelse av valgt-tilstand/Neste, tallpillenes utforming, store tomme handlingsknapper og teksteditorens feltinnstillinger. Standard-/tidligere svar skal ha Neste; ubesvarte direktevalg består. Tallpillene skal følge den viste Combat-referansen med intern ledetekst, midtstilling og hjørnetrekant. Linjeskift og tekstlengde bestemmes per editorinstans. Brukerens «ellers fungerer det bra» er en positiv observasjon av øvrig flyt, ikke mergegodkjenning eller en detaljert fysisk testkvittering for alle tidligere akseptansescenarier.

@@ -1,5 +1,7 @@
 # Produktgjennomgang av #58
 
+**Nyeste vurdering:** Se [oppfølgingen etter PWA-review](followup/README.md). Den erstatter vurderingen av tallpillene, valgt svar/Neste og + Klasse nedenfor.
+
 Kilde: [gjeldende sak](https://github.com/geirskoglund/dnd-character-sheet/issues/58). Primærbruk er installert PWA; bildene her er faktiske Chromium-rendringer, ikke fysisk iPhone eller native tastatur. Mastergrunnlag for før-bildene: `c32c4d0`.
 
 ## Art og klasse før/etter

@@ -1,3 +1,4 @@
+import {constrainText,type TextEditorFieldOptions} from './text-editor-options';
 import {icon} from './icons';
 
 export type TextField = HTMLInputElement | HTMLTextAreaElement;
@@ -15,7 +16,14 @@ export function validField(field: HTMLInputElement | HTMLTextAreaElement | HTMLS
 }
 
 /** A separate top-layer editor keeps the caller's actual nodes, listeners and draft alive. */
-export function editText(field: TextField) {
+function fieldOptions(field:TextField, options:TextEditorFieldOptions = {}) {
+  const multiline=options.multiline??(field.dataset.textMultiline===undefined?field instanceof HTMLTextAreaElement:field.dataset.textMultiline==='true');
+  const configured=options.maxLength??(field.dataset.textMaxlength===undefined?undefined:Number(field.dataset.textMaxlength));
+  const nativeLimit=field.maxLength<0?undefined:field.maxLength;
+  const limits=[nativeLimit,configured].filter((value):value is number=>value!==undefined&&Number.isSafeInteger(value)&&value>=0);
+  return {multiline,maxLength:limits.length?Math.min(...limits):undefined};
+}
+export function editText(field: TextField, options:TextEditorFieldOptions = {}) {
   if (field.disabled || field.closest('[inert]') || document.querySelector('.text-editor[open],.number-change-dialog[open]')) return;
   const opener = document.activeElement as HTMLElement | null;
   const returnScroll = window.scrollY;
@@ -25,14 +33,20 @@ export function editText(field: TextField) {
   d.setAttribute('aria-labelledby', 'text-editor-title');
   d.innerHTML = `<form novalidate><div class="dialog-heading"><span class="text-title-icon" aria-hidden="true">${icon('note')}</span><h2 id="text-editor-title"></h2><button type="button" class="dialog-close" data-dismiss aria-label="Avbryt tekstredigering">${icon('close')}</button></div><div class="text-editor-body"></div><div class="dialog-actions"><button type="button" data-dismiss>Avbryt</button><button type="submit">OK</button></div></form>`;
   d.querySelector('h2')!.textContent = label;
-  const input = document.createElement(field instanceof HTMLTextAreaElement ? 'textarea' : 'input');
+  const settings=fieldOptions(field,options);
+  const input = document.createElement(settings.multiline ? 'textarea' : 'input');
   if (input instanceof HTMLInputElement) input.type = field instanceof HTMLInputElement ? field.type : 'text';
   input.value = field.value;
+  const initialValue=input.value;
   input.setAttribute('aria-label', label);
   input.placeholder = field.placeholder || 'Skriv inn...';
   for (const attr of ['maxlength', 'minlength', 'pattern', 'autocomplete', 'spellcheck', 'autocapitalize', 'inputmode']) {
     if (field.hasAttribute(attr)) input.setAttribute(attr, field.getAttribute(attr)!);
   }
+  if(settings.maxLength!==undefined)input.maxLength=settings.maxLength;
+  const constrain=()=>{const value=constrainText(input.value,settings);if(value===input.value)return;const start=input.selectionStart,end=input.selectionEnd;input.value=value;if(start!==null&&end!==null)input.setSelectionRange(Math.min(start,value.length),Math.min(end,value.length));};
+  input.addEventListener('input',event=>{if(!(event as InputEvent).isComposing)constrain();});
+  input.addEventListener('compositionend',constrain);
   if(field instanceof HTMLInputElement&&field.list&&input instanceof HTMLInputElement){
     const suggestions=field.list.cloneNode(true) as HTMLDataListElement;
     suggestions.id='text-editor-suggestions';input.setAttribute('list',suggestions.id);d.append(suggestions);
@@ -85,7 +99,9 @@ export function editText(field: TextField) {
   });
   d.querySelector('form')!.onsubmit = event => {
     event.preventDefault();
-    const value = input.value;
+    // Opening/confirming an unchanged legacy value must not truncate registered data.
+    if(input.value===initialValue){close();return;}
+    constrain();const value = input.value;
     close();
     if (field.value !== value) {
       field.value = value;
@@ -100,6 +116,7 @@ export function editText(field: TextField) {
 export function enhanceText(root: ParentNode) {
   root.querySelectorAll<TextField>('input:not([type]),input[type="text"],input[type="url"],input[type="email"],textarea').forEach(field => {
     if (field.dataset.textBound || field.readOnly || field.closest('.text-editor') || field.matches('[data-direct-text]')) return;
+    const settings=fieldOptions(field);if(settings.maxLength!==undefined)field.maxLength=settings.maxLength;
     field.dataset.textBound = 'true'; field.readOnly = true;
     if(field instanceof HTMLTextAreaElement){const preview=()=>field.rows=Math.min(4,Math.max(1,field.value.split('\n').length));preview();field.addEventListener('input',preview);}
     field.classList.add('text-value'); field.placeholder ||= 'Skriv inn...';

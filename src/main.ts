@@ -1,3 +1,4 @@
+import {textArea} from './ui/record-fields';
 import {numberChangeDialog} from './ui/number-change-dialog';
 import {effectiveMaxHp} from './domain/item-effects';
 import {isTestApp,testVersion} from './app-environment';
@@ -300,7 +301,7 @@ function editOverrides(c: Character) {
 function editNote(id?: string) {
   const draft = structuredClone(current()!);
   const note = draft.notes.find(n => n.id === id) ?? { id: crypto.randomUUID(), title: '', body: '' };
-  const d = dialog(id ? 'Rediger notat' : 'Nytt notat', `${field('Tittel', 'title', note.title, 'required maxlength="100"')}<label>Tekst<textarea name="body" maxlength="10000" rows="8">${esc(note.body)}</textarea></label>${id ? '<button type="button" id="delete-note">Slett notat</button>' : ''}`, async form => {
+  const d = dialog(id ? 'Rediger notat' : 'Nytt notat', `${field('Tittel', 'title', note.title, 'required maxlength="100"',{multiline:false,maxLength:100})}${textArea('Tekst','body',note.body,8,{multiline:true,maxLength:10000})}${id ? '<button type="button" id="delete-note">Slett notat</button>' : ''}`, async form => {
     const data = new FormData(form);
     note.title = String(data.get('title')).trim(); note.body = String(data.get('body'));
     if (!id) draft.notes.push(note);

@@ -1,6 +1,7 @@
+import {textEditorAttributes,type TextEditorFieldOptions} from './text-editor-options';
 import { escapeHtml as esc, field, select } from './html';
 export { field, select, esc };
-export const textArea = (label: string, name: string, value = '', rows = 4) => `<label>${esc(label)}<textarea name="${name}" maxlength="10000" rows="${rows}">${esc(value)}</textarea></label>`;
+export const textArea = (label: string, name: string, value = '', rows = 4, textOptions:TextEditorFieldOptions = {}) => `<label>${esc(label)}<textarea name="${name}" maxlength="${textOptions.maxLength??10000}" rows="${rows}"${textEditorAttributes({multiline:true,...textOptions})}>${esc(value)}</textarea></label>`;
 export const check = (label: string, name: string, value = false) => `<label class="check"><input type="checkbox" name="${name}" ${value ? 'checked' : ''}>${esc(label)}</label>`;
 export const numberField = (label: string, name: string, value: unknown, attrs = '') => field(label, name, value, `type="number" step="1" ${attrs}`);
 export const options = (values: readonly string[]) => values.map(value => ({value, label:value}));

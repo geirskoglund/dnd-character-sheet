@@ -1,0 +1,130 @@
+[
+  {
+    "name": "subclass-default-390",
+    "width": 390,
+    "height": 844,
+    "addClass": {
+      "height": 44,
+      "width": 79.546875,
+      "cssHeight": "44px"
+    },
+    "selected": [
+      "Ingen / ikke valgt"
+    ],
+    "next": 1
+  },
+  {
+    "name": "level-390",
+    "width": 390,
+    "height": 844,
+    "addClass": {
+      "height": 44,
+      "width": 79.546875,
+      "cssHeight": "44px"
+    },
+    "selected": [],
+    "next": 1
+  },
+  {
+    "name": "subclass-back-390",
+    "width": 390,
+    "height": 844,
+    "addClass": {
+      "height": 44,
+      "width": 79.546875,
+      "cssHeight": "44px"
+    },
+    "selected": [
+      "Thief"
+    ],
+    "next": 1
+  },
+  {
+    "name": "subclass-multiclass-390",
+    "width": 390,
+    "height": 844,
+    "addClass": {
+      "height": 44,
+      "width": 79.546875,
+      "cssHeight": "44px"
+    },
+    "selected": [
+      "Ingen / ikke valgt"
+    ],
+    "next": 1
+  },
+  {
+    "name": "level-multiclass-390",
+    "width": 390,
+    "height": 844,
+    "addClass": {
+      "height": 44,
+      "width": 79.546875,
+      "cssHeight": "44px"
+    },
+    "selected": [],
+    "next": 1
+  },
+  {
+    "name": "level-multiclass-320",
+    "width": 320,
+    "height": 568,
+    "addClass": {
+      "height": 44,
+      "width": 84.6875,
+      "cssHeight": "44px"
+    },
+    "selected": [],
+    "next": 1
+  },
+  {
+    "name": "level-multiclass-320-large",
+    "width": 320,
+    "height": 568,
+    "addClass": {
+      "height": 80.390625,
+      "width": 167.40625,
+      "cssHeight": "80.3906px"
+    },
+    "selected": [],
+    "next": 1
+  },
+  {
+    "name": "level-multiclass-320-large-value",
+    "width": 320,
+    "height": 568,
+    "addClass": {
+      "height": 80.390625,
+      "width": 167.40625,
+      "cssHeight": "80.3906px"
+    },
+    "selected": [],
+    "next": 1
+  },
+  {
+    "name": "hp-390",
+    "width": 390,
+    "height": 844,
+    "addClass": null,
+    "selected": [],
+    "next": 0
+  },
+  {
+    "name": "equipment-default-390",
+    "width": 390,
+    "height": 844,
+    "addClass": null,
+    "selected": [
+      "Øk eller reduser med"
+    ],
+    "next": 1
+  },
+  {
+    "name": "equipment-number-390",
+    "width": 390,
+    "height": 844,
+    "addClass": null,
+    "selected": [],
+    "next": 1
+  }
+]

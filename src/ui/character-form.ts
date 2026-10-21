@@ -28,7 +28,7 @@ export function characterForm(c: Character, creating: boolean) {
       ${field('Grunnfart for arten (ft)', 'speciesSpeed', c.species.walkingSpeed ?? '', 'type="number" min="0"')}
       <label class="check"><input type="checkbox" name="ignoreArmorPenalty" ${c.species.ignoresHeavyArmorSpeedPenalty ? 'checked' : ''}>Heavy armor reduserer ikke artens speed</label>
     </div></fieldset>
-    <fieldset><legend tabindex="-1">Klasse og nivå</legend><div id="class-rows">${(c.classes.length ? c.classes : [undefined]).map(cl => classRow(cl)).join('')}</div><button type="button" class="pill" id="add-class">+ Klasse</button><p id="total-level"></p></fieldset>
+    <fieldset><legend tabindex="-1">Klasse og nivå</legend><div id="class-rows">${(c.classes.length ? c.classes : [undefined]).map(cl => classRow(cl)).join('')}</div><button type="button" id="add-class">+ Klasse</button><p id="total-level"></p></fieldset>
     <fieldset><legend tabindex="-1">Grunnverdier</legend><p>Angi endelige ability scores, inkludert bonuser.</p><div class="form-grid">${abilities.map(a => field(a, a, c.abilityScores[a], 'type="number" min="0" required')).join('')}</div>
     ${field('Maks HP fra karakterarket', 'hpMax', c.hp.max || '', 'type="number" min="1" required')}
     <p>På level 1: full Hit Die + Constitution modifier. Senere levels: fysisk kast eller fast verdi + Constitution modifier. Angi samlet maks HP her.</p>
