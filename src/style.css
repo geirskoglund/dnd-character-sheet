@@ -324,7 +324,7 @@ dialog.number-change-dialog{position:fixed;inset:0;max-height:none;overflow:hidd
 .number-entry-tabs{display:flex;gap:8px;flex:1;justify-content:end}
 .number-entry-tabs button{padding:4px 16px;min-width:60px;line-height:1.1}
 .number-entry-tabs [aria-pressed=true]{border-color:var(--accent);background:var(--panel);font-weight:600}
-input.number-entry-input{width:100%;min-width:0;max-width:none;height:100%;min-height:48px;padding:0 6px;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;background:transparent;color:var(--accent);font:600 2.3rem/1 Journal;text-align:center;caret-color:var(--accent);touch-action:manipulation}
+.number-entry-value{width:100%;min-width:0;max-width:none;height:100%;min-height:48px;padding:0 6px;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;background:transparent;color:var(--accent);font:600 2.3rem/1 Journal;text-align:center;display:grid;align-items:center;overflow:hidden;white-space:nowrap;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .number-keypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(4,minmax(44px,1fr));gap:4px}
 .number-keypad button{padding:0;min-width:0;background:var(--panel);font:500 1.9rem Journal;touch-action:manipulation}
 .number-change-error{color:var(--danger);font-weight:600;max-width:50ch;flex-shrink:0}.number-change-error:empty{display:none}
@@ -343,4 +343,5 @@ input.number-value::-webkit-inner-spin-button,input.number-value::-webkit-outer-
  .number-change-dialog .dialog-heading{padding-bottom:12px}
 }
 
-input.number-entry-input:focus{outline:none;box-shadow:0 2px 0 var(--accent)}
+.number-entry-value:focus{outline:none}
+.number-entry-value:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

@@ -1,11 +1,13 @@
 import type {Character} from '../domain/model';
 import {hpAfterChange} from '../domain/derived';
 import {numberChangeDialog} from './number-change-dialog';
-/** Damage remains a single existing domain operation including temporary HP absorption. */
-export function changeHp(hp:Character['hp'],save:(delta:number)=>Promise<void>,options:{damageOnly?:boolean}={}){
- const total=hp.current+hp.temp;
- return numberChangeDialog({name:'HP',title:options.damageOnly?'Ta skade':'Endre HP',icon:'healing',original:total,min:0,max:options.damageOnly?total:Math.max(total,hp.max+hp.temp),
-  comparison:delta=>{const after=hpAfterChange(hp,delta);return {before:{value:String(hp.current),detail:`av ${hp.max} HP · ${hp.temp} temp HP`},after:{value:String(after.current),detail:`av ${hp.max} HP · ${after.temp} temp HP`}};},
-  preview:delta=>{const after=hpAfterChange(hp,delta);return `HP ${hp.current} → ${after.current} / ${hp.max} · Temporary HP ${hp.temp} → ${after.temp}. Skade bruker Temporary HP først.`;},
-  onConfirm:async(_result,delta)=>{if(delta)await save(delta);}});
+/** Manual corrections touch ordinary HP only; damage consumes temporary HP first. */
+export function changeHp(hp:Character['hp'],save:(next:Character['hp'],delta:number)=>Promise<void>,options:{damageOnly?:boolean}={}){
+ const damage=options.damageOnly??false;
+ const after=(delta:number)=>damage?hpAfterChange(hp,delta):{...hp,current:Math.max(0,Math.min(hp.max,hp.current+delta))};
+ const detail=(value:Character['hp'])=>`av ${hp.max} HP${damage?` · ${value.temp} temp HP`:''}`;
+ return numberChangeDialog({name:'HP',title:damage?'Ta skade':'Endre HP',icon:'healing',original:damage?hp.current+hp.temp:hp.current,min:0,max:damage?hp.current+hp.temp:hp.max,
+  comparison:delta=>({before:{value:String(hp.current),detail:detail(hp)},after:{value:String(after(delta).current),detail:detail(after(delta))}}),
+  preview:delta=>`HP ${hp.current} → ${after(delta).current} / ${hp.max}. ${damage?`Temporary HP ${hp.temp} → ${after(delta).temp}. Skade bruker Temporary HP først.`:'Korrigerer bare vanlig HP. Temporary HP endres ikke.'}`,
+  onConfirm:async(_result,delta)=>{if(delta)await save(after(delta),delta);}});
 }

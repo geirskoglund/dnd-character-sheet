@@ -8,9 +8,9 @@ test('review: keypad replaces the wheels without moving the comparison or action
  const before=await d.locator('.number-comparison,.dialog-actions').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().y));
  await d.getByRole('button',{name:'Skriv inn GP',exact:true}).click();
  await expect(d.locator('.change-wheels')).toBeHidden();
- const input=d.getByRole('textbox',{name:'GP',exact:true});await expect(input).toHaveAttribute('readonly','');
+ const input=d.getByRole('textbox',{name:'GP',exact:true});await expect(input).toHaveAttribute('aria-readonly','true');
  for(const digit of ['1','2'])await d.locator('.number-keypad').getByRole('button',{name:digit,exact:true}).click();
- await expect(input).toHaveValue('12');
+ await expect(input).toHaveText('12');
  await expect(d.locator('.number-after b')).toHaveText('12,00');
  const after=await d.locator('.number-comparison,.dialog-actions').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().y));expect(after).toEqual(before);
  await d.getByRole('button',{name:'Tilbake til hjul',exact:true}).click();
@@ -18,7 +18,7 @@ test('review: keypad replaces the wheels without moving the comparison or action
  await d.getByRole('button',{name:'Skriv inn CP',exact:true}).click();
  await context.grantPermissions(['clipboard-read','clipboard-write']);await page.evaluate(()=>navigator.clipboard.writeText('-20'));
  await d.getByRole('textbox',{name:'CP',exact:true}).press('ControlOrMeta+A');await d.getByRole('textbox',{name:'CP',exact:true}).press('ControlOrMeta+V');
- await expect(d.getByRole('textbox',{name:'CP',exact:true})).toHaveValue('-20');await finish(page);
+ await expect(d.getByRole('textbox',{name:'CP',exact:true})).toHaveText('-20');await finish(page);
  await page.locator('[data-action="money"]').click();await expect(d.locator('.number-before b')).toHaveText('11,80');
 });
 
@@ -85,5 +85,7 @@ test('review: narrow mobile keypad stays visible without an OS keyboard and impo
  await page.screenshot({path:test.info().outputPath('money-320-text.png')});
  await d.getByRole('button',{name:'Skriv inn GP',exact:true}).click();const input=d.getByRole('textbox',{name:'GP',exact:true});
  expect(await input.evaluate(el=>el.clientHeight>=parseFloat(getComputedStyle(el).fontSize))).toBe(true);
- await input.scrollIntoViewIfNeeded();await expect(input).toBeInViewport();await page.screenshot({path:test.info().outputPath('keypad-320-text.png')});
+ await input.pressSequentially('25');await input.scrollIntoViewIfNeeded();await expect(input).toBeInViewport();await page.screenshot({path:test.info().outputPath('keypad-320-text.png')});
+ await input.press('ControlOrMeta+A');await input.pressSequentially('90071992547409');
+ expect(await input.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
 });

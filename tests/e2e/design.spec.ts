@@ -64,7 +64,7 @@ test('corner marks clickability without a different status surface and item stat
 });
 
 test('the signed number wheel scrolls down to damage, keeps the delta and supports undo',async({page})=>{
- await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
+ await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Ta skade',exact:true}).click();
  const wheel=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
  await wheel.hover();await page.mouse.wheel(0,352);await expect(wheel).toHaveAttribute('aria-valuenow','-8');
  await page.waitForTimeout(300);await expect(wheel).toHaveAttribute('aria-valuenow','-8');
@@ -79,9 +79,9 @@ test('HP keyboard, bounds and cancellation preserve the pending transaction',asy
  await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
  const wheel=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
  await wheel.focus();await page.keyboard.press('ArrowDown');await expect(wheel).toHaveAttribute('aria-valuenow','-1');
- await page.keyboard.press('Home');await expect(wheel).toHaveAttribute('aria-valuenow','-33');await expect(page.locator('.number-breakdown')).toContainText('HP 28 → 0');
- await page.keyboard.press('End');await expect(wheel).toHaveAttribute('aria-valuenow','10');await expect(page.locator('.number-breakdown')).toContainText('Temporary HP 5 → 5');
- await wheelEntry(page,'Endring','-1000');await expect(wheel).toHaveAttribute('aria-valuenow','-33');
+ await page.keyboard.press('Home');await expect(wheel).toHaveAttribute('aria-valuenow','-28');await expect(page.locator('.number-breakdown')).toContainText('HP 28 → 0');
+ await page.keyboard.press('End');await expect(wheel).toHaveAttribute('aria-valuenow','10');await expect(page.locator('.number-breakdown')).toContainText('Temporary HP endres ikke');
+ await wheelEntry(page,'Endring','-1000');await expect(wheel).toHaveAttribute('aria-valuenow','-28');
  await wheelEntry(page,'Endring','1000');await expect(wheel).toHaveAttribute('aria-valuenow','10');
  await page.keyboard.press('Escape');expect((await readState(page)).hp).toEqual({current:28,max:38,temp:5});
 });
@@ -153,7 +153,7 @@ test('journal components remain readable without overflow at 320/390 pixels and 
 });
 
 test('HP save failure preserves the chosen amount and retry commits once; wheel selection stays visible',async({page})=>{
- await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.locator('[data-action="hp"]').click();
+ await fixture(page);await page.getByRole('button',{name:'Combat',exact:true}).click();await page.getByRole('button',{name:'Ta skade',exact:true}).click();
  const slider=page.getByRole('spinbutton',{name:'Tallhjul: Endring',exact:true});
  await wheelEntry(page,'Endring','-8');await expect(slider).toHaveAttribute('aria-valuenow','-8');
  await page.evaluate(()=>{

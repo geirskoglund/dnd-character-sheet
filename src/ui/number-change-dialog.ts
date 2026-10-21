@@ -29,21 +29,22 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  const d=document.createElement('dialog');d.className='number-change-dialog';d.setAttribute('aria-labelledby','number-change-title');
  const scale=options.decimal?100:1;
  let whole=0,fraction=0,pending=false,editor:WheelKey|null=null;
+ let draft='',replaceAll=false,entryStart={whole:0,fraction:0};
  const format=(value:number)=>options.decimal?`${value<0?'−':''}${Math.floor(Math.abs(value)/100)},${String(Math.abs(value)%100).padStart(2,'0')}`:String(value);
  const labels:Record<WheelKey,string>={whole:options.decimal?(options.wholeLabel??'Heltall'):'Endring',fraction:options.fractionLabel??'Hundredeler'};
- d.innerHTML=`<form novalidate><div class="dialog-heading"><span class="number-title-icon" aria-hidden="true">${icon(options.icon??'emblem')}</span><h2 id="number-change-title" tabindex="-1">${esc(options.title??`Endre ${options.name}`)}</h2><button type="button" class="dialog-close" data-dismiss aria-label="Avbryt endring">${icon('close')}</button></div><div class="number-change-body">${wizardArt(options.icon??'emblem')}<div class="number-comparison" aria-live="polite"><span class="number-before"><small>Før</small><b></b><span data-detail></span></span><span class="number-result-arrow" aria-hidden="true">→</span><span class="number-after"><small>Etter</small><b></b><span data-detail></span></span></div><div class="number-control-area"><div class="change-wheels"></div><section class="number-entry-panel" aria-label="Skriv tallet" hidden><div class="number-entry-toolbar"><button type="button" class="number-entry-back" aria-label="Tilbake til hjul">${icon('arrow')}</button><div class="number-entry-tabs" ${options.decimal?'':'hidden'}><button type="button" data-edit-wheel="whole">${esc(labels.whole)}</button><button type="button" data-edit-wheel="fraction">${esc(labels.fraction)}</button></div></div><input class="number-entry-input" type="text" readonly inputmode="none" autocomplete="off" spellcheck="false"><div class="number-keypad" role="group" aria-label="Talltaster">${['1','2','3','4','5','6','7','8','9','±','0','⌫'].map(key=>`<button type="button" data-key="${key}" aria-label="${key==='±'?'Bytt fortegn':key==='⌫'?'Slett siffer':key}">${key}</button>`).join('')}</div></section></div><p class="number-help">Sveip opp eller ned. Trykk på midttallet for å skrive.</p><p class="number-breakdown" aria-live="polite"></p><p class="number-change-error" role="alert"></p></div><div class="dialog-actions"><button type="button" data-dismiss>Avbryt</button><button type="submit">OK</button></div></form>`;
+ d.innerHTML=`<form novalidate><div class="dialog-heading"><span class="number-title-icon" aria-hidden="true">${icon(options.icon??'emblem')}</span><h2 id="number-change-title" tabindex="-1">${esc(options.title??`Endre ${options.name}`)}</h2><button type="button" class="dialog-close" data-dismiss aria-label="Avbryt endring">${icon('close')}</button></div><div class="number-change-body">${wizardArt(options.icon??'emblem')}<div class="number-comparison" aria-live="polite"><span class="number-before"><small>Før</small><b></b><span data-detail></span></span><span class="number-result-arrow" aria-hidden="true">→</span><span class="number-after"><small>Etter</small><b></b><span data-detail></span></span></div><div class="number-control-area"><div class="change-wheels"></div><section class="number-entry-panel" aria-label="Skriv tallet" hidden><div class="number-entry-toolbar"><button type="button" class="number-entry-back" aria-label="Tilbake til hjul">${icon('arrow')}</button><div class="number-entry-tabs" ${options.decimal?'':'hidden'}><button type="button" data-edit-wheel="whole">${esc(labels.whole)}</button><button type="button" data-edit-wheel="fraction">${esc(labels.fraction)}</button></div></div><div class="number-entry-value" role="textbox" aria-readonly="true" aria-multiline="false" tabindex="0"></div><div class="number-keypad" role="group" aria-label="Talltaster">${['1','2','3','4','5','6','7','8','9','±','0','⌫'].map(key=>`<button type="button" data-key="${key}" aria-label="${key==='±'?'Bytt fortegn':key==='⌫'?'Slett siffer':key}">${key}</button>`).join('')}</div></section></div><p class="number-help">Sveip opp eller ned. Trykk på midttallet for å skrive.</p><p class="number-breakdown" aria-live="polite"></p><p class="number-change-error" role="alert"></p></div><div class="dialog-actions"><button type="button" data-dismiss>Avbryt</button><button type="submit">OK</button></div></form>`;
  document.body.append(d);
  const error=d.querySelector<HTMLElement>('.number-change-error')!,submit=d.querySelector<HTMLButtonElement>('[type=submit]')!;
- const wheelArea=d.querySelector<HTMLElement>('.change-wheels')!,panel=d.querySelector<HTMLElement>('.number-entry-panel')!,input=panel.querySelector<HTMLInputElement>('input')!;
+ const wheelArea=d.querySelector<HTMLElement>('.change-wheels')!,panel=d.querySelector<HTMLElement>('.number-entry-panel')!,entry=panel.querySelector<HTMLElement>('.number-entry-value')!;
  const delta=()=>Number(BigInt(whole)*BigInt(scale)+BigInt(fraction));
  const measure=document.createElement('canvas').getContext('2d')!;
  const fitComparison=()=>{
   if(!d.isConnected)return;
-  d.querySelectorAll<HTMLElement>('.number-comparison b').forEach(value=>{
+  d.querySelectorAll<HTMLElement>('.number-comparison b,.number-entry-value').forEach(value=>{
    value.style.fontSize='';const style=getComputedStyle(value);
    measure.font=`${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-   const width=measure.measureText(value.textContent??'').width;
-   if(width>value.clientWidth&&value.clientWidth>0)value.style.fontSize=`${Math.max(16,parseFloat(style.fontSize)*value.clientWidth/width*.98)}px`;
+   const width=measure.measureText(value.textContent??'').width,available=value.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
+   if(width>available&&available>0)value.style.fontSize=`${Math.max(16,parseFloat(style.fontSize)*available/width*.98)}px`;
   });
  };
  const comparisonObserver=new ResizeObserver(fitComparison);comparisonObserver.observe(d.querySelector('.number-comparison')!);
@@ -51,7 +52,7 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  const current=(which:WheelKey)=>which==='whole'?whole:fraction;
  const valid=()=>{
   const b=changeBounds(options.original,options);
-  return (!editor||parseWheelInteger(input.value)!==null)&&delta()>=b.min&&delta()<=b.max&&Number.isSafeInteger(delta());
+  return (!editor||draft===''||parseWheelInteger(draft)!==null)&&delta()>=b.min&&delta()<=b.max&&Number.isSafeInteger(delta());
  };
  const update=()=>{
   const result=changeResult(options.original,delta());
@@ -77,21 +78,22 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  const flush=()=>{
   wheels.forEach(w=>w.stop());
   if(editor===null)return true;
-  const parsed=parseWheelInteger(input.value);
-  if(parsed===null){
+  const parsed=draft===''?null:parseWheelInteger(draft);
+  if(draft!==''&&parsed===null){
    error.textContent='Skriv et heltall, med eventuelt + eller − foran. Komma og desimalpunkt kan ikke brukes i ett hjul.';
-   input.setAttribute('aria-invalid','true');return false;
+   entry.setAttribute('aria-invalid','true');return false;
   }
-  set(editor,parsed);input.removeAttribute('aria-invalid');
+  if(parsed!==null)set(editor,parsed);entry.removeAttribute('aria-invalid');
   editor=null;panel.hidden=true;wheelArea.hidden=false;drawAll();update();return true;
  };
  const edit=(which:WheelKey)=>{
   if(pending)return;
   if(editor!==null&&!flush())return;
   wheels.forEach(w=>w.stop());editor=which;
-  input.setAttribute('aria-label',labels[which]);input.value=String(current(which));
+  entryStart={whole,fraction};draft='';replaceAll=false;
+  entry.setAttribute('aria-label',labels[which]);entry.textContent='';entry.removeAttribute('aria-invalid');
   panel.querySelectorAll<HTMLButtonElement>('[data-edit-wheel]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.editWheel===which)));
-  wheelArea.hidden=true;panel.hidden=false;input.focus({preventScroll:true});input.select();update();
+  wheelArea.hidden=true;panel.hidden=false;entry.focus({preventScroll:true});update();
  };
  function wheel(which:WheelKey){
   const label=labels[which],shell=document.createElement('div');shell.className='change-wheel';
@@ -155,38 +157,42 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  }
  wheel('whole');if(options.decimal)wheel('fraction');
 
- /** Readonly prevents the OS keyboard. Physical keys and the button pad share the same text draft. */
- const replaceSelection=(text:string,backspace=false,forwardDelete=false)=>{
+ /** A plain, non-selectable display avoids native selection handles and the OS keyboard. */
+ const syncDraft=()=>{
+  entry.textContent=draft;
+  if(draft===''){
+   ({whole,fraction}=entryStart);error.textContent='';entry.removeAttribute('aria-invalid');update();
+  }else{
+   const parsed=parseWheelInteger(draft);
+   if(parsed!==null){entry.removeAttribute('aria-invalid');set(editor!,parsed);}else update();
+  }
+  entry.focus({preventScroll:true});
+ };
+ const type=(text:string,backspace=false)=>{
   if(pending||editor===null)return;
-  let start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
-  if(start===end&&backspace)start=Math.max(0,start-1);
-  if(start===end&&forwardDelete)end=Math.min(input.value.length,end+1);
-  const next=input.value.slice(0,start)+text+input.value.slice(end);
+  const next=replaceAll?text:backspace?draft.slice(0,-1):draft+text;
   if(next.length>64)return;
-  input.value=next;input.focus({preventScroll:true});input.setSelectionRange(start+text.length,start+text.length);
-  const parsed=parseWheelInteger(next);
-  if(parsed!==null)set(editor,parsed);else update();
+  draft=next;replaceAll=false;syncDraft();
  };
  const toggleSign=()=>{
   if(pending||editor===null)return;
-  input.value=input.value.startsWith('-')?input.value.slice(1):'-'+input.value.replace(/^\+/,'');
-  const parsed=parseWheelInteger(input.value);if(parsed!==null)set(editor,parsed);else update();
-  input.focus({preventScroll:true});input.setSelectionRange(input.value.length,input.value.length);
+  draft=draft.startsWith('-')?draft.slice(1):'-'+draft.replace(/^\+/,'');replaceAll=false;syncDraft();
  };
  panel.querySelectorAll<HTMLButtonElement>('[data-key]').forEach(button=>{
   button.onpointerdown=e=>e.preventDefault();
-  button.onclick=()=>button.dataset.key==='±'?toggleSign():replaceSelection(button.dataset.key==='⌫'?'':button.dataset.key!,button.dataset.key==='⌫');
+  button.onclick=()=>button.dataset.key==='±'?toggleSign():type(button.dataset.key==='⌫'?'':button.dataset.key!,button.dataset.key==='⌫');
  });
  const back=panel.querySelector<HTMLButtonElement>('.number-entry-back')!;
  back.onpointerdown=e=>e.preventDefault();back.onclick=()=>{const active=editor;if(flush()&&active)wheels.get(active)!.value.focus({preventScroll:true});};
  panel.querySelectorAll<HTMLButtonElement>('[data-edit-wheel]').forEach(button=>{button.onpointerdown=e=>e.preventDefault();button.onclick=()=>edit(button.dataset.editWheel as WheelKey);});
- input.onkeydown=e=>{
+ entry.onkeydown=e=>{
   if(pending){e.preventDefault();return;}
-  if(e.key==='Enter'){e.preventDefault();back.click();}
-  else if(e.key==='Backspace'||e.key==='Delete'){e.preventDefault();replaceSelection('',e.key==='Backspace',e.key==='Delete');}
-  else if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();replaceSelection(e.key);}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'){e.preventDefault();replaceAll=true;}
+  else if(e.key==='Enter'){e.preventDefault();back.click();}
+  else if(e.key==='Backspace'||e.key==='Delete'){e.preventDefault();type('',true);}
+  else if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();type(e.key);}
  };
- input.onpaste=e=>{e.preventDefault();replaceSelection(e.clipboardData?.getData('text/plain')??'');};
+ entry.onpaste=e=>{e.preventDefault();type(e.clipboardData?.getData('text/plain')??'');};
 
  let unlocked=false;
  const unlock=()=>{

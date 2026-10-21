@@ -33,7 +33,7 @@ import { instantiateEquipment } from './domain/catalog';
 import { historyView } from './ui/history';
 import { modifiers, signed } from './domain/modifiers';
 import { levelUpCharacter } from './domain/level-up';
-import { deriveStats, hpAfterItemChange } from './domain/derived';
+import { deriveStats } from './domain/derived';
 import { escapeHtml as esc, field, select } from './ui/html';
 import './style.css';
 
@@ -274,8 +274,8 @@ function levelUp(c: Character) {
   update();
 }
 function editHitPoints(c: Character, damageOnly=false) {
-  changeHp({...c.hp,max:effectiveMaxHp(c)},async delta=>{
-    await saveCharacter({...c,hp:hpAfterItemChange(c,delta)},'hp',`HP endret (${delta>0?'+':''}${delta})`);
+  changeHp({...c.hp,max:effectiveMaxHp(c)},async (hp,delta)=>{
+    await saveCharacter({...c,hp:{...hp,max:c.hp.max}},'hp',`HP endret (${delta>0?'+':''}${delta})`);
     message='';await refresh();
   },{damageOnly});
 }
