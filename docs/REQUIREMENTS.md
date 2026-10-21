@@ -1,6 +1,8 @@
 # Kravspesifikasjon – D&D Character Companion
-**Status:** Gjeldende produktgrunnlag, oppdatert 2026-10-20. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
+**Status:** Gjeldende produktgrunnlag, oppdatert 2026-10-21. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
 **Spill:** D&D 5e (2014). Mobilførst, offline-først, fysisk terningkast og DM som autoritet.
+
+**Arbeidsgrunnlag:** GitHub-Issuen har oppgavens detaljerte krav og akseptansekriterier. Dette dokumentet har felles produktføringer. Vanlig Issue-presisering krever ikke oppdatering av alle prosjektdokumenter. Se [arbeidsinstruksen](../AGENTS.md). Nyeste tallendringskrav står i [#25](https://github.com/geirskoglund/dnd-character-sheet/issues/25); eldre leveransebeskrivelser nedenfor viser tidligere betjening.
 
 Gjeldende funksjonsstatus og foreslått arbeidsrekkefølge: [produktgjennomgang og backlog](BACKLOG.md). Historiske leveranseavsnitt nedenfor er ikke en samlet mangelliste; nyere beslutninger og kildebelagt status i gjennomgangen gjelder. Prioriteringsforslag bestiller ikke appkode.
 
@@ -237,7 +239,7 @@ Nyere avklaringer fra den pågående én-og-én-gjennomgangen samles i [arbeidsn
 
 ### Senere godkjent: felles tallhjul
 
-Hele tall rulles vertikalt, med valgt tall i midten, endelige grenser og direkte innskriving ved trykk på tallet. Eventyrjournal-uttrykk. I opprettelse velges selve verdien; for HP velges en signert **endring**, med før/etter-visning. Valget står til bekreftelse, fremfor tidligere slider med nøytral retur. Tallfeltene beholder tastaturstøtte og eksplisitt lagring. HP skal kunne økes igjen fra 0.
+Gjeldende føring er den felles tallendringsdialogen i [#25](https://github.com/geirskoglund/dnd-character-sheet/issues/25). Den erstatter den tidligere betjeningen med hjul inne i skjemaet og absolutte verdier i enkelte flyter. Se §22 for felles retning; fullstendige P-/K-krav og akseptansekriterier vedlikeholdes i Issuen. Eventyrjournal og trygg bekreftelse/avbryt gjelder fortsatt. Den nye dialogen er ikke implementert gjennom denne dokumentasjonen.
 
 ### Leveranse og avgrensning
 
@@ -251,7 +253,7 @@ Veiviseren er et eget grafisk element i Eventyrjournal: tematisk illustrasjon, t
 
 Lukk/X bevarer et lokalt utkast med svar og posisjon, også over reload/app-lukking. Fortsett åpner samme steg. Fullfør registrerer gjenstanden/verdiene; Forkast utkast er egen destruktiv handling. Ved redigering består sist bekreftede våpen og Combat-verdier til fullføring. Utkast skal ikke telles som utstyr, brukes i Combat eller skrive karakterhistorikk. Lagre-/konfliktfeil vises tydelig og skal ikke lukke eller forkaste uferdig arbeid. Karakteradministrasjon/karakterutkast hører i menyen, utstyrsutkast finnes i Utstyr.
 
-Penger har to rullefelt ved siden av hverandre: hele GP og desimaldel00–99, med felles midtrad; direkte innskriving beholdes. 55|25 betyr55,25GP og lagres som5525CP. HP og Temporary HP i Combat får hjørnetrekant fordi de åpner redigering; AC/Initiative og Character-HP forblir uten.
+Den leverte pengevisningen hadde to rullefelt for hele GP og desimaldel00–99, med felles midtrad og direkte innskriving. Den betjeningen erstattes som krav av [#25](https://github.com/geirskoglund/dnd-character-sheet/issues/25), der hjulene uttrykker endring. Penger lagres fortsatt eksakt som heltall CP. HP og Temporary HP i Combat har hjørnetrekant fordi de åpner redigering; AC/Initiative og Character-HP er statusfelt.
 
 ## 15. Ny utstyrsregistrering: isolert prøve før appendring (2026-10-20)
 
@@ -305,7 +307,7 @@ Disse innspillene er avklart/rapportert i samtalen og dokumenteres nå; ingen av
 - Vanlig individuelt utstyr, også armor, ringer og amuletter, skal ikke ha et generelt Antall-spørsmål. Kopier brukes for separate gjenstander. Dette presiserer og erstatter §15s tidligere bevaring av antall for alt annet enn våpen. Eksisterende antall/data må bevares trygt ved senere endring.
 - Lag en egen kategori **Forbruk under Utstyr**. Ammunisjon, potions og mat/rasjoner kan føres som beholdninger. Standardvarer bør kunne velges ferdig fra et avgrenset 2014/SRD-utvalg; ikke krev manuell nyopprettelse av vanlige ting.
 - Forbruk og påfyll skal være enkelt under spill, også når beholdningen er null. Én-trykks reduksjon med Angre og påfyll av et samlet antall er foreslått betjening; den konkrete utformingen er ikke endelig godkjent. Ikke trekk piler automatisk når et bueoppslag åpnes. Vanlig pilskade følger våpenet; spesialammunisjon kan ha egen tekst. Potions kan beskrives og HP korrigeres manuelt; ingen generell forbrukseffektmotor forutsettes.
-- Brukeren ønsker å lukke tallhjulet ved trykk på den valgte midtraden og beholde tallet. Direkte innskriving skal fortsatt være tilgjengelig. To pengehjul for hele GP og 00–99 er fortsatt krav. Codex hadde ført inn et pengeunntak uten godkjenning; det er trukket tilbake etter brukerens rettelse. Ingen særregel om at pengehjulene ikke kan lukkes er vedtatt. Den konkrete lukke-/gjenåpningsflyten og inngangen for direkteinnskriving må beskrives og avklares, uten å gjette et nytt unntak.
+- Nyeste tallhjulskrav er [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25). Dette erstatter det tidligere ønsket om å lukke selve hjulet ved midttrykk. Detaljer vedlikeholdes i Issuen.
 - **Rapportert feil:** installert iPhone-app krever konsekvent to trykk på åpne/lukke-knappen for tallhjul, mens Chrome-fanen ikke har samme symptom. Brukeren beskriver det som et fokuslag. Eksakt årsak og rettelse er ikke bekreftet; en lignende ekstern rapport er ikke bevis for årsaken i denne appen. Fysisk standalone-kontroll kreves før feilen kvitteres ut.
 
 ## 19. Samlet gjennomgang og backlog som arbeidsgrunnlag
@@ -320,21 +322,29 @@ Backlog items er vanlige tekstlige beskrivelser av ønsket funksjonalitet, ikke 
 
 ## 20. Klargjøring før implementasjon i separate tråder
 
-Brukeren bestilte klargjøring av backloggen etter avklaring om at separate tråder ikke automatisk deler hele samtalen. [BACKLOG_READY.md](BACKLOG_READY.md) og hver av de27 eksisterende Issues beskriver ønsket flyt, konkrete testforventninger, avhengigheter, bevaringskrav og åpne produktvalg. Dette autoriserer ikke appkode.
+Separate tråder bruker gjeldende GitHub-Issue som oppgavens detaljerte arbeidsgrunnlag sammen med felles produktkrav. [BACKLOG_READY.md](BACKLOG_READY.md) er indeks og historisk klargjøringsgrunnlag; beskrivelse, status og prioritet vedlikeholdes i GitHub. Dette autoriserer ikke appkode.
 
 - **Klar for implementasjon** betyr at produktforutsetningene innen oppgavens omfang er klare, ikke at funksjonen er levert, testet eller bestilt kodet. Kontroller mot gjeldende master før oppstart.
 - **Trenger produktavklaring** betyr at tekstlig flyt og scenarioer er forslag. Spør bare om de reelle åpne valgene og ta én brukerflyt om gangen. Tekniske valg og kjente følger av vedtatte krav eies av implementatøren.
 - **Avventer avhengighet** beholder forventningene, men krever at navngitte leveranser eller testtilgang faktisk foreligger. Ikke sett Klar automatisk bare fordi en annen Issue er lukket.
 - Hver implementasjon skal bevare angitt eksisterende funksjon/data og dokumentere faktisk test-/produktkontroll etter gjeldende leveringskrav. Fysisk iOS-port er et eget kontrollkrav, ikke noe en Chromium-test kan kvittere ut.
 
-Første klargjøring oppga9 klare,16 med produktspørsmål og2 som avventer. Den inneholdt feil og er erstattet av [kvalitetsgjennomgangen](BACKLOG_REVIEW.md): **7 klare, 19 med produktspørsmål og 1 som avventer fysisk testtilgang**. Oppgaveprioritet og BL-ID-er beholdes; implementasjon starter ved egen uttrykkelig bestilling.
+Tidligere kontrollgrunnlag finnes i [kvalitetsgjennomgangen](BACKLOG_REVIEW.md). Det er historikk, ikke en løpende statusliste. BL-ID-er beholdes; implementasjon starter ved egen uttrykkelig bestilling.
 
 ## 21. Kvalitetssikring av saksgrunnlaget etter brukerrettelse
 
-Brukeren påpekte at pengeunntaket i første sak ikke var avtalt og bestilte deretter rettelse og selvkritisk gjennomgang av alle saker. Dette gjelder dokumentasjon og GitHub-backlog, ikke appkode. [Gjennomgangen av alle27 saker](BACKLOG_REVIEW.md) viser rettelser, kilder og status; [BACKLOG_READY.md](BACKLOG_READY.md) har gjeldende beskrivelser.
+Brukeren påpekte at pengeunntaket i første sak ikke var avtalt og bestilte deretter rettelse og selvkritisk gjennomgang av alle saker. [Gjennomgangen av alle27 saker](BACKLOG_REVIEW.md) viser den historiske kontrollen. GitHub har dagens saksbeskrivelser. #25 er senere erstattet av brukerens fulle tekst; se §22. Ingen av dokumentgjennomgangene er appimplementasjon.
 
 - Et utsagn blir ikke en brukerbeslutning ved å stå i eksisterende kode, et Codex-dokument eller et testscenario. Skill avklarte krav, regelavledede forventninger, tekniske utgangspunkter og nye produktforslag.
 - Pengeunntaket er fjernet. Ny flyt for tilstandsimmunitet er fortsatt uavklart, slik den tidligere utsettelsen sier. Eksisterende registrering beholdes inntil ny bestilt implementasjon er levert.
 - D&D-eksempler skal følge den faktiske typen og 2014-reglene. Saving-throw-Expertise er ikke et vanlig standardvalg, selv om tidligere data/UI kan representere det. Bevar manuelle DM-verdier og importer; ikke gjør gamle generiske felt til regelkilde.
 - Tekniske utgangspunkter som dagens syvdagers backupfrist er ikke nye låste produktkrav. Ingen ny utvalgsgrense eller regel om effekters ikke-stabling kan utledes bare av katalog-ID.
 - Avklar bare reelle åpne produktvalg. Harde avhengigheter må ha nødvendig funksjonsgrunnlag; kodeoverlapp er samordning. Ingen manglende opprinnelige funksjonskrav fjernes gjennom denne oppryddingen.
+
+## 22. Felles tallendringsdialog
+
+Det gjennomgående tallendringsmønsteret er en egen fullskjermdialog, med endringsbeløp fra 0, opprinnelig/endret verdi og eksplisitt OK eller Avbryt/X. Trykk på midttallet brukes til direkteinnskriving. Kalleren kan angi resultatgrenser; P-/K-kravene og akseptansekriteriene står samlet i [#25](https://github.com/geirskoglund/dnd-character-sheet/issues/25). Bevar ID-ene og les brukerens tekst før implementasjon. Det skal ikke opprettes en konkurrerende full kravkopi her.
+
+P01 presiserer fullskjerm som generell popupføring. Eldre designformuleringer om kompakte popups beskriver tidligere praksis. Ved tallredigering fra en annen popup skal den underliggende popupens tilstand bevares. «Opprinnelig verdi» tilhører kalleren, også når den er et uferdig skjema.
+
+Denne føringen erstatter tidligere tallhjulsbetjening som produktkrav. Nåværende appkode, veiledningsbilder og tidligere testresultater dokumenterer fortsatt bare den leverte versjonen. Oppdatering av #25/dokumentene er ikke en bestilling av appkode.

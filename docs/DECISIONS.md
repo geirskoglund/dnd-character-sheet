@@ -1,7 +1,7 @@
 # Beslutningslogg – D&D Character Companion
 
-**Oppdatert:** 2026-10-20
-**Status:** Utstyrsflyten er levert i PR #23. PR #24 og GitHub-backloggen er levert. Klargjøringen i PR #52 er korrigert etter brukerens påpekning av et uavklart pengeunntak. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) viser kontrollen av alle27 saker; BACKLOG_READY.md har gjeldende status og åpne spørsmål. Ingen ny appkode er bestilt i denne runden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Denne loggen bevarer beslutningshistorikken; eldre «bestilt/åpent/ikke implementert» må leses med nyere status.
+**Oppdatert:** 2026-10-21
+**Status:** Gjeldende oppgavedetaljer/status vedlikeholdes i GitHub. #25 har brukerens nye tallendringskrav. Nye gjennomgående føringer og arbeidsmåte står sist i denne loggen; eldre kontroll-/leveranseavsnitt er historikk. Ingen ny appkode er bestilt i denne dokumentrunden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md).
 **Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
 
 ## 1. Produktmål og grenser – besluttet
@@ -345,7 +345,7 @@ Brukeren bestemte uttrykkelig at forbruksvarene skal ligge i en **egen kategori 
 
 ## Oppfølging: tallhjul i installert iPhone-app
 
-Brukeren ønsker å lukke tallhjulet med trykk på valgt midtbånd og beholde verdien. Direkte tallinnskriving og pengenes to hjul må fortsatt fungere. Codex sitt senere pengeunntak var ikke avtalt og er trukket tilbake; den konkrete pengelukkingen må avklares. Dette er ikke implementert.
+Historisk innspill: Brukeren ønsket midtbåndslukking. Det er senere erstattet av den nye komponentbeskrivelsen i #25: Midttrykk åpner direkteinnskriving, mens OK eller Avbryt/X avslutter dialogen. Se nyeste beslutning nedenfor; tidligere lukke-/gjenåpningsspørsmål er ikke lenger arbeidsgrunnlag.
 
 Rapportert, konsekvent feil: to trykk kreves på hjulknappen i installert modus, men ikke i Chrome-fanen. Brukerens fokuslag-forklaring er en observasjon, ikke en bekreftet rotårsak. Koden flytter fokus til hjulpanelet ved åpning og til input ved valgt rad. Ingen fysisk iPhone-verifikasjon eller rettelse er gjort. En lignende [ekstern feilrapport](https://github.com/shoelace-style/webawesome/issues/2409) gjelder et annet produkt og beviser ikke årsaken her.
 
@@ -373,10 +373,18 @@ Som konsistensopprydding er gjeldende korte formuleringer om fire faner, tallhju
 
 Brukeren siterte pengeunntaket fra #25 og påpekte «Dette har vi ikke snakket om», og bestilte deretter: «Rett det opp. Vær selvkritisk og gå gjennom alle sakene for å kvalitetssikre.» Bestillingen gjelder dokumenter og GitHub-saker, ikke appkode.
 
-**Tilbakekalt Codex-antakelse:** Pengehjulene var ikke godkjent unntatt fra ønsket om midtbåndslukking. Verken dagens alltid åpne visning eller dens direkteinnskrivingshandling kan brukes som et slikt vedtak. To GP-hjul og direkteinnskriving består som krav; konkret lukking/gjenåpning avklares uten at en ny løsning erklæres vedtatt.
+**Historisk tilbakekalt Codex-antakelse:** Pengehjulene var ikke godkjent unntatt fra det daværende ønsket om midtbåndslukking. Eksisterende kode var ikke bevis for et slikt vedtak. Den nye tallhjulsflyten var fortsatt uavklart ved denne gjennomgangen; den er senere avklart og erstattet gjennom brukerens nye #25 nedenfor.
 
-Gjennomgangen av alle27 saker står i [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md). #25 og #38 er satt fra Klar til Trenger produktavklaring. #35 har åpne spørsmål om ny visning/dekningsgrense, ikke en hard avhengighet til #34. Gjeldende fordeling er **7 klare, 19 trenger produktavklaring og 1 avventer fysisk testtilgang**. Prioritet, type, BL-ID-er og opprinnelig rekkefølge beholdes. Ingen funksjon er levert ved å endre saksbeskrivelsen.
+Den historiske gjennomgangen av alle27 saker står i [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md). Der ble #25/#38 nedgradert og #35 fikk produktspørsmål. Gjeldende saksbeskrivelser og status finnes i GitHub; #25 er senere erstattet. Ingen funksjon er levert ved å endre saksbeskrivelsen.
 
 Regel-/tekstfeil og overflødige avklaringsspørsmål er rettet. Blant annet er vanlig saving-throw-Expertise fjernet fra proficiencyforslaget, Second Wind er fortsatt oppslag/manuell telling og ikke automatisk healing, og Magic Missile-eksempelet innfører ingen ny kastemetode. Bevaring av gamle DM-data er ikke godkjenning av dem som vanlige standardregler. Dagens syvdagers backupfrist og konkrete gjennomføringsmetoder merkes som tekniske utgangspunkter, ikke brukerbestemte produktkrav. Hard avhengighet krever nødvendig funksjonsgrunnlag eller tilgang; review trenger ikke vente på at feil allerede er rettet.
 
 Denne rettelsen oppdaterer varig prosjektminne. Den autoriserer ingen av de27 appendringene og gjenåpner ikke allerede vedtatte produktprinsipper.
+
+## Felles tallendring og enklere oppgavevedlikehold (2026-10-21)
+
+Brukeren har skrevet og avklart en ny fullstendig beskrivelse for [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25), og bestilt at den erstatter hele den opprinnelige teksten. Brukerens tekst og P-/K-ID-er beholdes ordrett; akseptansekriterier og tekniske agentnotater legges etter teksten i egne seksjoner. Detaljene vedlikeholdes i Issuen, ikke som en ny full kopi i repoet. [Krav §22](REQUIREMENTS.md#22-felles-tallendringsdialog) fører det gjennomgående prinsippet. Dette er oppgave-/dokumentarbeid, ikke appimplementasjon.
+
+Arbeidsmåten er samtidig avklart: Issuen er hovedkilde for konkret funksjon, krav-ID-er, akseptanse, tekniske merknader og spørsmål. REQUIREMENTS har felles produktprinsipper; DECISIONS oppdateres ved vesentlige produktvalg. Vanlig presisering av en sak gjøres direkte i GitHub uten automatisk dokumentbranch/PR. Status og prioritet holdes i GitHub; løpende statustellinger og hele saksbeskrivelser skal ikke speiles i flere dokumenter. Nødvendige fellesendringer samles eller følger implementasjonen. Historiske leveransebevis beholdes tydelig som historikk.
+
+Nyere avtale om brukerreview erstatter generell delegasjon av automatisk merge for funksjons-/UI-endringer: Brukeren skal kunne teste PR-en og uttrykkelig godkjenne før merge til produksjonsbranchen master. Retningen for testpublisering er én fast GitHub Pages-testadresse som viser aktuell arbeidsbranch/PR, med varig testdata isolert fra produksjon. Egen testbranch eller ny hostingkonto er ikke nødvendig for dette. Testmiljøet er ikke etablert gjennom denne dokumentbestillingen.

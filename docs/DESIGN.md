@@ -1,6 +1,4 @@
-> Nyeste presisering: illustrert veiviser med ett spørsmål per skjerm, direkte svarflater, grafiske fremdriftspunkter og separate gjenopptakbare utkast. Penger bruker to hjul (hele GP / 00–99) med felles midtmarkering. HP/temp HP har hjørnemarkør i Combat. Se [implementasjonen](GUIDED_WORKFLOWS.md#illustrert-spørsmålsveiviser-og-utkast).
-
-> Nyere backlogrettelse: ønsket om å lukke tallhjul ved trykk på valgt midtbånd har ikke et godkjent pengeunntak. Dagens alltid åpne pengevisning og dens tastaturhandling er eksisterende implementasjon, ikke bindende design. Lukke-/gjenåpningsflyten og separat direkteinnskriving er uavklart; to GP-hjul består som krav. Se [BL-01](BACKLOG_READY.md#bl-01) og [gjennomgangen](BACKLOG_REVIEW.md).
+> Nyeste tallendringskrav: [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25). Brukerens P-/K-krav og akseptansekriterier vedlikeholdes der. De erstatter eldre betjening med hjul i skjemaer, absolutt pengevalg og midtbåndslukking. Eventyrjournal videreføres. Nåværende implementasjon og skjermbilder er ikke bevis på at den nye dialogen er levert.
 
 > Gjeldende arbeidsflyter (2026-10-20): [GUIDED_WORKFLOWS.md](GUIDED_WORKFLOWS.md). Eventyrjournal videreføres med fire ikonfaner og Meny, separat Magi, vertikalt tallhjul med eksakt innskriving og korte forgrenede veivisere. Hjørnetrekanten brukes på arbeidsflatens oppslag/kort, aldri på navigasjon, Combat-kategorier, lukkekryss eller selvforklarende listevalg. Rutinemeldinger om lagring fjernes, feil er tydelige. Toppfelt scroller fortsatt bort. Eldre slider-/trefaneskisser nedenfor er historikk.
 
@@ -41,7 +39,7 @@ Ikke bruk forslagene som ferdig bestemte farger/fontvalg. Brukeren skal velge re
 ## Liten skjerm / tilgjengelighet
 - Primær bredde 360–390 CSS px; vurder 320 px, stor skrift, smale layouts og nettbrett. Horisontal scrolling kun som bevisst interaksjon for Combat faner, ikke for formular.
 - Klare fokusindikatorer, tastaturbetjening for desktop, touch targets omtrent 44px når praktisk mulig, semantiske labels og god skjermleserstøtte.
-- Modals/paneler kan være større for søkbare kataloger, små for én slot/ressurs; unngå å tvinge brukeren gjennom mange dialoger.
+- Nyeste popupføring er fullskjerm (P01 i #25). Tallendring fra en annen popup skal bevare den underliggende flaten og dens tilstand. Eldre kompakt-/stor-varianter er eksisterende implementasjon; de overstyrer ikke den nye føringen. Unngå unødvendige mellomdialoger.
 - Tydelige, merkbare feil ved mislykket lagring eller fare for tap av data; ingen rutinemeldinger om vellykket lagring. Undo, tom/oppbrukt ressurs og uavklarte betingelser skal være forståelige.
 
 ## Rolle til referanseprototyper
