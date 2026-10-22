@@ -58,3 +58,34 @@ test('a resumed description sizes to restored draft text',async({page})=>{
   const description=page.getByRole('textbox',{name:'Beskrivelse (valgfritt)',exact:true});
   await expect(description).toHaveValue(longText);await fullText(description);
 });
+
+test('opening a note from a scrolled page anchors the popup and locks the page through nested editing',async({page})=>{
+  await createCharacter(page);await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
+  await fillField(page,'Tittel','Nederst på siden');await fillField(page,'Tekst',longText);await finish(page);
+  const d=page.locator('dialog:not(.text-editor)'),note=page.getByRole('button',{name:'Nederst på siden',exact:true});
+  await expect(d).not.toBeVisible();await note.scrollIntoViewIfNeeded();const returnY=await page.evaluate(()=>scrollY);
+  expect(returnY).toBeGreaterThan(300);await note.tap();
+  const lockedY=await page.evaluate(()=>scrollY),bounds=await d.boundingBox();
+  expect(bounds!.y).toBe(0);expect(bounds!.height).toBe(844);
+  const heading=d.locator('.dialog-heading'),footer=d.locator('.dialog-actions'),body=d.locator('#dialog-body');
+  const background=await page.locator('.character-header').boundingBox();
+  for(const target of [heading,footer]){
+    await target.hover();await page.mouse.wheel(0,-2000);
+    await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(lockedY);
+    expect(await page.locator('.character-header').boundingBox()).toEqual(background);
+  }
+  expect(await d.evaluate(el=>getComputedStyle(el).position)).toBe('fixed');
+  // Both nested text dismissal and a declined deletion must keep the caller's lock.
+  const text=d.getByRole('textbox',{name:'Tekst',exact:true});await text.click();
+  await page.locator('.text-editor').getByRole('button',{name:'Avbryt',exact:true}).tap();
+  expect(await page.evaluate(()=>document.body.style.position)).toBe('fixed');
+  await body.evaluate(el=>el.scrollTop=el.scrollHeight);const scroll=await body.evaluate(el=>el.scrollTop);
+  await d.getByRole('button',{name:'Slett notat',exact:true}).click();await d.getByRole('button',{name:'Avbryt',exact:true}).click();
+  expect(await body.evaluate(el=>el.scrollTop)).toBe(scroll);
+  expect(await page.evaluate(()=>document.body.style.position)).toBe('fixed');
+  await d.getByRole('button',{name:'Avbryt',exact:true}).tap();await expect(d).not.toBeVisible();
+  await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(returnY);await expect(note).toBeFocused();
+  expect(await page.evaluate(()=>document.body.style.position)).toBe('');
+  await note.tap();await fillField(page,'Tekst',longText+'\nBekreftet.');await finish(page);await expect(d).not.toBeVisible();
+  await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(returnY);await expect(note).toBeFocused();
+});

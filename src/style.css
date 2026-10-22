@@ -281,7 +281,7 @@ details:not(.app-menu)>summary{padding:.7rem 1rem .7rem .3rem;border-bottom:1px 
 @media(max-width:360px){.equipment-editor .wizard-art{height:80px;margin:.25rem auto}.equipment-editor .wizard-art>.icon{width:48px;height:48px}}
 
 /* #25: an anchored dialog with independent wheel tracks and a shared number pad. */
-dialog,dialog[data-size=large]{inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:100dvh;border:0;border-radius:0}
+dialog,dialog[data-size=large]{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:100dvh;border:0;border-radius:0}
 dialog>form{height:100%}
 .dialog-heading{padding-top:max(18px,env(safe-area-inset-top))}
 dialog.number-change-dialog{position:fixed;inset:0;max-height:none;overflow:hidden;overscroll-behavior:none;--dialog-padding:clamp(16px,5vw,32px);--wheel-row:max(46px,2.6rem);--number-area:max(300px,calc(5 * var(--wheel-row) + 2rem))}

@@ -14,6 +14,20 @@ let returnScroll = 0;
 let collectionSelector = '';
 let cancelHandler: CancelHandler;
 let pending = false;
+let unlockPage: (() => void) | undefined;
+
+function lockPage() {
+  const locks: [CSSStyleDeclaration,string][] = [
+    [document.body.style,'position'],[document.body.style,'top'],[document.body.style,'left'],
+    [document.body.style,'right'],[document.body.style,'overflow'],
+    [document.documentElement.style,'overflow'],[document.documentElement.style,'overscroll-behavior'],
+  ];
+  const saved=locks.map(([style,property])=>({style,property,value:style.getPropertyValue(property),priority:style.getPropertyPriority(property)}));
+  document.body.style.position='fixed';document.body.style.top=`-${returnScroll}px`;
+  document.body.style.left='0';document.body.style.right='0';document.body.style.overflow='hidden';
+  document.documentElement.style.overflow='hidden';document.documentElement.style.overscrollBehavior='none';
+  return () => {for(const {style,property,value,priority} of saved){if(value)style.setProperty(property,value,priority);else style.removeProperty(property);}};
+}
 
 function visible(element: HTMLElement | null): element is HTMLElement {
   if (!element?.isConnected || !element.getClientRects().length) return false;
@@ -38,21 +52,27 @@ function restoreFocus() {
   (visible(target) ? target : fallback)?.focus({preventScroll:true});
   window.scrollTo(0, returnScroll);
 }
-host.onclose = () => { if (!host.open) restoreFocus(); };
+function finishClose() {
+  if(host.open||!unlockPage)return;
+  unlockPage?.();unlockPage=undefined;
+  restoreFocus();
+}
+function closeDialog() {host.close();finishClose();}
+host.onclose = finishClose;
 host.oncancel = event => {
   event.preventDefault();
   if (pending) return;
-  if (cancelHandler) cancelHandler(); else host.close();
+  if (cancelHandler) cancelHandler(); else closeDialog();
 };
 // Native search fields otherwise consume the first Escape to clear their value.
 host.addEventListener('keydown',event=>{
   if(event.key!=='Escape'||event.isComposing)return;
   event.preventDefault();event.stopPropagation();
   if(pending)return;
-  if(cancelHandler)cancelHandler();else host.close();
+  if(cancelHandler)cancelHandler();else closeDialog();
 },true);
 function open(title: string, html: string, footer: string, onCancel?: CancelHandler, initialFocus?: string, kind: 'view'|'edit'|'confirm'='edit', size: 'compact'|'large'='large') {
-  if (!host.open) captureOpener();
+  if (!host.open) {captureOpener();unlockPage??=lockPage();}
   delete host.dataset.wizard;
   delete host.dataset.equipmentEditor;host.classList.remove('equipment-editor');
   cancelHandler = onCancel;
@@ -71,14 +91,14 @@ function open(title: string, html: string, footer: string, onCancel?: CancelHand
 export function viewDialog(title: string, html: string, initialFocus?: string, size: 'compact'|'large'='compact') {
   const d = open(title, html, '', undefined, initialFocus, 'view', size);
   d.querySelector('form')!.onsubmit = event => event.preventDefault();
-  d.querySelector<HTMLButtonElement>('#close-dialog')!.onclick = () => d.close();
+  d.querySelector<HTMLButtonElement>('#close-dialog')!.onclick = closeDialog;
   return d;
 }
 /** Editors and destructive confirmations have distinct commit and discard actions. */
 export function editDialog(title: string, html: string, onSubmit: (form: HTMLFormElement) => Promise<void>, submit = 'Lagre', onCancel?: CancelHandler, confirmation=false) {
   const d = open(title, html, `${confirmation?'<button type="button" id="cancel">Avbryt</button>':''}<button id="submit" type="submit">${esc(submit)}</button>`, onCancel, undefined, confirmation?'confirm':'edit', confirmation?'compact':'large');
   const form = d.querySelector('form')!;
-  d.querySelector<HTMLButtonElement>('#cancel')!.onclick = () => { if (cancelHandler) cancelHandler(); else d.close(); };
+  d.querySelector<HTMLButtonElement>('#cancel')!.onclick = () => { if (cancelHandler) cancelHandler(); else closeDialog(); };
   form.onsubmit = event => { event.preventDefault();
     const invalid=[...form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement>('[data-text-bound]')].find(field=>!field.closest('[hidden]')&&!validField(field));
     if(invalid){d.querySelector('#dialog-error')!.textContent='Fyll ut en gyldig verdi før du lagrer.';invalid.focus({preventScroll:true});return;}
@@ -100,7 +120,7 @@ export async function commitDialog(action: () => Promise<void>,closeAfter=true) 
   const label = primary?.textContent;
   if (primary) primary.textContent = 'Lagrer …';
   let success=false;
-  try { await action();success=true;if(closeAfter)host.close(); }
+  try { await action();success=true;if(closeAfter)closeDialog(); }
   catch (error) {
     const alert = form.querySelector<HTMLElement>('#dialog-error')!;
     alert.textContent = error instanceof Error ? error.message : 'Kunne ikke lagre. Endringene er ikke bekreftet.';
