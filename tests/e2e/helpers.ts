@@ -78,7 +78,7 @@ export async function wheelEntry(page:Page,name:string,value:string){
  await typeWheelText(page,label,value);await d.getByRole('heading').click();
 }
 export async function setNumberField(page:Page,field:Locator,value:string){
- if(value===''){await field.locator('..').getByRole('button',{name:/^Fjern /}).click();return;}
+ if(value==='')throw new Error('WP04: tall-elementer har ingen Fjern verdi-kontroll.');
  const original=Number(await field.inputValue())||0;
  await field.click();await wheelEntry(page,'Endring',String(Number(value)-original));
  await page.locator('dialog.number-change-dialog').getByRole('button',{name:'OK',exact:true}).click();
@@ -95,7 +95,7 @@ export async function fillField(page:Page,name:string,value:string,index=0){
   }
  }
  const field=await revealField(page,name,index);
- if(await field.getAttribute('data-wheel-bound'))await setNumberField(page,field,value);else await field.fill(value);
+ if(await field.getAttribute('data-wheel-bound'))await setNumberField(page,field,value);else if(await field.getAttribute('data-text-bound')){await field.click();const editor=page.locator('dialog.text-editor');await editor.locator('input,textarea').fill(value);await editor.getByRole('button',{name:'OK',exact:true}).click();await expect(editor).toHaveCount(0);}else await field.fill(value);
 }
 export async function characterStep(page:Page,index:number){await revealField(page,['Navn','Klasse','STR'][index]);}
 export async function finish(page:Page){

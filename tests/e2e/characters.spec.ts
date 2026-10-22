@@ -26,14 +26,14 @@ test('mobile character lifecycle, isolated copy, cancellation, notes, undo and p
   await finish(page);
   await expect(page.getByLabel('Karakterstatus')).toContainText('12.34');
   await page.getByRole('button', { name: 'Legg til notat' }).click();
-  await page.getByRole('textbox', { name: 'Tittel' }).fill('Bakgrunn');
-  await page.getByRole('textbox', { name: 'Tekst' }).fill('Reisende fra nord.');
+  await fillField(page,'Tittel','Bakgrunn');
+  await fillField(page,'Tekst','Reisende fra nord.');
   await finish(page);
   await openMenu(page);
   await page.getByRole('button', { name: 'Kopier karakter' }).click();
   await expect(page.getByRole('heading', { name: 'Alva (kopi)', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Bakgrunn', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Tekst' }).fill('Kopiens historie');
+  await fillField(page,'Tekst','Kopiens historie');
   await finish(page);
   await openMenu(page);
   await choose(page,'Bytt karakter',{ label: 'Alva' });

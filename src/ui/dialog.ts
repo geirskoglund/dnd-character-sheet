@@ -1,3 +1,4 @@
+import {validField} from './text-editor';
 import { escapeHtml as esc } from './html';
 import {icon} from './icons';
 import {enhanceNumbers} from './number-wheel';
@@ -6,6 +7,7 @@ type CancelHandler = (() => void) | undefined;
 const host = document.createElement('dialog');
 host.setAttribute('aria-labelledby', 'dialog-title');
 document.body.append(host);
+new MutationObserver(()=>enhanceNumbers(host)).observe(host,{childList:true,subtree:true});
 let opener: HTMLElement | null = null;
 let openerSelector = '';
 let returnScroll = 0;
@@ -57,11 +59,12 @@ function open(title: string, html: string, footer: string, onCancel?: CancelHand
   pending = false;
   host.dataset.kind=kind;host.dataset.size=size;
   const close=kind==='confirm'?'':`<button type="button" id="${kind==='view'?'close-dialog':'cancel'}" class="dialog-close" aria-label="${kind==='view'?'Lukk':'Avbryt'}" title="${kind==='view'?'Lukk':'Avbryt'}">${icon('close')}</button>`;
-  host.innerHTML = `<form><div class="dialog-heading"><h2 id="dialog-title" tabindex="-1">${esc(title)}</h2>${close}</div><div id="dialog-body">${html}</div><p id="dialog-error" role="alert"></p><div class="dialog-actions">${footer}</div></form>`;
+  host.innerHTML = `<form><div class="dialog-heading"><h2 id="dialog-title" tabindex="-1" autofocus>${esc(title)}</h2>${close}</div><div id="dialog-body">${html}</div><p id="dialog-error" role="alert"></p><div class="dialog-actions">${footer}</div></form>`;
   host.scrollTop = 0;
   if (!host.open) host.showModal();
-  (initialFocus ? host.querySelector<HTMLElement>(initialFocus) : null)?.focus({preventScroll:true});
-  if (!initialFocus) host.querySelector<HTMLElement>('#dialog-title')!.focus({preventScroll:true});
+  const target=initialFocus?host.querySelector<HTMLElement>(initialFocus):null;
+  if(target&&!target.matches('input[type=search],select'))target.focus({preventScroll:true});
+  else host.querySelector<HTMLElement>('#dialog-title')!.focus({preventScroll:true});
   return host;
 }
 /** Lookups and immediate-choice pickers have one dismissal action and never submit a form. */
@@ -76,7 +79,10 @@ export function editDialog(title: string, html: string, onSubmit: (form: HTMLFor
   const d = open(title, html, `${confirmation?'<button type="button" id="cancel">Avbryt</button>':''}<button id="submit" type="submit">${esc(submit)}</button>`, onCancel, undefined, confirmation?'confirm':'edit', confirmation?'compact':'large');
   const form = d.querySelector('form')!;
   d.querySelector<HTMLButtonElement>('#cancel')!.onclick = () => { if (cancelHandler) cancelHandler(); else d.close(); };
-  form.onsubmit = event => { event.preventDefault(); void commitDialog(() => onSubmit(form)); };
+  form.onsubmit = event => { event.preventDefault();
+    const invalid=[...form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement>('[data-text-bound]')].find(field=>!field.closest('[hidden]')&&!validField(field));
+    if(invalid){d.querySelector('#dialog-error')!.textContent='Fyll ut en gyldig verdi før du lagrer.';invalid.focus({preventScroll:true});return;}
+    void commitDialog(() => onSubmit(form)); };
 
   enhanceNumbers(d);
   return d;

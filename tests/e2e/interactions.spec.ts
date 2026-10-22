@@ -41,7 +41,7 @@ test('equipment plus opens searchable choices immediately and selection commits 
   await createCharacter(page);
   const count=await historyCount(page);
   await equipmentTab(page); await page.getByRole('button',{name:'Legg til armor og skjold',exact:true}).click();
-  await expect(page.getByRole('searchbox',{name:'Søk i utstyr',exact:true})).toBeFocused();
+  await expect(page.getByRole('searchbox',{name:'Søk i utstyr',exact:true})).not.toBeFocused();
   await expect(modal(page).getByRole('button',{name:'+ Utstyr',exact:true})).toHaveCount(0);
   await expect(modal(page).getByRole('button',{name:'Lagre',exact:true})).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Legg til Shield',exact:true})).toBeVisible();

@@ -1,3 +1,4 @@
+import {validField} from './text-editor';
 import {editDialog,commitDialog,confirmDialog} from './dialog';
 import {enhanceNumbers} from './number-wheel';
 import {escapeHtml as esc} from './html';
@@ -90,7 +91,7 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
   header.querySelector('#wizard-help')!.textContent=q.help;header.querySelector('.wizard-picture')!.innerHTML=wizardArt(q.art??(q.element.closest('[data-class-id]')?'feature':'note'));
   const progress=header.querySelector<HTMLElement>('.wizard-progress')!;progress.setAttribute('aria-valuemin','1');progress.setAttribute('aria-valuemax',String(list.length));progress.setAttribute('aria-valuenow',String(at+1));progress.setAttribute('aria-valuetext',`${at+1} av ${list.length}`);
   progress.innerHTML=list.map((_,i)=>`<span class="${i<at?'done':i===at?'current':''}"></span>`).join('');
-  back.hidden=at===0;submit.textContent=at===list.length-1?label:'Neste';submit.hidden=!!q.element.querySelector('[data-choice-field]')&&at<list.length-1;
+  back.hidden=at===0;submit.textContent=at===list.length-1?label:'Neste';
   q.element.querySelectorAll<HTMLButtonElement>('[data-wizard-choice]').forEach(button=>{
    const holder=button.closest<HTMLElement>('[data-choice-field]')!,field=holder.dataset.nativeChoice?q.element.querySelector<HTMLInputElement|HTMLSelectElement>(`[name="${CSS.escape(holder.dataset.nativeChoice)}"]`):holder.querySelector<HTMLInputElement>('input');
    const value=field instanceof HTMLInputElement&&field.type==='checkbox'?(field.checked?'yes':'no'):field?.value;
@@ -100,12 +101,18 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
     field.dispatchEvent(new Event('change',{bubbles:true}));goNext(true);
    };
   });
-  body.scrollTop=0;
+  // An existing/default answer always has a visible way forward. Unanswered choices stay direct.
+  submit.hidden=!!q.element.querySelector('[data-choice-field]')&&!q.element.querySelector('[data-wizard-choice][aria-pressed=true]')&&at<list.length-1;
+  updateValidity();body.scrollTop=0;
+ };
+ const updateValidity=()=>{
+  const q=questions().find(q=>q.id===current);
+  submit.disabled=!q||[...q.element.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('input,select,textarea')].some(f=>!f.disabled&&f.type!=='hidden'&&!validField(f))||[...q.element.querySelectorAll<HTMLElement>('[data-choice-required]')].some(h=>!h.dataset.nativeChoice&&!h.querySelector<HTMLInputElement>('input')?.value);
  };
  const valid=()=>{
   const q=questions().find(q=>q.id===current);if(!q)return false;
   for(const holder of q.element.querySelectorAll<HTMLElement>('[data-choice-required]')){if(holder.dataset.nativeChoice)continue;const input=holder.querySelector<HTMLInputElement>('input');if(input&&!input.value){alert.textContent='Velg et svar for å fortsette.';return false;}}
-  for(const field of q.element.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('input,select,textarea')){if(field.disabled||field.type==='hidden')continue;if(!field.checkValidity()){field.reportValidity();return false;}}
+  for(const field of q.element.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('input,select,textarea')){if(field.disabled||field.type==='hidden')continue;if(!validField(field)){alert.textContent='Fyll ut en gyldig verdi for å fortsette.';field.focus({preventScroll:true});return false;}}
   return true;
  };
  function goNext(choice=false){
@@ -115,8 +122,8 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
  }
  form.onsubmit=e=>{e.preventDefault();goNext();};
  form.addEventListener('click',e=>{const target=e.target as HTMLElement;if(target.closest('#add-class,[data-remove-class]')){queueMicrotask(()=>{if(target.closest('#add-class')){const last=form.querySelector<HTMLElement>('.class-row:last-child');if(last)current=`1:${last.dataset.classId}:classChoice`;}draw();changed=true;void persist();});}});
- form.addEventListener('input',()=>{if(form.getAttribute('aria-busy')==='true')return;changed=true;void persist();});
- form.addEventListener('change',event=>{if(form.getAttribute('aria-busy')==='true')return;const field=event.target;if(!(field instanceof HTMLInputElement)||['hidden','checkbox','radio'].includes(field.type))draw();if(restoring)return;changed=true;void persist();});
+ form.addEventListener('input',()=>{if(form.getAttribute('aria-busy')==='true')return;updateValidity();changed=true;void persist();});
+ form.addEventListener('change',event=>{if(form.getAttribute('aria-busy')==='true')return;updateValidity();const field=event.target;if(!(field instanceof HTMLInputElement)||['hidden','checkbox','radio'].includes(field.type))draw();if(restoring)return;changed=true;void persist();});
  back.onclick=()=>{const list=questions(),at=list.findIndex(q=>q.id===current);current=list[Math.max(0,at-1)].id;draw();changed=true;void persist();};
  if(persistence){
   const unload=(e:BeforeUnloadEvent)=>{if(d.open&&form.isConnected&&(pendingWrites>0||failure)){e.preventDefault();e.returnValue='';}};window.addEventListener('beforeunload',unload);d.addEventListener('close',()=>window.removeEventListener('beforeunload',unload),{once:true});

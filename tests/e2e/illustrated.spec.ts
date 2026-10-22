@@ -44,7 +44,7 @@ test('failed draft autosave is prominent, X stays open, and retry preserves the 
  phase('inject quota failure');await page.evaluate(()=>{const original=IDBObjectStore.prototype.put;(window as any).failDraft=true;IDBObjectStore.prototype.put=function(...args){if(this.name==='settings'&&(args[0] as any)?.id?.startsWith('wizard-draft:')&&(window as any).failDraft)throw new DOMException('Full lagring','QuotaExceededError');return original.apply(this,args);};});
  phase('extra damage choice');
  phase('custom expression choice');await click(page,'Annet');
- phase('type expression');await page.getByRole('textbox',{name:'Skadeuttrykk',exact:true}).fill('1d6+2');
+ phase('type expression');await fillField(page,'Skadeuttrykk','1d6+2');
  phase('expect autosave error');await expect(d(page).getByRole('alert')).toContainText('Utkastet kunne ikke lagres');
  phase('close with failed storage');await click(page,'Lukk veiviseren');
  phase('expect failed close settled');await expect(d(page).getByRole('alert')).toHaveText('Full lagring');await expect(d(page).locator('form')).not.toHaveAttribute('aria-busy','true');
