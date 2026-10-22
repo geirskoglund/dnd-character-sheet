@@ -424,3 +424,8 @@ Brukeren har uttrykkelig fritatt denne leveransen fra ny brukerreview og deleger
 ## Karakterveiviser: avgrenset gruppering og katalogvalg (#61)
 
 [#61](https://github.com/geirskoglund/dnd-character-sheet/issues/61) bestemmer syv skjermer for både Ny karakter og Rediger karakter. Klassevalg, subklasser, nivåer og abilities grupperes bevisst; unntaket endrer ikke oppdelingen i andre veivisere. Nye art-/klasse-/subklassevalg hentes fra katalogen; opprettelsesgrenene og + Klasse fjernes. Registrerte svar utenfor katalogen skal ikke gå tapt ved redigering. Positive hele klassenivåer har ingen spillregelbasert øvre grense, og totalnivået er summen. Manglende progresjonstabeller gir ingen oppdiktede regler eller sletting av førte ressurser. Detaljer og akseptanse står i saken.
+
+## Avgrensning av regelbøker (2026-10-22)
+- Appens **faktiske målomfang** er D&D 5e **2014**, med **Player's Handbook (2014)** og de relevante reglene fra **Eberron: Rising from the Last War (2019)** som gruppen bruker. Ikke anta at subklasser og valg fra Xanathar's, Tasha's, andre supplementer eller 2024-reglene inngår.
+- Skill mellom offisielle navn/metadata, SRD 5.1-innhold som kan distribueres og bokmateriale som ikke kan leveres med appen uten rettigheter. Artificer fra Eberron er aktuell dersom den brukes; ikke anta at alle Eberron-alternativer skal implementeres.
+- Tidligere bred opplisting av offisielle subklasser er **ikke** en bestilling på å inkludere alle i appen. Mulighet for egne feats/features og manuell redigering beholdes.
