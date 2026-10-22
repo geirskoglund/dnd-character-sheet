@@ -15,7 +15,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # Hosted Ubuntu already includes Chrome's system libraries. Avoid an apt
+      # mirror outage blocking validation; keep Playwright's pinned browser.
+      - name: Install Playwright Chromium
+        timeout-minutes: 5
+        run: npx playwright install chromium
       - run: npm run check
       - uses: actions/upload-artifact@v4
         if: failure()
