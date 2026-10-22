@@ -1,8 +1,8 @@
 # Beslutningslogg – D&D Character Companion
 
-**Oppdatert:** 2026-10-21
+**Oppdatert:** 2026-10-22
 **Status:** Gjeldende oppgavedetaljer/status vedlikeholdes i GitHub. #25 har brukerens nye tallendringskrav. Nye gjennomgående føringer og arbeidsmåte står sist i denne loggen; eldre kontroll-/leveranseavsnitt er historikk. Ingen ny appkode er bestilt i denne dokumentrunden. Se [BACKLOG.md](BACKLOG.md), [REQUIREMENTS.md](REQUIREMENTS.md), [DATA_MODEL.md](DATA_MODEL.md), [DESIGN.md](DESIGN.md) og [CODEX_HANDOFF.md](CODEX_HANDOFF.md).
-**Regelversjon:** D&D 5e **2014**, ikke 2024. Innhold fra Eberron kan registreres, men proprietært innhold kan ikke uten videre distribueres.
+**Regelgrunnlag:** D&D 5e **2014**, med Player’s Handbook (2014) og Eberron: Rising from the Last War (2019) som samlet og autoritativt grunnlag. [Omfang, manuell føring, distribusjon og utvidbarhet](REQUIREMENTS.md#overordnet-føring--regelgrunnlag-og-omfang) gjelder hele appen.
 
 ## 1. Produktmål og grenser – besluttet
 
@@ -73,7 +73,7 @@
 - Hosting: **GitHub Pages**. Lokal database: **IndexedDB**, ingen backend/brukerkonto. Lokal persistens synkroniseres ikke mellom enheter.
 - Eksport/import **JSON** som backup (inkludert evt. portrett), med **diskret påminnelse etter en periode med endringer uten eksport**. Robust håndtering av data og migrering; offline PWA med cache/service worker når implementasjonen modnes.
 - Prototype-HTML er **funksjonell referanse, ikke produksjonskode**. Kravspesifikasjon og designbrief skrives **etter** at prototypen er testet/avklart; deretter Codex-implementasjon med tester.
-- **Innhold:** SRD 5.1 leveres som ferdig, lokalt regelbibliotek; innhold utenfor SRD (inkludert proprietært 2014-/Eberron-innhold) skal kunne registreres manuelt. Skill lisensiert SRD 5.1-regeldata fra proprietært innhold og brukerregistrerte karakterdata.
+- **Innhold:** SRD 5.1 leveres som ferdig, lokalt regelbibliotek med riktig lisens og kilde. [PHB 2014 og Eberron 2019 definerer funksjonelt omfang](REQUIREMENTS.md#overordnet-føring--regelgrunnlag-og-omfang), også utenfor SRD. Skill distribuerbare regeldata fra brukerregistrert bokinnhold; alle karaktervalgene skal kunne representeres uten krav om full regelautomatisering.
 - Talebasert oppslag på skill/modifier var diskutert som valgfri fremtidig funksjon, **ikke nødvendig for MVP**. Ingen talemutasjoner.
 
 ## 7. Åpne spørsmål – avklares én etter én
@@ -86,7 +86,7 @@
 6. **Endringslogg og angre – besluttet:** Logg faktiske karakterendringer (HP, Temporary HP, spell slots, penger, utstyr og opprettelse/sletting) som strukturerte hendelser med før-/etter-verdier. Ikke logg midlertidige UI-valg som avkryssing i skadeberegning. Vis inspeksjonslogg; støtt enkel «Angre siste endring». Eldre endringer korrigeres manuelt i første versjon; eventuell flerstegs reversering utsettes.
 7. **Backup-sikkerhet – besluttet:** Manuell JSON-eksport/import, med diskret påminnelse når karakteren er endret og det har gått en stund siden siste sikkerhetskopi. Ingen automatisk skybackup eller masete varsler.
 8. **Testopplegg – besluttet:** Codex utformer testarkitektur, eksempelkarakterer, scenarier og automatiserte tester ut fra kravene; dekker ulike klasser, ressurser, spells, utstyr, skadeeffekter og grensetilfeller. Brukeren kvalitetssikrer UX manuelt. Vi forhåndsbestemmer ikke detaljert testpakke.
-9. **Innholdsdekning – besluttet:** Lever SRD 5.1 som ferdig, lokalt tilgjengelig regelbibliotek. Annet 2014- og Eberron-innhold registreres manuelt av brukeren. Respekter lisens og skill regelbibliotek fra brukerdata.
+9. **Innholdsdekning – besluttet:** Det funksjonelle omfanget er [PHB 2014 og Eberron 2019](REQUIREMENTS.md#overordnet-føring--regelgrunnlag-og-omfang). SRD 5.1 leveres som lokalt regelbibliotek og er ikke en omfangsgrense. Manuell registrering og overstyring er grunnleggende; skill medfølgende regeldata fra brukerens bokinnhold og følg gjeldende distribusjonsrettigheter.
 
 - **Testing:** Codex har ansvar for å utforme og vedlikeholde automatiserte tester, testdata og scenarier, inklusive grensetilfeller; kravene definerer forventet funksjon. Bruker tester UX manuelt.
 
@@ -425,7 +425,9 @@ Brukeren har uttrykkelig fritatt denne leveransen fra ny brukerreview og deleger
 
 [#61](https://github.com/geirskoglund/dnd-character-sheet/issues/61) bestemmer syv skjermer for både Ny karakter og Rediger karakter. Klassevalg, subklasser, nivåer og abilities grupperes bevisst; unntaket endrer ikke oppdelingen i andre veivisere. Nye art-/klasse-/subklassevalg hentes fra katalogen; opprettelsesgrenene og + Klasse fjernes. Registrerte svar utenfor katalogen skal ikke gå tapt ved redigering. Positive hele klassenivåer har ingen spillregelbasert øvre grense, og totalnivået er summen. Manglende progresjonstabeller gir ingen oppdiktede regler eller sletting av førte ressurser. Detaljer og akseptanse står i saken.
 
-## Avgrensning av regelbøker (2026-10-22)
-- Appens **faktiske målomfang** er D&D 5e **2014**, med **Player's Handbook (2014)** og de relevante reglene fra **Eberron: Rising from the Last War (2019)** som gruppen bruker. Ikke anta at subklasser og valg fra Xanathar's, Tasha's, andre supplementer eller 2024-reglene inngår.
-- Skill mellom offisielle navn/metadata, SRD 5.1-innhold som kan distribueres og bokmateriale som ikke kan leveres med appen uten rettigheter. Artificer fra Eberron er aktuell dersom den brukes; ikke anta at alle Eberron-alternativer skal implementeres.
-- Tidligere bred opplisting av offisielle subklasser er **ikke** en bestilling på å inkludere alle i appen. Mulighet for egne feats/features og manuell redigering beholdes.
+## Regelgrunnlag, omfang og utvidbarhet (2026-10-22)
+
+- [Den overordnede føringen i REQUIREMENTS](REQUIREMENTS.md#overordnet-føring--regelgrunnlag-og-omfang) er felles kilde for hele appen: Player’s Handbook (2014) og Eberron: Rising from the Last War (2019) er samlet og autoritativt grunnlag. Alle 12 PHB-klasser med tilhørende subklasser, Artificer med alle tre Eberron-subklassene og relevant spillerinnhold fra begge bøkene inngår.
+- Appen skal kunne representere valgene og egenskapene med manuell føring og overstyring; dette krever ikke automatisering av alle reglene. SRD 5.1 er et lovlig distribuerbart regelbibliotek, ikke en funksjonell omfangsgrense. Medfølgende regeldata og brukerens registreringer fra egne bøker holdes tydelig adskilt.
+- Ingen automatisk innblanding av 2024 eller andre supplementer. Datamodell, kataloger og UI skal tåle senere utvidelser uten unødvendig ombygging, med identifiserbar regelutgave og innholdskilde. Utvidelser av omfanget krever en uttrykkelig produktbeslutning.
+- Føringen styrer videre arkitekturvalg, implementasjoner og tester. Dokumentasjonsoppdateringen endrer ingen appkode eller brukerflyt og erklærer ikke den samlede innholdsdekningen levert.

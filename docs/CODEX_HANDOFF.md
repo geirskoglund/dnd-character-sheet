@@ -2,6 +2,8 @@
 
 ## Gjeldende oppgavegrunnlag
 
+Les [overordnet føring om regelgrunnlag, omfang og utvidbarhet](REQUIREMENTS.md#overordnet-føring--regelgrunnlag-og-omfang) før videre arkitekturvalg, implementasjoner og tester. PHB 2014 og Eberron 2019 er det samlede funksjonelle grunnlaget for hele appen; SRD 5.1 er et distribuerbart regelbibliotek, ikke en begrensning på hvilke karaktervalg som skal kunne representeres. Manuell føring og overstyring er grunnleggende. Hele den avklarte føringen står ett sted i REQUIREMENTS; eldre fase-/SRD-beskrivelser er ikke en annen produktavgrensning.
+
 [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25) har brukerens fulle tekst med P01–P16/K1–K9, etterfulgt av akseptansekriterier og agentnotater. Den erstatter tidligere midtbåndslukking og den gamle Issue-teksten. Les Issuen som detaljert arbeidsgrunnlag; [krav §22](REQUIREMENTS.md#22-felles-tallendringsdialog) angir felles produktretning. Ingen ny appkode er bestilt gjennom denne oppgave-/dokumentoppdateringen.
 
 GitHub har aktuelle oppgavebeskrivelser, status og prioritet. [BACKLOG.md](BACKLOG.md) har produktoversikt og tidligere kontrollgrunnlag; [BACKLOG_READY.md](BACKLOG_READY.md) er indeks og historisk klargjøring. [BACKLOG_REVIEW.md](BACKLOG_REVIEW.md) bevarer gjennomgangen i PR #53, ikke dagens tallhjulskrav. Ikke oppdater alle dokumenter eller speil statustellinger ved hver US-redigering. Bare nye fellesføringer og reelle motstrid krever dokumentendring. Bevar brukerens tekst/ID-er og hold egne tillegg separat.
