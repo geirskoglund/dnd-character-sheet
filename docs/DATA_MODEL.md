@@ -3,7 +3,8 @@
 **Status:** Konseptuell kontrakt med implementerte utvidelser dokumentert nedenfor. Gjeldende format er Character/backup2 og IndexedDB3. Codex kan velge konkret TypeScript-/JS-struktur og IndexedDB-skjema, men må oppfylle funksjonene i [REQUIREMENTS.md](REQUIREMENTS.md). Manuelle overstyringer og SRD-/egendefinerte data er grunnleggende.
 
 ## Prinsipper
-- **Per-character data** er separate fra immutable/importerte **SRD CatalogEntries**. Ingen avhengighet til en komplett proprietær katalog.
+- **Per-character data** er separate fra immutable/importerte **CatalogEntries**. Følg [regelgrunnlag, omfang og utvidbarhet](REQUIREMENTS.md#overordnet-føring--regelgrunnlag-og-omfang): PHB 2014 og Eberron 2019 skal kunne representeres, også utenfor den distribuerbare SRD 5.1-katalogen. Ingen avhengighet til en komplett proprietær regeltekstkatalog.
+- Regelutgave og innholdskilde skal kunne identifiseres. Skill medfølgende regeldata fra brukerregistrert bokinnhold; modellen og katalogreferansene skal tåle senere godkjente innholdskilder og karaktervalg uten unødvendig ombygging. Representasjon krever ikke automatisering av alle reglene.
 - Identiteter er stabile UUID-er for brukeropprettede entiteter og lagrede karakterinstanser; eventuelle katalog-IDer er separate.
 - Hver katalogbaserte entitet kan instansieres på en karakter og **overstyres** (navn, effekter, ressurser, tekst) uten å endre katalogen eller andre karakterer.
 - Ikke forsøk én universal JSON-tekststreng for språk, proficiencies eller damage defenses: de er domeneobjekter.

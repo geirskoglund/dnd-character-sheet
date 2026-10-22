@@ -1,10 +1,40 @@
 # Kravspesifikasjon – D&D Character Companion
-**Status:** Gjeldende produktgrunnlag, oppdatert 2026-10-21. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
+**Status:** Gjeldende produktgrunnlag, oppdatert 2026-10-22. Gjeldende beslutninger: [DECISIONS.md](DECISIONS.md).
 **Spill:** D&D 5e (2014). Mobilførst, offline-først, fysisk terningkast og DM som autoritet.
 
 **Arbeidsgrunnlag:** GitHub-Issuen har oppgavens detaljerte krav og akseptansekriterier. Dette dokumentet har felles produktføringer. Vanlig Issue-presisering krever ikke oppdatering av alle prosjektdokumenter. Se [arbeidsinstruksen](../AGENTS.md). Nyeste tallendringskrav står i [#25](https://github.com/geirskoglund/dnd-character-sheet/issues/25); eldre leveransebeskrivelser nedenfor viser tidligere betjening.
 
 Gjeldende funksjonsstatus og foreslått arbeidsrekkefølge: [produktgjennomgang og backlog](BACKLOG.md). Historiske leveranseavsnitt nedenfor er ikke en samlet mangelliste; nyere beslutninger og kildebelagt status i gjennomgangen gjelder. Prioriteringsforslag bestiller ikke appkode.
+
+## Overordnet føring – regelgrunnlag og omfang
+
+Applikasjonen skal støtte Dungeons & Dragons 5th Edition (2014), med følgende regelbøker som samlet og autoritativt grunnlag:
+
+- Player’s Handbook (2014)
+- Eberron: Rising from the Last War (2019)
+
+Dette er en grunnleggende produktbeslutning som skal styre datamodell, regelhåndtering, karakterinformasjon, klasse- og subklassevalg, spells, feats, egenskaper og øvrig funksjonalitet.
+
+### Omfang
+
+- Alle 12 klasser og tilhørende subklasser fra Player’s Handbook (2014).
+- Artificer og alle tre tilhørende subklasser fra Eberron.
+- Relevante regler, karaktervalg og øvrig spillerinnhold fra begge bøkene.
+- Ingen automatisk innblanding av 2024-reglene eller innhold fra andre supplementer.
+
+### Viktige prinsipper
+
+1. Appen skal kunne representere alle disse karaktervalgene og deres egenskaper, men trenger ikke automatisere alle reglene.
+2. Den skal først og fremst erstatte et fysisk karakterark. Manuell registrering og overstyring er grunnleggende funksjonalitet.
+3. SRD 5.1 brukes som lovlig distribuerbart regelbibliotek, men SRD 5.1 definerer ikke produktets funksjonelle omfang. Appen må kunne representere innhold fra begge de angitte bøkene selv når full regeltekst ikke kan distribueres.
+4. Det skal være et tydelig skille mellom regeldata som kan leveres med appen, og innhold brukeren selv registrerer fra egne regelbøker.
+5. Ingen funksjonalitet skal utformes under antakelsen om at SRD 5.1 dekker alle klasser, subklasser eller egenskaper vi skal støtte.
+
+### Utvidbarhet
+
+De angitte bøkene definerer gjeldende produktomfang. Datamodell, innholdskataloger og brukergrensesnitt skal utformes slik at flere innholdskilder og karaktervalg kan støttes senere uten unødvendig ombygging. Regelutgave og innholdskilde skal kunne identifiseres tydelig. Utvidelser av omfanget krever en uttrykkelig produktbeslutning.
+
+Denne avgrensningen og føringen om utvidbarhet gjelder hele applikasjonen, ikke bare karakteropprettelsen. Den skal ligge til grunn for alle videre arkitekturvalg, implementasjoner og tester.
 
 ## 1. Produkt og akseptansekriterier
 **Overordnet mål: erstatte papirkarakterarket ved det fysiske spillebordet.** Appen skal gjøre det enkelt å lese, slå opp, notere og endre karakterinformasjon under spill, med spillerens manuelle kontroll og DM som autoritet. Nye funksjoner og brukerflyter vurderes først etter hvordan de støtter dette målet.
@@ -94,7 +124,7 @@ De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsipp
 - Ressurser kan knyttes til class features, feats, spells og items og har count/max, rest-regler og manuell overstyring. Arcane Recovery styres av **spilledag**, ikke kalenderdato.
 - Felles spellvisning; klassespesifikke data (Wizard spellbook/prepared, Warlock Pact Magic, andre known/prepared). Slot-beholdning skal følge klasse/nivå med manuell overstyring etter senere avklaring i §13; forbruk føres manuelt med ±1. Cantrips koster normalt ingen spell slots.
 - Egne features kan være handlinger, ressurser, betingede passive effekter og eventuelt aktivstatus. Eksterne buffs, debuffs, darkness/dekning og lignende **skal ikke kreve** løpende registrering; bare tilføy ved behov, særlig for skadeberegning.
-- Full SRD 5.1 som lokalt regelbibliotek med riktig lisensinformasjon og sporbar opprinnelse. Innhold utenfor SRD, inkludert Eberron, er manuelt registrert av bruker; ikke distribuer proprietært innhold.
+- Full SRD 5.1 som lokalt regelbibliotek med riktig lisensinformasjon og sporbar opprinnelse. Det funksjonelle omfanget følger [regelgrunnlaget over](#overordnet-føring--regelgrunnlag-og-omfang), også for innhold utenfor SRD. Skill medfølgende regeldata fra brukerens registreringer fra egne bøker; manglende distribusjonsrett til full regeltekst begrenser ikke hvilke karaktervalg og egenskaper appen skal kunne representere.
 
 ## 6. Historikk, lagring og drift
 - **IndexedDB**, lokal/offline-first, GitHub Pages statisk hosting. Ingen obligatorisk nettforbindelse for lagrede karakterer og SRD-oppslag etter at appen er cachet.
