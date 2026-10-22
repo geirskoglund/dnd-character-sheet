@@ -1,6 +1,6 @@
 import {effectiveAbilities,effectiveMaxHp} from './item-effects';
 import type {Character} from './model';
-import {classFacts,classKey,levelFacts,slotProgression} from './magic';
+import {classFacts,classKey,levelFacts,slotProgression,hasUnknownSlotProgression} from './magic';
 import {abilityModifier} from './modifiers';
 type Pool=Character['resources'][number];
 const projectionIds=new Map<string,string>();
@@ -36,7 +36,7 @@ export function withStandardResources(source:Character):Character {
   const raw=f.sourceRef?.kind==='catalog'?f.sourceRef.id.replace('srd51:class:',''):'';
   const key=raw.startsWith('wild-shape-')?'wild-shape':raw.startsWith('bardic-inspiration-')?'bardic-inspiration':raw.startsWith('action-surge-')?'action-surge':raw;
   const cl=c.classes.find(cl=>({'ki':'monk','rage':'barbarian','second-wind':'fighter','action-surge':'fighter','bardic-inspiration':'bard','font-of-magic':'sorcerer','lay-on-hands':'paladin','wild-shape':'druid','arcane-recovery':'wizard'} as Record<string,string>)[key]===classKey(cl));
-  if(!cl)continue;
+  if(!cl||cl.level>20)continue;
   let max=0,recharge:Pool['recharge']={kind:'longRest'};
   if(key==='ki'&&cl.level>=2){max=cl.level;recharge={kind:'shortRest',ruleText:'Minst 30 minutter av hvilen brukt til meditasjon.'};}
   if(key==='rage')max=cl.level>=20?999:cl.level>=17?6:cl.level>=12?5:cl.level>=6?4:cl.level>=3?3:2;
@@ -53,7 +53,10 @@ export function withStandardResources(source:Character):Character {
   if(pool&&!f.resourceRefs.includes(pool.id))f.resourceRefs.push(pool.id);
  }
  // Remove obsolete generated counts on class/level changes; explicit overrides remain paper-sheet entries.
- c.resources=c.resources.filter(p=>!p.automatic||p.manualMaximum||desired.has(`${p.automatic.key}:${p.classRef??''}`));
+ // An absent 2014 progression row is unknown, never an instruction to delete sheet entries.
+ const unknownSlots=hasUnknownSlotProgression(c);
+ const unknownClasses=new Set(c.classes.filter(cl=>cl.level>20).map(cl=>cl.id));
+ c.resources=c.resources.filter(p=>!p.automatic||p.manualMaximum||!!p.classRef&&unknownClasses.has(p.classRef)||unknownSlots&&p.automatic.key.startsWith('spellcasting:')||desired.has(`${p.automatic.key}:${p.classRef??''}`));
  const ids=new Set(c.resources.map(p=>p.id));
  for(const f of c.features)f.resourceRefs=f.resourceRefs.filter(id=>ids.has(id));
  return c;

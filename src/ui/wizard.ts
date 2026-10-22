@@ -32,7 +32,7 @@ function controls(form:HTMLFormElement){
  return [...form.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('input[name],select[name],textarea[name]')].filter(el=>!el.name.startsWith('_')).map(el=>{const index=counts.get(el.name)??0;counts.set(el.name,index+1);return {name:el.name,index,value:el.value,...el instanceof HTMLInputElement&&['checkbox','radio'].includes(el.type)?{checked:el.checked}:{}};});
 }
 function restore(form:HTMLFormElement,draft:WizardDraft){for(const entry of draft.controls){const input=[...form.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('[name]')].filter(el=>el.name===entry.name)[entry.index];if(!input)continue;input.value=entry.value;if(input instanceof HTMLInputElement&&entry.checked!==undefined)input.checked=entry.checked;}form.dispatchEvent(new Event('change',{bubbles:true}));}
-const questionTitles:Record<string,string>={name:'Hva heter oppføringen?',speciesChoice:'Hvilken art tilhører karakteren?',speciesName:'Hva heter arten?',speciesSpeed:'Hva er artens grunnfart?',ignoreArmorPenalty:'Ignorerer arten fartsreduksjon fra tung rustning?',classChoice:'Hvilken klasse har karakteren?',className:'Hva heter klassen?',subclassChoice:'Hvilken subclass har karakteren?',subclassName:'Hva heter subclassen?',classLevel:'Hvilket klassenivå har karakteren?',hpMax:'Hva er karakterens maksimale HP?',poolName:'Hva heter beholdningen?',max:'Hvor mange kan du ha til sammen?',current:'Hvor mange har du tilgjengelig nå?',spellLevel:'Hvilket nivå vil du føre?',category:'Hva slags egenskap er dette?'};
+const questionTitles:Record<string,string>={name:'Hva heter oppføringen?',speciesChoice:'Hvilken art tilhører karakteren?',classChoice:'Hvilken klasse har karakteren?',subclassChoice:'Hvilken subclass har karakteren?',classLevel:'Hvilket klassenivå har karakteren?',hpMax:'Hva er karakterens maksimale HP?',poolName:'Hva heter beholdningen?',max:'Hvor mange kan du ha til sammen?',current:'Hvor mange har du tilgjengelig nå?',spellLevel:'Hvilket nivå vil du føre?',category:'Hva slags egenskap er dette?'};
 /** Shared question frame. Older forms are projected one control at a time without losing their listeners. */
 export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?:(form:HTMLFormElement)=>boolean}[],label='Lagre',persistence?:WizardPersistence){
  const form=d.querySelector('form')!,body=d.querySelector<HTMLElement>('#dialog-body')!,submit=d.querySelector<HTMLButtonElement>('#submit')!,nativeSubmit=form.onsubmit;
@@ -46,14 +46,14 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
  const questions=()=>groups.flatMap((group,gi)=>{
   if(group.when&&!group.when(form))return [];
   const labels=[...group.element.querySelectorAll<HTMLElement>('label')].filter(el=>!!el.querySelector('input,select,textarea')&&!el.closest('.number-wheel'));
-  const split=!group.element.matches('[data-question-id]')||labels.length>1;
+  const split=!group.element.hasAttribute('data-question-grouped')&&(!group.element.matches('[data-question-id]')||labels.length>1);
   const labelled=split?labels:[group.element];
   group.element.dataset.wizardSplit=String(split);
   return labelled.filter(available).map((element,li)=>{
    const field=element.querySelector<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('input[name],select[name],textarea[name]');
    const cls=element.closest<HTMLElement>('[data-class-id]')?.dataset.classId??'';
    const id=element.dataset.questionId??`${gi}:${cls}:${field?.name??li}`;
-   const title=element.dataset.questionTitle??(field?.name==='name'&&form.querySelector('#class-rows')?'Hva heter karakteren?':questionTitles[field?.name??''])??(field?.name&&['STR','DEX','CON','INT','WIS','CHA'].includes(field.name)?`Hva er ${field.name}?`:element.childNodes[0]?.textContent?.trim()||'Hva vil du føre på arket?');
+   const title=element.dataset.questionTitle??questionTitles[field?.name??'']??(field?.name&&['STR','DEX','CON','INT','WIS','CHA'].includes(field.name)?`Hva er ${field.name}?`:element.childNodes[0]?.textContent?.trim()||'Hva vil du føre på arket?');
    element.dataset.wizardKey=id;
    return {element,id,title,help:element.dataset.questionHelp??(field?.name==='hpMax'?'På første nivå: full Hit Die + CON-modifier. Senere: fysisk kast eller fast verdi + CON. Angi samlet maks HP fra arket.':field?.name&&['STR','DEX','CON','INT','WIS','CHA'].includes(field.name)?'Bruk den endelige verdien på karakterarket, inkludert bonuser.':''),art:(element.dataset.questionArt??group.element.dataset.questionArt) as UIIcon|undefined,group};
   });
@@ -68,25 +68,26 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
  const flush=async()=>{if(!persistence)return undefined;changed=true;await persist();if(failure)throw failure;return {id:entry!.id,revision};};
  const splitOptions=()=>{
   for(const q of questions()){
-   const field=q.element.querySelector<HTMLSelectElement|HTMLInputElement>('select,input[type="checkbox"]');if(!field||q.element.querySelector('[data-choice-field]'))continue;
+   for(const field of q.element.querySelectorAll<HTMLSelectElement|HTMLInputElement>('select,input[type="checkbox"]')){if(field.parentElement?.querySelector('[data-choice-field]'))continue;
    const name=field.name,options=field instanceof HTMLSelectElement?[...field.options].filter(o=>o.value!==''||!field.required).map(o=>({value:o.value,label:o.textContent??o.value})):[{value:'yes',label:'Ja'},{value:'no',label:'Nei'}];
    const selected=field instanceof HTMLSelectElement?field.value:field.checked?'yes':'no';
    if(!field.hasAttribute('aria-label'))field.setAttribute('aria-label',field.closest('label')?.childNodes[0]?.textContent?.trim()||name);
    field.hidden=true;field.setAttribute('aria-hidden','true');field.tabIndex=-1;
-   const holder=document.createElement('div');holder.innerHTML=choices('_'+name,selected,options);q.element.append(holder);
+   const holder=document.createElement('div');holder.innerHTML=choices('_'+name,selected,options);field.parentElement!.append(holder);
    holder.querySelector('input')!.remove();holder.querySelector<HTMLElement>('[data-choice-field]')!.dataset.nativeChoice=name;
-   q.element.dataset.questionTitle=q.title;
+   if(!q.element.hasAttribute('data-question-grouped'))q.element.dataset.questionTitle=q.title;
+   }
   }
  };
  const draw=()=>{
   enhanceNumbers(form);splitOptions();const list=questions();if(!list.length)return;
   let at=list.findIndex(q=>q.id===current);if(at<0){at=0;current=list[0].id;}
   for(const group of groups){group.element.hidden=false;group.element.dataset.wizardHidden='';if(group.element.dataset.wizardSplit==='true')group.element.querySelectorAll<HTMLElement>('label').forEach(el=>{el.hidden=true;el.dataset.wizardHidden='';});}
-  groups.forEach(group=>{if(group.element.dataset.wizardSplit!=='true')group.element.hidden=true;else{group.element.querySelectorAll<HTMLElement>('.class-row').forEach(row=>{row.hidden=true;row.dataset.wizardHidden='';});}});
+  groups.forEach(group=>{if(group.element.dataset.wizardSplit!=='true')group.element.hidden=true;});
   d.querySelectorAll('[data-wizard-active]').forEach(el=>el.removeAttribute('data-wizard-active'));
   const q=list[at];q.element.dataset.wizardActive='true';q.element.hidden=false;for(let p=q.element.parentElement;p&&p!==body;p=p.parentElement)if(p.hasAttribute('data-wizard-hidden'))p.hidden=false;
   for(const group of groups)if(!group.element.contains(q.element)&&group.element!==q.element)group.element.hidden=true;
-  for(const group of groups)if(group.element.dataset.wizardSplit==='true'){group.element.querySelectorAll<HTMLElement>('legend, p').forEach(el=>el.hidden=true);group.element.querySelectorAll<HTMLButtonElement>('button[data-remove-class],#add-class').forEach(b=>b.hidden=!q.element.closest('[data-class-id]')||b.hasAttribute('data-remove-class')&&form.querySelectorAll('[data-class-id]').length<2);}
+  for(const group of groups)if(group.element.dataset.wizardSplit==='true'){group.element.querySelectorAll<HTMLElement>('legend, p').forEach(el=>el.hidden=true);}
   const question=header.querySelector<HTMLElement>('#wizard-question')!;question.textContent=q.title;
   header.querySelector('#wizard-help')!.textContent=q.help;header.querySelector('.wizard-picture')!.innerHTML=wizardArt(q.art??(q.element.closest('[data-class-id]')?'feature':'note'));
   const progress=header.querySelector<HTMLElement>('.wizard-progress')!;progress.setAttribute('aria-valuemin','1');progress.setAttribute('aria-valuemax',String(list.length));progress.setAttribute('aria-valuenow',String(at+1));progress.setAttribute('aria-valuetext',`${at+1} av ${list.length}`);
@@ -98,11 +99,11 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
    button.setAttribute('aria-pressed',String(button.dataset.wizardChoice===value));
    button.onclick=()=>{
     if(!field)return;if(field instanceof HTMLInputElement&&field.type==='checkbox')field.checked=button.dataset.wizardChoice==='yes';else field.value=button.dataset.wizardChoice!;
-    field.dispatchEvent(new Event('change',{bubbles:true}));goNext(true);
+    field.dispatchEvent(new Event('change',{bubbles:true}));if(!q.element.hasAttribute('data-manual-next'))goNext(true);
    };
   });
   // An existing/default answer always has a visible way forward. Unanswered choices stay direct.
-  submit.hidden=!!q.element.querySelector('[data-choice-field]')&&!q.element.querySelector('[data-wizard-choice][aria-pressed=true]')&&at<list.length-1;
+  submit.hidden=!q.element.hasAttribute('data-manual-next')&&!!q.element.querySelector('[data-choice-field]')&&!q.element.querySelector('[data-wizard-choice][aria-pressed=true]')&&at<list.length-1;
   updateValidity();body.scrollTop=0;
  };
  const updateValidity=()=>{
@@ -121,7 +122,7 @@ export function bindWizard(d:HTMLDialogElement,groups:{element:HTMLElement;when?
   else if(!choice)nativeSubmit?.call(form,new SubmitEvent('submit',{cancelable:true}));
  }
  form.onsubmit=e=>{e.preventDefault();goNext();};
- form.addEventListener('click',e=>{const target=e.target as HTMLElement;if(target.closest('#add-class,[data-remove-class]')){queueMicrotask(()=>{if(target.closest('#add-class')){const last=form.querySelector<HTMLElement>('.class-row:last-child');if(last)current=`1:${last.dataset.classId}:classChoice`;}draw();changed=true;void persist();});}});
+
  form.addEventListener('input',()=>{if(form.getAttribute('aria-busy')==='true')return;updateValidity();changed=true;void persist();});
  form.addEventListener('change',event=>{if(form.getAttribute('aria-busy')==='true')return;updateValidity();const field=event.target;if(!(field instanceof HTMLInputElement)||['hidden','checkbox','radio'].includes(field.type))draw();if(restoring)return;changed=true;void persist();});
  back.onclick=()=>{const list=questions(),at=list.findIndex(q=>q.id===current);current=list[Math.max(0,at-1)].id;draw();changed=true;void persist();};

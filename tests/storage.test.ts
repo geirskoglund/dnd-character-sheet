@@ -15,7 +15,7 @@ describe('character aggregate and persistence', () => {
     expect(b.languages).toEqual([]);
     expect(a.id).not.toBe(b.id);
     expect(characterSchema.safeParse({ ...a, goldCp: 1.1 }).success).toBe(false);
-    expect(characterSchema.safeParse({ ...a, level: 21 }).success).toBe(false);
+    expect(characterSchema.safeParse({ ...a, level: 0 }).success).toBe(false);
     expect(characterSchema.safeParse({ ...a, name: ' ' }).success).toBe(false);
     expect(characterSchema.safeParse({ ...a, damageDefenses: ['fire'] }).success).toBe(false);
   });

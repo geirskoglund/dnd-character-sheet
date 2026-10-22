@@ -56,11 +56,17 @@ export async function nextQuestion(page:Page){
  throw new Error('Et svar må velges før veiviseren kan gå videre.');
 }
 export async function choose(page:Page,name:string,option:string|{label:string}|{value:string},index=0){
- const field=await revealField(page,name,index);
+ const field=await revealField(page,name,name==='Klasse'?0:index);
+ if(name==='Klasse'&&await field.getAttribute('type')==='hidden'){
+  const label=typeof option==='object'&&'label' in option?option.label:null;
+  const value=typeof option==='string'?option:typeof option==='object'&&'value' in option?option.value:null;
+  const button=label?page.locator('[data-class-selection]').getByRole('button',{name:label,exact:true}):page.locator(`[data-class-toggle="${value}"]`);
+  if(await button.getAttribute('aria-pressed')!=='true')await button.click();return;
+ }
  if(await field.isVisible())return field.selectOption(option);
  const label=await field.evaluate((el,arg)=>{const s=el as HTMLSelectElement;return [...s.options].find(o=>typeof arg==='string'?o.value===arg:'label'in arg?o.label===arg.label:o.value===arg.value)?.label;},option);
  if(label===undefined)throw new Error('Fant ikke valget i '+name);
- await page.getByRole('dialog').locator('[data-wizard-active]').getByRole('button',{name:label,exact:true}).click();
+ const holder=field.locator('..');await holder.getByRole('button',{name:label,exact:true}).click();
 }
 export async function typeWheelText(page:Page,name:string,value:string){
  const label=name==='Hele GP'?'GP':name==='Hundredeler'?'CP':name;

@@ -75,6 +75,7 @@ test('production PWA works offline on a GitHub Pages subpath and has no horizont
   await fillField(page,'Navn','Offline Alva');
   await choose(page,'Art / species',{label:'Dwarf'});
   await characterStep(page,1);
+  await page.getByRole('button',{name:'Fighter',exact:true}).click();
   await choose(page,'Klasse',{label:'Monk'});
   await characterStep(page,1);
   await fillField(page,'Klassenivå','6');
@@ -121,14 +122,13 @@ test('multiclass totals and separate navigation scroll positions', async ({ page
   await menuAction(page, 'Rediger karakter');
   await characterStep(page,1);
   await fillField(page,'Klassenivå','3');
-  await expect(page.locator('#total-level')).toHaveText('Totalt level: 3');
-  await page.getByRole('button', { name: '+ Klasse', exact: true }).click();
-  await choose(page,'Klasse',{label:'Wizard'},1);
+  await choose(page,'Klasse',{label:'Wizard'});
   await fillField(page,'Klassenivå','2',1);
-  await expect(page.locator('#total-level')).toHaveText('Totalt level: 5');
-  await page.getByRole('button',{name:'Fjern klasse',exact:true}).click();
-  await characterStep(page,1);await expect(page.getByRole('button',{name:'Fjern klasse',exact:true})).not.toBeVisible();
-  await page.getByRole('button',{name:'+ Klasse',exact:true}).click();await choose(page,'Klasse',{label:'Wizard'},1);await fillField(page,'Klassenivå','2',1);
+  await choose(page,'Klasse',{label:'Fighter'});
+  await page.getByRole('button',{name:'Wizard',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Neste',exact:true})).toBeEnabled();
+  await choose(page,'Klasse',{label:'Wizard'});
+  await fillField(page,'Klassenivå','2',1);
   await finish(page);
   await expect(page.locator('header')).toContainText('Fighter 3 / Wizard 2');
   await page.setViewportSize({ width: 390, height: 500 });

@@ -26,7 +26,7 @@ test('WP01 GP02–05/09: name validation, placeholder, staged OK and three disca
  const level=await revealField(page,'Klassenivå');await level.click();await expect(page.locator('dialog.number-change-dialog')).toBeVisible();
  await page.locator('dialog.number-change-dialog').getByRole('button',{name:'Avbryt',exact:true}).click();await expect(level).toHaveValue('1');
  await expect(caller(page).getByRole('button',{name:/Fjern verdi/})).toHaveCount(0);
- const hp=await revealField(page,'Maks HP fra karakterarket');await expect(caller(page).locator('#submit')).toBeDisabled();await hp.click();await page.locator('dialog.number-change-dialog').getByRole('button',{name:'Avbryt',exact:true}).click();await expect(hp).toHaveValue('');await fillField(page,'Maks HP fra karakterarket','12');await expect(caller(page).locator('#submit')).toBeEnabled();
+ const hp=await revealField(page,'Maks HP fra karakterarket');await expect(caller(page).locator('#submit')).toBeEnabled();await hp.click();await page.locator('dialog.number-change-dialog').getByRole('button',{name:'Avbryt',exact:true}).click();await expect(hp).toHaveValue('2');await fillField(page,'Maks HP fra karakterarket','12');await expect(caller(page).locator('#submit')).toBeEnabled();
  await expect(level).toHaveClass(/number-value/);expect(await level.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('none');
 });
 

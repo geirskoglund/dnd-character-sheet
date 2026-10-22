@@ -13,13 +13,18 @@ export function subclassFacts(cl:Character['classes'][number]) {
  return context.subclasses.find(r=>r.class===classKey(cl)&&(normal(cl.subclass??'')===normal(known?.subclasses[0]??'') || normal(cl.subclass??'').endsWith(normal(r.name))));
 }
 export function maxSpellLevel(cl:Character['classes'][number]) {return (levelFacts(cl)?.slots??[]).reduce((max,n,i)=>n?i+1:max,0);}
+export function hasUnknownSlotProgression(c:Character) {
+ const casters=c.classes.filter(cl=>['bard','cleric','druid','paladin','ranger','sorcerer','wizard'].includes(classKey(cl)));
+ return casters.some(cl=>!levelFacts(cl)) || (casters.filter(cl=>maxSpellLevel(cl)>0).length>1 && casters.reduce((n,cl)=>n+(['paladin','ranger'].includes(classKey(cl))?Math.floor(cl.level/2):cl.level),0)>20);
+}
 export function slotProgression(c:Character) {
+ if(hasUnknownSlotProgression(c))return [];
  const spellcasters=c.classes.filter(cl=>classKey(cl)!=='warlock'&&maxSpellLevel(cl)>0);
  let slots:number[]=[];
  if(spellcasters.length===1)slots=[...levelFacts(spellcasters[0])!.slots];
  else if(spellcasters.length>1){
   const level=spellcasters.reduce((n,cl)=>n+(['paladin','ranger'].includes(classKey(cl))?Math.floor(cl.level/2):cl.level),0);
-  slots=[...(context.levels.find(r=>r.class==='wizard'&&r.level===Math.min(20,level))?.slots??[])];
+  slots=[...(context.levels.find(r=>r.class==='wizard'&&r.level===level)?.slots??[])];
  }
  return slots;
 }

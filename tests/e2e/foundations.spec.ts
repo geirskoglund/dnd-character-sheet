@@ -62,24 +62,19 @@ test('minimal creation, five read-only status values, equipment edited inside ap
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   }
 });
-test('subclass lists follow class, custom subclasses persist, core editing preserves equipment', async ({page}) => {
+test('catalog subclasses follow each class and core editing preserves equipment', async ({page}) => {
   await openCharacter(page);
-  await characterStep(page,1);
   await choose(page,'Subclass (valgfritt)',{label:'Champion'});
-  await characterStep(page,1);
   await choose(page,'Klasse',{label:'Wizard'});
-  await expect(page.getByLabel('Subclass (valgfritt)',{exact:true})).toHaveValue('');
-  await expect(page.locator('[name="subclassChoice"] option')).not.toContainText(['Champion']);
-  await characterStep(page,1);
-  await choose(page,'Subclass (valgfritt)','custom');
-  await fillField(page,'Egen subclass','Min skole');
+  await choose(page,'Subclass (valgfritt)',{label:'School of Evocation'},1);
   await save(page); await equipment(page); await addEquipment(page,'Shield · shield');
   await menuAction(page,'Rediger karakter');
-  await revealField(page,'Egen subclass');await expect(page.getByRole('textbox',{name:'Egen subclass',exact:true})).toHaveValue('Min skole');
-  await characterStep(page,0);
+  await revealField(page,'Subclass (valgfritt)');
+  await expect(page.getByLabel('Subclass (valgfritt)',{exact:true}).nth(0)).toHaveValue('Champion');
+  await expect(page.getByLabel('Subclass (valgfritt)',{exact:true}).nth(1)).toHaveValue('School of Evocation');
   await choose(page,'Art / species',{label:'Dwarf'});
   await save(page); await page.reload(); await equipmentTab(page);
-  await expect(page.locator('header')).toContainText('Min skole');
+  await expect(page.locator('header')).toContainText('School of Evocation');
   await expect(page.getByRole('button',{name:'Shield · i bruk',exact:true})).toBeVisible();
   await expectCharacterStatus(page,'Speed25 ft');
 });
@@ -95,17 +90,15 @@ test('Monk AC and speed follow class level and equipped shield', async ({page}) 
   await expectCharacterStatus(page,'AC16');
   await expectCharacterStatus(page,'Speed45 ft');
 });
-test('custom species and custom armor remain editable separately', async ({page}) => {
+test('catalog species and custom armor remain editable separately', async ({page}) => {
   await openCharacter(page);
-  await choose(page,'Art / species','custom');
-  await fillField(page,'Navn på art / underart','Min art');
-  await fillField(page,'Grunnfart for arten (ft)','35'); await save(page);
+  await choose(page,'Art / species',{label:'Elf'}); await save(page);
   await equipment(page); await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();
   await fillField(page,'Navn på utstyr','Min rustning');
   await page.getByRole('button',{name:'Lagre',exact:true}).click();await fillField(page,'AC-grunnverdi','15');await page.getByRole('button',{name:'Neste',exact:true}).click();await page.getByRole('button',{name:'Ja, høyst +2',exact:true}).click();await finish(page);await expect(page.getByRole('dialog')).not.toBeVisible();
   await useEquipment(page,'Min rustning');await expectCharacterStatus(page,'AC17');await page.reload();
   await menuAction(page,'Rediger karakter');
-  await revealField(page,'Navn på art / underart');await expect(page.getByRole('textbox',{name:'Navn på art / underart',exact:true})).toHaveValue('Min art'); await save(page);
+  await revealField(page,'Art / species');await expect(page.getByLabel('Art / species',{exact:true})).toHaveValue('srd51:species:elf'); await save(page);
   await equipmentTab(page); await page.getByRole('button',{name:'Min rustning · i bruk',exact:true}).click(); await expect(page.getByRole('dialog').getByRole('heading',{name:'Min rustning',exact:true})).toBeVisible(); await save(page);
 });
 test('damage and temp HP only in Combat, preview/cancel and atomic undo', async ({page}) => {
@@ -177,8 +170,7 @@ test('cancelled forms leave no stale listeners or errors in the next dialog', as
   await openCharacter(page); await save(page);
   await menuAction(page,'Rediger karakter');
   await characterStep(page,1);
-  await choose(page,'Klasse','custom');
-  await fillField(page,'Egen klasse','Min klasse');
+  await choose(page,'Klasse',{label:'Wizard'});
   await closeEditor(page);
   await equipment(page); await addEquipment(page,'Leather · armor');
   await menuAction(page,'Rediger karakter');
@@ -189,10 +181,9 @@ test('cancelled forms leave no stale listeners or errors in the next dialog', as
   await closeEditor(page);
   await menuAction(page,'Rediger karakter');
   await characterStep(page,1);
-  await choose(page,'Klasse','custom');
-  await fillField(page,'Egen klasse','Fighter'); await save(page);
+  await choose(page,'Klasse',{label:'Rogue'}); await save(page);
   await menuAction(page,'Rediger karakter');
-  await characterStep(page,1);await expect(page.getByLabel('Klasse',{exact:true})).toHaveValue('custom');
+  await characterStep(page,1);await expect(page.getByRole('button',{name:'Rogue',exact:true})).toHaveAttribute('aria-pressed','true');
   expect(errors).toEqual([]);
 });
 test('four modifier favorites show full names, can be changed and persist offline', async ({page,context}) => {
