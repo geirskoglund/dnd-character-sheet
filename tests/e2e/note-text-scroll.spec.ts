@@ -61,10 +61,13 @@ test('a resumed description sizes to restored draft text',async({page})=>{
 
 test('opening a note from a scrolled page anchors the popup and locks the page through nested editing',async({page})=>{
   await createCharacter(page);await page.getByRole('button',{name:'Legg til notat',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Nytt notat',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Slett notat',exact:true})).toHaveCount(0);
   await fillField(page,'Tittel','Nederst på siden');await fillField(page,'Tekst',longText);await finish(page);
   const d=page.locator('dialog:not(.text-editor)'),note=page.getByRole('button',{name:'Nederst på siden',exact:true});
   await expect(d).not.toBeVisible();await note.scrollIntoViewIfNeeded();const returnY=await page.evaluate(()=>scrollY);
   expect(returnY).toBeGreaterThan(300);await note.tap();
+  await expect(d.getByRole('heading',{name:'Notat',exact:true})).toBeVisible();
   const lockedY=await page.evaluate(()=>scrollY),bounds=await d.boundingBox();
   expect(bounds!.y).toBe(0);expect(bounds!.height).toBe(844);
   const heading=d.locator('.dialog-heading'),footer=d.locator('.dialog-actions'),body=d.locator('#dialog-body');
@@ -75,6 +78,18 @@ test('opening a note from a scrolled page anchors the popup and locks the page t
     expect(await page.locator('.character-header').boundingBox()).toEqual(background);
   }
   expect(await d.evaluate(el=>getComputedStyle(el).position)).toBe('fixed');
+  const remove=footer.getByRole('button',{name:'Slett notat',exact:true}),save=footer.getByRole('button',{name:'Lagre',exact:true});
+  await expect(remove).toHaveText('');await expect(remove.locator('[data-icon="trash"]')).toHaveCount(1);
+  for(const width of [390,320])for(const font of ['100%','200%']){
+    await page.setViewportSize({width,height:568});await page.evaluate(font=>document.documentElement.style.fontSize=font,font);
+    const before=(await remove.boundingBox())!,saveBox=(await save.boundingBox())!;
+    expect(before.width).toBe(48);expect(before.height).toBe(48);
+    expect(before.x+before.width).toBeLessThan(saveBox.x);expect(saveBox.width).toBeGreaterThan(before.width*2);
+    expect(before.y).toBeGreaterThanOrEqual(0);expect(before.y+before.height).toBeLessThanOrEqual(568);
+    await body.evaluate(el=>el.scrollTop=el.scrollHeight);
+    expect(await remove.boundingBox()).toEqual(before);
+  }
+  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>document.documentElement.style.fontSize='100%');
   // Both nested text dismissal and a declined deletion must keep the caller's lock.
   const text=d.getByRole('textbox',{name:'Tekst',exact:true});await text.click();
   await page.locator('.text-editor').getByRole('button',{name:'Avbryt',exact:true}).tap();
@@ -86,6 +101,9 @@ test('opening a note from a scrolled page anchors the popup and locks the page t
   await d.getByRole('button',{name:'Avbryt',exact:true}).tap();await expect(d).not.toBeVisible();
   await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(returnY);await expect(note).toBeFocused();
   expect(await page.evaluate(()=>document.body.style.position)).toBe('');
-  await note.tap();await fillField(page,'Tekst',longText+'\nBekreftet.');await finish(page);await expect(d).not.toBeVisible();
-  await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(returnY);await expect(note).toBeFocused();
+  // Reopening can scroll the opener into view again after the viewport/font changes above.
+  await note.evaluate(el=>el.addEventListener('pointerdown',()=>el.dataset.openScroll=String(window.scrollY),{once:true}));
+  await note.tap();const saveReturnY=Number(await note.getAttribute('data-open-scroll'));
+  await fillField(page,'Tekst',longText+'\nBekreftet.');await finish(page);await expect(d).not.toBeVisible();
+  await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(saveReturnY);await expect(note).toBeFocused();
 });

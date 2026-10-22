@@ -86,3 +86,5 @@ Rapporter iOS-versjon, installert modus/nettleser, PR/commit og konkret forløp 
 2. Åpne Tekst igjen. Nederst skal det være én strek over Avbryt/OK. Prøv med tastaturet åpent og lukket i installert My D&D Test; X/Avbryt/OK skal være tilgjengelige og virke på første trykk. Avbryt skal bevare den opprinnelige teksten.
 3. Den samme fulltekstvisningen gjelder flerlinjefelt i andre dialoger/veivisere, også etter Tilbake og gjenopptatt utkast. Kontroller gjerne en lang utstyrsmerknad eller beskrivelse.
 4. Rull ned til notatpillene før åpning. Popupen skal fylle skjermen med en gang. Sveip på overskriften, nederste knappelinje og gjennom hele teksten: siden bak skal stå fast. Åpne/lukk teksteditoren og avbryt en slettingsbekreftelse. Lukk eller lagre notatet; du skal komme tilbake til samme sted på siden. Prøv også etter at PWA-en har vært i bakgrunnen og tas frem igjen.
+
+5. Eksisterende notater skal ha overskriften «Notat», nye «Nytt notat». Søppelbøtten skal stå som en liten ikonknapp til venstre for Lagre og beholde plasseringen når lang tekst rulles. Trykk søppelbøtten og avbryt bekreftelsen: tekst og rulleposisjon skal beholdes.

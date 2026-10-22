@@ -1,5 +1,7 @@
 # Full tekstvisning og enkelt skille
 
+[Nyeste notatvisning med fast søppelbøtte og nøytral overskrift](#nøytral-overskrift-og-fast-søppelbøtte) erstatter den eldre overskriften og sletteknappens plassering i bildene nedenfor.
+
 Grunnlag: brukerens to Notat-bilder og godkjente presisering i samtalen 22. oktober 2026. Faktisk lokal app i Chromium med mobil/touch-geometri; dette er ikke fysisk iPhone/PWA eller native tastaturtest.
 
 - [Notat ved starten, 390 px](note-top-390.png): teksten fortsetter under skjermkanten og kan rulles i dialoginnholdet.
@@ -20,3 +22,11 @@ Vanlige dialoger får nå eksplisitt `position:fixed` og en bakgrunnslås med be
 Inspiserte faktiske Chromium-bilder viser [Rediger notat fra nedscrollet side](popup-from-bottom-390.png) og [retur til notatet](return-to-note-390.png). Målt åpning fra 1026 px beholdt den underliggende sidens plassering med `body.top:-1026px`; dialogens topp var 0 før/etter rulling. Lukking gjenopprettet 1026 px og fokus på reisenotatet. Dette er lokal mobilgeometri, ikke fysisk PWA-verifikasjon eller bevis på årsaken til den forbigående PWA-feilen.
 
 Oppfølgingen er kontrollert med 155 enhets-/integrasjonstester, produksjonsbygg og alle 106 nettleserscenarioer (105 i fullkjøringen, samt grønn etterprøve av returposisjonen med måling ved faktisk brukertrykk). Ingen tester eller forventninger er fjernet. Full GitHub Validate kjøres før oppdatert testpublisering.
+
+## Nøytral overskrift og fast søppelbøtte
+
+Brukeren har godkjent «Notat» for eksisterende notater, fortsatt «Nytt notat» ved opprettelse og en kompakt søppelbøtte til venstre for Lagre. Knappen viser bare ikonet og har tilgjengelig navn «Slett notat»; bekreftelsesdialogen beholdes.
+
+Inspiserte faktiske Chromium-bilder viser [390 px / normal tekst](note-footer-390.png) og [320 × 568 / 200 % tekst, rullet til slutten](note-footer-320.png). [Målingene](footer-measurements.json) viser samme plassering før/etter rulling, 48 × 48 px søppelbøtte og henholdsvis 303/238 px bredde til Lagre. Begge står i den faste knappelinjen. SVG-en bruker appens eksisterende linjestil.
+
+155 enhets-/integrasjonstester, produksjonsbygg og 12/12 berørte nettleserprøver bestod. Prøvene omfatter overskrifter, manglende sletteknapp på nye notater, kompakt fast plassering, stor tekst, avbrutt sletting, bekreftet sletting og Angre. Skjermbildene er lokal mobil/touch-geometri, ikke fysisk iPhone/PWA-test. Brukerreview og mergegodkjenning gjenstår.
