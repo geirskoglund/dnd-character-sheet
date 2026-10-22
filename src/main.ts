@@ -301,7 +301,7 @@ function editOverrides(c: Character) {
 function editNote(id?: string) {
   const draft = structuredClone(current()!);
   const note = draft.notes.find(n => n.id === id) ?? { id: crypto.randomUUID(), title: '', body: '' };
-  const d = dialog(id ? 'Rediger notat' : 'Nytt notat', `${field('Tittel', 'title', note.title, 'required maxlength="100"',{multiline:false,maxLength:100})}${textArea('Tekst','body',note.body,8,{multiline:true,maxLength:10000})}${id ? '<button type="button" id="delete-note">Slett notat</button>' : ''}`, async form => {
+  const d = dialog(id ? 'Notat' : 'Nytt notat', `${field('Tittel', 'title', note.title, 'required maxlength="100"',{multiline:false,maxLength:100})}${textArea('Tekst','body',note.body,8,{multiline:true,maxLength:10000})}${id ? `<button type="button" id="delete-note" class="note-delete danger" aria-label="Slett notat" title="Slett notat">${icon('trash')}</button>` : ''}`, async form => {
     const data = new FormData(form);
     note.title = String(data.get('title')).trim(); note.body = String(data.get('body'));
     if (!id) draft.notes.push(note);
@@ -309,6 +309,7 @@ function editNote(id?: string) {
     message = ''; await refresh();
   });
   const remove = d.querySelector<HTMLButtonElement>('#delete-note');
+  if (remove) d.querySelector('.dialog-actions')!.prepend(remove);
   if (remove) remove.onclick = () => {
     confirmDialog('Slett notat?', `<p>Vil du slette «${esc(note.title)}»?</p>`, async () => {
       draft.notes = draft.notes.filter(n => n.id !== id);

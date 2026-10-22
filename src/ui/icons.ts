@@ -61,6 +61,7 @@ const paths = {
   wand:'<path d="m4 21 11-14 3 3L7 24zM16 2v3m5-1-2 2m3 4h-3M10 4l2 2"/>',
   menu:'<path d="M5 6h14M5 12h14M5 18h14"/>', close:'<path d="m6 6 12 12M18 6 6 18"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',check:'<path d="m5 12 5 5L20 6"/>',
+  trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',
   arrow:'<path d="M5 12h14m-5-5 5 5-5 5"/>',history:'<path d="M3 10a9 9 0 1 1 0 5M3 4v6h6M12 7v5l4 2"/>',
 } satisfies Record<IconKey|string,string>;
 export type UIIcon = keyof typeof paths;

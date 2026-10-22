@@ -407,3 +407,7 @@ Brukeren har bestilt implementasjon av [#58](https://github.com/geirskoglund/dnd
 ### Oppfølging etter brukerens PWA-review av PR #59
 
 Brukeren bestilte samlet rettelse av valgt-tilstand/Neste, tallpillenes utforming, store tomme handlingsknapper og teksteditorens feltinnstillinger. Standard-/tidligere svar skal ha Neste; ubesvarte direktevalg består. Tallpillene skal følge den viste Combat-referansen med intern ledetekst, midtstilling og hjørnetrekant. Linjeskift og tekstlengde bestemmes per editorinstans. Brukerens «ellers fungerer det bra» er en positiv observasjon av øvrig flyt, ikke mergegodkjenning eller en detaljert fysisk testkvittering for alle tidligere akseptansescenarier.
+
+### Full tekst i kalleren og enkelt skille i flerlinjeeditoren (2026-10-22)
+
+Etter to Notat-bilder godkjente brukeren at hele flerlinjeteksten vises, med rulling av innholdet mellom fast overskrift/X og fast knappelinje. Samme rettelse gjelder andre kallere av felleskomponenten. Flerlinjeeditoren beholder bare skillet over Avbryt/OK nederst. Dette presiserer visningen; feltgrenser, tekstinnhold og bekreftelsesflyt endres ikke.

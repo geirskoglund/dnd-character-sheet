@@ -1,0 +1,50 @@
+[
+  {
+    "width": 390,
+    "height": 727,
+    "font": "100%",
+    "trashBefore": {
+      "x": 15.59375,
+      "y": 660.8125,
+      "width": 48,
+      "height": 48
+    },
+    "trashAfter": {
+      "x": 15.59375,
+      "y": 660.8125,
+      "width": 48,
+      "height": 48
+    },
+    "save": {
+      "x": 71.59375,
+      "y": 660.625,
+      "width": 302.8125,
+      "height": 48.375
+    },
+    "heading": "Notat"
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "font": "200%",
+    "trashBefore": {
+      "x": 12.796875,
+      "y": 478.609375,
+      "width": 48,
+      "height": 48
+    },
+    "trashAfter": {
+      "x": 12.796875,
+      "y": 478.609375,
+      "width": 48,
+      "height": 48
+    },
+    "save": {
+      "x": 68.796875,
+      "y": 455.21875,
+      "width": 238.40625,
+      "height": 94.78125
+    },
+    "heading": "Notat"
+  }
+]

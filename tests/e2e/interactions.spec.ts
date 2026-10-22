@@ -166,8 +166,11 @@ test('long mobile workflows return to the edited pill and preserve scroll withou
     await finish(page);await expect(modal(page)).not.toBeVisible();
   }
   await page.setViewportSize({width:320,height:568});
-  await page.getByRole('button',{name:titles[3],exact:true}).click();
-  const scroll=await page.evaluate(()=>scrollY);
+  const opener=page.getByRole('button',{name:titles[3],exact:true});
+  // Record the actual press after the browser scrolls the opener into view, before the page lock.
+  await opener.evaluate(el=>el.addEventListener('pointerdown',()=>el.dataset.openScroll=String(window.scrollY),{once:true}));
+  await opener.click();
+  const scroll=Number(await opener.getAttribute('data-open-scroll'));
   await fillField(page,'Tekst','Endret tekst');
   await finish(page);
   await expect(modal(page)).not.toBeVisible();

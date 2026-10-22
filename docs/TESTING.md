@@ -79,3 +79,12 @@ Rapporter iOS-versjon, installert modus/nettleser, PR/commit og konkret forløp 
 - **Valgt svar og Neste:** Ny Jones → Dragonborn → Rogue. «Ingen / ikke valgt» skal ha Neste. Gå videre, Tilbake, velg Thief og gå Tilbake igjen. Det markerte svaret og Neste skal vises sammen. Lukk hele veiviseren og gjenoppta utkastet. Gjenta med et allerede valgt utstyrssvar.
 - **Tall og klassehandlinger:** Klassenivå og maks HP skal vises i en midtstilt pille med ledetekst inni, ramme og hjørnetrekant som Combat. Trykk også på ledeteksten. Prøv én og to klasser; + Klasse og Fjern klasse skal være kompakte også i installert PWA. Prøv kort skjerm og stor tekst, med intern rulling der det trengs.
 - **Feltgrenser:** Notattittel er én linje / 100 tegn; notattekst tillater linjeskift / 10 000 tegn. Manuell angrepstekst for utstyr er én linje / 1 000 tegn. Prøv typing og lim inn, samt Avbryt/X. Grensene er feltinnstillinger; en avbrutt editor skal aldri endre feltet under.
+
+## Etterkontroll: full notattekst
+
+1. Opprett eller åpne et notat med flere linjer, blanklinjer og et langt avsnitt. Bekreft teksteditoren med OK. Hele teksten skal kunne leses ved å rulle innholdet i Nytt/Rediger notat; overskrift/X og Lagre skal stå fast. Prøv også liten skjerm og stor tekst, og åpne notatet igjen etter lagring.
+2. Åpne Tekst igjen. Nederst skal det være én strek over Avbryt/OK. Prøv med tastaturet åpent og lukket i installert My D&D Test; X/Avbryt/OK skal være tilgjengelige og virke på første trykk. Avbryt skal bevare den opprinnelige teksten.
+3. Den samme fulltekstvisningen gjelder flerlinjefelt i andre dialoger/veivisere, også etter Tilbake og gjenopptatt utkast. Kontroller gjerne en lang utstyrsmerknad eller beskrivelse.
+4. Rull ned til notatpillene før åpning. Popupen skal fylle skjermen med en gang. Sveip på overskriften, nederste knappelinje og gjennom hele teksten: siden bak skal stå fast. Åpne/lukk teksteditoren og avbryt en slettingsbekreftelse. Lukk eller lagre notatet; du skal komme tilbake til samme sted på siden. Prøv også etter at PWA-en har vært i bakgrunnen og tas frem igjen.
+
+5. Eksisterende notater skal ha overskriften «Notat», nye «Nytt notat». Søppelbøtten skal stå som en liten ikonknapp til venstre for Lagre og beholde plasseringen når lang tekst rulles. Trykk søppelbøtten og avbryt bekreftelsen: tekst og rulleposisjon skal beholdes.

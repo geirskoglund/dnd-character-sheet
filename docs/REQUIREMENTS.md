@@ -365,3 +365,5 @@ Appens primære bruk er som installert PWA ved det fysiske spillebordet (uttrykk
 ### Presisering etter PWA-review av #58
 
 Et markert svar i en veiviser skal ha en synlig Neste-handling. Det gjelder både gyldige standardverdier (inkludert «Ingen / ikke valgt»), svar ved Tilbake og svar fra utkast. Ubesvarte spørsmål kan fortsatt ta spilleren direkte videre ved valg. Tallverdien i et spørsmål bruker Combat-pillenes journalramme, typografi og hjørnetrekant: midtstilt, med ledeteksten inni og tydelig visuell vekt. Handlingsknapper som + Klasse skal ikke arve en pillehøyde som fyller tomrom. Teksteditorens kallere kan bestemme linjeskift og maksimal lengde per felt; eksisterende feltgrenser og registrerte data bevares.
+
+Flerlinjetekst skal vises i sin helhet i kalleren, inkludert blanklinjer og automatisk linjebryting. Langt dialoginnhold kan rulle vertikalt mellom fast overskrift/lukkekryss og fast knappelinje. Flerlinjeeditoren har ett skille over knappelinjen, uten en ekstra bunnstrek på tekstfeltet (brukerpresisering 2026-10-22).
