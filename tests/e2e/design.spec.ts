@@ -47,7 +47,7 @@ test('journal identity scrolls away, menu stays reachable, and all six coin labe
  const arcs=await page.locator('.ability-coin defs path').evaluateAll(els=>els.map(e=>e.getAttribute('d')));expect(arcs).toHaveLength(6);expect(new Set(arcs).size).toBe(1);
  await page.evaluate(()=>scrollTo(0,900));expect(await page.locator('.character-header').evaluate(el=>el.getBoundingClientRect().bottom)).toBeLessThan(0);
  const position=await page.evaluate(()=>scrollY);await menuAction(page,'Om appen');
- await expect(page.getByRole('dialog')).toContainText('D&D Character Companion');await expect(page.getByRole('dialog')).toContainText('2014');
+ await expect(page.getByRole('dialog')).toContainText('My D&D');await expect(page.getByRole('dialog')).toContainText('2014');
  await page.getByRole('button',{name:'Lukk',exact:true}).click();expect(await page.evaluate(()=>scrollY)).toBe(position);
  await expect(page.locator('.app-menu > summary')).toBeFocused();
 });

@@ -13,8 +13,8 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
   let release = 'A', failWorker = false;
   const server = createServer(async (req, res) => {
     const path = new URL(req.url!, 'http://localhost').pathname;
-    if (!path.startsWith('/dnd-character-sheet/') || path.includes('..')) { res.writeHead(404).end(); return; }
-    const relative = path.slice('/dnd-character-sheet/'.length) || 'index.html';
+    if (!path.startsWith('/dnd-character-sheet/my-dnd/app/') || path.includes('..')) { res.writeHead(404).end(); return; }
+    const relative = path.slice('/dnd-character-sheet/my-dnd/app/'.length) || 'index.html';
     const html = originalIndex.replace(/<title>.*?<\/title>/, `<title>Release ${release}</title>`);
     res.setHeader('Cache-Control', 'no-store');
     try {
@@ -33,7 +33,7 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
   });
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address() as { port: number };
-  const url = `http://127.0.0.1:${address.port}/dnd-character-sheet/`;
+  const url = `http://127.0.0.1:${address.port}/dnd-character-sheet/my-dnd/app/`;
   try {
     await page.goto(url); await expect(page).toHaveTitle('Release A');
     await menuAction(page, 'Ny karakter');

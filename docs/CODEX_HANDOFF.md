@@ -10,7 +10,7 @@ GitHub har aktuelle oppgavebeskrivelser, status og prioritet. [BACKLOG.md](BACKL
 
 Brukeren må uttrykkelig bestille appkode. Korte bekreftelser og en bestilling av Issue-/dokumentarbeid starter ingen appendring. Ta reelle produktspørsmål én flyt om gangen og løs tekniske valg selv. Funksjons-/UI-PR skal kunne testes og må få brukerens godkjenning før merge; dette erstatter tidligere generell delegasjon av automatisk testet merge.
 
-Testmiljøet er bestilt som egen oppgave [#55](https://github.com/geirskoglund/dnd-character-sheet/issues/55). Én fast testadresse på GitHub Pages viser valgt PR, med varige testdata isolert fra produksjon; egen testbranch er ikke nødvendig. Se [testpublisering og førstegangsbruk](TESTING.md) og [arbeidsinstruksen](../AGENTS.md). #25 implementeres separat og funksjons-PR skal testes før brukerens mergegodkjenning.
+Testmiljøet fra [#55](https://github.com/geirskoglund/dnd-character-sheet/issues/55) videreføres på søskenadresser: **My D&D** på https://geirskoglund.github.io/dnd-character-sheet/my-dnd/app/ og **My D&D Test** på https://geirskoglund.github.io/dnd-character-sheet/my-dnd/test-app/. Master-merge publiserer appen automatisk og bevarer valgt test-commit. Velg validert PR via `pages.yml` på master; senere grønne commits i valgt PR følger automatisk. Varige testdata er isolert fra produksjon; egen testbranch er ikke nødvendig. Se [testpublisering og førstegangsbruk](TESTING.md) og [arbeidsinstruksen](../AGENTS.md). #25 implementeres separat og funksjons-PR skal testes før brukerens mergegodkjenning.
 
 ## Repo og GitHub-backlog
 
@@ -26,7 +26,7 @@ Godkjent v2-utstyrsflyt er levert i [PR23](https://github.com/geirskoglund/dnd-c
 
 Siste presisering: spør valgfritt «Hva kreves for å aktivere effekten?» med ett svar, inkludert Ikke avklart. Dette er regel-/DM-informasjon. Ikke avklart og passiv vises under Andre egenskaper. Ikke gjeninnfør obligatorisk flerkategoriplassering. Ekte karakterberegninger, én effekttekst, delte ressurser, håndvalg/kopiering og én sluttlagring skal erstatte prototypeverdiene og gammelt generisk utstyrsskjema. Eldre profiler/overstyringer/utkast skal bevares.
 
-Løpende innspill i krav §17: installert navn **My D&D**, endelig appikon ubestemt, lavere bunnmeny ønsket spesielt i installert visning. Dette er loggført; ikon og meny er ikke ferdig levert.
+Gjeldende installasjonsnavn er **My D&D** / **My D&D Test**. Ikon A er valgt: journallogo, firkantramme på iPhone og sirkelramme som maskérbart Android-motiv, med TEST-merke i test. Se [miljø-/overgangskontrakten](TESTING.md) og [ikonfilene](../assets/app-icons/README.md). Innspillet om lavere bunnmeny beholdes som separat produktpunkt.
 
 ## Historikk: isolert utstyrsprototype
 

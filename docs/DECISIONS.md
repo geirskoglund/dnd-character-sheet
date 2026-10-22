@@ -411,3 +411,12 @@ Brukeren bestilte samlet rettelse av valgt-tilstand/Neste, tallpillenes utformin
 ### Full tekst i kalleren og enkelt skille i flerlinjeeditoren (2026-10-22)
 
 Etter to Notat-bilder godkjente brukeren at hele flerlinjeteksten vises, med rulling av innholdet mellom fast overskrift/X og fast knappelinje. Samme rettelse gjelder andre kallere av felleskomponenten. Flerlinjeeditoren beholder bare skillet over Avbryt/OK nederst. Dette presiserer visningen; feltgrenser, tekstinnhold og bekreftelsesflyt endres ikke.
+
+
+## Søskenmiljøer og valgt appikon (2026-10-22)
+
+Brukeren har valgt `/dnd-character-sheet/my-dnd/app/` og `/dnd-character-sheet/my-dnd/test-app/`, installasjonsnavn My D&D / My D&D Test og ikon A. Den firkantede journallogoen brukes på iPhone; en variant med sirkelramme tilbys Android som maskérbart motiv. PWA kan ikke velge ikon etter launcherens maske: sirkelrammen vises også når Android velger en annen ytterform. Test bruker samme motiv med TEST-merke. [Originaler og eksportfiler](../assets/app-icons/README.md) bevarer det godkjente uttrykket.
+
+Bestillingen omfatter app-/manifest-/worker-konfigurasjon, Pages-flyt, overgang fra gamle adresser og varige agentinstruksjoner. Gamle appbygg fjernes fra publiseringen, gamle workers avvikles og overgangssider peker til de nye miljøene. Databasenavnene og lokale data beholdes. Nye iOS-installasjoner kan ha et annet lagringsområde. Brukeren har uttrykkelig valgt å ikke ta backup ved denne overgangen; det opprettes ingen ekstra backupfunksjon eller backupbetingelse for leveransen. Det er bare bruker og samboer som har eksisterende installasjoner.
+
+Brukeren har uttrykkelig fritatt denne leveransen fra ny brukerreview og delegert merge etter Codex-kontroll. Det endrer ikke standardregelen for senere funksjons-/UI-PR-er. Faktiske tester og publiseringskontroll føres i [kravmatrisen](CHARACTER_WORKSPACE.md#før-koding-kontroll-nye-pwa-adresser-og-my-dd-ikoner-2026-10-22). Codex-miljøets nettverks-/kontooppsett trenger ingen adresseendring; repoets publiseringskontrakt er [TESTING.md](TESTING.md).

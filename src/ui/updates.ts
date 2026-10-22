@@ -10,8 +10,8 @@ export function installUpdates() {
   let dismissedWorker: ServiceWorker | undefined;
   let checking = false, activating = false, reloadRequested = false, manualCheck = false;
   const workerUrl = new URL('./sw.js', document.baseURI).href;
-  // A first visit to /test/ may initially be controlled by the parent worker.
-  // Its handover to the new test worker is an installation, not an app update.
+  // A first visit can be controlled by a legacy parent worker during migration.
+  // Handover to this scope is installation, not an app update.
   let hasController = 'serviceWorker' in navigator && navigator.serviceWorker.controller?.scriptURL === workerUrl;
   const show = (message: string) => { text.textContent = message; banner.hidden = false; };
   const ready = (force=false) => {

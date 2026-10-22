@@ -8,8 +8,8 @@ export async function menuAction(page: Page, name: string) {
   await page.getByRole('button', {name, exact:true}).click();
   if(name==='Angre siste endring')await page.waitForFunction(()=>document.querySelector('#app')?.getAttribute('aria-busy')!=='true');
 }
-export async function createCharacter(page: Page, species = 'Elf') {
-  await page.goto('./'); await menuAction(page, 'Ny karakter');
+export async function createCharacter(page: Page, species = 'Elf', url = './') {
+  await page.goto(url); await menuAction(page, 'Ny karakter');
   await fillField(page,'Navn','Alva');
   await choose(page,'Art / species',{label:species});
   await characterStep(page,1);

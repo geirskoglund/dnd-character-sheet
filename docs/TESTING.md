@@ -1,54 +1,56 @@
-# Fast testadresse på GitHub Pages
+# Faste app- og testadresser på GitHub Pages
 
-Test: https://geirskoglund.github.io/dnd-character-sheet/test/
+- **My D&D:** https://geirskoglund.github.io/dnd-character-sheet/my-dnd/app/
+- **My D&D Test:** https://geirskoglund.github.io/dnd-character-sheet/my-dnd/test-app/
 
-Produksjon: https://geirskoglund.github.io/dnd-character-sheet/
+Dette er repoets publiseringsmål. Det er ett Pages-nettsted med to søskenstier. Ikke opprett en testbranch, nye miljøstier eller et ekstra repository. Produksjonsappen bygges alltid fra master. Én valgt PR/commit er tilgjengelig i test om gangen. Testappen viser «Testversjon», PR-nummer og kort commit-ID; master som testgrunnlag viser master. Testdata beholdes på tvers av PR-er.
 
-Én testutgave er tilgjengelig om gangen. Testappen viser «Testversjon», PR-nummer og kort commit-ID; startutgaven fra master viser master i stedet. Den kan installeres separat som **My D&D Test**. Produksjonsappens installasjonsnavn endres ikke av dette oppsettet.
+## Første overgang fra gamle telefoninstallasjoner
 
-## Første gang på telefonen
+1. Ved behov kan JSON-backup tas fra den gamle installasjonen og lagres utenfor appen før den fjernes. Brukeren har uttrykkelig valgt overgang uten backup for sine to eksisterende telefoninstallasjoner; backup er ingen sperre for denne publiseringen.
+2. Åpne den gamle adressen mens du er på nett: `/dnd-character-sheet/` for appen, `/dnd-character-sheet/test/` for test. De viser nå overgangssider til riktig ny adresse. En gammel cachet app kan vises først; la den hente retirement-workeren, lukk gamle appvinduer og åpne adressen igjen. Ikke slett nettleserdata.
+3. Følg lenken til den nye adressen og installer appen derfra. Kontroller navn og ikon, og at test viser **Testversjon**. Hvis første åpning fortsatt viser en gammel cachet utgave, lukk vinduet og åpne igjen mens du er på nett. De nye scopes får egne workers.
+4. Åpne den nye **installerte** appen og kontroller karakterene. Databasenavnene er bevart, men iOS kan gi en ny hjemskjerminstallasjon separat lagring. Importer backup bare hvis karakterene mangler; import legger til og er ikke en synkronisering.
+5. Når data og den nye installasjonen er kontrollert, fjern de gamle hjemskjermappene manuelt. Kontroller også at den nye appen åpner uten nett.
 
-Oppdater produksjonsappen til utgaven med testmiljøstøtte før du åpner testadressen. En eldre, fortsatt aktiv produksjons-worker har en generell navigasjonsregel som ellers kan vise produksjonsappen på testadressen. Bruk eksisterende «Se etter oppdatering» / «Oppdater appen»; ikke slett nettleserdata. Kontroller at testadressen faktisk viser «Testversjon» før du bruker den.
-
-Åpne deretter testadressen. Den begynner med et eget tomt karakterark. Vil du bruke en installert testapp, installer og åpne den før du importerer testgrunnlaget. Hvis ønskelig: eksporter backup fra produksjonsappen og importer den én gang i testappen. Etter dette beholdes lokale testkarakterer mellom testpubliseringer og bytte av PR. Testappen har samme eksplisitte oppdateringsvalg som produksjon.
-
-Data finnes i nettleseren/installasjonen som opprettet dem. Ny nettleser, privat modus eller flytting mellom nettleser og hjemskjermapp kan innebære et annet lagringsområde på iOS. Ta backup før slike bytter. Det er ingen synkronisering mellom enheter eller miljøer.
+Overgangssidene er ingen appbygg og har ikke installasjonsmanifest. Gamle `sw.js`-adresser leverer små retirement-workere: de aktiveres, fjerner bare egen gammel precache og avregistrerer seg. En ny app eller overgangsside rydder også eksakte gamle root-/test-registreringer. Åpne redigeringsvinduer navigeres ikke automatisk; lokale karakterdata slettes aldri. En helt frakoblet gammel installasjon kan ikke avvikles før den kommer på nett. Oppsettet garanterer ikke at OS-et fjerner gamle installasjoner eller oppdaterer gamle installasjonsnavn/ikoner.
 
 ## Velge PR til test – for agenten
 
-1. Opprett funksjons-PR mot master og vent på grønn **Validate** på gjeldende PR-hode. Branchen må inneholde testmiljøstøtten fra master; merge/rebase master om nødvendig.
-2. Velg PR med workflowen **Deploy GitHub Pages**, kjørt fra master:
+1. Start fra oppdatert master. Opprett samlet PR mot master og vent på grønn **Validate** på gjeldende PR-hode. PR-en må inneholde den nye PWA-/publiseringsstøtten fra master. Merge/rebase master om nødvendig.
+2. Kjør den betrodde master-workflowen:
 
    ```sh
    gh workflow run pages.yml --repo geirskoglund/dnd-character-sheet --ref master -f preview=PR_NUMMER
    ```
 
    Bruk tallet uten `#`. Alternativt: Actions → Deploy GitHub Pages → Run workflow → master → Preview.
-3. Vent på grønn publisering og HTTPS-kontroll i workflowen. Gi brukeren den faste testlenken, PR-lenken og hva som skal testes. Brukeren trenger ikke gjennomgå kode.
-4. Nye commits i **den valgte PR-en** publiseres automatisk etter vellykket Validate. Urelaterte PR-er tar ikke over adressen. Gamle/outdaterte valideringskjøringer og mislykkede bygg publiseres ikke. Ved samtidige kjøringer eller behov for ny publisering kan samme PR-nummer velges igjen.
-5. Behold PR-en åpen til brukeren uttrykkelig godkjenner funksjonsendringen. Testpublisering er ikke produksjonsmerge.
+3. Vent på vellykket deploy **og** HTTPS-kontroll. Kontroller `deployment.json` på repoets Pages-root: `production.sha`, `preview.sha` og `preview.pr` skal stemme. De nye appenes `environment-layout.json` viser kanal og eksakt bygg-commit. Gi brukeren PR-lenke, **den faste testlenken over** og konkrete testinstruksjoner.
+4. Nye commits i den valgte PR-en publiseres automatisk etter vellykket Validate. Urelaterte PR-er tar ikke over adressen. Utdaterte valideringskjøringer og feilende bygg publiseres ikke. Velg samme PR-nummer igjen ved behov for eksplisitt gjenpublisering.
+5. Behold funksjons-/UI-PR åpen til brukeren har testet og uttrykkelig godkjent merge, med mindre brukeren uttrykkelig har delegert egen merge for den aktuelle oppgaven. Testpublisering er ikke produksjonsmerge.
+6. Etter godkjent merge publiserer et push til `master` appen automatisk og **bevarer testutgaven**. Vent på Pages/HTTPS-kontroll før du melder produksjon ferdig. Gi appadressen over. Testdata flyttes ikke til produksjon.
 
-`preview=keep` bygger master og beholder sist publiserte test-commit, også etter merge/sletting av PR-branchen. `preview=master` velger siste master som testgrunnlag. Det nullstiller ikke testdata. Det trengs ingen fast testbranch, ekstra repository, konto eller hostingtjeneste.
+`preview=keep` bygger master og beholder sist publiserte eksakte test-commit, også når PR-branchen er slettet. `preview=master` velger siste master som testgrunnlag. Ingen av valgene nullstiller testdata. Ved første flytting må valgt test-commit ha de nye miljøfilene; velg en validert oppdatert PR før merge, eller bruk `preview=master` hvis en eldre valgt commit hindrer bygg. Ikke gjett nye adresser for å omgå en slik feil.
 
-## Teknisk kontrakt
+## Teknisk kontrakt og feilhåndtering
 
-- GitHub Pages mottar ett samlet nettsted. Workflowen bygger master og valgt test-commit i separate jobber og legger testbygget under `test/` **etter** at begge service workers er generert. Produksjonens precache inneholder dermed ingen testfiler.
-- Publisert `deployment.json` inneholder de eksakte commit-ID-ene og valgt PR. Senere produksjonspubliseringer leser dette for å bevare testutgaven. Metadata-/nettverksfeil stopper publisering; HTTP 404 ved første oppsett gir master som startutgave. Eksplisitt valg av PR/master kan gjenopprette ugyldige metadata. Ingen branch-/PR-strenger brukes som shell-kode.
-- IndexedDB heter fortsatt `dnd-character-companion` i produksjon. Test bruker alltid `dnd-character-companion-test`, uavhengig av PR/commit. Karakterer, assets, historikk, settings og veiviserutkast følger hver sin database. Ingen DB-versjons-/backupformatendring, automatisk kopiering eller sletting.
-- Service worker og manifest ligger relativt til hvert miljø. Testmanifestets `id`, `start_url` og `scope` løses til testadressen og gir egen installasjonsidentitet.
-- Workbox-cache får ulike miljøprefikser. Generell `cleanupOutdatedCaches` er deaktivert fordi root-scope ellers også kan matche nestet testcache; Workbox fjerner fortsatt utdaterte precache-oppføringer i sin egen cache. Produksjonens navigasjonsfallback ekskluderer teststien. Oppdateringskontrollen teller ikke vinduer fra det andre miljøet.
-- Nåværende app har ingen andre varige appinnstillinger i localStorage/sessionStorage. Testappen leser ikke produksjonens gamle prototype-localStorage. Nye lagringsmekanismer må videreføre miljøskillet.
-- PR-bygg har bare lesetilgang, uten lagrede Git-credentials. Valg av samme-repo-PR og publisering kjøres fra betrodd master-workflow i separate jobber. Fork-PR-er velges ikke. Begge miljøer deler origin; lagringsnavnene beskytter mot utilsiktet sammenblanding, ikke ondsinnet JavaScript.
-- Mislykket plan/bygg hindrer ny Pages-deploy. En feil i kontrollen etter selve deployen rapporteres som feil; den ruller ikke automatisk nettstedet tilbake. Gjenpubliser et kjent commit ved behov.
-- Testdata flyttes aldri til produksjon ved godkjenning. Bruk vanlig backup/import ved et bevisst ønske om å overføre karakterdata. Eldre testkode kan ikke forventes å lese et nyere databaseskjema; slik feil skal aldri møtes med automatisk sletting.
+- `pages.yml` bygger master og valgt test-commit i separate jobber og lager begge service workere før sammensetning. Byggene legges i `my-dnd/app/` og `my-dnd/test-app/`. `scripts/assemble-pages.mjs` fra betrodd master kontrollerer kanal, commit, manifest og PNG-filer og skriver overgangssidene. Ingen PR-kode kjøres i deploy-jobben.
+- `deployment.json` ligger fortsatt på `/dnd-character-sheet/deployment.json`. Metadata-versjon 1 bevares for valg av test-commit; `layout:2` og `paths` beskriver nye adresser. Metadata-/nettverksfeil stopper publisering; HTTP 404 ved første oppsett gir master som startutgave. Eksplisitt PR/master-valg kan gjenopprette ugyldige metadata. Branch-/PR-strenger kjøres aldri som shell-kode.
+- Manifestene bruker relative `id`, `start_url` og `scope` (`./`) som løses til hver sin faste adresse. Appnavn og short_name er My D&D / My D&D Test. Separate PNG-er gir journallogoen på iPhone (`apple-touch-icon`) og et sirkelmotiv med `purpose:maskable` på Android. Android-launcheren velger ytterformen; det finnes ikke et PWA-valg «bare ved rund maske». TEST-merket inngår i testikonets bildefil.
+- IndexedDB heter fortsatt `dnd-character-companion` og `dnd-character-companion-test`. Karakterer, assets, historikk, settings og veiviserutkast følger hver sin database. Ingen DB-versjons-/backupformatendring, automatisk kopiering eller sletting. Test leser ikke gammel prototype-localStorage.
+- Begge workere er begrenset til sin egen søskensti. Cacheprefikser og scopes er forskjellige; bred `cleanupOutdatedCaches` er av. Workbox rydder sin egen precache. Oppdateringskontrollen teller bare egne vinduer. Root-/test-opprydding matcher eksakte gamle scopes og egne precache-navn, aldri nye appregistreringer/caches.
+- Appene deler origin; navne-/scope-skillet beskytter mot utilsiktet sammenblanding og installasjonsforveksling, ikke ondsinnet JavaScript. Det er ingen synkronisering mellom enheter eller miljøer. Ny nettleser/privatmodus/installasjon kan ha et annet lagringsområde.
+- PR-bygg har bare lesetilgang, uten lagrede Git-credentials. Valg av samme-repo-PR og deploy kjøres fra betrodd master-workflow med separate rettigheter. Fork-PR-er velges ikke.
+- Mislykket plan/bygg/sammensetning hindrer deploy. Feil i HTTPS-kontroll etter deploy rapporteres, men ruller ikke automatisk nettstedet tilbake. Gjenpubliser et kjent kompatibelt test-commit eller velg `preview=master`; ikke slett brukerdata. Ikke rerun en fullført deploy-jobb med duplikate Pages-artifacts; start en ny workflow-kjøring.
+- Eldre testkode kan ikke forventes å lese et nyere databaseskjema. Slike feil skal aldri møtes med automatisk databasesletting.
 
 ## Verifikasjon
 
-`tests/pages-plan.test.ts` kontrollerer PR-valg, master/test-skille, bevart test-commit, relevante/stale valideringskjøringer og avvisning av ugyldige valg/forker/feilende Validate.
+`tests/pages-plan.test.ts` kontrollerer testvalg, bevart commit, relevante/stale Validate-kjøringer og avvisning av ugyldige valg/forker. `tests/pages-layout.test.ts` prøver sammensetning og avviser feil kanal/commit/navn/scope eller manglende ikoner før publisering.
 
-`tests/e2e/preview.spec.ts` bygger to faktiske testutgaver og serverer produksjon/test på samme origin. Den prøver backup-import én gang, uavhengig redigering, portrett, historikk, veiviserutkast, oppdatering av begge scopes mens det andre er åpent, bytte av test-PR, beholdte databaser og offline-reload etter begge aktiveringer. Workflowen kontrollerer også publiserte HTTPS-adresser, testmanifest og commit-metadata.
+`tests/e2e/preview.spec.ts` bygger to reelle testutgaver på samme origin som appen. Den prøver separate karakterer, portrett, historikk, utkast, backup/import, begge scopes' oppdatering mens den andre er åpen, beholdte databaser og offline. Den kontrollerer manifestidentitet og ikonstørrelser. `pwa-migration.spec.ts` bruker ekte genererte Workbox-workere med de tidligere scope-/fallback-reglene og prøver avvikling, åpen redigering, overgangssider, bevart lagring og nye offline-apper. `updates.spec.ts` prøver eksplisitt oppdatering og flere redigeringsvinduer på den nye appstien.
 
-Fysisk installering og oppdatering på iPhone er ikke dekket av Chromium-testen og skal rapporteres separat. Oppsettet implementerer ikke tallhjulssak #25.
+HTTPS-kontrollen verifiserer begge appadresser, navn/scope, ikoner, eksakte bygg-commits og gamle overgangssider/workere. Fysisk installasjon på iPhone/Android er ikke dekket av Chromium og skal rapporteres separat. Godkjente ikondesign er ikke bevis på at en bestemt launcher er prøvd.
 
 ## Test av tallendringsdialogen #25
 
