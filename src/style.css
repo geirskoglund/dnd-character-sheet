@@ -363,7 +363,7 @@ dialog.text-editor {position:fixed;inset:auto 0 0;top:0;margin:0;width:100%;max-
 .text-editor-body {flex:1;min-height:0;display:flex;overflow:auto;padding:12px 0}
 .text-editor-body input,.text-editor-body textarea {width:100%;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;min-height:48px;font-size:1.1rem}
 .text-editor-body input {align-self:flex-start}
-.text-editor-body textarea {height:100%;resize:none}
+.text-editor-body textarea {height:100%;resize:none;border-bottom:0}
 .text-editor .dialog-actions {flex:none;position:static}
 
 .text-title-icon {color:var(--accent);display:flex}.text-title-icon .icon {width:26px;height:26px}
@@ -374,7 +374,10 @@ dialog.text-editor {position:fixed;inset:auto 0 0;top:0;margin:0;width:100%;max-
 dialog[data-wizard] #add-class {height:auto;min-height:44px;width:auto;justify-self:start;align-self:start;margin-top:.75rem;padding:.5rem .9rem;font-size:1rem}
 dialog[data-wizard] #dialog-body > :not(.wizard-discard) {flex-shrink:0}
 [data-wizard-split=true] [data-subclass-fields]:not(:has([data-wizard-active])) {display:none}
-textarea.text-value {min-height:44px;max-height:10rem;field-sizing:content}
+.text-value-wrap {display:grid;min-width:0;font-size:max(16px,1rem)}
+.text-value-wrap::after {content:attr(data-text) ' ';visibility:hidden;white-space:pre-wrap;overflow-wrap:anywhere;padding:.6rem .7rem;border-bottom:1px solid transparent}
+.text-value-wrap::after,textarea.text-value {grid-area:1 / 1;min-height:44px}
+textarea.text-value {height:100%;overflow:hidden;field-sizing:fixed}
 .text-editor .dialog-heading {max-height:35%;min-height:48px;align-items:flex-start;overflow:hidden}
 .text-editor .dialog-heading h2 {max-height:3.3em;overflow:auto}
 /* Leave more room for the actual answers in list questions. */

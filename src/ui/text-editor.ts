@@ -113,12 +113,24 @@ export function editText(field: TextField, options:TextEditorFieldOptions = {}) 
   input.focus({preventScroll: true});
 }
 
+function updatePreview(field:TextField) {
+  const preview=field.parentElement;
+  if(preview?.classList.contains('text-value-wrap'))preview.dataset.text=field.value||field.placeholder||'Skriv inn...';
+}
 export function enhanceText(root: ParentNode) {
   root.querySelectorAll<TextField>('input:not([type]),input[type="text"],input[type="url"],input[type="email"],textarea').forEach(field => {
-    if (field.dataset.textBound || field.readOnly || field.closest('.text-editor') || field.matches('[data-direct-text]')) return;
+    if(field.dataset.textBound){updatePreview(field);return;}
+    if (field.readOnly || field.closest('.text-editor') || field.matches('[data-direct-text]')) return;
     const settings=fieldOptions(field);if(settings.maxLength!==undefined)field.maxLength=settings.maxLength;
     field.dataset.textBound = 'true'; field.readOnly = true;
-    if(field instanceof HTMLTextAreaElement){const preview=()=>field.rows=Math.min(4,Math.max(1,field.value.split('\n').length));preview();field.addEventListener('input',preview);}
+    if(field instanceof HTMLTextAreaElement){
+      // A hidden layout copy grows with wrapping, font size and hidden wizard steps,
+      // including browsers without field-sizing. Keep the real field for forms and editing.
+      const preview=document.createElement('span');preview.className='text-value-wrap';
+      field.before(preview);preview.append(field);field.rows=1;
+      const update=()=>updatePreview(field);
+      update();field.addEventListener('input',update);
+    }
     field.classList.add('text-value'); field.placeholder ||= 'Skriv inn...';
     field.setAttribute('aria-haspopup', 'dialog');
     field.addEventListener('click', () => editText(field));
