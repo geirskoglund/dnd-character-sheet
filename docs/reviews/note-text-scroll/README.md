@@ -30,3 +30,7 @@ Brukeren har godkjent «Notat» for eksisterende notater, fortsatt «Nytt notat�
 Inspiserte faktiske Chromium-bilder viser [390 px / normal tekst](note-footer-390.png) og [320 × 568 / 200 % tekst, rullet til slutten](note-footer-320.png). [Målingene](footer-measurements.json) viser samme plassering før/etter rulling, 48 × 48 px søppelbøtte og henholdsvis 303/238 px bredde til Lagre. Begge står i den faste knappelinjen. SVG-en bruker appens eksisterende linjestil.
 
 155 enhets-/integrasjonstester, produksjonsbygg og 12/12 berørte nettleserprøver bestod. Prøvene omfatter overskrifter, manglende sletteknapp på nye notater, kompakt fast plassering, stor tekst, avbrutt sletting, bekreftet sletting og Angre. Skjermbildene er lokal mobil/touch-geometri, ikke fysisk iPhone/PWA-test. Brukerreview og mergegodkjenning gjenstår.
+
+## Godkjenning
+
+22. oktober 2026 godkjente brukeren den publiserte utgaven `6c76075495c0b673cab78ad00a315bf8a5a7c545` med «Flott, du kan merge PR». Leveransen er akseptert og merge av PR #60 uttrykkelig bestilt; tidligere ventestatus for denne leveransen er erstattet. GitHub Validate bestod med 155 enhets-/integrasjonstester, produksjonsbygg og 106 nettlesertester, og testpubliseringen var grønn. Dette er brukerens samlede godkjenning, ikke en detaljert logg per fysisk testscenario. Den avsluttende dokumentoppdateringen endrer ingen appkode.
