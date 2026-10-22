@@ -1,3 +1,4 @@
+import './pwa/legacy-cleanup.js';
 import {textArea} from './ui/record-fields';
 import {numberChangeDialog} from './ui/number-change-dialog';
 import {effectiveMaxHp} from './domain/item-effects';
@@ -338,7 +339,7 @@ async function action(name: string) {
       break;
     }
     case 'prepare': preparationDialog(editorContext);break;
-    case 'about': viewDialog('Om appen',`<p><strong>D&amp;D Character Companion</strong></p><p>D&amp;D 5e · 2014</p><p>${isTestApp?esc(testVersion):`Versjon ${__APP_VERSION__}`}</p><p>Et digitalt karakterark ved det fysiske spillebordet. Lagres på denne enheten og kan brukes uten nett.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p><a href="./FONT-LICENSES.txt">Fonter og ikoner</a></p>`);break;
+    case 'about': viewDialog('Om appen',`<p><strong>My D&amp;D${isTestApp?' Test':''}</strong></p><p>D&amp;D 5e · 2014</p><p>${isTestApp?esc(testVersion):`Versjon ${__APP_VERSION__}`}</p><p>Et digitalt karakterark ved det fysiske spillebordet. Lagres på denne enheten og kan brukes uten nett.</p><a href="./SRD-LICENSE.txt">SRD 5.1 · lisens</a><p><a href="./FONT-LICENSES.txt">Fonter og ikoner</a></p>`);break;
     case 'check-update': await updates.check(); break;
     case 'create': editCharacter(); break;
     case 'edit': editCharacter(c); break;

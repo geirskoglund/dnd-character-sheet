@@ -7,7 +7,11 @@ Appens karakterer ligger i IndexedDB på samme origin. Oppdateringskoden sletter
 Repository Settings → Pages → Build and deployment → Source skal være **GitHub Actions**:
 https://github.com/geirskoglund/dnd-character-sheet/settings/pages
 
-Den gamle «Deploy from a branch»-metoden kan publisere kildefiler parallelt med Vite-produksjonsbygget. Repository-root er ikke lenger et ferdig nettsted. `pages.yml` bygger og publiserer `dist/`; dette skal være eneste publiseringskilde. Codex-integrasjonen kan lese denne innstillingen, men GitHub har avvist endring av den med «Resource not accessible by integration», så kontoeieren må velge kilden i GitHub.
+Den gamle «Deploy from a branch»-metoden kan publisere kildefiler parallelt med Vite-produksjonsbygget. Repository-root er ikke lenger et ferdig nettsted. `pages.yml` bygger master og valgt test-commit separat og publiserer ett samlet nettsted: My D&D på `my-dnd/app/`, My D&D Test på `my-dnd/test-app/`. Dette skal være eneste publiseringskilde. Se [faste adresser og publiseringskommandoer](TESTING.md). Codex-integrasjonen kan lese denne innstillingen, men GitHub har avvist endring av den med «Resource not accessible by integration», så kontoeieren må velge kilden i GitHub.
+
+## Overgang fra gamle adresser
+
+Gamle `/dnd-character-sheet/` og `/dnd-character-sheet/test/` er erstattet med overgangssider og retirement-workere. Ta JSON-backup på hver telefon/i hvert miljø før gamle installasjoner fjernes. Følg [overgangsoppskriften](TESTING.md#første-overgang-fra-gamle-telefoninstallasjoner). Eksakte gamle workers og deres appcaches ryddes; IndexedDB/localStorage og nye appscopes røres ikke. En gammel frakoblet/cachet app må komme på nett og eventuelt lukkes/åpnes før den nye overgangssiden blir synlig. Ingen åpen redigering navigeres automatisk.
 
 ## I appen
 
@@ -23,4 +27,4 @@ Ved første overgang fra eldre versjoner uten oppdateringsknapp: bekreft Pages-k
 
 `tests/e2e/updates.spec.ts` serverer to produksjonsutgaver med forskjellige precache-revisjoner. Den oppretter og lagrer en karakter i A, lar en annen fane ha et ulagret utkast, gjør B tilgjengelig og bekrefter at oppdateringen venter. Deretter lagres utkastet og den andre fanen lukkes. Oppdateringsknappen aktiverer B, navnet og HP beholdes, og B med karakteren kan lastes uten nett. Testen kontrollerer også offline-/serverfeil uten sletting av data. Førstegangsinstallasjonen skal ikke vise et falskt oppdateringsvarsel.
 
-Ingen oppdateringsmelding er normalt når den nyeste publiserte utgaven allerede er installert. Arbeid som bare ligger lokalt/på en PR-branch publiseres ikke; den får først en ny oppdaterbar service worker når master er bygget og Pages-jobben er ferdig. Testen simulerer nå også minuttkontroll uten manuelt søk, lukket varsel som hentes frem igjen via menyen, redigeringsvern og fortsatt offline-data.
+Ingen oppdateringsmelding er normalt når den nyeste publiserte utgaven allerede er installert. Lokalt arbeid publiseres ikke. En validert, valgt PR oppdaterer testappen gjennom den faste Pages-flyten; master-merge oppdaterer produksjonsappen. Begge får en ny oppdaterbar worker når tilhørende bygg og Pages-jobben er ferdig. Testen simulerer nå også minuttkontroll uten manuelt søk, lukket varsel som hentes frem igjen via menyen, redigeringsvern og fortsatt offline-data.

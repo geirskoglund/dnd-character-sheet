@@ -93,6 +93,7 @@ jobs:
       - name: Check test-environment support
         run: |
           test -f src/app-environment.ts || { echo 'Merge/rebase master med testmiljø-støtte inn i PR-branchen først.'; exit 1; }
+          test -f scripts/assemble-pages.mjs || { echo 'Velg en PR med nye PWA-adresser fra master, eller preview=master.'; exit 1; }
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -120,18 +121,23 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       # This job never checks out or executes PR code.
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          persist-credentials: false
+          path: infra
       - uses: actions/download-artifact@v4
         with:
           name: pages-production
-          path: site
+          path: site/my-dnd/app
       - uses: actions/download-artifact@v4
         with:
           name: pages-preview
-          path: site/test
-      - name: Write deployment selection
+          path: site/my-dnd/test-app
+      - name: Assemble sibling apps and retire old addresses
         env:
           DEPLOYMENT_METADATA: ${{ needs.plan.outputs.metadata }}
-        run: node -e "require('node:fs').writeFileSync('site/deployment.json', JSON.stringify(JSON.parse(process.env.DEPLOYMENT_METADATA), null, 2))"
+        run: node infra/scripts/assemble-pages.mjs site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -144,7 +150,8 @@ jobs:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
           PREVIEW_SHA: ${{ needs.plan.outputs.preview }}
         run: |
-          echo "Testadresse: ${PAGES_URL}test/" >> "$GITHUB_STEP_SUMMARY"
+          echo "Appadresse: ${PAGES_URL}my-dnd/app/" >> "$GITHUB_STEP_SUMMARY"
+          echo "Testadresse: ${PAGES_URL}my-dnd/test-app/" >> "$GITHUB_STEP_SUMMARY"
           echo "Test-commit: ${PREVIEW_SHA}" >> "$GITHUB_STEP_SUMMARY"
       - name: Verify published URLs
         uses: actions/github-script@v7
@@ -166,12 +173,31 @@ jobs:
                 };
                 const actual = await (await get('deployment.json')).json();
                 if (actual.production.sha !== expected.production.sha || actual.preview.sha !== expected.preview.sha) throw new Error('Publiseringen er ikke synlig ennå.');
-                const production = await (await get('')).text();
-                const preview = await (await get('test/')).text();
-                const manifest = await (await get('test/manifest.webmanifest')).json();
-                const productionManifest = await (await get('manifest.webmanifest')).json();
-                if (!production.includes('id="app"') || production.includes('<title>My D&D Test</title>') || !preview.includes('<title>My D&D Test</title>') || manifest.name !== 'My D&D Test' || productionManifest.name === manifest.name) throw new Error('Feil miljøidentitet på publisert adresse.');
-                await core.summary.addRaw('\nPublisert produksjon, testadresse, testmanifest og commit-metadata er kontrollert over HTTPS.\n').write();
+                for (const [target,path,name,channel] of [
+                  ['production','my-dnd/app/','My D&D','production'],
+                  ['preview','my-dnd/test-app/','My D&D Test','test'],
+                ]) {
+                  const html = await (await get(path)).text();
+                  const manifest = await (await get(path+'manifest.webmanifest')).json();
+                  const layout = await (await get(path+'environment-layout.json')).json();
+                  const scope = new URL(manifest.scope,new URL(path,base)).href;
+                  if (!html.includes('id="app"') || !html.includes(`<title>${name}</title>`) || !html.includes('apple-touch-icon') ||
+                    manifest.name!==name || manifest.short_name!==name || manifest.id!=='./' || manifest.start_url!=='./' ||
+                    scope!==new URL(path,base).href || layout.version!==2 || layout.channel!==channel || layout.sha!==expected[target].sha) {
+                    throw new Error(`Feil miljøidentitet eller commit: ${path}`);
+                  }
+                  for (const icon of [...manifest.icons.map(icon=>icon.src),'apple-touch-icon.png']) {
+                    const bytes = new Uint8Array(await (await get(path+icon)).arrayBuffer());
+                    if (bytes.slice(0,8).join(',')!=='137,80,78,71,13,10,26,10') throw new Error(`Ugyldig ikon: ${path+icon}`);
+                  }
+                  await get(path+'sw.js');
+                }
+                for (const path of ['', 'test/']) {
+                  const html = await (await get(path)).text();
+                  const worker = await (await get(path+'sw.js')).text();
+                  if (!html.includes('har flyttet') || html.includes('id="app"') || !worker.includes('self.registration.unregister()')) throw new Error('Gammel adresse er ikke avviklet.');
+                }
+                await core.summary.addRaw('\nBegge nye appadresser, manifest/scope, ikoner, eksakte bygg og gamle overgangsadresser er kontrollert over HTTPS.\n').write();
                 return;
               } catch (caught) { error=caught; await new Promise(resolve=>setTimeout(resolve,3000)); }
             }

@@ -1,4 +1,4 @@
-# D&D Character Companion
+# My D&D
 
 Et mobilførst, lokalt lagret karakterark for **D&D 5e (2014)**. Fysiske terninger og DM avgjør spillet. Ingen konto, backend eller automatisk karakterbygger.
 
@@ -52,9 +52,12 @@ Eksisterende prototype-data i `localStorage` røres ikke og konverteres ikke aut
 
 ## GitHub Pages
 
-Fast testadresse: https://geirskoglund.github.io/dnd-character-sheet/test/. Produksjon bygges fra master; én valgt PR kan testes separat før godkjenning og merge. Testkarakterer beholdes på tvers av PR-er og lagres adskilt fra produksjon. Se [testpublisering og førstegangsbruk](docs/TESTING.md).
+- **My D&D:** https://geirskoglund.github.io/dnd-character-sheet/my-dnd/app/
+- **My D&D Test:** https://geirskoglund.github.io/dnd-character-sheet/my-dnd/test-app/
 
-Velg **Settings → Pages → Source → GitHub Actions** i GitHub. Etter merge til `master` bygger og publiserer `pages.yml` innholdet i `dist/`. Ingen backend eller hemmeligheter kreves. Vite bruker relative asset-stier; nettlesertestene kjører under `/dnd-character-sheet/` for å kontrollere Pages-understien. Publisering krever tilgang til Pages og godkjenning av GitHub-miljøet dersom repositoriet krever det. PR-er valideres av `ci.yml` og publiseres ikke.
+Velg **Settings → Pages → Source → GitHub Actions**. `pages.yml` bygger master og valgt test-commit hver for seg, og publiserer begge som ett nettsted på søskenstiene over. Merge til `master` publiserer appen automatisk og bevarer valgt testutgave. En PR publiseres til den faste testadressen etter grønn Validate og eksplisitt valg av PR-nummer; senere validerte commits i valgt PR følger automatisk. Ingen egen testbranch, konto eller backend kreves.
+
+Testkarakterer beholdes mellom PR-er og lagres adskilt fra produksjon. Appene har ulike PWA-identiteter/scopes og egne ikoner; testikonet har TEST-merke. Nettlesertestene bruker den faktiske appunderstien. Se [agentens publiseringsflyt, overgang og installasjon](docs/TESTING.md). De gamle adressene `/dnd-character-sheet/` og `/dnd-character-sheet/test/` viser overgangssider, ikke gamle appbygg. Eldre service workere avvikles uten å slette karakterdata.
 
 Meny → Om appen viser versjons-ID. «Se etter oppdatering» ligger direkte i menyen. Når en ny versjon er nedlastet, bruk «Oppdater appen». Lagre redigering og lukk andre appfaner først. Karakterdata beholdes; slett aldri nettleserdata for å oppdatere. Se [oppdatering og publiseringskilde](docs/UPDATES.md) for første overgang fra eldre versjoner og feilsøking.
 

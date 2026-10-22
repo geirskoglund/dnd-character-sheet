@@ -297,7 +297,7 @@ Utstyrsbidrag er kildeknyttet og gjelder ved aktiv bruk og nødvendig attunement
 ## 17. Installasjonsnavn og bunnmeny – nye innspill
 
 - Ved installasjon på telefonen skal appnavnet være **My D&D** (manifestets name og short_name).
-- Endelig appikon er **ikke bestemt**. Eksisterende ikon er foreløpig.
+- Appikon er valgt 2026-10-22: A, journallogoen med vinrød «My D&D», lys bakgrunn og bronseramme. iPhone bruker firkantrammen; Android tilbys sirkelrammen som maskérbart motiv. Launcheren bestemmer ytterformen. Testikonet har et tydelig TEST-merke. Se [ikonoriginaler og eksportfiler](../assets/app-icons/README.md).
 - Bunnmenylinjen oppleves for høy, særlig som installert app. Reduser unødvendig vertikal luft; bevar tilgjengelige trykkflater og nødvendig safe area. Dette er registrert som et åpent designpunkt, ikke ferdig verifisert eller levert gjennom dette innspillet.
 
 ## 18. Individuelt utstyr, Forbruk og tallhjul – oppfølging etter PR #23
@@ -367,3 +367,12 @@ Appens primære bruk er som installert PWA ved det fysiske spillebordet (uttrykk
 Et markert svar i en veiviser skal ha en synlig Neste-handling. Det gjelder både gyldige standardverdier (inkludert «Ingen / ikke valgt»), svar ved Tilbake og svar fra utkast. Ubesvarte spørsmål kan fortsatt ta spilleren direkte videre ved valg. Tallverdien i et spørsmål bruker Combat-pillenes journalramme, typografi og hjørnetrekant: midtstilt, med ledeteksten inni og tydelig visuell vekt. Handlingsknapper som + Klasse skal ikke arve en pillehøyde som fyller tomrom. Teksteditorens kallere kan bestemme linjeskift og maksimal lengde per felt; eksisterende feltgrenser og registrerte data bevares.
 
 Flerlinjetekst skal vises i sin helhet i kalleren, inkludert blanklinjer og automatisk linjebryting. Langt dialoginnhold kan rulle vertikalt mellom fast overskrift/lukkekryss og fast knappelinje. Flerlinjeeditoren har ett skille over knappelinjen, uten en ekstra bunnstrek på tekstfeltet (brukerpresisering 2026-10-22).
+
+
+## 24. Faste PWA-miljøer og installasjonsidentitet (2026-10-22)
+
+- My D&D publiseres på `https://geirskoglund.github.io/dnd-character-sheet/my-dnd/app/` og My D&D Test på `https://geirskoglund.github.io/dnd-character-sheet/my-dnd/test-app/`.
+- De er søskenstier med egne manifest-identiteter, startadresser, scopes, service workere og cacheområder. Ingen av appenes scopes skal inneholde den andre appen. Androids installasjonsvalg skal dermed ikke bygge på den tidligere nestingen av test under app-scope; fysisk OS-atferd må fortsatt skilles fra nettlesertester.
+- Bevar databasenavnene `dnd-character-companion` og `dnd-character-companion-test`, historikk, portrett, settings og utkast. Ingen automatisk sammenslåing, kopiering eller sletting. iOS kan gi en ny installasjon separat lagring; JSON-backup/import er overgangsvernet.
+- Gamle root-/test-adresser avvikles som appbygg og viser overgangssider til riktig nytt miljø. Eksakte gamle service worker-registreringer og deres egne appcaches ryddes uten å slette lokale karakterdata eller nye registreringer/caches. Ingen tvungen navigasjon av et åpent redigeringsvindu.
+- [TESTING.md](TESTING.md) er agentens varige publiseringskontrakt. Ett samlet Pages-nettsted bygger master og valgt test-commit hver for seg. Master-merge oppdaterer appen og bevarer testutgaven; testpublisering krever grønn Validate og eksplisitt PR-valg. Fremtidige funksjons-PR-er krever fortsatt brukerens mergegodkjenning med mindre brukeren uttrykkelig delegerer noe annet for den aktuelle oppgaven.

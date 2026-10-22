@@ -33,13 +33,13 @@ test('production and a fixed preview retain separate characters, portraits, draf
     });
   }
   const originalIndex=await readFile('dist/index.html','utf8'),originalWorker=await readFile('dist/sw.js','utf8');
-  const prefix='/dnd-character-sheet/';
+  const prefix='/dnd-character-sheet/my-dnd/';
   const server=createServer(async(req,res)=>{
     try {
       const path=decodeURIComponent(new URL(req.url!,'http://localhost').pathname);
       if(!path.startsWith(prefix)){res.writeHead(404).end();return;}
-      const isPreview=path.startsWith(prefix+'test/');
-      const relative=path.slice((prefix+(isPreview?'test/':'')).length)||'index.html';
+      const isPreview=path.startsWith(prefix+'test-app/');
+      const relative=path.slice((prefix+(isPreview?'test-app/':'app/')).length)||'index.html';
       const directory=isPreview?join(temp,previewRelease):resolve('dist');
       const file=resolve(directory,relative);
       if(!file.startsWith(directory+'/')){res.writeHead(404).end();return;}
@@ -55,7 +55,7 @@ test('production and a fixed preview retain separate characters, portraits, draf
     }catch{res.writeHead(404).end();}
   });
   await new Promise<void>(ok=>server.listen(0,'127.0.0.1',ok));
-  const url=`http://127.0.0.1:${(server.address() as {port:number}).port}${prefix}`;
+  const url=`http://127.0.0.1:${(server.address() as {port:number}).port}${prefix}app/`;
   try {
     await page.goto(url);
     await menuAction(page,'Ny karakter');
@@ -70,14 +70,30 @@ test('production and a fixed preview retain separate characters, portraits, draf
 
     const download=page.waitForEvent('download');await menuAction(page,'Eksporter backup');
     const backup=await(await download).path();
-    preview=await context.newPage();await preview.goto(url+'test/');
+    preview=await context.newPage();await preview.goto(new URL('../test-app/',url).href);
     await expect(preview.getByLabel('Testversjon',{exact:true})).toContainText('PR #55');
     await expect(preview.getByRole('heading',{name:'Produksjons-Alva',exact:true})).toHaveCount(0);
     await preview.waitForFunction(async()=>Boolean((await navigator.serviceWorker.getRegistration())?.active),null,{timeout:15000});
-    await preview.waitForFunction(()=>navigator.serviceWorker.controller?.scriptURL.includes('/test/sw.js'));
+    await preview.waitForFunction(()=>navigator.serviceWorker.controller?.scriptURL.includes('/test-app/sw.js'));
     await expect(preview.getByLabel('Appoppdatering')).not.toBeVisible();
     const manifest=await preview.evaluate(async()=>await(await fetch('./manifest.webmanifest')).json());
     expect(manifest).toMatchObject({id:'./',start_url:'./',scope:'./',name:'My D&D Test',short_name:'My D&D Test'});
+    const productionManifest=await page.evaluate(async()=>await(await fetch('./manifest.webmanifest')).json());
+    expect(productionManifest).toMatchObject({name:'My D&D',short_name:'My D&D',id:'./',scope:'./',start_url:'./'});
+    expect(new URL(manifest.scope,preview.url()).href.startsWith(new URL(productionManifest.scope,page.url()).href)).toBe(false);
+    for(const app of [page,preview]) {
+      expect(await app.locator('link[rel="apple-touch-icon"]').getAttribute('href')).toBe('./apple-touch-icon.png');
+      const sizes=await app.evaluate(async()=>{
+        const manifest=await(await fetch('./manifest.webmanifest')).json();
+        return await Promise.all([...manifest.icons.map((icon:any)=>icon.src),'apple-touch-icon.png'].map(async src=>{
+          const image=new Image();image.src=src;await image.decode();return [src,image.naturalWidth,image.naturalHeight];
+        }));
+      });
+      expect(sizes).toEqual([['icon-192.png',192,192],['icon-512.png',512,512],['icon-maskable-512.png',512,512],['apple-touch-icon.png',180,180]]);
+    }
+    const productionIcon=await page.request.get(new URL('icon-512.png',page.url()).href);
+    const testIcon=await page.request.get(new URL('icon-512.png',preview.url()).href);
+    expect((await productionIcon.body()).equals(await testIcon.body())).toBe(false);
     await menuAction(preview,'Importer backup');await preview.getByLabel('JSON-fil').setInputFiles(backup!);
     await preview.getByRole('dialog').getByRole('button',{name:'Importer',exact:true}).click();
     await expect(preview.getByRole('heading',{name:'Produksjons-Alva',exact:true})).toBeVisible();
@@ -94,7 +110,7 @@ test('production and a fixed preview retain separate characters, portraits, draf
     expect(originalTest.settings.some((r:any)=>r.id.startsWith('wizard-draft:'))).toBe(true);
     await preview.screenshot({path:'test-results/preview-mobile.png',fullPage:true});
 
-    // A root-worker activation must neither count the test tab nor delete its cache.
+    // A production-worker activation must neither count the sibling test tab nor delete its cache.
     productionRelease='B';await menuAction(page,'Se etter oppdatering');
     await expect(page.getByLabel('Appoppdatering')).toContainText('En ny versjon er klar');
     await page.getByRole('button',{name:'Oppdater appen',exact:true}).click();
