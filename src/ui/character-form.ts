@@ -25,7 +25,7 @@ export function characterForm(c: Character) {
     + step('subclasses', '', '<div data-subclass-rows></div>', true)
     + step('levels', '', '<div class="character-levels" data-level-rows></div>', true)
     + step('abilities', '', `<div class="character-abilities">${abilities.map(a => field(a, a, c.abilityScores[a], `type="number" min="0" step="1" required data-number-title="${abilityNames[a]}"`)).join('')}</div>`, true)
-    + step('hp', '', field('Maks HP fra karakterarket', 'hpMax', c.hp.max, 'type="number" min="1" step="1" required'), true);
+    + step('hp', '', field('Maks HP fra karakterarket', 'hpMax', c.hp.max, 'type="number" min="1" step="1" required data-number-caption="Maks HP"'), true);
 }
 function selectedKeys(form:HTMLFormElement):string[] {
   const value=form.querySelector<HTMLInputElement>('[name="classChoice"]')!.value;
