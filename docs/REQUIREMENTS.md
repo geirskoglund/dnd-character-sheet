@@ -20,7 +20,7 @@ Dette er et **digitalt, manuelt redigerbart karakterark**, ikke en regelmotor, t
 Når spilleren skal legge inn flere verdier, brukes en kort, forgrenet veiviser fremfor et omfattende skjema. Dette gjelder på tvers av appen, ikke bare våpen. Rene valg fra en liste beholder direkte registrering uten ekstra spørsmål eller bekreftelser.
 
 - Still forståelige spørsmål fra spillerens oppgave. Ja/nei-svar bestemmer hvilke oppfølgingssteg som trengs; sikre katalog-/karakterverdier følger med automatisk.
-- Nyeste presisering (§14): ett spørsmål eller én verdi per skjerm. Terningtype, antall, skadetype og betingelse får separate spørsmål. Ja/nei-svar er direkte knapper som går videre.
+- Nyeste presisering (§14): ett spørsmål eller én verdi per skjerm. Karakterveiviseren har et avgrenset unntak med grupperte skjermer etter [#61](https://github.com/geirskoglund/dnd-character-sheet/issues/61), også ved redigering. Terningtype, antall, skadetype og betingelse får separate spørsmål. Ja/nei-svar er direkte knapper som går videre.
 - Spør bare om relevant informasjon. Tilby avslutning så snart nødvendig informasjon er registrert; merknader og øvrige detaljer er valgfrie.
 - Tilbake bevarer svar. Nyeste presisering (§14): Lukk bevarer et lokalt utkast; Forkast utkast er separat. Hele registreringen bekreftes samlet, med trygg feilbehandling og Angre etter gjeldende lagringskrav.
 - Veiviseren hjelper med føring på karakterarket; den krever ikke rekonstruksjon av tidligere level-ups eller automatiske regelvalg.
@@ -35,7 +35,7 @@ Konteksttilpasning skal støtte målet om et digitalt papirkarakterark og gjøre
 - Generelle valg skal beholdes. Bare reelle forutsetninger kan begrunne en begrensning; ukjente eller uavklarte forhold merkes og valget beholdes tilgjengelig.
 - Tilgang og egenskaper kan komme fra flere kilder. Cantrips/spells kan for eksempel komme fra klasse, subclass, art, feats, utstyr eller en avtale med DM. Et klassefilter alene skal ikke skjule andre gyldige tilganger.
 - Skille mellom å eie/registrere, velge/lære og bruke noe er del av relevansvurderingen. Manglende proficiency for et våpen hindrer for eksempel ikke eierskap; eventuelle konsekvenser ved bruk håndteres i den aktuelle flyten.
-- Manuelle valg, «Opprett egen» og DM-unntak skal fortsatt være tilgjengelige. Endret kontekst skal bevare tidligere registrerte data.
+- Manuelle valg, «Opprett egen» og DM-unntak skal fortsatt være tilgjengelige der flyten tilbyr dem. Ny/Rediger karakter bruker bare katalogvalg for nye arter, klasser og subklasser etter [#61](https://github.com/geirskoglund/dnd-character-sheet/issues/61); tidligere lagrede svar bevares ved redigering. Endret kontekst skal bevare tidligere registrerte data.
 
 De konkrete reglene og kontrollscenarioene defineres for hvert område. Prinsippet følger produktets eksisterende grenser for manuell kontroll og avgrensede beregninger.
 

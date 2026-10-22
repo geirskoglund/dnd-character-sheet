@@ -1,94 +1,87 @@
-import {enhanceNumbers} from './number-wheel';
 import { abilities, type Character } from '../domain/model';
 import { classCatalog, speciesCatalog } from '../domain/catalog';
-import { field, select } from './html';
+import { escapeHtml as esc, field, select } from './html';
 
 type ClassEntry = Character['classes'][number];
-export function subclassFields(classId: string, subclass = '') {
-  const known = classCatalog.find(c => c.catalogId === classId);
-  const choices = known?.subclasses ?? [];
-  const choice = choices.includes(subclass) ? subclass : subclass ? 'custom' : '';
-  return `${select('Subclass (valgfritt)', 'subclassChoice', choice, [{value:'', label:'Ingen / ikke valgt'}, ...choices.map(name => ({value:name, label:name})), {value:'custom', label:'Opprett egen subclass'}])}
-    <div data-custom-subclass ${choice === 'custom' ? '' : 'hidden'}>${field('Egen subclass', 'subclassName', choice === 'custom' ? subclass : '', 'maxlength="100"')}</div>`;
-}
-export function classRow(cl: ClassEntry = { id: crypto.randomUUID(), name: '', level: 1 }) {
-  const choice = cl.definitionRef?.kind === 'catalog' && classCatalog.some(c => c.catalogId === cl.definitionRef?.id) ? cl.definitionRef.id : cl.name ? 'custom' : '';
-  return `<div class="class-row" data-class-id="${cl.id}">${select('Klasse', 'classChoice', choice, [{value:'', label:'Velg klasse'}, ...classCatalog.map(c => ({value:c.catalogId, label:c.name})), {value:'custom', label:'Opprett egen klasse'}], 'required')}
-    <div data-custom-class ${choice === 'custom' ? '' : 'hidden'}>${field('Egen klasse', 'className', cl.name, 'maxlength="100"')}</div>
-    <div data-subclass-fields>${subclassFields(choice, cl.subclass)}</div>
-    ${field('Klassenivå', 'classLevel', cl.level, 'type="number" min="1" max="20" required')}
-    <button type="button" data-remove-class>Fjern klasse</button></div>`;
-}
-export function characterForm(c: Character, creating: boolean) {
-  const choice = speciesCatalog.some(s => s.catalogId === c.species.catalogId) ? c.species.catalogId! : c.species.name ? 'custom' : '';
-  return `<fieldset><legend tabindex="-1">Identitet</legend>${field('Navn', 'name', c.name, 'required maxlength="100" autocomplete="off" placeholder="Karakterens navn"')}
-    ${select('Art / species', 'speciesChoice', choice, [{value:'', label:'Velg art'}, ...speciesCatalog.map(s => ({value:s.catalogId!, label:s.name})), {value:'custom', label:'Opprett egen art / underart'}], 'required')}
-    <div data-custom-species ${choice === 'custom' ? '' : 'hidden'}>
-      ${field('Navn på art / underart', 'speciesName', c.species.name, 'maxlength="100"')}
-      ${field('Grunnfart for arten (ft)', 'speciesSpeed', c.species.walkingSpeed ?? '', 'type="number" min="0"')}
-      <label class="check"><input type="checkbox" name="ignoreArmorPenalty" ${c.species.ignoresHeavyArmorSpeedPenalty ? 'checked' : ''}>Heavy armor reduserer ikke artens speed</label>
-    </div></fieldset>
-    <fieldset><legend tabindex="-1">Klasse og nivå</legend><div id="class-rows">${(c.classes.length ? c.classes : [undefined]).map(cl => classRow(cl)).join('')}</div><button type="button" id="add-class">+ Klasse</button><p id="total-level"></p></fieldset>
-    <fieldset><legend tabindex="-1">Grunnverdier</legend><p>Angi endelige ability scores, inkludert bonuser.</p><div class="form-grid">${abilities.map(a => field(a, a, c.abilityScores[a], 'type="number" min="0" required')).join('')}</div>
-    ${field('Maks HP fra karakterarket', 'hpMax', c.hp.max || '', 'type="number" min="1" required')}
-    <p>På level 1: full Hit Die + Constitution modifier. Senere levels: fysisk kast eller fast verdi + Constitution modifier. Angi samlet maks HP her.</p>
-    <p>${creating ? 'Karakteren starter med full HP. Utstyr legges til inne i appen.' : 'Nåværende HP og temporary HP beholdes. Skade og healing registreres i Combat.'}</p></fieldset>`;
+const classKey = (cl: ClassEntry) => cl.definitionRef?.kind === 'catalog' ? cl.definitionRef.id : cl.id;
+const abilityNames = {STR:'Strength', DEX:'Dexterity', CON:'Constitution', INT:'Intelligence', WIS:'Wisdom', CHA:'Charisma'};
+/** Existing non-catalog answers remain readable; new answers come from the catalog. */
+export function subclassFields(classId: string, subclass = '', name = 'subclassChoice') {
+  const choices = classCatalog.find(c => c.catalogId === classId)?.subclasses ?? [];
+  return select('Subclass (valgfritt)', name, subclass, [{value:'', label:'Ingen / ikke valgt'}, ...[...new Set([...choices, ...(subclass ? [subclass] : [])])].map(value => ({value, label:value}))]);
 }
 export function readSubclass(root: ParentNode) {
-  const choice = root.querySelector<HTMLSelectElement>('[name="subclassChoice"]')!.value;
-  return choice === 'custom' ? root.querySelector<HTMLInputElement>('[name="subclassName"]')!.value.trim() : choice;
+  return root.querySelector<HTMLSelectElement>('[name="subclassChoice"]')!.value;
 }
-export function bindSubclass(root: ParentNode) {
-  const custom = root.querySelector<HTMLSelectElement>('[name="subclassChoice"]')!.value === 'custom';
-  root.querySelector<HTMLElement>('[data-custom-subclass]')!.hidden = !custom;
-  root.querySelector<HTMLInputElement>('[name="subclassName"]')!.required = custom;
+const step = (id:string, title:string, html:string, manual=false) => `<section data-question-id="${id}" data-question-title="${esc(title)}" data-question-help="" data-question-grouped ${manual?'data-manual-next':''}>${html}</section>`;
+export function characterForm(c: Character) {
+  const existing = c.classes.filter(cl => !classCatalog.some(known => known.catalogId === classKey(cl)));
+  const options = [...classCatalog.map(cl => ({key:cl.catalogId, name:cl.name})), ...existing.map(cl => ({key:classKey(cl), name:cl.name}))];
+  const knownSpecies = speciesCatalog.some(s => s.catalogId === c.species.catalogId);
+  const species = [...speciesCatalog.map(s => ({value:s.catalogId!, label:s.name})), ...(c.species.name && !knownSpecies ? [{value:'existing', label:c.species.name}] : [])];
+  return step('name', 'Hva heter karakteren?', field('Navn', 'name', c.name, 'required maxlength="100" autocomplete="off" placeholder="Karakterens navn"'))
+    + step('species', '', select('Art / species', 'speciesChoice', knownSpecies ? c.species.catalogId! : c.species.name?'existing':'', [{value:'',label:'Velg art'}, ...species], 'required'))
+    + step('classes', '', `<div class="wizard-options" data-choice-required data-class-selection><input type="hidden" name="classChoice" aria-label="Klasse" value="${esc(c.classes.length?JSON.stringify(c.classes.map(classKey)):'')}">${options.map(cl => `<button type="button" data-class-toggle="${esc(cl.key)}" aria-pressed="${c.classes.some(old => classKey(old)===cl.key)}">${esc(cl.name)}</button>`).join('')}</div>`, true)
+    + step('subclasses', '', '<div data-subclass-rows></div>', true)
+    + step('levels', '', '<div class="character-levels" data-level-rows></div>', true)
+    + step('abilities', '', `<div class="character-abilities">${abilities.map(a => field(a, a, c.abilityScores[a], `type="number" min="0" step="1" required data-number-title="${abilityNames[a]}"`)).join('')}</div>`, true)
+    + step('hp', '', field('Maks HP fra karakterarket', 'hpMax', c.hp.max, 'type="number" min="1" step="1" required data-number-caption="Maks HP"'), true);
+}
+function selectedKeys(form:HTMLFormElement):string[] {
+  const value=form.querySelector<HTMLInputElement>('[name="classChoice"]')!.value;
+  return value ? JSON.parse(value) as string[] : [];
 }
 export function readCharacterForm(form: HTMLFormElement, source: Character, creating: boolean): Character {
   const draft = structuredClone(source), data = new FormData(form);
-  const text = (key: string) => String(data.get(key) ?? '');
-  const definition = speciesCatalog.find(s => s.catalogId === text('speciesChoice'));
-  draft.name = text('name');
-  draft.species = definition ? structuredClone(source.species.catalogId === definition.catalogId ? source.species : definition) : {...draft.species, catalogId:undefined, name:text('speciesName').trim(), walkingSpeed:text('speciesSpeed') === '' ? null : Number(data.get('speciesSpeed')), ignoresHeavyArmorSpeedPenalty:data.has('ignoreArmorPenalty')};
-  if (!definition && (draft.species.name !== source.species.name || source.species.catalogId)) { draft.species.traits = []; draft.species.languages = []; }
+  draft.name = String(data.get('name') ?? '');
+  const species = speciesCatalog.find(s => s.catalogId === data.get('speciesChoice'));
+  if(species) draft.species = structuredClone(source.species.catalogId===species.catalogId?source.species:species);
   for (const a of abilities) draft.abilityScores[a] = Number(data.get(a));
-  draft.classes = [...form.querySelectorAll<HTMLElement>('[data-class-id]')].map(row => {
-    const value = (key: string) => row.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="${key}"]`)!.value;
-    const old = source.classes.find(cl => cl.id === row.dataset.classId);
-    const known = classCatalog.find(cl => cl.catalogId === value('classChoice'));
-    return {...old, id:row.dataset.classId!, name:known?.name ?? value('className').trim(), definitionRef:known ? {kind:'catalog' as const, id:known.catalogId} : old?.definitionRef?.kind === 'custom' && old.name === value('className').trim() ? old.definitionRef : undefined, ...(readSubclass(row) || old?.subclass !== undefined ? {subclass:readSubclass(row)} : {}), level:Number(value('classLevel'))};
+  draft.classes = selectedKeys(form).map(key => {
+    const row=form.querySelector<HTMLElement>(`[data-class-key="${CSS.escape(key)}"]`)!;
+    const old=source.classes.find(cl => classKey(cl)===key), known=classCatalog.find(cl => cl.catalogId===key);
+    return {...old, id:row.dataset.classId!, name:known?.name??old!.name, definitionRef:known?{kind:'catalog' as const,id:key}:old?.definitionRef,
+      subclass:String(data.get(`subclass:${key}`)??''), level:Number(data.get(`level:${key}`))};
   });
   draft.level = draft.classes.reduce((n, cl) => n + cl.level, 0);
   draft.hp.max = Number(data.get('hpMax'));
   if (creating) draft.hp = {max:draft.hp.max, current:draft.hp.max, temp:0};
   return draft;
 }
-export function bindCharacterForm(form: HTMLFormElement, source: Character, creating: boolean) {
-  const previousClass=new WeakMap<HTMLSelectElement,string>();
-  form.querySelectorAll<HTMLSelectElement>('[name="classChoice"]').forEach(select=>previousClass.set(select,select.value));
-  const update = () => {
-    const custom = form.querySelector<HTMLSelectElement>('[name="speciesChoice"]')!.value === 'custom';
-    form.querySelector<HTMLElement>('[data-custom-species]')!.hidden = !custom;
-    for (const key of ['speciesName', 'speciesSpeed']) form.querySelector<HTMLInputElement>(`[name="${key}"]`)!.required = custom;
-    const rows = [...form.querySelectorAll<HTMLElement>('[data-class-id]')];
-    rows.forEach(row => {
-      row.querySelector<HTMLButtonElement>('[data-remove-class]')!.hidden = rows.length === 1;
-      const customClass = row.querySelector<HTMLSelectElement>('[name="classChoice"]')!.value === 'custom';
-      row.querySelector<HTMLElement>('[data-custom-class]')!.hidden = !customClass;
-      row.querySelector<HTMLInputElement>('[name="className"]')!.required = customClass;
-      bindSubclass(row);
-    });
-    form.querySelector('#total-level')!.textContent = `Totalt level: ${readCharacterForm(form, source, creating).level}`;
+export function bindCharacterForm(form: HTMLFormElement, source: Character) {
+  const selection=form.querySelector<HTMLInputElement>('[name="classChoice"]')!;
+  const subclasses=form.querySelector<HTMLElement>('[data-subclass-rows]')!, levels=form.querySelector<HTMLElement>('[data-level-rows]')!;
+  const update=()=>{
+    const keys=selectedKeys(form);
+    // Keep the original nodes for retained classes: their values and editor bindings survive.
+    for(const row of subclasses.querySelectorAll<HTMLElement>('[data-class-key]')) if(!keys.includes(row.dataset.classKey!)) row.remove();
+    for(const row of levels.querySelectorAll<HTMLElement>('[data-level-key]')) if(!keys.includes(row.dataset.levelKey!)) row.remove();
+    for(const key of keys){
+      if(subclasses.querySelector(`[data-class-key="${CSS.escape(key)}"]`))continue;
+      const old=source.classes.find(cl=>classKey(cl)===key), known=classCatalog.find(cl=>cl.catalogId===key), id=old?.id??crypto.randomUUID(), name=known?.name??old!.name;
+      subclasses.insertAdjacentHTML('beforeend', `<div data-class-key="${esc(key)}" data-class-id="${id}"><h4>${esc(name)}</h4>${subclassFields(key,old?.subclass,`subclass:${key}`)}</div>`);
+      levels.insertAdjacentHTML('beforeend', `<div data-level-key="${esc(key)}">${field('Klassenivå',`level:${key}`,old?.level??1,`type="number" min="1" step="1" required data-number-caption="${esc(name)}" data-number-title="${esc(name)}"`)}</div>`);
+    }
+    levels.classList.toggle('many-classes',keys.length>=3);
+    form.querySelectorAll<HTMLButtonElement>('[data-class-toggle]').forEach(button=>button.setAttribute('aria-pressed',String(keys.includes(button.dataset.classToggle!))));
+    const name=form.querySelector<HTMLInputElement>('[name="name"]')!.value;
+    const titles:Record<string,string>={species:`Hvilken art er ${name}?`,classes:`Hvilken eller hvilke klasser har ${name}?`,subclasses:`Angi subklasser for ${name}.`,levels:`Velg hvilket nivå (level) ${name} er på, innenfor klassene sine.`,abilities:`Legg inn nivået for ${name}s egenskaper.`,hp:`Legg inn maksimum helse (hit points) for ${name}.`};
+    for(const [id,title] of Object.entries(titles))form.querySelector<HTMLElement>(`[data-question-id="${id}"]`)!.dataset.questionTitle=title;
   };
-  form.addEventListener('input', update);
-  form.addEventListener('change', event => {
-    const target = event.target as HTMLSelectElement;
-    if (target.name === 'classChoice'&&previousClass.get(target)!==target.value) {target.closest('[data-class-id]')!.querySelector('[data-subclass-fields]')!.innerHTML = subclassFields(target.value);previousClass.set(target,target.value);}
-    update();
+  form.addEventListener('click',event=>{
+    const button=(event.target as HTMLElement).closest<HTMLButtonElement>('[data-class-toggle]');if(!button)return;
+    const keys=selectedKeys(form),key=button.dataset.classToggle!;
+    selection.value=keys.includes(key)?(keys.length===1?'':JSON.stringify(keys.filter(k=>k!==key))):JSON.stringify([...keys,key]);
+    selection.dispatchEvent(new Event('change',{bubbles:true}));
   });
-  form.querySelector<HTMLButtonElement>('#add-class')!.onclick = () => { form.querySelector('#class-rows')!.insertAdjacentHTML('beforeend', classRow()); enhanceNumbers(form);update(); form.querySelectorAll<HTMLElement>('[name="classChoice"]')[form.querySelectorAll('[data-class-id]').length - 1].focus(); };
-  form.addEventListener('click', event => {
-    const target = event.target as HTMLElement;
-    if (target.matches('[data-remove-class]')) { target.closest('[data-class-id]')!.remove(); update(); }
-  });
-  update();
+  form.addEventListener('input',update);form.addEventListener('change',update);update();
+}
+
+/** Map unfinished pre-#61 questions onto the grouped flow. Class answers are already
+ * stored by stable ID in the draft payload; repeated old controls must not replace them. */
+export function groupedCharacterDraft(entry: import('../domain/wizard-draft').WizardDraft) {
+  if(['name','species','classes','subclasses','levels','abilities','hp'].includes(entry.step)||!entry.step)return entry;
+  const field=entry.step.split(':').at(-1)!;
+  const step=field==='name'?'name':field.startsWith('species')||field==='ignoreArmorPenalty'?'species':field.startsWith('subclass')?'subclasses':field==='classLevel'?'levels':field.startsWith('class')?'classes':abilities.includes(field as typeof abilities[number])?'abilities':field==='hpMax'?'hp':'name';
+  return {...entry,step,controls:entry.controls.filter(control=>!['classChoice','classLevel','subclassChoice'].includes(control.name))};
 }

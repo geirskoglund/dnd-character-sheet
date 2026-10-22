@@ -61,17 +61,17 @@ test('P03/P07/P10 K4–K7: the same basis, no product maximum, valid signed entr
  await expect(page.locator('.stats')).toContainText('12 / 12');
 });
 
-test('P08/P16 K5/K8: explicit negative lower bound and upper bound are result limits',async({page})=>{
+test('P08/P16 K5/K8: class levels have a lower bound and no game-rule upper bound',async({page})=>{
  await createCharacter(page);await menuAction(page,'Rediger karakter');
  const field=await revealField(page,'Klassenivå');await field.click();
  const d=page.locator('.number-change-dialog');
  await d.getByRole('button',{name:'Skriv inn Endring',exact:true}).click();
  await typeWheelText(page,'Endring','100');
- await d.getByRole('button',{name:'OK',exact:true}).click();await expect(field).toHaveValue('20');
+ await d.getByRole('button',{name:'OK',exact:true}).click();await expect(field).toHaveValue('101');
  await field.click();await d.getByRole('button',{name:'Skriv inn Endring',exact:true}).click();await typeWheelText(page,'Endring','-500');
- await d.getByRole('button',{name:'Avbryt',exact:true}).click();await expect(field).toHaveValue('20');
+ await d.getByRole('button',{name:'Avbryt',exact:true}).click();await expect(field).toHaveValue('101');
  await field.click();await d.getByRole('button',{name:'Skriv inn Endring',exact:true}).click();await typeWheelText(page,'Endring','-500');
- await d.getByRole('button',{name:'Avbryt endring',exact:true}).click();await expect(field).toHaveValue('20');
+ await d.getByRole('button',{name:'Avbryt endring',exact:true}).click();await expect(field).toHaveValue('101');
 });
 
 test('P09/P10 K3/K4: both decimal wheels accept signed integers, endpoints and sign control',async({page})=>{

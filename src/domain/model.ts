@@ -28,9 +28,9 @@ const effect = z.object({ id, sourceRef: ref.optional(), target: z.enum(['damage
 export const characterSchema = z.object({
   schemaVersion: z.literal(2), id, revision: count, name: z.string().trim().min(1).max(100),
   createdAt: z.iso.datetime(), updatedAt: z.iso.datetime(),
-  level: z.number().int().min(1).max(20),
+  level: z.number().int().min(1),
   classes: z.array(z.object({ id, name: z.string().max(100), subclass: z.string().max(100).optional(),
-    definitionRef: ref.optional(), level: z.number().int().min(1).max(20) })),
+    definitionRef: ref.optional(), level: z.number().int().min(1) })),
   species: z.object({ name: z.string().max(100), catalogId: z.string().optional(),
     walkingSpeed: count.nullable(), ignoresHeavyArmorSpeedPenalty: z.boolean(),
     traits: z.array(z.object({ name: text, description: text, iconKey:visualIcon })), languages: z.array(text) }), backgroundNoteId: id.optional(), campaignId: id.optional(), portraitAssetId: id.optional(),

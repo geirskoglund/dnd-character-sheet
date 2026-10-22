@@ -5,6 +5,7 @@ import {createCharacter,characterStep,finish,menuAction,equipmentTab,useEquipmen
 const d=(p:Page)=>p.getByRole('dialog');
 async function sheet(p:Page,name:string,level:number,subclass?:string){
  await createCharacter(p);await menuAction(p,'Rediger karakter');await characterStep(p,1);
+ if(name!=='Fighter')await p.getByRole('button',{name:'Fighter',exact:true}).click();
  await choose(p,'Klasse',{label:name});await fillField(p,'Klassenivå',String(level));
  if(subclass)await choose(p,'Subclass (valgfritt)',{label:subclass});
  await characterStep(p,2);await fillField(p,'INT','16');await fillField(p,'WIS','16');await fillField(p,'STR','16');await finish(p);await expect(d(p)).not.toBeVisible();
@@ -83,7 +84,7 @@ test('HP reaches zero and can increase again with a real touch wheel; navigation
  const triangles=await page.locator('nav button, .app-menu summary, .combat-tabs button').evaluateAll(els=>els.map(el=>getComputedStyle(el,'::after').clipPath));expect(triangles.every(v=>v==='none')).toBe(true);
 });
 test('multiclass spell selection uses each class level and asks source only when ambiguous',async({page})=>{
- await sheet(page,'Wizard',1);await menuAction(page,'Rediger karakter');await characterStep(page,1);await page.getByRole('button',{name:'+ Klasse',exact:true}).click();
+ await sheet(page,'Wizard',1);await menuAction(page,'Rediger karakter');await characterStep(page,1);
  await choose(page,'Klasse',{label:'Cleric'},1);await fillField(page,'Klassenivå','4',1);await finish(page);await expect(d(page)).not.toBeVisible();await magic(page);
  await expect(page.getByRole('region',{name:'Spell slots',exact:true})).toContainText('2 / 2');
  await page.getByRole('button',{name:'Legg til spell',exact:true}).click();const search=page.getByRole('searchbox',{name:'Søk i SRD 5.1',exact:true});await search.fill('Invisibility');await expect(page.getByRole('button',{name:'Legg til Invisibility',exact:true})).toHaveCount(0);

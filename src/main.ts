@@ -27,7 +27,7 @@ import { exportBackup, importBackup } from './storage/backup';
 import { libraryPicker } from './ui/library-picker';
 import { createRecordEditors } from './ui/record-editors';
 import { characterView, combatView, equipmentView, magicView } from './ui/views';
-import { characterForm, bindCharacterForm, readCharacterForm, subclassFields, bindSubclass, readSubclass } from './ui/character-form';
+import { characterForm, bindCharacterForm, readCharacterForm, subclassFields, readSubclass, groupedCharacterDraft } from './ui/character-form';
 import { newEquipment, weaponSummary } from './ui/equipment-form';
 import { editDialog as dialog, viewDialog, confirmDialog, commitDialog } from './ui/dialog';
 import { equipmentPicker, bindEquipmentPicker } from './ui/equipment-picker';
@@ -222,25 +222,27 @@ async function run(fn: () => Promise<void>) {
   finally { busy = false;root.setAttribute('aria-busy','false'); }
 }
 function editCharacter(source?: Character,resume?:WizardDraft) {
+  if(resume)resume=groupedCharacterDraft(resume);
   const recovered=resume?.payload as {source:Character;creating:boolean;classes:Character['classes']}|undefined;
   if(recovered&&!recovered.creating)source=recovered.source;
-  const draft = recovered?.source??(source ? structuredClone(source) : { ...createCharacter(), name: '' });
+  const draft = recovered?.source??(source ? structuredClone(source) : { ...createCharacter(), name: '', hp:{max:2,current:2,temp:0} });
   const creating = !source;
-  const d = dialog(source ? 'Rediger karakter' : 'Ny karakter', characterForm({...draft,classes:recovered?.classes??draft.classes}, creating), async form => {
-    const updated = withStandardResources(readCharacterForm(form, draft, creating));
-    if (!updated.species.name || updated.species.walkingSpeed === null) throw new Error('Velg art eller angi navn og grunnfart for egen art.');
+  const formSource = {...draft,classes:recovered?.classes??draft.classes};
+  const d = dialog(source ? 'Rediger karakter' : 'Ny karakter', characterForm(formSource), async form => {
+    const updated = withStandardResources(readCharacterForm(form, formSource, creating));
+    if (!updated.species.name || updated.species.walkingSpeed === null) throw new Error('Velg art.');
     if (!updated.classes.length || updated.classes.some(cl => !cl.name)) throw new Error('Velg minst én klasse.');
     if (new Set(updated.classes.map(cl => cl.name.toLowerCase())).size !== updated.classes.length) throw new Error('Registrer hver klasse én gang, med samlet klassenivå.');
     if (updated.hp.max < 1) throw new Error('Registrer maksimal HP fra karakterarket.');
     const valid = characterSchema.safeParse(updated);
-    if (!valid.success) throw new Error('Kontroller navn, klassenivå (totalt 1–20), ability scores og maks HP.');
+    if (!valid.success) throw new Error('Kontroller navn, positive hele klassenivåer, ability scores og maks HP.');
     const saved = await saveCharacter(valid.data, source ? 'edit' : 'create', source ? 'Karaktergrunnlag redigert' : 'Karakter opprettet',undefined,await flushWizard(d));
     selected = saved.id;
     message = '';
     await refresh();
   });
-  bindCharacterForm(d.querySelector('form')!, draft, creating);
-  bindWizard(d,[...d.querySelectorAll<HTMLElement>('#dialog-body > fieldset')].map(element=>({element})),'Lagre',{store:draftRepo,entry:resume??newWizardDraft({kind:'character',label:draft.name||'Ny karakter',characterId:creating?undefined:draft.id,editingId:creating?undefined:draft.id,payload:{source:draft,creating,classes:draft.classes}}),changed:refresh,payload:form=>({source:draft,creating,classes:readCharacterForm(form,draft,creating).classes.map(cl=>({...cl,level:Number.isFinite(cl.level)&&cl.level>=1&&cl.level<=20?cl.level:1}))})});
+  bindCharacterForm(d.querySelector('form')!, formSource);
+  bindWizard(d,[...d.querySelectorAll<HTMLElement>('#dialog-body > [data-question-id]')].map(element=>({element})),'Lagre',{store:draftRepo,entry:resume??newWizardDraft({kind:'character',label:draft.name||'Ny karakter',characterId:creating?undefined:draft.id,editingId:creating?undefined:draft.id,payload:{source:draft,creating,classes:draft.classes}}),changed:refresh,payload:form=>({source:draft,creating,classes:readCharacterForm(form,formSource,creating).classes.map(cl=>({...cl,level:Number.isSafeInteger(cl.level)&&cl.level>=1?cl.level:1}))})});
 }
 function inspectEquipment(id: string) { equipmentLookup(editorContext,id); }
 function addEquipment(c: Character, group = '') {
@@ -269,10 +271,8 @@ function levelUp(c: Character) {
   const update = () => {
     const cl = c.classes.find(cl => cl.id === form.querySelector<HTMLInputElement | HTMLSelectElement>('[name="levelClass"]')!.value)!;
     form.querySelector('[data-level-subclass]')!.innerHTML = subclassFields(cl.definitionRef?.id ?? '', cl.subclass);
-    bindSubclass(form);
   };
   form.querySelector<HTMLInputElement | HTMLSelectElement>('[name="levelClass"]')!.onchange = update;
-  form.addEventListener('change', () => bindSubclass(form));
   update();
 }
 function editHitPoints(c: Character, damageOnly=false) {

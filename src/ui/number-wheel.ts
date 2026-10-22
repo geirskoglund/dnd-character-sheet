@@ -12,14 +12,14 @@ export function enhanceNumbers(root:ParentNode){
   const pill=input.closest('label');
   if(pill){
    pill.classList.add('number-pill');
-   const caption=document.createElement('small');caption.textContent=label;
+   const caption=document.createElement('small');caption.textContent=input.dataset.numberCaption??label;
    for(const node of [...pill.childNodes])if(node.nodeType===Node.TEXT_NODE)node.remove();
    pill.prepend(caption);
   }
   const open=()=>{
    if(input.disabled||input.closest('[inert]'))return;
    const original=Number.isFinite(input.valueAsNumber)?input.valueAsNumber:0;
-   numberChangeDialog({name:label,original,min:input.min!==''?Number(input.min):undefined,max:input.max!==''?Number(input.max):undefined,allowNegative:input.dataset.allowNegative!==undefined,
+   numberChangeDialog({name:input.dataset.numberTitle??label,original,min:input.min!==''?Number(input.min):undefined,max:input.max!==''?Number(input.max):undefined,allowNegative:input.dataset.allowNegative!==undefined,
     onConfirm:result=>{
      if(input.value===String(result))return;
      input.value=String(result);input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));

@@ -8,7 +8,7 @@ Dette er den samlede implementasjonen bestilt etter gjennomgangen i [WORKFLOW_RE
 
 | Mål | Arbeidsflyt |
 | --- | --- |
-| Opprette karakter | Meny → Ny karakter: identitet → klasse/nivå → grunnverdier/maks HP. Tilbake bevarer svar. Artens regeltekst vises ikke i opprettelsen; utstyr og spilltilstand føres inne i appen. |
+| Opprette karakter | Meny → Ny karakter: navn → art → klasser → subklasser → klassenivåer → abilities → maks HP, også ved Rediger karakter. Grupperingen er et avgrenset unntak etter [#61](https://github.com/geirskoglund/dnd-character-sheet/issues/61). Tilbake bevarer svar. Artens regeltekst vises ikke i opprettelsen; utstyr og spilltilstand føres inne i appen. |
 | Vanlig nytt utstyr | Utstyr → + i riktig gruppe → søk/velg. Direkte tillegg, katalogverdier følger med. Føres som eid; I bruk velges fra gjenstandens kort. Ingen mellomdialog. |
 | Egen våpenvariant | Tilpass ved katalogvåpen → navn/valgfri merknad → valgfri endring av grunnskade/ekstraskade. Hver ekstraskade har uttrykk, skadetype fra liste og eget ja/nei-spørsmål om betingelse. Betingelsen vises på kortet og i Combat. |
 | Egne egenskaper/spells | Kort veiviser for navn/type/nivå og valgfri tekst. Flere detaljer gir tilgang til eksisterende handlinger, koblinger, ikoner og manuelle overstyringer. Ingen obligatorisk fullskjema for normal føring. |

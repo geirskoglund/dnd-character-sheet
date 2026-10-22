@@ -109,8 +109,8 @@ legend { max-width: 100%; padding: 0 .3rem; font-weight: 600; }
 .check { display: flex; align-items: center; gap: .6rem; min-height: 38px; }
 .check input { width: 22px; min-height: 22px; flex: 0 0 22px; }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,10rem),1fr)); gap: .8rem; }
-.class-row, .equipment-row { display: grid; gap: .65rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--soft-line); }
-fieldset label + label, [data-custom-species], [data-custom-item], [data-custom-armor] { margin-top: .7rem; }
+.equipment-row { display: grid; gap: .65rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--soft-line); }
+fieldset label + label, [data-custom-item], [data-custom-armor] { margin-top: .7rem; }
 summary { min-height: 44px; padding: .65rem 1rem .65rem 0; list-style: none; font-weight: 600; }
 summary::-webkit-details-marker { display: none; }
 details { min-width: 0; }
@@ -357,7 +357,6 @@ input.number-value {width:100%;max-width:100%;min-height:0;height:auto;padding:0
 .wizard-options {gap:8px}
 .wizard-options button {min-height:48px;padding:.55rem;gap:4px;font-size:1.05rem;border-radius:8px}
 .wizard-options button > .icon {width:22px;height:22px}
-[data-wizard-split=true] .class-row {padding-bottom:0;margin-bottom:0;border-bottom:0}
 [data-wizard-split=true]:not(:has([data-wizard-active])) {display:none}
 dialog.text-editor {position:fixed;inset:auto 0 0;top:0;margin:0;width:100%;max-width:none;max-height:none;padding:max(12px,env(safe-area-inset-top)) 16px max(12px,env(safe-area-inset-bottom));border:0;border-radius:0;background:var(--paper);overflow:hidden;box-sizing:border-box}
 .text-editor form {height:100%;display:flex;flex-direction:column;min-height:0}
@@ -373,9 +372,7 @@ dialog.text-editor {position:fixed;inset:auto 0 0;top:0;margin:0;width:100%;max-
 .text-editor-body {overscroll-behavior:contain}.text-editor-body textarea {overflow:auto;overscroll-behavior:contain}
 .text-editor .dialog-actions {padding:12px 0 0;gap:8px;background:transparent}
 .text-editor .dialog-actions button {padding:.5rem .3rem;min-height:48px;line-height:1.2}
-dialog[data-wizard] #add-class {height:auto;min-height:44px;width:auto;justify-self:start;align-self:start;margin-top:.75rem;padding:.5rem .9rem;font-size:1rem}
 dialog[data-wizard] #dialog-body > :not(.wizard-discard) {flex-shrink:0}
-[data-wizard-split=true] [data-subclass-fields]:not(:has([data-wizard-active])) {display:none}
 .text-value-wrap {display:grid;min-width:0;font-size:max(16px,1rem)}
 .text-value-wrap::after {content:attr(data-text) ' ';visibility:hidden;white-space:pre-wrap;overflow-wrap:anywhere;padding:.6rem .7rem;border-bottom:1px solid transparent}
 .text-value-wrap::after,textarea.text-value {grid-area:1 / 1;min-height:44px}
@@ -392,3 +389,18 @@ dialog:has([data-wizard-active] .wizard-options) #wizard-question,
 /* Wizard actions keep their labels readable instead of inflating at large text sizes. */
 dialog[data-wizard] #submit {min-width:0}
 dialog[data-wizard] .dialog-actions > button {padding:.5rem .4rem;line-height:1.2}
+
+/* #61: explicit grouped character questions; other wizards keep their own layout. */
+.character-abilities,.character-levels {display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));justify-items:stretch}
+.character-abilities {grid-template-columns:repeat(3,minmax(0,1fr))}
+.character-levels:not(.many-classes):has(> :only-child) {grid-template-columns:minmax(0,220px);justify-content:center}
+.character-abilities .number-pill,.character-levels .number-pill {width:100%;max-width:none;min-width:0;margin:0}
+.character-abilities .number-value,.character-levels .number-value {min-width:0;width:100%}
+[data-subclass-rows] h4 {font:600 1.25rem Journal;margin:1rem 0 .4rem}
+[data-question-grouped] .number-pill small {overflow-wrap:anywhere}
+dialog:has([data-question-grouped]) .wizard-intro {margin-bottom:.7rem}
+dialog:has([data-question-grouped]) .wizard-art {height:80px;margin:.3rem auto}
+.character-abilities .number-pill,.character-levels .number-pill {padding:12px 6px;container-type:inline-size}
+.character-abilities .number-pill small {font-size:min(1rem,28cqw);white-space:nowrap}
+.character-levels .number-pill small {font-size:min(1rem,23cqw)}
+.character-abilities input.number-value,.character-levels input.number-value {font-size:min(2.6rem,52cqw)}
