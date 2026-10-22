@@ -109,8 +109,8 @@ legend { max-width: 100%; padding: 0 .3rem; font-weight: 600; }
 .check { display: flex; align-items: center; gap: .6rem; min-height: 38px; }
 .check input { width: 22px; min-height: 22px; flex: 0 0 22px; }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,10rem),1fr)); gap: .8rem; }
-.class-row, .equipment-row { display: grid; gap: .65rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--soft-line); }
-fieldset label + label, [data-custom-species], [data-custom-item], [data-custom-armor] { margin-top: .7rem; }
+.equipment-row { display: grid; gap: .65rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--soft-line); }
+fieldset label + label, [data-custom-item], [data-custom-armor] { margin-top: .7rem; }
 summary { min-height: 44px; padding: .65rem 1rem .65rem 0; list-style: none; font-weight: 600; }
 summary::-webkit-details-marker { display: none; }
 details { min-width: 0; }
