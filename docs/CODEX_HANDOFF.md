@@ -2,6 +2,8 @@
 
 ## Gjeldende oppgavegrunnlag
 
+Start med [funksjonelt UI-kart](UI_MAP.md) for faktisk implementert navigasjon og betjening. Les relevant område selektivt, deretter oppgaven og felleskravene. [Arbeidsfordelingen](../AGENTS.md#arbeidsfordeling-og-dokumentasjonsansvar) gjelder fast: klargjøring endrer bare aktuelt issue og angir dokumentasjonsbehov; implementasjon oppdaterer berørt dokumentasjon, inkludert UI-kartet, i samme leveranse og PR. Vurder berørte krav, beslutninger, design, arkitektur, datamodell og guider uten å omskrive uendrede forhold eller historikk.
+
 Les [overordnet føring om regelgrunnlag, omfang og utvidbarhet](REQUIREMENTS.md#overordnet-føring--regelgrunnlag-og-omfang) før videre arkitekturvalg, implementasjoner og tester. PHB 2014 og Eberron 2019 er det samlede funksjonelle grunnlaget for hele appen; SRD 5.1 er et distribuerbart regelbibliotek, ikke en begrensning på hvilke karaktervalg som skal kunne representeres. Manuell føring og overstyring er grunnleggende. Hele den avklarte føringen står ett sted i REQUIREMENTS; eldre fase-/SRD-beskrivelser er ikke en annen produktavgrensning.
 
 [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25) har brukerens fulle tekst med P01–P16/K1–K9, etterfulgt av akseptansekriterier og agentnotater. Den erstatter tidligere midtbåndslukking og den gamle Issue-teksten. Les Issuen som detaljert arbeidsgrunnlag; [krav §22](REQUIREMENTS.md#22-felles-tallendringsdialog) angir felles produktretning. Ingen ny appkode er bestilt gjennom denne oppgave-/dokumentoppdateringen.
@@ -22,7 +24,7 @@ Brukeren har opprettet [Project1](https://github.com/users/geirskoglund/projects
 
 Overleveringen omfatter v0.11 og CODEX_HANDOFF, REQUIREMENTS, DATA_MODEL, DESIGN og DECISIONS. Alle er tilgjengelige. Ikke gjeninnfør den tidligere feilaktige antakelsen om en manglende ekstra forklaringsfil.
 
-## Siste appleveranse: den godkjente utstyrsflyten
+## Historisk appleveranse: den godkjente utstyrsflyten
 
 Godkjent v2-utstyrsflyt er levert i [PR23](https://github.com/geirskoglund/dnd-character-sheet/pull/23), merge `9518d8c`. Krav §16 erstattet tidligere avgrensning til isolert fil. [Før-koding-matrisen](CHARACTER_WORKSPACE.md#før-koding-kontroll-utstyrsflyt-i-hovedappen) angir scenarioene; 203 lokale tester og faktisk produktgjennomgang er dokumentert der. CI og Pages var vellykket for mergecommit; direkte ekstern Pages-røyktest var blokkert av miljøets proxy, ikke utført. [Utstyrsguiden](EQUIPMENT.md) beskriver gjeldende føring og bevarte beregninger.
 
@@ -40,7 +42,7 @@ Etter review av utstyr ønsket brukeren å prøve en ny arbeidsflyt isolert før
 
 Les også [CHARACTER_WORKSPACE.md](CHARACTER_WORKSPACE.md) før videre funksjonsarbeid. Brukeren har uttrykkelig bedt om at REQUIREMENTS og DECISIONS holdes oppdatert, slik at avklaringer ikke forsvinner når samtalen komprimeres. Før oppgavedetaljer i GitHub-Issuen; oppdater felleskrav/beslutningslogg bare når en vesentlig produktføring endres, og før faktisk produktkontroll ved levering. Ikke gjeninnfør forkastede mønstre eller anta at hele SRD/Combat er ferdig bare fordi Character-flytene er utvidet. Brukeren må få fullføre løpende tilbakemeldinger før ny koding bestilles.
 
-Gjeldende uttrykk er Eventyrjournal, med den nye [prøveversjonen av veiviserflyter](GUIDED_WORKFLOWS.md): Character/Combat/Magi/Utstyr og Meny, kontekstfiltre, forberedelse, automatiske slots/Hit Dice, enkle beholdninger/hvile og tallhjul. Nyere krav §13–14 og WORKFLOW_REVIEW erstatter tidligere slider-/trefane-/per-terning-forslag. Tidligere bestilt implementasjon er levert gjennom de historiske PR-ene. Ny funksjons-/UI-PR krever brukerens test og godkjenning før merge; saml arbeid, ingen merge per kommentar.
+Gjeldende uttrykk er Eventyrjournal. [UI-kartet](UI_MAP.md) beskriver dagens betjening; [veiviserguiden](GUIDED_WORKFLOWS.md) bevarer tidligere leveransegrunnlag: Character/Combat/Magi/Utstyr og Meny, kontekstfiltre, forberedelse, automatiske slots/Hit Dice, enkle beholdninger/hvile og tallhjul. Nyere krav §13–14 og WORKFLOW_REVIEW erstatter tidligere slider-/trefane-/per-terning-forslag. Tidligere bestilt implementasjon er levert gjennom de historiske PR-ene. Ny funksjons-/UI-PR krever brukerens test og godkjenning før merge; saml arbeid, ingen merge per kommentar.
 
 Proficiencies, skadeegenskaper og tilstandsimmunitet beholder eksisterende funksjon; ny forenkling er uttrykkelig utsatt. Samlet ny kort-hvileflyt, avansert skadeberegning, komplett SRD/standardhandlinger og ikke-SRD-klasseregler er fortsatt åpne krav. Ikke gjeninnfør rå terningkast som obligatorisk Hit Dice-føring eller generisk spell-slot/HitDice-type i vanlig Ny beholdning. Appen erstatter papirarket, ingen automatisk karakterbygger.
 
@@ -84,9 +86,9 @@ Codex **eier testopplegg og kode**. Brukeren **eier funksjonelle beslutninger og
 
 Gå gjennom hver implementert flyt fra brukerens utgangspunkt på mobil. Oppslag har én Lukk-knapp; redigering har ulike lagre-/avbryt-handlinger. + skal starte valg/opprettelse direkte, og en lagret pille skal åpne sin egen post. Bevar utkast ved avbrutt sletting, fokus/scroll ved retur og felt/søk ved lagringsfeil. Uendrede lagringer skal ikke fylle historikk eller forstyrre Angre. Test antall steg og knappenes formål i tillegg til at data blir lagret. Se [gjennomgangen og regresjonene](UX_REVIEW.md).
 
-## Nyeste leveranse: illustrerte spørsmål og gjenopptakbare utkast
+## Historisk leveranse: illustrerte spørsmål og gjenopptakbare utkast
 
-Brukeren bestilte ett valg/en verdi per skjerm, direkte Ja/Nei, illustrerte d4/d6/d8/d10/d12 og Annet, forklaringer og bare grafisk fremdrift. Dette erstatter tidligere samling av beslektede felter. X/Escape lagrer svar/posisjon; Fullfør bekrefter og fjerner utkastet atomisk; Forkast er separat. Utstyr viser egne utkast, Meny viser alle utkast inkludert ny karakter. Ved redigering består siste bekreftede post/Combat til fullføring. Ingen karakterhistorikk for utkast.
+Brukeren bestilte ett valg/en verdi per skjerm, direkte Ja/Nei, illustrerte d4/d6/d8/d10/d12 og Annet, forklaringer og bare grafisk fremdrift. Dette erstattet tidligere samling av beslektede felter; Ny/Rediger karakter har senere fått syv grupperte skjermer etter #61, se [karakterflytene](UI_MAP.md#karakterflyter). X/Escape lagrer svar/posisjon; Fullfør bekrefter og fjerner utkastet atomisk; Forkast er separat. Utstyr viser egne utkast, Meny viser alle utkast inkludert ny karakter. Ved redigering består siste bekreftede post/Combat til fullføring. Ingen karakterhistorikk for utkast.
 
 `domain/wizard-draft.ts`, `storage/wizard-drafts.ts` og felles `ui/wizard.ts` håndterer dette. Eget revisjonstall beskytter utkast i flere faner; karakterens revisjon og originalpost beskytter ferdige data. Schema2/DB3 beholdes; valgfrie `wizardDrafts` følger backup. Penger har hele GP/00–99 i to hjul, eksakt CP-lagring og direkte innskriving. Trekanten er gjeninnført på HP/temp HP i Combat. Se [betjening og produktbilder](GUIDED_WORKFLOWS.md#illustrert-spørsmålsveiviser-og-utkast) og siste kontrollmatrise.
 

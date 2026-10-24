@@ -1,3 +1,5 @@
+> Ved ny klargjøring: les relevant del av [UI-kartet](UI_MAP.md) og følg [ansvarsdelingen i AGENTS.md](../AGENTS.md#arbeidsfordeling-og-dokumentasjonsansvar). Leveransen endrer bare aktuelt GitHub-issue; dokumentasjonsbehov angis der og utføres senere av implementeringsagenten. Innholdet nedenfor er eldre klargjøringsgrunnlag, ikke en bestilling om filendringer.
+
 # Klargjøring av backlog for egne tråder
 
 GitHub-Issuen er hovedkilden for den konkrete oppgaven: brukerens beskrivelse, krav-ID-er, akseptansekriterier, teknisk informasjon og åpne spørsmål. Status og prioritet vedlikeholdes i GitHub, uten løpende speiling eller opptelling her.

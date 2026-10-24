@@ -1,4 +1,6 @@
-# Eventyrjournal – implementert grensesnitt
+# Eventyrjournal – design og leveransehistorikk
+
+> Gjennomgangen nedenfor gjelder leveransen 20. oktober 2026. Dagens fire hovedsider, HP-betjening og redigeringsflyter er beskrevet i [UI-kartet](UI_MAP.md). Slideren og trefanenavigasjonen nedenfor er historikk.
 
 Brukeren bestilte implementasjon 2026-10-20 etter tre designforslag og komponentplansjer. Denne versjonen innfører det valgte lyse journaluttrykket og avklarte betjeningsendringer. Den bygger videre på eksisterende karakterføringer; den er ikke en ny regelmotor eller automatisk karakterbygger.
 

@@ -1,6 +1,8 @@
-> Nyeste tallendringskrav: [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25). Brukerens P-/K-krav og akseptansekriterier vedlikeholdes der. De erstatter eldre betjening med hjul i skjemaer, absolutt pengevalg og midtbåndslukking. Eventyrjournal videreføres. Nåværende implementasjon og skjermbilder er ikke bevis på at den nye dialogen er levert.
+> Faktisk implementert betjening finnes i [UI-kartet](UI_MAP.md). Dette dokumentet er designføringer og historiske forslag; funksjonsstatus må kontrolleres mot kartet og aktuell kode.
 
-> Gjeldende arbeidsflyter (2026-10-20): [GUIDED_WORKFLOWS.md](GUIDED_WORKFLOWS.md). Eventyrjournal videreføres med fire ikonfaner og Meny, separat Magi, vertikalt tallhjul med eksakt innskriving og korte forgrenede veivisere. Hjørnetrekanten brukes på arbeidsflatens oppslag/kort, aldri på navigasjon, Combat-kategorier, lukkekryss eller selvforklarende listevalg. Rutinemeldinger om lagring fjernes, feil er tydelige. Toppfelt scroller fortsatt bort. Eldre slider-/trefaneskisser nedenfor er historikk.
+> Nyeste tallendringskrav: [#25 – Felles tallendringsdialog med rullehjul](https://github.com/geirskoglund/dnd-character-sheet/issues/25). Brukerens P-/K-krav og akseptansekriterier vedlikeholdes der. De erstatter eldre betjening med hjul i skjemaer, absolutt pengevalg og midtbåndslukking. Eventyrjournal videreføres. Eldre implementasjonsbeskrivelser og skjermbilder er historiske; [UI-kartet](UI_MAP.md#felteditorer) beskriver dagens tallendring, med kontrollgrunnlag separat fra kravene.
+
+> Historisk arbeidsflytleveranse (2026-10-20): [GUIDED_WORKFLOWS.md](GUIDED_WORKFLOWS.md). Eventyrjournal videreføres med fire ikonfaner og Meny, separat Magi, vertikalt tallhjul med eksakt innskriving og korte forgrenede veivisere. Hjørnetrekanten brukes på arbeidsflatens oppslag/kort, aldri på navigasjon, Combat-kategorier, lukkekryss eller selvforklarende listevalg. Rutinemeldinger om lagring fjernes, feil er tydelige. Toppfelt scroller fortsatt bort. Eldre slider-/trefaneskisser nedenfor er historikk.
 
 # Designbrief – D&D Character Companion
 
