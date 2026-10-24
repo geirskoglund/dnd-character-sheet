@@ -63,6 +63,8 @@ Meny → Om appen viser versjons-ID. «Se etter oppdatering» ligger direkte i m
 
 ## Gjeldende produktgrunnlag
 
+[Funksjonelt UI-kart](docs/UI_MAP.md) beskriver implementert navigasjon, områder og betjening, med egne innganger til Ny/Rediger karakter og Level Up. Bruk kartet for dagens funksjon; krav og beslutninger nedenfor beholder sine roller.
+
 Se [samlet produktgjennomgang og GitHub-backlog](docs/BACKLOG.md) for levert funksjonalitet, mangler fra opprinnelig prototype/overlevering, nyere innspill og åpne produktvalg. De27 oppgavene er opprettet i avtalt rekkefølge med prioritet/type; Integrasjonen mangler tilgang til brukerens Project. Appimplementasjon bestilles særskilt.
 
 Gjeldende oppgavebeskrivelser, akseptansekriterier og status vedlikeholdes i GitHub; [BACKLOG_READY.md](docs/BACKLOG_READY.md) er indeks og eldre klargjøringsgrunnlag. [#25](https://github.com/geirskoglund/dnd-character-sheet/issues/25) har brukerens nye beskrivelse av felles tallendringsdialog. Vanlig Issue-redigering krever ikke oppdatering av alle prosjektdokumenter. Historiske kontroller finnes i [BACKLOG_REVIEW.md](docs/BACKLOG_REVIEW.md).

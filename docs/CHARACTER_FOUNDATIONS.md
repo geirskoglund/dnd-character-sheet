@@ -1,5 +1,7 @@
 # Karaktergrunnlag, beregnede verdier og spilltilstand
 
+Gjeldende skjermrekkefølge og betjening: [UI-kartets karakterflyter](UI_MAP.md#karakterflyter). Denne guiden beskriver beregningsgrunnlag og historiske rettelser; katalogutvalget er ikke hele produktomfanget.
+
 Denne rettelsen erstatter det flate opprettelsesskjemaet fra fase 1. Opprettelse registrerer identitet, art, nåværende klasse(r)/nivå, endelige ability scores, maksimal HP. Valg av kjent art viser ingen artsdetaljer eller speed i opprettelsen. Utstyrs-+ åpner søk og kategorifilter direkte; et katalogvalg legges til umiddelbart. Eget utstyr opprettes fra samme velger. Beregnet AC og walking speed forklares i menyens beregningsvalg. Totalt level er summen av klassenivåene. Det finnes ingen automatisk level-up eller rekonstruksjon av tidligere levels.
 
 Maks HP registreres fra karakterarket: tidligere HP-kast, Constitution-endringer og særregler kan ikke utledes trygt bare fra nåværende klasse/nivå. En ny registrering starter med current HP = max HP og temp HP = 0. Endelige ability scores inkluderer allerede artsbonuser og ASI/feats; katalogvalget legger dem ikke på igjen. Dette er registrering av karakteren spilleren har, ikke en automatisk karakterbygger.

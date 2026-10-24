@@ -352,7 +352,7 @@ Backlog items er vanlige tekstlige beskrivelser av ønsket funksjonalitet, ikke 
 
 ## 20. Klargjøring før implementasjon i separate tråder
 
-Separate tråder bruker gjeldende GitHub-Issue som oppgavens detaljerte arbeidsgrunnlag sammen med felles produktkrav. [BACKLOG_READY.md](BACKLOG_READY.md) er indeks og historisk klargjøringsgrunnlag; beskrivelse, status og prioritet vedlikeholdes i GitHub. Dette autoriserer ikke appkode.
+Separate tråder bruker gjeldende GitHub-Issue som oppgavens detaljerte arbeidsgrunnlag sammen med felles produktkrav. [UI-kartet](UI_MAP.md) beskriver faktisk implementert betjening, uten å erstatte krav eller beslutninger. [Arbeidsfordelingen i AGENTS.md](../AGENTS.md#arbeidsfordeling-og-dokumentasjonsansvar), presisert i [#65](https://github.com/geirskoglund/dnd-character-sheet/issues/65), gjelder fast: klargjøring endrer bare aktuelt issue og identifiserer dokumentasjonsbehov; implementasjon oppdaterer UI-kart og øvrig nødvendig, berørt dokumentasjon i samme leveranse og PR. Nye områder inkluderes og fjernet/erstattet atferd korrigeres; historikk og dokumentenes roller bevares. [BACKLOG_READY.md](BACKLOG_READY.md) er indeks og historisk klargjøringsgrunnlag; beskrivelse, status og prioritet vedlikeholdes i GitHub. Dette autoriserer ikke appkode.
 
 - **Klar for implementasjon** betyr at produktforutsetningene innen oppgavens omfang er klare, ikke at funksjonen er levert, testet eller bestilt kodet. Kontroller mot gjeldende master før oppstart.
 - **Trenger produktavklaring** betyr at tekstlig flyt og scenarioer er forslag. Spør bare om de reelle åpne valgene og ta én brukerflyt om gangen. Tekniske valg og kjente følger av vedtatte krav eies av implementatøren.

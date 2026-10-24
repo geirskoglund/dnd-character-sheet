@@ -1,4 +1,6 @@
-# Prøveversjon: enklere føring ved bordet
+# Veiviserflyter – leveransegrunnlag
+
+> Dagens betjening finnes i [UI-kartet](UI_MAP.md). Dette dokumentet bevarer leveransegjennomganger; eldre våpenflyter og bilder er erstattet av utstyrsverkstedet, og Ny/Rediger karakter har syv grupperte skjermer etter #61. Ett-spørsmål-prinsippet gjelder ellers med avtalte unntak.
 
 > Tallbetjeningen nedenfor og eldre bilder er historiske. #25 erstatter innfelte hjul/absolutte GP-verdier med felles fullskjermdialog: trykk verdien, velg en endring fra 0, kontroller Før/Etter og bekreft med OK eller forkast med Avbryt/X. Midttrykk bytter hjulområdet til et eget tallpanel som viser en visuell 0 ved tom innskriving uten inputfelt, tekstmarkering eller systemtastatur over verdien. Penger har signerte GP-/CP-hjul. Båndet er fast; dialogen er låst mot bakgrunnen. HP-pillen korrigerer bare vanlig HP mellom 0 og maks og bevarer temp HP. Ta skade tillater bare reduksjon og bruker temp HP først. Se [produktkontrollen](CHARACTER_WORKSPACE.md#før-koding-kontroll-felles-tallendringsdialog-25) og [testinstruksjonene](TESTING.md#test-av-tallendringsdialogen-25).
 
@@ -10,7 +12,7 @@ Dette er den samlede implementasjonen bestilt etter gjennomgangen i [WORKFLOW_RE
 | --- | --- |
 | Opprette karakter | Meny → Ny karakter: navn → art → klasser → subklasser → klassenivåer → abilities → maks HP, også ved Rediger karakter. Grupperingen er et avgrenset unntak etter [#61](https://github.com/geirskoglund/dnd-character-sheet/issues/61). Tilbake bevarer svar. Artens regeltekst vises ikke i opprettelsen; utstyr og spilltilstand føres inne i appen. |
 | Vanlig nytt utstyr | Utstyr → + i riktig gruppe → søk/velg. Direkte tillegg, katalogverdier følger med. Føres som eid; I bruk velges fra gjenstandens kort. Ingen mellomdialog. |
-| Egen våpenvariant | Tilpass ved katalogvåpen → navn/valgfri merknad → valgfri endring av grunnskade/ekstraskade. Hver ekstraskade har uttrykk, skadetype fra liste og eget ja/nei-spørsmål om betingelse. Betingelsen vises på kortet og i Combat. |
+| Egen våpenvariant | Tilpass ved katalogvåpen → navn → samlet virkningsområde. Se [gjeldende utstyrsbetjening](UI_MAP.md#utstyr); den eldre skadeveiviseren nedenfor er historikk. |
 | Egne egenskaper/spells | Kort veiviser for navn/type/nivå og valgfri tekst. Flere detaljer gir tilgang til eksisterende handlinger, koblinger, ikoner og manuelle overstyringer. Ingen obligatorisk fullskjema for normal føring. |
 | Finne egenskap/feat/spell | Mine klasser som standard, relevante nivåer/subclass/tilgang; generelle gyldige feats beholdes. Typeknapper for Egenskaper/Feats. Alle klasser og overstyring finnes. Direkte valg registrerer og lukker. Kilde spørres bare hvis flere passer. |
 | Administrere magi | Egen Magi-fane: cantrips, spells, bok/forberedt og casting-verdier. Fire ikoner og Meny nederst med tilgjengelige navn. Combat viser relevante oppslag fra samme data. |
@@ -19,7 +21,7 @@ Dette er den samlede implementasjonen bestilt etter gjennomgangen i [WORKFLOW_RE
 | Føre Hit Dice | Hvile viser tilgjengelig/maks per klasse/terning. Enkel telling, ingen påkrevd registrering av rå terningkast. Rull/regn ved bordet; HP føres separat, eventuelt som ett samlet delta. |
 | Ny egen beholdning | Navn → maks/tilgjengelig → kort/lang/manuell gjenoppretting. Tilgjengelig starter lik maks. Spell slots og Hit Dice har konkrete plasseringer, ikke generisk typevalg her. |
 | Lang hvile | Hvile → Lang hvile → kort preview av faktiske endringer → Fullfør hvilen. Betingede gjenopprettinger velges eksplisitt. Hele endringen kan angres samlet. |
-| Justere tall | Direkte tallfelt eller ↕: vertikalt, begrenset tallhjul. Valgt verdi i midten; trykk på den for tastatur. HP bruker signert delta og før/etter-visning; valget står til bekreftelse. Null HP kan økes igjen. |
+| Justere tall | Trykk verdien → fullskjerm tallendring fra 0 med Før/Etter → OK eller Avbryt/X. Midttrykk åpner appens tallpanel. Se [felteditorer](UI_MAP.md#felteditorer). |
 
 AC-forklaringen ligger i Utstyr. Rutinemessige «lagret»-meldinger er fjernet; lagringsfeil vises tydelig og utkast beholdes for nytt forsøk. Hjørnetrekant brukes på arbeidsflatens oppslag, ikke navigasjon, Combat-tabs, X eller selvforklarende listevalg. Utstyrsgruppene fra prototypen beholdes. Våpenkort får mer bredde for uttrykk/betingelser; pillene er uniforme innen hver gruppe, artsegenskaper beholder tett grid.
 
@@ -68,7 +70,7 @@ Nyeste krav §14 erstatter det eldre grupperte skjemaet: **én avgjørelse eller
 
 Våpenvarianten spør navn → frivillig merknad → endre grunnskade? → ekstraskade? Ved Ja: illustrert d4/d6/d8/d10/d12 eller Annet → antall (eller eget uttrykk) → skadetype → betingelse? → eventuell tekst → enda en ekstraskade? → kort resultat og Fullfør. Hver betingelse følger sin skade på Utstyr/Combat. Spilleren kaster fysiske terninger og vurderer vilkårene med DM. En nei-gren beholder sikre grunnverdier uten flere skadefelt.
 
-Den felles rammen har lokale SVG-illustrasjoner, journalpalett, grafiske fremdriftspunkter, forklaringer og fast X/Tilbake/Neste eller Fullfør. Ingen synlig «steg X av Y»; skjermleser får posisjonen. Punktrekken følger den aktuelle forgreningen, ikke et løfte om et fast antall spørsmål. Karaktergrunnlag, egne egenskaper/spells og beholdninger bruker samme ramme og én verdi per skjerm. Eksisterende avansert detaljredigering er fortsatt en frivillig ekspertflate.
+Den felles rammen har lokale SVG-illustrasjoner, journalpalett, grafiske fremdriftspunkter, forklaringer og fast X/Tilbake/Neste eller Fullfør. Ingen synlig «steg X av Y»; skjermleser får posisjonen. Punktrekken følger den aktuelle forgreningen, ikke et løfte om et fast antall spørsmål. Egne egenskaper/spells og beholdninger bruker samme ramme. Karaktergrunnlag har senere fått syv grupperte skjermer etter #61; den opprinnelige én-verdi-beskrivelsen gjelder ikke disse skjermene. Eksisterende avansert detaljredigering er fortsatt en frivillig ekspertflate.
 
 **Lukk bevarer arbeidet:** X/Escape lagrer svar og posisjon som eget lokalt utkast. Utstyr viser utstyrsutkast, Meny viser alle utkast og uferdige karakterer. Fortsett åpner samme spørsmål etter reload, også uten nett. Fullfør bekrefter posten og fjerner utkastet i samme transaksjon. Forkast utkast krever bekreftelse og endrer ikke ferdige data. Et uferdig våpen finnes ikke i inventar/Combat; uferdig redigering lar den gamle versjonen være. Lagre- eller fanekonflikt lar skjermen/svarene bli stående med tydelig feil. Backup tar med utkast; kopi kopierer bare ferdige karakterdata.
 
