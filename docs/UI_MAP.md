@@ -104,7 +104,7 @@ Kontekstfiltre har Alle klasser/overstyring/egen registrering som manuelle veier
 
 ## Utstyr
 
-AC vises øverst; **AC-grunnlag** foldes ut for forklaring. Konflikter/advarsler vises ved relevante oppsett. Inventaret er delt i **Weapons**, **Armor og skjold** og **Annet utstyr**, med + per gruppe. I bruk sorteres først; piller viser navn, våpenangrep/skade eller AC/attunement, hånd/I bruk og eventuelt I sekken/ekstraskade. Trykk åpner gjenstandsoppslag, ikke automatisk utstyring.
+Utstyr viser ikke AC eller AC-grunnlag. Konflikter/advarsler vises ved relevante oppsett. Forbruksvarer åpnes fra én trykkbar seksjonsrad med eget flaskeikon, antall vareposter og hjørnemarkør. Inventaret er delt i **Weapons**, **Armor og skjold** og **Annet utstyr**, med + per gruppe. I bruk sorteres først; piller viser navn, våpenangrep/skade eller AC/attunement, hånd/I bruk og eventuelt I sekken/ekstraskade. Trykk åpner gjenstandsoppslag, ikke automatisk utstyring.
 
 | Inngang | Handling og lagring |
 | --- | --- |
@@ -171,14 +171,15 @@ Beskrivelsene ovenfor er kontrollert ved kodegjennomgang, inkludert videre kall 
 
 Ved UI-/flytendringer skal berørte beskrivelser oppdateres i **samme leveranse og PR**. Nye hovedområder legges til; fjernet/erstattet atferd tas ut av gjeldende beskrivelse. Klargjøring bruker kartet og angir dokumentasjonsbehov i issuet; implementasjon undersøker aktuell kode, retter kartet og samordner berørte innganger/guider. Se [AGENTS.md](../AGENTS.md#arbeidsfordeling-og-dokumentasjonsansvar). Ingen separat statuslogg eller generell omskriving av historikk kreves.
 
-## Forbruk
+## Forbruksvarer
 
-Utstyr har egen **Forbruk**-seksjon. Combat har **Forbruk** sammen med Ta skade/Hvile; Action/Bonus/Reaction består. Begge åpner samme fullskjermliste med kategorier, ikoner og den valgte karakterens beholdninger. Listen ruller internt. Navnet åpner et rent oppslag med beskrivelse og enhet; oppslag bruker ingen vare eller HP.
+Utstyr har én trykkbar seksjonsrad med flaskeikon, **Forbruksvarer** og antall registrerte varer. Combat har **Forbruksvarer** sammen med Ta skade/Hvile; Action/Bonus/Reaction består. Begge åpner karakterens samme fullskjermliste med kategorier og raske tellere. Navn vises uten standardvarens enhetssuffiks; enheter som stk./ampuller/flasker tar ingen plass i listen. Eventuelle terninguttrykk står tydelig under varenavnet. De tre tellerknappene har lik kompakt bredde. OK og X lukker; justeringer er allerede lagret når de utføres.
 
-- **Legg til forbruksvare:** søkbart bibliotek med 25 lokale standardvarer. Velg vare → angi antall → Legg til. Ingen spørsmål om kjente standardegenskaper. Healer's Kit foreslår 10 bruk; poser føres per pose, ammunisjon per stykk.
-- **Egen forbruksvare:** veiviser for navn, antall, kategori, valgfri beskrivelse og frivillig ikonoverstyring. X/Escape bevarer utkast i Meny; Fullfør registrerer én separat beholdning. Samme navn slås aldri sammen.
-- **−/+** endrer med én. Langt trykk åpner den relative tallvelgeren på 0 for større fratrekk/tillegg. Rulling/bevegelse avbryter ventende langt trykk. Langt trykk gir ingen enkeltendring i tillegg.
-- **Antallet** åpner **Ny total**, med reell Før/Etter og absolutt verdi i hjulet/tallpanelet. Dette gir også tilgang til alle justeringer uten langt trykk. OK lagrer; X/Avbryt bevarer beholdningen.
-- Null beholdes som post; minus er deaktivert. **Angre** bruker samme karakterhistorikk som Meny. Ingen automatisk ammunisjon, healing eller tidsmåling. Lagringsfeil vises og bevarer valgt verdi for nytt forsøk; revisjonskonflikt krever gjenåpning med oppdatert karakter.
+- **Fra Utstyr:** Legg til åpner det korte kategoribiblioteket uten søk. Standardvarer som allerede er registrert skjules, også ved antall0. Velg vare → antall → Legg til. Nye identiske registreringer avvises; egne varianter kan skilles med beskrivelse/terninguttrykk. Eldre poster bevares.
+- **Fra Combat:** bare beholdning, −/+, totalretting og oppslag. Ingen Legg til eller Fjern. Ved åpning skjules varer med antall0. En vare som brukes ned til0 mens listen er åpen blir stående til neste åpning, slik at raden ikke forsvinner under fingeren. Administrasjon/påfyll av tomme varer skjer fra Utstyr.
+- **Egen forbruksvare:** illustrert veiviser for navn, antall, kategori, valgfritt terninguttrykk, beskrivelse og ikon. X/Escape bevarer utkast i Meny; Fullfør registrerer én separat beholdning. Terningene kastes fysisk.
+- **−/+** endrer med én. Langt trykk åpner relativ tallvelger på0 for større fratrekk/tillegg. Rulling/bevegelse avbryter ventende langtrykk. Antallet åpner **Ny total** med faktisk Før/Etter. OK lagrer; X/Avbryt bevarer tallet.
+- **Vareoppslag:** relevant regeltekst og terninguttrykk, uten healing-sammenligningstabell, også for tidligere lagrede potions. Fast bunnlinje med Fjern utstyr til venstre og OK til høyre fra Utstyr; bare OK fra Combat. Fjern spør om bekreftelse med varenavn. Positiv beholdning varsles med antallet; ved0 vises ikke den beholdningsadvarselen. Avbrutt bekreftelse bevarer oppslaget. Feil bevarer bekreftelsen for nytt forsøk.
+- Null beholdes som post og minus er deaktivert. Angre finnes i Meny, ikke i Forbruksvarer-listen. Ingen automatisk ammunisjon, healing eller tidsmåling. Revisjonskonflikter avvises uten stille overskriving.
 
-Kode: [consumables.ts](../src/ui/consumables.ts), [domenelogikk](../src/domain/consumables.ts), [katalog](../src/data/srd-consumables.json). Fysisk iPhone-kontroll av langtrykk, rulling og tallpanelets første trykk inngår i brukerens test før merge.
+Kode: [UI](../src/ui/consumables.ts), [domene](../src/domain/consumables.ts), [katalog](../src/data/srd-consumables.json). Fysisk iPhone-/Safari-/installert kontroll av siste versjon gjenstår før merge.

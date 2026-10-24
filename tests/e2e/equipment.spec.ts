@@ -39,11 +39,11 @@ test('armor + shield + attuned cloak: AC19, save bonus, switching and overrides 
  await expectCharacterStatus(page,'AC18');await page.getByRole('button',{name:'Cloak of Protection · i bruk',exact:true}).click();
  await expect(page.getByRole('checkbox',{name:'Attuned',exact:true})).toBeVisible();await expect(dialog(page).getByRole('checkbox',{name:'Attuned',exact:true})).not.toBeChecked();
  await page.getByRole('checkbox',{name:'Attuned',exact:true}).check();await expect(dialog(page).locator('form')).not.toHaveAttribute('aria-busy','true');await save(page);
- await expectCharacterStatus(page,'AC19');await page.getByText('AC-grunnlag',{exact:true}).click();await expect(page.getByRole('main')).toContainText('Chain Mail: 16');await expect(page.getByRole('main')).toContainText('Shield 2 + Cloak of Protection 1 = 19');
+ await expectCharacterStatus(page,'AC19');await expect(page.getByText('AC-grunnlag',{exact:true})).toHaveCount(0);
  await page.getByRole('button',{name:'Character',exact:true}).click();await page.locator('[data-modifier="0"]').click();await expect(page.getByRole('button',{name:'Dexterity save +4',exact:true})).toBeVisible();await page.keyboard.press('Escape');
  await equipmentTab(page);await page.getByRole('button',{name:'Shield · i bruk',exact:true}).click();await itemDetails(page);await addItemBonus(page,'AC','1');await save(page);await expectCharacterStatus(page,'AC20');
  await menuAction(page,'Angre siste endring');await expectCharacterStatus(page,'AC19');
- await page.reload();await equipmentTab(page);await expect(page.getByRole('main')).toContainText('AC 19');
+ await page.reload();await equipmentTab(page);await expectCharacterStatus(page,'AC19');
 });
 test('own equipment needs only a name; details and complex effects are optional, errors preserve the draft',async({page})=>{
  await setup(page);await page.getByRole('button',{name:'Legg til annet utstyr',exact:true}).click();await page.getByRole('button',{name:'Opprett eget utstyr',exact:true}).click();

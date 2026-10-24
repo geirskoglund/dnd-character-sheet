@@ -7,7 +7,7 @@ export const iconLabels = {
   hand:'Manipulasjon / nytte', strength:'Styrke', magic:'Magi', speech:'Språk', tools:'Verktøy', note:'Notat', resource:'Ressurs', condition:'Tilstand',
   sword:'Sverd', axe:'Øks', bow:'Bue', crossbow:'Armbrøst', dagger:'Dolk', hammer:'Hammer', spear:'Spyd', whip:'Pisk',
   'armor-light':'Lett rustning', 'armor-medium':'Middels rustning', 'armor-heavy':'Tung rustning', shield:'Skjold',
-  equipment:'Utstyr', cloak:'Kappe', ring:'Ring', fire:'Ild', cold:'Kulde', acid:'Syre', lightning:'Lyn',
+  potion:'Forbruksvarer / flaske', equipment:'Utstyr', cloak:'Kappe', ring:'Ring', fire:'Ild', cold:'Kulde', acid:'Syre', lightning:'Lyn',
   thunder:'Torden', poison:'Gift', necrotic:'Nekrotisk', radiant:'Strålende', force:'Kraft', psychic:'Psykisk',
   piercing:'Piercing', slashing:'Slashing', bludgeoning:'Bludgeoning', illusion:'Illusjon', teleport:'Teleportering',
   control:'Kontroll', light:'Lys', nature:'Natur',

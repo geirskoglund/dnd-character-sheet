@@ -40,36 +40,40 @@
     "name": "Potion of Healing",
     "category": "healing",
     "unit": "flasker",
-    "description": "2d4+2 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. The number of hit points depends on the potion's rarity, as shown in the Potions of Healing table. Whatever its potency, the potion's red liquid glimmers when agitated.\n\nPotions of Healing (table)\n\n| Potion of ... | Rarity | HP Regained |\n\n|---|---|---|\n\n| Healing | Common | 2d4 + 2 |\n\n| Greater healing | Uncommon | 4d4 + 4 |\n\n| Superior healing | Rare | 8d4 + 8 |\n\n| Supreme healing | Very rare | 10d4 + 20 |",
+    "description": "2d4+2 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
     "iconKey": "healing",
-    "sourceIndex": "potion-of-healing-common"
+    "sourceIndex": "potion-of-healing-common",
+    "diceExpression": "2d4+2"
   },
   {
     "catalogId": "srd51:consumable:potion-of-healing-greater",
     "name": "Potion of Greater Healing",
     "category": "healing",
     "unit": "flasker",
-    "description": "4d4+4 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. The number of hit points depends on the potion's rarity, as shown in the Potions of Healing table. Whatever its potency, the potion's red liquid glimmers when agitated.\n\nPotions of Healing (table)\n\n| Potion of ... | Rarity | HP Regained |\n\n|---|---|---|\n\n| Healing | Common | 2d4 + 2 |\n\n| Greater healing | Uncommon | 4d4 + 4 |\n\n| Superior healing | Rare | 8d4 + 8 |\n\n| Supreme healing | Very rare | 10d4 + 20 |",
+    "description": "4d4+4 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
     "iconKey": "healing",
-    "sourceIndex": "potion-of-healing-greater"
+    "sourceIndex": "potion-of-healing-greater",
+    "diceExpression": "4d4+4"
   },
   {
     "catalogId": "srd51:consumable:potion-of-healing-superior",
     "name": "Potion of Superior Healing",
     "category": "healing",
     "unit": "flasker",
-    "description": "8d4+8 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. The number of hit points depends on the potion's rarity, as shown in the Potions of Healing table. Whatever its potency, the potion's red liquid glimmers when agitated.\n\nPotions of Healing (table)\n\n| Potion of ... | Rarity | HP Regained |\n\n|---|---|---|\n\n| Healing | Common | 2d4 + 2 |\n\n| Greater healing | Uncommon | 4d4 + 4 |\n\n| Superior healing | Rare | 8d4 + 8 |\n\n| Supreme healing | Very rare | 10d4 + 20 |",
+    "description": "8d4+8 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
     "iconKey": "healing",
-    "sourceIndex": "potion-of-healing-superior"
+    "sourceIndex": "potion-of-healing-superior",
+    "diceExpression": "8d4+8"
   },
   {
     "catalogId": "srd51:consumable:potion-of-healing-supreme",
     "name": "Potion of Supreme Healing",
     "category": "healing",
     "unit": "flasker",
-    "description": "10d4+20 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. The number of hit points depends on the potion's rarity, as shown in the Potions of Healing table. Whatever its potency, the potion's red liquid glimmers when agitated.\n\nPotions of Healing (table)\n\n| Potion of ... | Rarity | HP Regained |\n\n|---|---|---|\n\n| Healing | Common | 2d4 + 2 |\n\n| Greater healing | Uncommon | 4d4 + 4 |\n\n| Superior healing | Rare | 8d4 + 8 |\n\n| Supreme healing | Very rare | 10d4 + 20 |",
+    "description": "10d4+20 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
     "iconKey": "healing",
-    "sourceIndex": "potion-of-healing-supreme"
+    "sourceIndex": "potion-of-healing-supreme",
+    "diceExpression": "10d4+20"
   },
   {
     "catalogId": "srd51:consumable:rations-1-day",
@@ -123,7 +127,8 @@
     "unit": "ampuller",
     "description": "As an action, you can splash the contents of this vial onto a creature within 5 feet of you or throw the vial up to 20 feet, shattering it on impact. In either case, make a ranged attack against a creature or object, treating the acid as an improvised weapon.\n\nOn a hit, the target takes 2d6 acid damage.",
     "iconKey": "tools",
-    "sourceIndex": "acid-vial"
+    "sourceIndex": "acid-vial",
+    "diceExpression": "2d6"
   },
   {
     "catalogId": "srd51:consumable:alchemists-fire-flask",
@@ -132,7 +137,8 @@
     "unit": "flasker",
     "description": "This sticky, adhesive fluid ignites when exposed to air.\n\nAs an action, you can throw this flask up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the alchemist's fire as an improvised weapon.\n\nOn a hit, the target takes 1d4 fire damage at the start of each of its turns. A creature can end this damage by using its action to make a DC 10 Dexterity check to extinguish the flames.",
     "iconKey": "tools",
-    "sourceIndex": "alchemists-fire-flask"
+    "sourceIndex": "alchemists-fire-flask",
+    "diceExpression": "1d4"
   },
   {
     "catalogId": "srd51:consumable:antitoxin-vial",
@@ -150,7 +156,8 @@
     "unit": "flasker",
     "description": "As an action, you can splash the contents of this flask onto a creature within 5 feet of you or throw it up to 20 feet, shattering it on impact. In either case, make a ranged attack against a target creature, treating the holy water as an improvised weapon.\n\nIf the target is a fiend or undead, it takes 2d6 radiant damage.\n\nA cleric or paladin may create holy water by performing a special ritual.\n\nThe ritual takes 1 hour to perform, uses 25 gp worth of powdered silver, and requires the caster to expend a 1st-level spell slot.",
     "iconKey": "tools",
-    "sourceIndex": "holy-water-flask"
+    "sourceIndex": "holy-water-flask",
+    "diceExpression": "2d6"
   },
   {
     "catalogId": "srd51:consumable:poison-basic-vial",
@@ -159,7 +166,8 @@
     "unit": "ampuller",
     "description": "You can use the poison in this vial to coat one slashing or piercing weapon or up to three pieces of ammunition. Applying the poison takes an action. A creature hit by the poisoned weapon or ammunition must make a DC 10 Constitution saving throw or take 1d4 poison damage. Once applied, the poison retains potency for 1 minute before drying.",
     "iconKey": "tools",
-    "sourceIndex": "poison-basic-vial"
+    "sourceIndex": "poison-basic-vial",
+    "diceExpression": "1d4"
   },
   {
     "catalogId": "srd51:consumable:ball-bearings-bag-of-1000",

@@ -54,7 +54,7 @@ const scroll = { character: 0, combat: 0, magic:0, equipment: 0 };
 let busy = false;
 let message = '';
 const current = () => characters.find(c => c.id === selected);
-const editorContext:EditorContext = {undo:()=>action('undo'),get drafts(){return draftRepo;},draftChanged:refresh,current: () => current()!, save: async (draft: Character,type: string,description: string,completion?:DraftToken) => {
+const editorContext:EditorContext = {get drafts(){return draftRepo;},draftChanged:refresh,current: () => current()!, save: async (draft: Character,type: string,description: string,completion?:DraftToken) => {
   await saveCharacter(draft,type,description,undefined,completion); message = ''; await refresh();
 }};
 const editors = createRecordEditors(editorContext);
@@ -324,7 +324,7 @@ function editNote(id?: string) {
 async function action(name: string) {
   const c = current();
   switch (name) {
-    case 'consumables': consumablesDialog(editorContext);break;
+    case 'consumables': consumablesDialog(editorContext,page==='combat'?'combat':'equipment');break;
     case 'portrait': {
       const upload = async () => {
         const asset = await choosePortrait();

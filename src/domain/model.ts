@@ -59,7 +59,7 @@ export const characterSchema = z.object({
     casterClassRef: id.optional(), resourceSystemRef: z.string().optional(), accessSource:ref.optional(), sourceLabel:text.optional(), castingAbility:z.enum(abilities).optional(), alwaysPrepared:z.boolean().optional() })),
   consumables: z.array(z.object({id, name:z.string().trim().min(1).max(100), quantity:count.max(Number.MAX_SAFE_INTEGER),
     category:z.enum(['ammunition','healing','supplies','combat','other']), unit:text, description:text,
-    iconKey:visualIcon, catalogId:z.string().optional()})).default([]),
+    iconKey:visualIcon, catalogId:z.string().optional(), diceExpression:z.string().trim().max(100).optional()})).default([]),
   items: z.array(z.object({ id, iconKey:visualIcon, definitionRef: ref.optional(), name: text,
     category: z.enum(['weapon', 'armor', 'shield', 'equipment', 'magic']), quantity: count, equipped: z.boolean(),
     hand: z.enum(['none','left','right','both']).optional(),

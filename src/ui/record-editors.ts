@@ -9,7 +9,7 @@ import { skillAbilities } from '../domain/modifiers';
 import { editDialog, confirmDialog } from './dialog';
 import { field, select, esc, textArea, check, numberField, options, economies, rechargeOptions, defenseOptions, conditionFields, readCondition, str, num, optionalNumber, optionalString, readRefs } from './record-fields';
 
-export interface EditorContext { undo?:()=>Promise<void>; current: () => Character; save: (draft: Character, type: string, description: string,completion?:DraftToken) => Promise<void>; drafts?:WizardDraftRepository; draftChanged?:()=>Promise<void>; resumedDraft?:WizardDraft }
+export interface EditorContext { current: () => Character; save: (draft: Character, type: string, description: string,completion?:DraftToken) => Promise<void>; drafts?:WizardDraftRepository; draftChanged?:()=>Promise<void>; resumedDraft?:WizardDraft }
 const requiredName = (value: string) => field('Navn', 'name', value, 'required maxlength="100"');
 const uid = () => crypto.randomUUID();
 const typeLabel = {features:'egenskap', languages:'språk', proficiencies:'proficiency', damageDefenses:'skadeegenskap', conditionImmunities:'tilstandsimmunitet', spells:'spell', resources:'ressurs', actions:'handling', effects:'effekt'};
