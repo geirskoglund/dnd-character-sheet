@@ -404,3 +404,15 @@ dialog:has([data-question-grouped]) .wizard-art {height:80px;margin:.3rem auto}
 .character-abilities .number-pill small {font-size:min(1rem,28cqw);white-space:nowrap}
 .character-levels .number-pill small {font-size:min(1rem,23cqw)}
 .character-abilities input.number-value,.character-levels input.number-value {font-size:min(2.6rem,52cqw)}
+
+/* Forbruk: shared full-screen inventory with scrollable rows and fixed controls. */
+.consumables-dialog[open]{display:flex;flex-direction:column;width:100%;max-width:none;height:100dvh;max-height:100dvh;margin:0;padding:0;overflow:hidden;inset:0}
+.consumables-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:1rem}
+.consumables-dialog .dialog-heading,.consumables-dialog .dialog-actions{flex-shrink:0;padding:1rem}
+.consumables-error{margin:0;padding:0 1rem}
+.consumable-row{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.65rem 0;border-bottom:1px solid var(--line)}
+.consumable-name{display:flex;align-items:center;gap:.5rem;flex:1;min-width:0;text-align:left;overflow-wrap:anywhere}
+.consumable-name small{display:block;font-weight:normal}
+.consumable-counter{display:flex;gap:.25rem;margin-left:auto;max-width:100%}
+.consumable-counter button{min-width:2.6rem;padding:.5rem;touch-action:pan-y;user-select:none;-webkit-touch-callout:none;overflow-wrap:anywhere}
+.consumable-catalog section{display:grid;gap:.5rem;margin-bottom:1rem}

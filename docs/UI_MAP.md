@@ -170,3 +170,15 @@ Etablert mot master **`624d8c0d5c0ce2f961da11202d81c31d8c4ece1a`**, kontrollert 
 Beskrivelsene ovenfor er kontrollert ved kodegjennomgang, inkludert videre kall til lagring og domene. Lokal runtimekontroll ble forsøkt, men bygg/preview stopper i miljøet med `spawnSync git EPERM` i Vite-konfigurasjonen før appen starter; ingen runtimepåstander bygger på dette forsøket. Dokumentasjons-PR-en oppgir kontrollene. Lesing av kode er ikke fysisk iPhone-/PWA-verifikasjon. Utseende, OS-tastatur og fysisk installasjon er ikke dokumentert som prøvd gjennom dette kartet. Regelstøtte vurderes fortsatt mot krav og aktuell oppgave, ikke bare mot at en knapp eller et datafelt finnes.
 
 Ved UI-/flytendringer skal berørte beskrivelser oppdateres i **samme leveranse og PR**. Nye hovedområder legges til; fjernet/erstattet atferd tas ut av gjeldende beskrivelse. Klargjøring bruker kartet og angir dokumentasjonsbehov i issuet; implementasjon undersøker aktuell kode, retter kartet og samordner berørte innganger/guider. Se [AGENTS.md](../AGENTS.md#arbeidsfordeling-og-dokumentasjonsansvar). Ingen separat statuslogg eller generell omskriving av historikk kreves.
+
+## Forbruk
+
+Utstyr har egen **Forbruk**-seksjon. Combat har **Forbruk** sammen med Ta skade/Hvile; Action/Bonus/Reaction består. Begge åpner samme fullskjermliste med kategorier, ikoner og den valgte karakterens beholdninger. Listen ruller internt. Navnet åpner et rent oppslag med beskrivelse og enhet; oppslag bruker ingen vare eller HP.
+
+- **Legg til forbruksvare:** søkbart bibliotek med 25 lokale standardvarer. Velg vare → angi antall → Legg til. Ingen spørsmål om kjente standardegenskaper. Healer's Kit foreslår 10 bruk; poser føres per pose, ammunisjon per stykk.
+- **Egen forbruksvare:** veiviser for navn, antall, kategori, valgfri beskrivelse og frivillig ikonoverstyring. X/Escape bevarer utkast i Meny; Fullfør registrerer én separat beholdning. Samme navn slås aldri sammen.
+- **−/+** endrer med én. Langt trykk åpner den relative tallvelgeren på 0 for større fratrekk/tillegg. Rulling/bevegelse avbryter ventende langt trykk. Langt trykk gir ingen enkeltendring i tillegg.
+- **Antallet** åpner **Ny total**, med reell Før/Etter og absolutt verdi i hjulet/tallpanelet. Dette gir også tilgang til alle justeringer uten langt trykk. OK lagrer; X/Avbryt bevarer beholdningen.
+- Null beholdes som post; minus er deaktivert. **Angre** bruker samme karakterhistorikk som Meny. Ingen automatisk ammunisjon, healing eller tidsmåling. Lagringsfeil vises og bevarer valgt verdi for nytt forsøk; revisjonskonflikt krever gjenåpning med oppdatert karakter.
+
+Kode: [consumables.ts](../src/ui/consumables.ts), [domenelogikk](../src/domain/consumables.ts), [katalog](../src/data/srd-consumables.json). Fysisk iPhone-kontroll av langtrykk, rulling og tallpanelets første trykk inngår i brukerens test før merge.

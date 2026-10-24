@@ -8,7 +8,7 @@ const dbs: IDBDatabase[] = [];
 afterEach(() => { dbs.forEach(db => db.close()); dbs.length = 0; });
 function legacyCharacter() {
   const c = createCharacter('Eldre karakter');
-  const { speedOverride, unarmoredDefense, ...rest } = c;
+  const { speedOverride, unarmoredDefense, consumables, ...rest } = c;
   return legacySchema.parse({ ...rest, schemaVersion: 1, species: 'Dwarf', speed: 35, acOverride: 19 });
 }
 it('preserves v1 values and IDs and does not mutate its source', () => {

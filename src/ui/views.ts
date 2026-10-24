@@ -45,6 +45,7 @@ export function equipmentView(c: Character) {
   const stats = deriveStats(c);
   return `<section aria-label="Utstyrsoversikt">${sectionTitle('Utstyr','equipment')}<p><strong>AC ${stats.ac}</strong></p><details><summary>AC-grunnlag</summary><p>${esc(stats.acExplanation)}</p></details>
     ${stats.warnings.map(w=>`<p class="warning">${esc(w)}</p>`).join('')}</section>
+    <section aria-label="Forbruk">${sectionTitle('Forbruk','equipment')}<button data-action="consumables">Forbruk · ${c.consumables.length} varer</button></section>
     ${([
       ['weapon','Weapons',['weapon']], ['armor','Armor og skjold',['armor','shield']], ['other','Annet utstyr',['equipment','magic']],
     ] as const).map(([group,label,categories])=>`<section class="equipment-group" data-equipment-kind="${group}" role="group" aria-label="${label}">${sectionTitle(label,group==='weapon'?'sword':group==='armor'?'shield':'equipment')}<div class="pills">${[...c.items].filter(item=>(categories as readonly string[]).includes(item.category)).sort((a,b)=>Number(inUse(b))-Number(inUse(a))).map(item=>{
@@ -69,7 +70,7 @@ export function combatView(c: Character, category: string) {
   return `<section aria-label="HP i Combat" class="combat-health"><button data-action="hp"><small>HP</small><strong>${c.hp.current} / ${effectiveMaxHp(c)}</strong></button><button data-action="temp-hp"><small>Temporary HP</small><strong>${c.hp.temp}</strong></button><div><small>AC</small><strong>${stats.ac}</strong></div><div><small>Initiative</small><strong>${signed(c.derivedOverrides.initiative ?? abilityModifier(effectiveAbilities(c).DEX)+itemAdjustment(c,'initiative'))}</strong></div></section>
     ${resourceGroup(c,'spellSlot','Spell slots')}<section aria-label="Kampoppslag"><div class="combat-tabs" role="group" aria-label="Handlingskategori">${['Action', 'Bonus', 'Reaction'].map(name => `<button aria-pressed="${category === name}" data-category="${name}">${name}</button>`).join('')}</div>
     ${weapons.length?`<div class="combat-attacks">${weaponCards}</div>`:''}${itemCombatEffects(c,economy)}${actions.length || spells.length ? `<div class="pills combat-choices">${actionPills(actions)}${spells.map(row=>pill(`data-lookup="spell:${row.id}"`,row.name,row.spellLevel ? `Lvl ${row.spellLevel}` : '∞',spellIcon(row))).join('')}</div>` : weapons.length||itemCombatEffects(c,economy)?'':'<p class="empty muted">Ingen registrerte oppslag i denne kategorien.</p>'}</section>
-    ${others.length||itemCombatEffects(c,'other')?section('Andre egenskaper',actionPills(others))+itemCombatEffects(c,'other'):''}<div class="combat-tools"><button data-action="hp-change">${icon('healing')}<span>Ta skade</span></button><button data-record="rest">${icon('moon')}<span>Hvile</span></button></div>`;
+    ${others.length||itemCombatEffects(c,'other')?section('Andre egenskaper',actionPills(others))+itemCombatEffects(c,'other'):''}<div class="combat-tools"><button data-action="consumables">${icon('equipment')}<span>Forbruk</span></button><button data-action="hp-change">${icon('healing')}<span>Ta skade</span></button><button data-record="rest">${icon('moon')}<span>Hvile</span></button></div>`;
 }
 
 export function resourceGroup(c:Character,kind:Character['resources'][number]['kind'],label:string,allowAdd=false){

@@ -102,3 +102,11 @@ Bruk **My D&D Test** på den faste adressen øverst. Kontroller valgt PR/commit 
 5. **Fysisk mobil:** Kontroller normal og stor tekst, lesbare valg/tall, intern rulling og tilgjengelig Neste/Tilbake/Lagre. Prøv editorenes første trykk og retur, også etter at appen har vært i bakgrunnen. Ved avvik: oppgi iOS-versjon, installert app/Safari, PR/commit og konkret forløp.
 
 PR-en beholdes åpen til uttrykkelig godkjent merge. Automatiske Chromium-resultater er ikke fysisk iPhone-bevis.
+
+## Test av Forbruk #30/#31
+
+1. Utstyr → Forbruk → Legg til forbruksvare → Arrows → antall18. Kontroller egen Forbruk-seksjon, kategorier/enheter og standardbiblioteket. Registrer en egen DM-variant med samme navn; de skal være uavhengige. Lukk/gjenoppta et eget utkast via Meny.
+2. Kort − gir17; Angre gir18. Kort + gir19. Langt − skal åpne med uendret beholdning; −5 viser Før18/Etter13. Langt +20 gir38. Avbryt/X skal bevare tallet, og slipp skal ikke gi en ekstra enkeltendring.
+3. Trykk antallet → Ny total20 skal gi20. Prøv total0, sperret minus ved0 og påfyll. Bytt mellom Combat og Utstyr og last på nytt: samme varer/antall. Les en potion uten automatisk HP-endring. Healer's Kit føres i bruk uten makstak10.
+4. Prøv lang liste, sveip som starter på tellerknapp, avbrutt langtrykk, tastatur og stor tekst på smal skjerm. Prøv vanlig Safari og installert My D&D Test på fysisk iPhone, særlig første OK/Avbryt/X, bevart listeposisjon og retur etter bakgrunn. Oppgi iOS-versjon, modus og PR/commit ved feil.
+5. Prøv offline etter første nettlading, backup/import til tomt lager og Angre. Behold eksisterende testdata. PR-en skal stå åpen til uttrykkelig godkjent merge.

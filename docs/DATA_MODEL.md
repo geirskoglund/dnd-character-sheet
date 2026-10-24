@@ -136,3 +136,7 @@ Tilleggene er valgfrie felter i karakteraggregatets eksisterende schemaVersion2;
 Kopi remapper gjenstandens interne IDs og egne children samlet, og starter kopien uten bruk/attunement. Catalog-referanser og eksterne delte referanser bevares. Fjerning sletter bare egne children som ingen annen eier refererer til. Hele karakterkopier, backup, historikk og angre omfatter disse feltene. Faktiske grunn-HP lagres fortsatt i hp.max; effectiveMaxHp beregnes for visning/healing/hvile uten å omskrive grunnverdien. Å legge bort HP-utstyr klipper ikke nåværende HP stille.
 
 Ny equipment-draft payload har editorVersion2 med source/expected/expectedPool/work. Work lagrer det konkrete spørsmålet, svar, spørsmålshistorikk, gjenstand og valgfri pool. Utkastets CAS-revision brukes atomisk ved sluttlagring; eldre draftformat gjenopptas med kompatibilitetsveiviseren.
+
+## Forbruk (#30/#31)
+
+Character2 har `consumables[]`, som leses som tom liste når feltet mangler i eldre data. Ingen DB-oppgradering eller flytting av `items`. Hver post har stabil `id`, `name`, ikke-negativt sikkert heltall `quantity`, `category` (ammunition/healing/supplies/combat/other), `unit`, `description`, valgfritt `iconKey` og `catalogId`. Katalogen er et eget lokalt SRD-datasett; flere poster kan ha samme katalog-ID/navn. Beholdning har ikke maks eller hvilegjenoppretting. Hele aggregatets revisjonskontroll, hendelser, Angre, kopiering og backup omfatter feltet. Egenregistrering bruker utkasttypen `consumable` i eksisterende settings/backup; sluttlagring og sletting av utkast er atomisk.

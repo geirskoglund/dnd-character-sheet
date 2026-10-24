@@ -57,6 +57,9 @@ export const characterSchema = z.object({
     ritual: z.boolean(), components: z.array(text), attack: text.optional(), save: text.optional(), damage: text.optional(),
     description: text, known: z.boolean(), inSpellbook: z.boolean(), prepared: z.boolean(),
     casterClassRef: id.optional(), resourceSystemRef: z.string().optional(), accessSource:ref.optional(), sourceLabel:text.optional(), castingAbility:z.enum(abilities).optional(), alwaysPrepared:z.boolean().optional() })),
+  consumables: z.array(z.object({id, name:z.string().trim().min(1).max(100), quantity:count.max(Number.MAX_SAFE_INTEGER),
+    category:z.enum(['ammunition','healing','supplies','combat','other']), unit:text, description:text,
+    iconKey:visualIcon, catalogId:z.string().optional()})).default([]),
   items: z.array(z.object({ id, iconKey:visualIcon, definitionRef: ref.optional(), name: text,
     category: z.enum(['weapon', 'armor', 'shield', 'equipment', 'magic']), quantity: count, equipped: z.boolean(),
     hand: z.enum(['none','left','right','both']).optional(),
@@ -83,7 +86,7 @@ export const characterSchema = z.object({
     ctx.addIssue({ code: 'custom', path: ['classes'], message: 'Klassenivå må summere til karakterens level.' });
   }
   const collections = ['classes', 'languages', 'proficiencies', 'damageDefenses', 'conditionImmunities',
-    'resources', 'features', 'actions', 'effects', 'spells', 'items', 'notes', 'activeStates'] as const;
+    'resources', 'features', 'actions', 'effects', 'spells', 'items', 'consumables', 'notes', 'activeStates'] as const;
   const ids = new Set([character.id]);
   for (const collection of collections) {
     for (const entity of character[collection]) {
