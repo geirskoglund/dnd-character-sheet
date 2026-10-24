@@ -423,3 +423,7 @@ dialog:has([data-question-grouped]) .wizard-art {height:80px;margin:.3rem auto}
 .consumables-entry small{font:400 .9rem Source;color:var(--muted);margin-left:auto}
 .consumables-entry::after{content:'';position:absolute;bottom:0;right:0;width:9px;height:9px;background:var(--line);clip-path:polygon(100% 0,100% 100%,0 100%)}
 .consumables-section h2{display:block}
+
+[data-choice-field="iconKey"] > button > .icon{width:32px;height:32px}
+[data-choice-field="iconKey"]{grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr))}
+[data-choice-field="diceKind"]{grid-template-columns:repeat(auto-fit,minmax(min(100%,6rem),1fr))!important}

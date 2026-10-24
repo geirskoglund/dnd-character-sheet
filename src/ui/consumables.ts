@@ -1,28 +1,37 @@
 import {z} from 'zod';
+import {iconLabels} from '../domain/iconography';
+import {consumableDiceSteps,readConsumableDice} from './consumable-dice';
 import {characterSchema} from '../domain/model';
 import {consumableCategories,newConsumable,setConsumableQuantity,addConsumable,removeConsumable,availableConsumables,consumableName,consumableDice,consumableDescription,type Consumable} from '../domain/consumables';
 import type {EditorContext} from './record-editors';
 import {viewDialog,editDialog,confirmDialog} from './dialog';
-import {wizardDialog,draftOptions} from './wizard';
+import {wizardDialog,draftOptions,choices} from './wizard';
 import {field,numberField,textArea,select,str,num} from './record-fields';
-import {icon,iconField,readIcon} from './icons';
+import {icon,readIcon} from './icons';
 import {escapeHtml as esc} from './html';
 import {numberChangeDialog} from './number-change-dialog';
 
 export function consumableWizard(ctx:EditorContext,done?:()=>void){
  const source=ctx.resumedDraft?characterSchema.shape.consumables.unwrap().element.extend({name:z.string().max(100)}).parse(ctx.resumedDraft.payload):newConsumable();
  const c=ctx.current();
- wizardDialog('Egen forbruksvare',[
+ const previous=ctx.resumedDraft?.controls.find(f=>f.name==='diceExpression')?.value??source.diceExpression??'';
+ const d=wizardDialog('Egen forbruksvare',[
   {id:'name',title:'Hva heter varen?',art:'equipment',html:field('Navn','name',source.name,'required maxlength="100"')},
   {id:'quantity',title:'Hvor mange har du?',art:'resource',html:numberField('Antall','quantity',source.quantity,'required min="0" max="9007199254740991"')},
   {id:'category',title:'Hvilken kategori passer?',art:'equipment',html:select('Kategori','category',source.category,Object.entries(consumableCategories).map(([value,c])=>({value,label:c.label})))},
-  {id:'dice',title:'Hvilke terninger brukes?',art:'potion',help:'Valgfritt uttrykk fra varen eller avtalen med DM, for eksempel 2d4+2. Du kaster terningene fysisk.',html:field('Terninguttrykk (valgfritt)','diceExpression',source.diceExpression??'','maxlength="100"')},
+  ...consumableDiceSteps(previous),
   {id:'description',title:'Vil du beskrive varen?',art:'note',html:textArea('Beskrivelse (valgfritt)','description',source.description)},
-  {id:'icon',title:'Vil du endre ikonet?',art:'equipment',html:iconField(source.iconKey)},
+  {id:'icon',title:'Hvilket ikon vil du bruke?',art:'equipment',html:choices('iconKey',source.iconKey??'',[{value:'',label:'Automatisk fra kategori',art:icon(consumableCategories[source.category].icon)},...Object.entries(iconLabels).map(([value,label])=>({value,label,art:icon(value as keyof typeof iconLabels)}))],false)},
  ],async(form,completion)=>{
-  const data=new FormData(form),row:Consumable={...source,name:str(data,'name'),quantity:num(data,'quantity'),category:str(data,'category') as Consumable['category'],description:str(data,'description'),diceExpression:str(data,'diceExpression')||undefined,iconKey:readIcon(data)};
+  const data=new FormData(form),row:Consumable={...source,name:str(data,'name'),quantity:num(data,'quantity'),category:str(data,'category') as Consumable['category'],description:str(data,'description'),diceExpression:readConsumableDice(data),iconKey:readIcon(data)};
   await ctx.save(addConsumable(c,row),'consumable',`${row.name} lagt til`,completion);done?.();
  },'Fullfør',draftOptions(ctx,'consumable','Egen forbruksvare',source));
+ const updateAutomaticIcon=()=>{
+  const category=str(new FormData(d.querySelector('form')!),'category') as Consumable['category'];
+  const automatic=d.querySelector<HTMLButtonElement>('[data-choice-field="iconKey"] [data-wizard-choice=""]');
+  if(automatic)automatic.innerHTML=icon(consumableCategories[category]?.icon??'note')+'<span>Automatisk fra kategori</span>';
+ };
+ d.querySelector('form')!.addEventListener('change',updateAutomaticIcon);updateAutomaticIcon();
 }
 
 /** Both entry points use the same character collection; this dialog survives nested editors. */

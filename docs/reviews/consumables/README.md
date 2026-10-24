@@ -17,3 +17,10 @@ Nyeste bilder: `review-equipment-390.png` (egen seksjonsrad/flaskeikon uten AC),
 Observerte resultater: Alle tre tellerknapper er like brede, navn og terninguttrykk er lesbare, enheter tar ingen plass, og administrasjon er borte i Combat. Faste bunnlinjer er synlige; stor tekst bryter innhold til nye linjer og listen ruller. Den nye nulltesten bekrefter3→0 uten at raden forsvinner, skjuling ved ny Combat-åpning og påfyll fra Utstyr. Bekreftelsen kan avbrytes tilbake til samme oppslag; simulert lagringsfeil bevarer bekreftelse og post før ett vellykket retry.
 
 Ingen fysisk iPhone-/Safari-kontroll påstås for denne nye versjonen. Brukerens bilder gjelder den forrige testutgaven og er grunnlag for endringene, ikke godkjenning av sluttversjonen.
+
+
+## Ikon- og terningvalg etter nytt brukerreview
+
+`icon-choices-390.png` og `icon-choices-320-large.png` viser faktiske ikonforhåndsvisninger med navn. `dice-choice-390.png`, `dice-choice-320.png` og `dice-choice-320-large.png` viser den illustrerte terningvelgeren; siste bilde er rullet til valgene ved320px/200% root-skrift. Bilder er inspisert: tre terningkolonner ved vanlig tekst, én kolonne når stor tekst krever plassen. Alle valg og faste handlinger kan nås uten horisontal rulling. Eldre bilder er historikk.
+
+Gjennomført i Chromium, ikke fysisk iPhone/Safari. Brukerens tidligere oppdateringsfeil er grunnlag for mer robust worker-kontroll, men den konkrete årsaken på telefonen er fortsatt ikke fastslått.

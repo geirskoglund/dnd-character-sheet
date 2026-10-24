@@ -750,3 +750,25 @@ Tillegg før koding: Combat velger synlige vare-ID-er ved åpning ut fra antall>
 | Fjern / beholdningsvarsel / feil / Angre | UI: navn og5 vises i positiv bekreftelse, ingen antallsadvarsel ved0. Avbryt returnerer til oppslag. Simulert feil bevarer post og bekreftelse, retry sletter én gang; Meny → Angre gjenoppretter. Backup/import inkluderer eget terninguttrykk | Positiv bekreftelse og faste Fjern utstyr/OK gjennomgått; Combat-oppslag har ingen sletting | Ingen produksjonsmerge uten brukerens godkjenning |
 
 Verifikasjon: Full lokal kontroll før siste nullfilter/duplikatpresisering bestod169 enhets-/integrasjonstester, TypeScript/produksjonsbygg og117 nettlesertester. Etter disse siste tilleggene bestod170 enhets-/integrasjonstester, nytt TypeScript/produksjonsbygg og alle6 berørte Forbruksvarer-scenarioer. Full GitHub Validate kjøres på sluttcommiten før automatisk publisering på valgt PR67. Kode, testguide, UI-kart, datamodell, beslutningslogg og nye gjennomgangsbilder følger samme PR. Språkpreferansen bokmål er også ført i AGENTS.md etter brukerens uttrykkelige avklaring.
+
+## Før koding: ikon- og terningvalg etter nytt iPhone-review
+
+Brukeren har uttrykkelig bestilt retting etter review av2d2e5cd. Egenregistrering av forbruksvarer skal bruke de etablerte illustrerte terningvalgene, tallvelger for antall/bonus og Annet for fritekst. Ikonvalg skal vise ikonene, inkludert automatisk ikon fra valgt kategori. En oppdateringskontroll uten svar er observert på fysisk iPhone; rotårsaken på enheten er ikke fastslått.
+
+| Scenario / tilstand | Forventning før koding | Planlagt kontroll |
+| --- | --- | --- |
+| Egen healing-vare2d6+1 / vare uten terninger | Samme illustrerte d4/d6/d8/d10/d12/d20-valg som utstyr, ett spørsmål per verdi; ingen native tastatur for vanlige terninger. Ingen terninger hopper over antall/bonus, Annet tillater eget uttrykk | Ekte mobilflyt, beholdt utkast/tilbake, lagring/Combat,320/390px og stor tekst |
+| Ikoner, kategori Healing/Annet, manuelt Magi | Alle valg har synlig ikon og navn. Automatisk følger kategorien også etter Tilbake og gjenopptak; ingen overflødig utfolding før ikonene | Visuell gjennomgang og UI-regresjon, både automatisk og manuell registrering |
+| Eldre uferdig terninguttrykk | Tidligere tekstfeltutkast gjenopptas uten å miste uttrykket. Nye illustrerte svar bevares ved X/reload/retur | Utkastkompatibilitet og nytt uttrykk2d6+1 |
+| Oppdateringskontroll | Spør aktiv worker først, ventende som fallback; tapte svar gir presis feil og nytt forsøk, aldri aktivering uten bekreftet antall. Flere åpne faner og åpne dialoger beskytter fortsatt ulagret arbeid | Enhetstest av avsender/fallback/timeout/ugyldig svar, reell overgang mellom to service-worker-bygg med usvarende ventende worker. Fysisk iOS-årsak og oppførsel må etterprøves separat |
+
+
+### Faktisk kontroll: ikon- og terningvalg
+
+| Scenario | Test og observert resultat | Egen produktgjennomgang | Gjenværende kontroll |
+| --- | --- | --- | --- |
+| Standardterning / bonus / eget uttrykk / ingen | UI registrerer4d4+4 med illustrert d4 og tallvelgere, gjenopptar antall4 etter X/reload, registrerer1d6+1d4 via Annet og Rent vann uten terninger. Eldre tekstutkast2d6+1 gjenopptas med d6/2/1 og lagres uendret | Faktiske390/320px-bilder inspisert. Seks ulike terningtegninger, inkludert d20. Ingen native teksteditor for standardterninger; Annet bevarer fri føring etter DM-avtale | Fysisk iPhone, Safari/PWA og VoiceOver |
+| Ikoner / kategori | UI bekrefter SVG på alle ikonvalg, velger Magi og kontrollerer automatisk Healing-ikon i registrert vare | Ikon og navn vises direkte. Ved320px/200% bruker valgene én kolonne uten oppdelte navn; listen ruller og bunnlinjen står fast. Terningvalg er også rullet og kontrollert i samme størrelse | Fysisk touch og tilgjengelighetsrevisjon |
+| Oppdatering / usvarende worker | Fire enhetstester dekker aktiv worker, flere faner, fallback, timeout, ugyldige svar og opprydding. Ekte tobyggs-nettlesertest blokkerer fortsatt flere faner og oppdaterer når ventende worker ikke svarer på tellemeldingen | Ingen aktivering uten gyldig antall; åpen dialog kontrolleres også etter ventetiden. Manglende svar beskrives som manglende svar, ikke som bevis på flere faner | Den konkrete årsaken til brukerens fysiske iOS-feil er ikke fastslått; ny iPhone-test trengs |
+
+Lokal verifikasjon:174 enhets-/integrasjonstester, TypeScript/produksjonsbygg og10 berørte nettleserscenarioer (Forbruksvarer, oppdateringer og preview) bestod. Etter siste tilpasning for stor tekst bestod alle3 berørte ikon-/terningscenarioer igjen, inkludert rulling til terningvalg. Bilder finnes i `reviews/consumables/`; full Validate på PR-hodet kontrolleres før publisering. Ingen produksjonsmerge uten brukerens uttrykkelige godkjenning.
