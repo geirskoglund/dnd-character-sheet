@@ -35,3 +35,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 The underlying SRD text remains under CC BY 4.0 as attributed above.
+
+Consumables: src/data/srd-consumables.json adapts 25 stock definitions from Equipment and the Potion of Healing table in Magic Items at the pinned 2014 5e-database revision a6212beb4b278917c2cff41c2b04c4ef4f3e0d6f. Names and units are normalized for individual ammunition, bags, kit uses and water contents; brief factual labels are supplied where the equipment dataset has no description. The four healing expressions are retained. No timing, dice, healing or other effects are executed automatically. Source: https://github.com/5e-bits/5e-database/tree/a6212beb4b278917c2cff41c2b04c4ef4f3e0d6f/src/2014/en . SRD 5.1 attribution and CC BY 4.0 terms above apply.

@@ -1,4 +1,5 @@
 import './pwa/legacy-cleanup.js';
+import {consumablesDialog,consumableWizard} from './ui/consumables';
 import {textArea} from './ui/record-fields';
 import {numberChangeDialog} from './ui/number-change-dialog';
 import {effectiveMaxHp} from './domain/item-effects';
@@ -97,7 +98,8 @@ async function resumeWizard(id:string){
  if(entry.characterId){if(!characters.some(c=>c.id===entry.characterId))throw new Error('Karakteren til dette utkastet finnes ikke.');selected=entry.characterId;await refresh();}
  root.querySelector('details.app-menu')?.removeAttribute('open');
  const context={...editorContext,resumedDraft:entry};
- if(entry.kind==='equipment'){const payload=equipmentDraftPayload.parse(entry.payload);page='equipment';render();equipmentWizard(context,payload.source,payload.existing);}
+ if(entry.kind==='consumable'){consumableWizard(context);}
+ else if(entry.kind==='equipment'){const payload=equipmentDraftPayload.parse(entry.payload);page='equipment';render();equipmentWizard(context,payload.source,payload.existing);}
  else if(entry.kind==='character'){
   const payload=z.object({source:characterSchema.safeExtend({name:z.string().max(100)}),creating:z.boolean(),classes:characterSchema.shape.classes}).parse(entry.payload);editCharacter(payload.creating?undefined:payload.source,{...entry,payload});
  }else if(entry.kind==='resource'){const payload=z.object({pool:characterSchema.shape.resources.element,existing:z.boolean(),kind:z.enum(['custom','spellSlot','hitDie'])}).parse(entry.payload);resourceWizard(context,payload.existing?payload.pool.id:undefined,payload.kind);}
@@ -322,6 +324,7 @@ function editNote(id?: string) {
 async function action(name: string) {
   const c = current();
   switch (name) {
+    case 'consumables': consumablesDialog(editorContext,page==='combat'?'combat':'equipment');break;
     case 'portrait': {
       const upload = async () => {
         const asset = await choosePortrait();

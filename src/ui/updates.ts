@@ -1,3 +1,4 @@
+import {countAppTabs} from './update-client-check';
 /** Explicit PWA updates: preserve IndexedDB and never interrupt an open character form. */
 export function installUpdates() {
   const banner = document.createElement('aside');
@@ -63,18 +64,6 @@ export function installUpdates() {
       if (manualCheck) show('Kunne ikke sjekke oppdateringer. Karakterdata er beholdt. Kontroller forbindelsen og prøv igjen.');
     } finally { checking = false; }
   }
-  function countTabs(worker: ServiceWorker): Promise<number> {
-    return new Promise((resolve, reject) => {
-      const channel = new MessageChannel();
-      const timer = window.setTimeout(() => { channel.port1.close(); reject(new Error('Kunne ikke kontrollere åpne appfaner. Lukk de andre appfanene og prøv igjen.')); }, 3000);
-      channel.port1.onmessage = event => {
-        clearTimeout(timer); channel.port1.close();
-        if (Number.isInteger(event.data) && event.data >= 1) resolve(event.data);
-        else reject(new Error('Kunne ikke kontrollere åpne appfaner. Prøv igjen.'));
-      };
-      worker.postMessage({ type: 'COUNT_APP_TABS' }, [channel.port2]);
-    });
-  }
   apply.onclick = async () => {
     if (activating) return;
     if (document.querySelector('dialog[open]')) { show('Lagre eller avbryt den åpne dialogen før du oppdaterer.'); return; }
@@ -82,10 +71,11 @@ export function installUpdates() {
     if (!worker) { apply.hidden = true; await check(); return; }
     activating = true; apply.disabled = true;
     try {
-      if (await countTabs(worker) > 1) {
+      if (await countAppTabs(registration!) > 1) {
         show('Appen er åpen i flere faner eller vinduer. Lagre endringer og lukk de andre, og trykk Oppdater appen her igjen.');
         return;
       }
+      if(document.querySelector('dialog[open]')){show('Lagre eller avbryt den åpne dialogen før du oppdaterer.');return;}
       reloadRequested = true;
       show('Oppdaterer appen. Karakterene dine beholdes …');
       worker.postMessage({ type: 'SKIP_WAITING' });

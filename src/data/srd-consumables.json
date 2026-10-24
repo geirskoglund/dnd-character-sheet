@@ -1,0 +1,235 @@
+[
+  {
+    "catalogId": "srd51:consumable:arrow",
+    "name": "Arrows",
+    "category": "ammunition",
+    "unit": "stk.",
+    "description": "Ammunition for a bow.",
+    "iconKey": "bow",
+    "sourceIndex": "arrow"
+  },
+  {
+    "catalogId": "srd51:consumable:crossbow-bolt",
+    "name": "Crossbow Bolts",
+    "category": "ammunition",
+    "unit": "stk.",
+    "description": "Ammunition for a crossbow.",
+    "iconKey": "bow",
+    "sourceIndex": "crossbow-bolt"
+  },
+  {
+    "catalogId": "srd51:consumable:sling-bullet",
+    "name": "Sling Bullets",
+    "category": "ammunition",
+    "unit": "stk.",
+    "description": "Ammunition for a sling.",
+    "iconKey": "bow",
+    "sourceIndex": "sling-bullet"
+  },
+  {
+    "catalogId": "srd51:consumable:blowgun-needle",
+    "name": "Blowgun Needles",
+    "category": "ammunition",
+    "unit": "stk.",
+    "description": "Ammunition for a blowgun.",
+    "iconKey": "bow",
+    "sourceIndex": "blowgun-needle"
+  },
+  {
+    "catalogId": "srd51:consumable:potion-of-healing-common",
+    "name": "Potion of Healing",
+    "category": "healing",
+    "unit": "flasker",
+    "description": "2d4+2 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
+    "iconKey": "healing",
+    "sourceIndex": "potion-of-healing-common",
+    "diceExpression": "2d4+2"
+  },
+  {
+    "catalogId": "srd51:consumable:potion-of-healing-greater",
+    "name": "Potion of Greater Healing",
+    "category": "healing",
+    "unit": "flasker",
+    "description": "4d4+4 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
+    "iconKey": "healing",
+    "sourceIndex": "potion-of-healing-greater",
+    "diceExpression": "4d4+4"
+  },
+  {
+    "catalogId": "srd51:consumable:potion-of-healing-superior",
+    "name": "Potion of Superior Healing",
+    "category": "healing",
+    "unit": "flasker",
+    "description": "8d4+8 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
+    "iconKey": "healing",
+    "sourceIndex": "potion-of-healing-superior",
+    "diceExpression": "8d4+8"
+  },
+  {
+    "catalogId": "srd51:consumable:potion-of-healing-supreme",
+    "name": "Potion of Supreme Healing",
+    "category": "healing",
+    "unit": "flasker",
+    "description": "10d4+20 HP.\n\nPotion, varies\n\nYou regain hit points when you drink this potion. Whatever its potency, the potion's red liquid glimmers when agitated.",
+    "iconKey": "healing",
+    "sourceIndex": "potion-of-healing-supreme",
+    "diceExpression": "10d4+20"
+  },
+  {
+    "catalogId": "srd51:consumable:rations-1-day",
+    "name": "Rations (1 day)",
+    "category": "supplies",
+    "unit": "dagsrasjoner",
+    "description": "Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts.",
+    "iconKey": "equipment",
+    "sourceIndex": "rations-1-day"
+  },
+  {
+    "catalogId": "srd51:consumable:torch",
+    "name": "Torch",
+    "category": "supplies",
+    "unit": "stk.",
+    "description": "A torch burns for 1 hour, providing bright light in a 20-foot radius and dim light for an additional 20 feet. If you make a melee attack with a burning torch and hit, it deals 1 fire damage.",
+    "iconKey": "equipment",
+    "sourceIndex": "torch"
+  },
+  {
+    "catalogId": "srd51:consumable:candle",
+    "name": "Candle",
+    "category": "supplies",
+    "unit": "stk.",
+    "description": "For 1 hour, a candle sheds bright light in a 5-foot radius and dim light for an additional 5 feet.",
+    "iconKey": "equipment",
+    "sourceIndex": "candle"
+  },
+  {
+    "catalogId": "srd51:consumable:oil-flask",
+    "name": "Oil (flask)",
+    "category": "supplies",
+    "unit": "flasker",
+    "description": "Oil usually comes in a clay flask that holds 1 pint.\n\nAs an action, you can splash the oil in this flask onto a creature within 5 feet of you or throw it up to 20 feet, shattering it on impact. Make a ranged attack against a target creature or object, treating the oil as an improvised weapon.\n\nOn a hit, the target is covered in oil. If the target takes any fire damage before the oil dries (after 1 minute), the target takes an additional 5 fire damage from the burning oil.\n\nYou can also pour a flask of oil on the ground to cover a 5-foot-square area, provided that the surface is level.\n\nIf lit, the oil burns for 2 rounds and deals 5 fire damage to any creature that enters the area or ends its turn in the area. A creature can take this damage only once per turn.",
+    "iconKey": "equipment",
+    "sourceIndex": "oil-flask"
+  },
+  {
+    "catalogId": "srd51:consumable:waterskin",
+    "name": "Water (waterskin-innhold)",
+    "category": "supplies",
+    "unit": "waterskin-innhold",
+    "description": "Water carried in a waterskin; this stock counts the water contents, not the container.",
+    "iconKey": "equipment",
+    "sourceIndex": "waterskin"
+  },
+  {
+    "catalogId": "srd51:consumable:acid-vial",
+    "name": "Acid (vial)",
+    "category": "combat",
+    "unit": "ampuller",
+    "description": "As an action, you can splash the contents of this vial onto a creature within 5 feet of you or throw the vial up to 20 feet, shattering it on impact. In either case, make a ranged attack against a creature or object, treating the acid as an improvised weapon.\n\nOn a hit, the target takes 2d6 acid damage.",
+    "iconKey": "tools",
+    "sourceIndex": "acid-vial",
+    "diceExpression": "2d6"
+  },
+  {
+    "catalogId": "srd51:consumable:alchemists-fire-flask",
+    "name": "Alchemist's Fire (flask)",
+    "category": "combat",
+    "unit": "flasker",
+    "description": "This sticky, adhesive fluid ignites when exposed to air.\n\nAs an action, you can throw this flask up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the alchemist's fire as an improvised weapon.\n\nOn a hit, the target takes 1d4 fire damage at the start of each of its turns. A creature can end this damage by using its action to make a DC 10 Dexterity check to extinguish the flames.",
+    "iconKey": "tools",
+    "sourceIndex": "alchemists-fire-flask",
+    "diceExpression": "1d4"
+  },
+  {
+    "catalogId": "srd51:consumable:antitoxin-vial",
+    "name": "Antitoxin (vial)",
+    "category": "combat",
+    "unit": "ampuller",
+    "description": "A creature that drinks this vial of liquid gains advantage on saving throws against poison for 1 hour. It confers no benefit to undead or constructs.",
+    "iconKey": "tools",
+    "sourceIndex": "antitoxin-vial"
+  },
+  {
+    "catalogId": "srd51:consumable:holy-water-flask",
+    "name": "Holy Water (flask)",
+    "category": "combat",
+    "unit": "flasker",
+    "description": "As an action, you can splash the contents of this flask onto a creature within 5 feet of you or throw it up to 20 feet, shattering it on impact. In either case, make a ranged attack against a target creature, treating the holy water as an improvised weapon.\n\nIf the target is a fiend or undead, it takes 2d6 radiant damage.\n\nA cleric or paladin may create holy water by performing a special ritual.\n\nThe ritual takes 1 hour to perform, uses 25 gp worth of powdered silver, and requires the caster to expend a 1st-level spell slot.",
+    "iconKey": "tools",
+    "sourceIndex": "holy-water-flask",
+    "diceExpression": "2d6"
+  },
+  {
+    "catalogId": "srd51:consumable:poison-basic-vial",
+    "name": "Basic Poison (vial)",
+    "category": "combat",
+    "unit": "ampuller",
+    "description": "You can use the poison in this vial to coat one slashing or piercing weapon or up to three pieces of ammunition. Applying the poison takes an action. A creature hit by the poisoned weapon or ammunition must make a DC 10 Constitution saving throw or take 1d4 poison damage. Once applied, the poison retains potency for 1 minute before drying.",
+    "iconKey": "tools",
+    "sourceIndex": "poison-basic-vial",
+    "diceExpression": "1d4"
+  },
+  {
+    "catalogId": "srd51:consumable:ball-bearings-bag-of-1000",
+    "name": "Ball Bearings (bag)",
+    "category": "combat",
+    "unit": "poser",
+    "description": "As an action, you can spill these tiny metal balls from their pouch to cover a level, square area that is 10 feet on a side.\n\nA creature moving across the covered area must succeed on a DC 10 Dexterity saving throw or fall prone.\n\nA creature moving through the area at half speed doesn't need to make the save.",
+    "iconKey": "tools",
+    "sourceIndex": "ball-bearings-bag-of-1000"
+  },
+  {
+    "catalogId": "srd51:consumable:caltrops",
+    "name": "Caltrops (bag)",
+    "category": "combat",
+    "unit": "poser",
+    "description": "As an action, you can spread a bag of caltrops to cover a square area that is 5 feet on a side.\n\nAny creature that enters the area must succeed on a DC 15 Dexterity saving throw or stop moving this turn and take 1 piercing damage.\n\nTaking this damage reduces the creature's walking speed by 10 feet until the creature regains at least 1 hit point.\n\nA creature moving through the area at half speed doesn't need to make the save.",
+    "iconKey": "tools",
+    "sourceIndex": "caltrops"
+  },
+  {
+    "catalogId": "srd51:consumable:healers-kit",
+    "name": "Healer's Kit (uses)",
+    "category": "combat",
+    "unit": "bruk",
+    "description": "This kit is a leather pouch containing bandages, salves, and splints. The kit has ten uses. As an action, you can expend one use of the kit to stabilize a creature that has 0 hit points, without needing to make a Wisdom (Medicine) check.",
+    "iconKey": "tools",
+    "sourceIndex": "healers-kit"
+  },
+  {
+    "catalogId": "srd51:consumable:chalk-1-piece",
+    "name": "Chalk (piece)",
+    "category": "other",
+    "unit": "stk.",
+    "description": "Chalk (piece): tracked per stk..",
+    "iconKey": "note",
+    "sourceIndex": "chalk-1-piece"
+  },
+  {
+    "catalogId": "srd51:consumable:paper-one-sheet",
+    "name": "Paper (sheet)",
+    "category": "other",
+    "unit": "ark",
+    "description": "Paper (sheet): tracked per ark.",
+    "iconKey": "note",
+    "sourceIndex": "paper-one-sheet"
+  },
+  {
+    "catalogId": "srd51:consumable:parchment-one-sheet",
+    "name": "Parchment (sheet)",
+    "category": "other",
+    "unit": "ark",
+    "description": "Parchment (sheet): tracked per ark.",
+    "iconKey": "note",
+    "sourceIndex": "parchment-one-sheet"
+  },
+  {
+    "catalogId": "srd51:consumable:ink-1-ounce-bottle",
+    "name": "Ink (ounce)",
+    "category": "other",
+    "unit": "ounces",
+    "description": "Ink (ounce): tracked per ounces.",
+    "iconKey": "note",
+    "sourceIndex": "ink-1-ounce-bottle"
+  }
+]

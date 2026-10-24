@@ -2,6 +2,7 @@ import {iconLabels, type IconKey} from '../domain/iconography';
 import {escapeHtml as esc} from './html';
 // Original line drawings. Shared strokes and 24-unit geometry, stored with the app.
 const paths = {
+  potion:'<path d="M9 2h6v4l4 6v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-7l4-6V2ZM8 2h8M5 14h14M9 6h6"/><path d="m10 17 2-1 2 1-2 2z"/>',
   emblem:'<path d="m12 2 8 5v10l-8 5-8-5V7zM12 6l4 6-4 6-4-6z"/>',
   feature:'<path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4zM12 6v15M7 8h2m6 0h2M7 12h2m6 0h2"/>',
   feat:'<path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/>',

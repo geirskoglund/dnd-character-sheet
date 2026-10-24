@@ -5,6 +5,7 @@ import {wizardArt} from './wizard-art';
 
 type ComparisonValue={value:string;detail?:string};
 export interface NumberChangeOptions extends ChangeLimits {
+ mode?:'relative'|'total';initialValue?:number;
  name:string;title?:string;original:number;icon?:UIIcon;decimal?:boolean;wholeLabel?:string;fractionLabel?:string;
  /** Domain values may have a separate presentation, e.g. ordinary and temporary HP. */
  comparison?:(delta:number)=>{before:ComparisonValue;after:ComparisonValue};
@@ -27,11 +28,13 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  document.body.style.left='0';document.body.style.right='0';document.body.style.overflow='hidden';
  document.documentElement.style.overflow='hidden';document.documentElement.style.overscrollBehavior='none';
  const d=document.createElement('dialog');d.className='number-change-dialog';d.setAttribute('aria-labelledby','number-change-title');
+ const base=options.mode==='total'?0:options.original;
  const scale=options.decimal?100:1;
- let whole=0,fraction=0,pending=false,editor:WheelKey|null=null;
+ let whole=options.initialValue??(options.mode==='total'?options.original:0),fraction=0,pending=false,editor:WheelKey|null=null;
  let draft='',replaceAll=false,entryStart={whole:0,fraction:0};
+ const display=(value:number)=>options.mode==='total'?String(value):signed(value);
  const format=(value:number)=>options.decimal?`${value<0?'−':''}${Math.floor(Math.abs(value)/100)},${String(Math.abs(value)%100).padStart(2,'0')}`:String(value);
- const labels:Record<WheelKey,string>={whole:options.decimal?(options.wholeLabel??'Heltall'):'Endring',fraction:options.fractionLabel??'Hundredeler'};
+ const labels:Record<WheelKey,string>={whole:options.decimal?(options.wholeLabel??'Heltall'):options.mode==='total'?'Ny total':'Endring',fraction:options.fractionLabel??'Hundredeler'};
  d.innerHTML=`<form novalidate><div class="dialog-heading"><span class="number-title-icon" aria-hidden="true">${icon(options.icon??'emblem')}</span><h2 id="number-change-title" tabindex="-1">${esc(options.title??`Endre ${options.name}`)}</h2><button type="button" class="dialog-close" data-dismiss aria-label="Avbryt endring">${icon('close')}</button></div><div class="number-change-body">${wizardArt(options.icon??'emblem')}<div class="number-comparison" aria-live="polite"><span class="number-before"><small>Før</small><b></b><span data-detail></span></span><span class="number-result-arrow" aria-hidden="true">→</span><span class="number-after"><small>Etter</small><b></b><span data-detail></span></span></div><div class="number-control-area"><div class="change-wheels"></div><section class="number-entry-panel" aria-label="Skriv tallet" hidden><div class="number-entry-toolbar"><button type="button" class="number-entry-back" aria-label="Tilbake til hjul">${icon('arrow')}</button><div class="number-entry-tabs" ${options.decimal?'':'hidden'}><button type="button" data-edit-wheel="whole">${esc(labels.whole)}</button><button type="button" data-edit-wheel="fraction">${esc(labels.fraction)}</button></div></div><div class="number-entry-value" role="textbox" aria-placeholder="0" aria-readonly="true" aria-multiline="false" tabindex="0"></div><div class="number-keypad" role="group" aria-label="Talltaster">${['1','2','3','4','5','6','7','8','9','±','0','⌫'].map(key=>`<button type="button" data-key="${key}" aria-label="${key==='±'?'Bytt fortegn':key==='⌫'?'Slett siffer':key}">${key}</button>`).join('')}</div></section></div><p class="number-help">Sveip opp eller ned. Trykk på midttallet for å skrive.</p><p class="number-breakdown" aria-live="polite"></p><p class="number-change-error" role="alert"></p></div><div class="dialog-actions"><button type="button" data-dismiss>Avbryt</button><button type="submit">OK</button></div></form>`;
  document.body.append(d);
  const error=d.querySelector<HTMLElement>('.number-change-error')!,submit=d.querySelector<HTMLButtonElement>('[type=submit]')!;
@@ -51,11 +54,11 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  d.addEventListener('close',()=>comparisonObserver.disconnect(),{once:true});void document.fonts.ready.then(fitComparison);
  const current=(which:WheelKey)=>which==='whole'?whole:fraction;
  const valid=()=>{
-  const b=changeBounds(options.original,options);
+  const b=changeBounds(base,options);
   return (!editor||draft===''||parseWheelInteger(draft)!==null)&&delta()>=b.min&&delta()<=b.max&&Number.isSafeInteger(delta());
  };
  const update=()=>{
-  const result=changeResult(options.original,delta());
+  const result=changeResult(base,delta());
   const comparison=options.comparison?.(delta())??{before:{value:format(options.original)},after:{value:format(result)}};
   for(const side of ['before','after'] as const){
    d.querySelector(`.number-${side} b`)!.textContent=comparison[side].value;
@@ -71,7 +74,7 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  const set=(which:WheelKey,next:number)=>{
   if(which==='fraction')fraction=Math.max(-99,Math.min(99,next));else whole=next;
   const candidate=BigInt(whole)*BigInt(scale)+BigInt(fraction);
-  const bounded=BigInt(normaliseChange(options.original,candidate,options));
+  const bounded=BigInt(normaliseChange(base,candidate,options));
   if(bounded!==candidate){whole=Number(bounded/BigInt(scale));fraction=Number(bounded%BigInt(scale));}
   error.textContent='';update();
  };
@@ -105,26 +108,26 @@ export function numberChangeDialog(options:NumberChangeOptions) {
   let rowHeight=46,first=0,timer:ReturnType<typeof setTimeout>|undefined,gesturing=false,touching=false;
   const bounds=()=>{
    if(which==='fraction')return {min:-99,max:99};
-   const b=changeBounds(options.original,options);
+   const b=changeBounds(base,options);
    return {min:Math.ceil((b.min-(options.decimal?99:0))/scale),max:Math.floor((b.max+(options.decimal?99:0))/scale)};
   };
   const stop=()=>{gesturing=false;clearTimeout(timer);track.scrollTo({top:track.scrollTop,behavior:'instant'});};
   const selectRow=()=>{
    const n=current(which);
    for(const item of track.children){const row=item as HTMLElement;
-    if(row.contains(value)){row.textContent=signed(Number(row.dataset.value));row.setAttribute('aria-hidden','true');}
+    if(row.contains(value)){row.textContent=display(Number(row.dataset.value));row.setAttribute('aria-hidden','true');}
    }
    const selected=[...track.children].find(row=>Number((row as HTMLElement).dataset.value)===n);
    selected?.removeAttribute('aria-hidden');selected?.replaceChildren(value);
-   value.textContent=signed(n);value.style.fontSize=`${Math.max(1,Math.min(2.1,13/Math.max(1,signed(n).length)))}rem`;
-   track.setAttribute('aria-valuenow',String(n));track.setAttribute('aria-valuetext',signed(n));
+   value.textContent=display(n);value.style.fontSize=`${Math.max(1,Math.min(2.1,13/Math.max(1,display(n).length)))}rem`;
+   track.setAttribute('aria-valuenow',String(n));track.setAttribute('aria-valuetext',display(n));
   };
   const draw=()=>{
    if(!track.getClientRects().length)return;
    const n=current(which),b=bounds();first=Math.max(n,Math.min(b.max,n+RADIUS));
    const last=Math.min(n,Math.max(b.min,n-RADIUS));track.replaceChildren();
    for(let v=first;v>=last;v--){
-    const row=document.createElement('div');row.className='change-wheel-row';row.dataset.value=String(v);row.textContent=signed(v);row.setAttribute('aria-hidden','true');
+    const row=document.createElement('div');row.className='change-wheel-row';row.dataset.value=String(v);row.textContent=display(v);row.setAttribute('aria-hidden','true');
     row.onclick=()=>{if(v===current(which)){edit(which);return;}stop();set(which,v);drawAll();};track.append(row);
    }
    rowHeight=(track.firstElementChild as HTMLElement).getBoundingClientRect().height;
@@ -211,7 +214,7 @@ export function numberChangeDialog(options:NumberChangeOptions) {
  d.querySelector('form')!.onsubmit=async e=>{
   e.preventDefault();if(pending||!flush()||!valid())return;
   pending=true;update();d.setAttribute('aria-busy','true');d.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=true);
-  try{await options.onConfirm(changeResult(options.original,delta()),delta());pending=false;dismiss();}
+  try{await options.onConfirm(changeResult(base,delta()),changeResult(base,delta())-options.original);pending=false;dismiss();}
   catch(failure){error.textContent=failure instanceof Error?failure.message:'Kunne ikke lagre. Endringen er bevart.';}
   finally{pending=false;d.removeAttribute('aria-busy');d.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=false);update();}
  };

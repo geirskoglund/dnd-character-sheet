@@ -67,6 +67,14 @@ test('updates a cached release explicitly, protects editing tabs, and preserves 
     await finish(other);
     await expect(other.getByRole('heading', { name: 'Bevart etter oppdatering', exact: true })).toBeVisible();
     await other.close();
+    // A dormant waiting worker must not block the active worker's same-scope tab check.
+    await page.evaluate(()=>{
+      const original=ServiceWorker.prototype.postMessage;
+      ServiceWorker.prototype.postMessage=function(message:unknown,...rest:unknown[]){
+        if((message as {type?:string})?.type==='COUNT_APP_TABS'&&this.state==='installed')return;
+        return (original as Function).call(this,message,...rest);
+      } as typeof original;
+    });
     await page.getByRole('button', { name: 'Oppdater appen', exact: true }).click();
     await expect(page).toHaveTitle('Release B');
     await expect(page.getByRole('heading', { name: 'Bevart etter oppdatering', exact: true })).toBeVisible();
